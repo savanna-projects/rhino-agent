@@ -1,0 +1,76 @@
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
+
+name: Rhino.Agent.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+pool:
+  name: Default
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: restore dependencies
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: '6ed1caf9-de4f-48e8-8276-201533d86a19'
+    verbosityRestore: 'Diagnostic'
+
+- task: DotNetCoreCLI@2
+  displayName: build projects
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: execute automated testing
+  inputs:
+    command: 'test'
+    projects: '**/*[Tt]ests/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+    testRunTitle: 'Automation Testing --- $(Build.BuildNumber)'
+
+- task: DotNetCoreCLI@2
+  displayName: publish files to $(build.artifactstagingdirectory)/$(Build.BuildNumber)
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
+    modifyOutputPath: false
+
+- task: PublishBuildArtifacts@1
+  displayName: publish artifact to container
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
+- task: PowerShell@2
+  displayName: 'parse build version for GitHub tag'
+  inputs:
+    targetType: 'inline'
+    script: |
+      # setup
+      [regex]$pattern = '(\d+.?)+'
+      $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
+      # set value
+      Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+- task: GitHubRelease@1
+  displayName: 'create GitHub tag'
+  inputs:
+    gitHubConnection: 'GitHub connection - Gravity API'
+    repositoryName: 'savanna-projects/rhino-agent'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'userSpecifiedTag'
+    tag: 'v$(buildVersion)'
+    title: 'Production v$(buildVersion)'
+    releaseNotesSource: 'inline'
+    assets: '$(build.artifactstagingdirectory)\$(Build.BuildNumber)\$(Build.BuildNumber).zip'
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
