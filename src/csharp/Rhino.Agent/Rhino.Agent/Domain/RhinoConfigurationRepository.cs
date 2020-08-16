@@ -77,7 +77,7 @@ namespace Rhino.Agent.Domain
             {
                 collection.Delete(d.Id);
             }
-            return HttpStatusCode.OK;
+            return HttpStatusCode.NoContent;
         }
         #endregion
 

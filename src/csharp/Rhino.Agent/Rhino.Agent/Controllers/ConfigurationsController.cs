@@ -115,20 +115,14 @@ namespace Rhino.Agent.Controllers
             // parse test case & configuration
             var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody);
 
-            // parse capabilities
-            var driverParams = new List<IDictionary<string, object>>();
-            foreach (var item in configuration.DriverParameters)
+            // exit conditions
+            if (!configuration.DriverParameters.Any())
             {
-                var driverParam = item;
-                if (driverParam.ContainsKey(ContextEntry.Capabilities))
-                {
-                    var capabilitiesBody = ((JObject)driverParam[ContextEntry.Capabilities]).ToString();
-                    driverParam[ContextEntry.Capabilities] =
-                        JsonConvert.DeserializeObject<Dictionary<string, object>>(capabilitiesBody);
-                }
-                driverParams.Add(driverParam);
+                return GetErrorResults(message: "You must provide at least one driver parameter.");
             }
-            configuration.DriverParameters = driverParams;
+
+            // parse driver parameters
+            configuration.DriverParameters = ParseDriverParameters(configuration.DriverParameters);
 
             // get credentials
             var credentials = Request.GetAuthentication();
@@ -152,13 +146,19 @@ namespace Rhino.Agent.Controllers
             var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
 
             // parse test case & configuration
-            var payload = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody);
+            var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody);
+
+            // exit conditions
+            if (!configuration.DriverParameters.Any())
+            {
+                return GetErrorResults(message: "You must provide at least one driver parameter.");
+            }
 
             // get credentials
             var credentials = Request.GetAuthentication();
 
             // get results
-            var (statusCode, _) = repository.Put(credentials, id, data: payload);
+            var (statusCode, _) = repository.Put(credentials, id, data: configuration);
 
             // exit conditions
             if (statusCode == HttpStatusCode.NotFound.ToInt32())
@@ -201,6 +201,47 @@ namespace Rhino.Agent.Controllers
                 Content = default,
                 StatusCode = repository.Delete(credentials).ToInt32()
             };
+        }
+
+        // TODO: move to extensions
+        // UTILITIES
+        private ContentResult GetErrorResults(string message)
+        {
+            // setup
+            var obj = new
+            {
+                Message = message
+            };
+
+            // response
+            return new ContentResult
+            {
+                Content = JsonConvert.SerializeObject(obj, jsonSettings),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = HttpStatusCode.InternalServerError.ToInt32()
+            };
+        }
+
+        private IEnumerable<IDictionary<string, object>> ParseDriverParameters(IEnumerable<IDictionary<string, object>> driverParameters)
+        {
+            // setup
+            var onDriverParameters = new List<IDictionary<string, object>>();
+
+            // iterate
+            foreach (var item in driverParameters)
+            {
+                var driverParam = item;
+                if (driverParam.ContainsKey(ContextEntry.Capabilities))
+                {
+                    var capabilitiesBody = ((JObject)driverParam[ContextEntry.Capabilities]).ToString();
+                    driverParam[ContextEntry.Capabilities] =
+                        JsonConvert.DeserializeObject<Dictionary<string, object>>(capabilitiesBody);
+                }
+                onDriverParameters.Add(driverParam);
+            }
+
+            // results
+            return onDriverParameters;
         }
     }
 }
