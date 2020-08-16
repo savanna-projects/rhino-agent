@@ -8,8 +8,13 @@ using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Http;
 
+using Newtonsoft.Json;
+
+using System;
+using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Rhino.Agent.Extensions
 {
@@ -66,5 +71,48 @@ namespace Rhino.Agent.Extensions
             int.TryParse($"{(int)statusCode}", out int statusCodeOut);
             return statusCodeOut;
         }
+
+        #region *** Read Request ***
+        /// <summary>
+        /// Deserialize a <see cref="HttpRequest.Body"/> into an object of a type.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> to deserialize the <see cref="HttpRequest"/> to.</typeparam>
+        /// <param name="request">The <see cref="HttpRequest"/> to deserialize.</param>
+        /// <returns>An object of the given type.</returns>
+        public static async Task<T> ReadAsAsync<T>(this HttpRequest request)
+        {
+            // read content
+            var requestBody = await DoReadAsync(request).ConfigureAwait(false);
+
+            // deserialize into object
+            return JsonConvert.DeserializeObject<T>(requestBody);
+        }
+
+        /// <summary>
+        /// Reads a <see cref="HttpRequest.Body"/> object.
+        /// </summary>
+        /// <param name="request">The <see cref="HttpRequest"/> to read.</param>
+        /// <returns>The <see cref="HttpRequest.Body"/> as <see cref="string"/>.</returns>
+        public static Task<string> ReadAsync(this HttpRequest request)
+        {
+            return DoReadAsync(request);
+        }
+
+        private static async Task<string> DoReadAsync(HttpRequest request)
+        {
+            // read content
+            using var streamReader = new StreamReader(request.Body);
+            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+
+            // exit conditions
+            if (!requestBody.IsJson())
+            {
+                throw new NotSupportedException("The request body must be JSON formatted.");
+            }
+
+            // deserialize into object
+            return requestBody;
+        }
+        #endregion
     }
 }

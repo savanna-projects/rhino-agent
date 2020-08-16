@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Rhino.Api" Version="2020.8.12.1" />
     <PackageReference Include="Rhino.Connectors.Text" Version="2020.8.14.3" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="84.0.4147.3001" />
   </ItemGroup>
 
 </Project>

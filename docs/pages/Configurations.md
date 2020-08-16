@@ -1,5 +1,5 @@
 # API: Configurations
-Use the following API methods to request details about automation configurations and to create or modify automation configurations.
+Use the following API methods to request details about _**Rhino Configurations**_ and to create or modify them.
 
 ## Get Configurations
 Returns a list of available _**Rhino Configurations**_.
@@ -119,21 +119,21 @@ Please see below for a typical response:
 The following system fields are always included in the response:
 
 #### General
-|Name                    |Type  |Description                                                                                            |
-|------------------------|------|-------------------------------------------------------------------------------------------------------|
-|name                    |string|The name of this _**Rhino Configuration**_.                                                            |
-|testsRepository         |array |A collection of folders and files in which there are _**Rhino Test Cases**_.                           |
-|driverParameters        |array |A collection of parameters which represents the target platforms on which the tests will run.          |
-|dataSource              |array |A collection of data objects which will be cascaded as primary table for all _**Rhino Test Cases**_.   |
-|models                  |array |A collection of _**Rhino Page Models**_ sources.                                                       |
-|connector               |string|Connector implementation type to use with this _**Rhino Configuration**_.                              |
-|gravityEndpoint         |string|Gravity Server endpoint. Use to send requests using remote gravity service instead of embedded service.|
-|authentication          |string|User name and password for authentication on Rhino Service.                                            |
-|engineConfiguration     |object|Configure the automation engine behavior.                                                              |
-|screenshotsConfiguration|object|Configure the screenshot behavior.                                                                     |
-|reportConfiguration     |object|Configure the reporting behavior.                                                                      |
+|Name                                                  |Type  |Description                                                                                            |
+|------------------------------------------------------|------|-------------------------------------------------------------------------------------------------------|
+|name                                                  |string|The name of this _**Rhino Configuration**_.                                                            |
+|testsRepository                                       |array |A collection of folders and files in which there are _**Rhino Test Cases**_.                           |
+|driverParameters                                      |array |A collection of parameters which represents the target platforms on which the tests will run.          |
+|dataSource                                            |array |A collection of data objects which will be cascaded as primary table for all _**Rhino Test Cases**_.   |
+|models                                                |array |A collection of _**Rhino Page Models**_ sources.                                                       |
+|connector                                             |string|Connector implementation type to use with this _**Rhino Configuration**_.                              |
+|gravityEndpoint                                       |string|Gravity Server endpoint. Use to send requests using remote gravity service instead of embedded service.|
+|[authentication](#authentication)                     |string|User name and password for authentication on Rhino Service.                                            |
+|[engineConfiguration](#engine-configuration)          |object|Configure the automation engine behavior.                                                              |
+|[screenshotsConfiguration](#screenshots-configuration)|object|Configure the screenshot behavior.                                                                     |
+|[reportConfiguration](#report-configuration)          |object|Configure the reporting behavior.                                                                      |
 
-#### Engine Authentication
+#### Authentication
 |Name    |Type  |Description                 |
 |--------|------|----------------------------|
 |userName|string|A valid Rhino API user name.|
@@ -193,7 +193,7 @@ POST /api/v3/configurations
 ```
 
 ### Request Fields
-The request body follows the same format as [Get Configuration](#get-configuration) [Response Content](#response-content).
+The request body follows the same format as [Get Configuration](#get-configuration) response content.
 
 ### Request Example
 ```js
@@ -257,6 +257,7 @@ The request body follows the same format as [Get Configuration](#get-configurati
 |Code|Description                                                                                  |
 |----|---------------------------------------------------------------------------------------------|
 |201 |Success, the _**Configuration**_ created and identifier was returned as part of the response.|
+|400 |Bad Request, the request is missing a mandatory field(s) or bad formatted.                   |
 |500 |Fail, the server encountered an unexpected error.                                            |
 
 ## Update Configuration
@@ -335,6 +336,7 @@ The request body follows the same format as [Get Configuration](#get-configurati
 |Code|Description                                                                          |
 |----|-------------------------------------------------------------------------------------|
 |200 |Success, the _**Configuration**_ was returned as part of the response.               |
+|400 |Bad Request, the request is missing a mandatory field(s) or bad formatted.           |
 |404 |Not Found, the _**Configuration**_ was not found under the configurations collection.|
 |500 |Fail, the server encountered an unexpected error.                                    |
 

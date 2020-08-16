@@ -84,7 +84,7 @@ namespace Rhino.Agent
             services.AddScoped<KnowledgeBaseManager, KnowledgeBaseManager>();
             services.AddScoped<PluginParser, PluginParser>();
             services.AddScoped<RhinoTestCaseRepository, RhinoTestCaseRepository>();
-            services.AddScoped<RhinoPageModelCollection, RhinoPageModelCollection>();
+            services.AddScoped<RhinoModelRepository, RhinoModelRepository>();
             services.AddScoped<RhinoConfigurationRepository, RhinoConfigurationRepository>();
             services.AddScoped<RhinoLogsRepository, RhinoLogsRepository>();
 

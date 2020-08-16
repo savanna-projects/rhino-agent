@@ -16,7 +16,6 @@ using Rhino.Api.Contracts.Configuration;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
@@ -108,17 +107,13 @@ namespace Rhino.Agent.Controllers
         [HttpPost]
         public async Task<IActionResult> Post()
         {
-            // read test case from request body
-            using var streamReader = new StreamReader(Request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
             // parse test case & configuration
-            var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody);
+            var configuration = await Request.ReadAsAsync<RhinoConfiguration>().ConfigureAwait(false);
 
             // exit conditions
             if (!configuration.DriverParameters.Any())
             {
-                return GetErrorResults(message: "You must provide at least one driver parameter.");
+                return GetErrorResults("You must provide at least one driver parameter.");
             }
 
             // parse driver parameters
@@ -141,17 +136,13 @@ namespace Rhino.Agent.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(string id)
         {
-            // read test case from request body
-            using var streamReader = new StreamReader(Request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
             // parse test case & configuration
-            var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody);
+            var configuration = await Request.ReadAsAsync<RhinoConfiguration>().ConfigureAwait(false);
 
             // exit conditions
             if (!configuration.DriverParameters.Any())
             {
-                return GetErrorResults(message: "You must provide at least one driver parameter.");
+                return GetErrorResults("You must provide at least one driver parameter.");
             }
 
             // get credentials
@@ -205,23 +196,6 @@ namespace Rhino.Agent.Controllers
 
         // TODO: move to extensions
         // UTILITIES
-        private ContentResult GetErrorResults(string message)
-        {
-            // setup
-            var obj = new
-            {
-                Message = message
-            };
-
-            // response
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(obj, jsonSettings),
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.InternalServerError.ToInt32()
-            };
-        }
-
         private IEnumerable<IDictionary<string, object>> ParseDriverParameters(IEnumerable<IDictionary<string, object>> driverParameters)
         {
             // setup
@@ -242,6 +216,23 @@ namespace Rhino.Agent.Controllers
 
             // results
             return onDriverParameters;
+        }
+
+        private ContentResult GetErrorResults(string message)
+        {
+            // setup
+            var obj = new
+            {
+                Message = message
+            };
+
+            // response
+            return new ContentResult
+            {
+                Content = JsonConvert.SerializeObject(obj, jsonSettings),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = HttpStatusCode.BadRequest.ToInt32()
+            };
         }
     }
 }

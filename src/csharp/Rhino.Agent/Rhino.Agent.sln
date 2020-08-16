@@ -12,8 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5F276F3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{3712E923-66B8-4982-9BE2-045E1B95C598}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\docs\Configurations.md = ..\..\..\docs\Configurations.md
-		..\..\..\docs\Home.md = ..\..\..\docs\Home.md
+		..\..\..\docs\pages\Configurations.md = ..\..\..\docs\pages\Configurations.md
+		..\..\..\docs\pages\Home.md = ..\..\..\docs\pages\Home.md
+		..\..\..\docs\pages\Models.md = ..\..\..\docs\pages\Models.md
 		..\..\..\README.md = ..\..\..\README.md
 	EndProjectSection
 EndProject

@@ -12,6 +12,7 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 
 using Newtonsoft.Json;
@@ -41,81 +42,115 @@ namespace Rhino.Agent.Controllers
             jsonSettings = provider.GetRequiredService<JsonSerializerSettings>();
         }
 
-        // GET: api/v3/elements
+        #region *** GET    ***
+        // GET: api/v3/models
         [HttpGet]
         public IActionResult Get()
         {
             // setup
-            var data = repository.Get(Request.GetAuthentication()).data.Select(i => new
+            var responseBody = repository.Get(Request.GetAuthentication()).data.Select(i => new
             {
                 i.Id,
                 i.Configurations,
-                TotalElements = i.Models.Count
+                Models = i.Models.Count,
+                Entries = i.Models.SelectMany(i=>i.Entries).Count()
             });
 
             // response
             return new ContentResult
             {
-                Content = JsonConvert.SerializeObject(new { Data = new { Collections = data } }, jsonSettings),
+                Content = JsonConvert.SerializeObject(new { Data = new { Collection = responseBody } }, jsonSettings),
                 ContentType = MediaTypeNames.Application.Json,
                 StatusCode = HttpStatusCode.OK.ToInt32()
             };
         }
 
-        // GET api/v3/elements/<id>
+        // GET api/v3/models/<id>
         [HttpGet("{id}")]
         public IActionResult Get(string id)
         {
             // setup
-            var data = repository.Get(Request.GetAuthentication(), id).data;
-            var body = JsonConvert.SerializeObject(data.Models, jsonSettings);
+            var obj = repository.Get(Request.GetAuthentication(), id).data;
+            var responseBody = JsonConvert.SerializeObject(obj.Models, jsonSettings);
 
             // response
             return new ContentResult
             {
-                Content = body,
+                Content = responseBody,
                 ContentType = MediaTypeNames.Application.Json,
                 StatusCode = HttpStatusCode.OK.ToInt32()
             };
         }
 
-        // GET api/v3/elements/<id>/configuration
+        // GET api/v3/models/<id>/configuration
         [HttpGet("{id}/configurations")]
         public IActionResult GetConfigurations(string id)
         {
             // setup
-            var data = repository.Get(Request.GetAuthentication(), id).data;
+            var obj = repository.Get(Request.GetAuthentication(), id).data;
+            var responseBody = JsonConvert.SerializeObject(new { Data = new { obj.Configurations } }, jsonSettings);
 
             // response
             return new ContentResult
             {
-                Content = JsonConvert.SerializeObject(new { Data = new { data.Configurations } }, jsonSettings),
+                Content = responseBody,
                 ContentType = MediaTypeNames.Application.Json,
                 StatusCode = HttpStatusCode.OK.ToInt32()
             };
         }
+        #endregion
 
-        // POST api/v3/elements/<configuration>
-        [HttpPost("{configuration}")]
-        public async Task<IActionResult> Post(string configuration)
+        #region  *** POST   ***
+        // POST api/v3/models
+        [HttpPost]
+        public Task<IActionResult> Post()
         {
+            return DoPost(configuration: string.Empty);
+        }
+
+        // POST api/v3/models/<configuration>
+        [HttpPost("{configuration}")]
+        public Task<IActionResult> Post(string configuration)
+        {
+            return DoPost(configuration);
+        }
+
+        private async Task<IActionResult> DoPost(string configuration)
+        {
+            // setup
+            var modelState = new ModelStateDictionary();
+
             // read test case from request body
-            using var streamReader = new StreamReader(Request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-            var models = JsonConvert.DeserializeObject<RhinoPageModel[]>(requestBody);
+            var models = await Request.ReadAsAsync<RhinoPageModel[]>().ConfigureAwait(false);
 
             // exit conditions
             if (models.Length == 0)
             {
-                return BadRequest();
+                modelState.AddModelError("Models.Length", "At least one model must be provided.");
+                return BadRequest(modelState);
             }
 
             // setup
             var collection = new RhinoPageModelCollection();
             collection.Configurations ??= new List<string>();
-            collection.Configurations.Add(configuration);
-            collection.Id = Guid.NewGuid();
             collection.Models = models;
+            if (!string.IsNullOrEmpty(configuration))
+            {
+                collection.Configurations.Add(configuration);
+            }
+
+            // model name
+            foreach (var model in models)
+            {
+                foreach (var entry in model.Entries)
+                {
+                    if (!string.IsNullOrEmpty(entry.Model))
+                    {
+                        continue;
+                    }
+                    entry.Model = model.Name;
+                }
+            }
 
             // get credentials
             var credentials = Request.GetAuthentication();
@@ -129,8 +164,10 @@ namespace Rhino.Agent.Controllers
                 StatusCode = HttpStatusCode.Created.ToInt32()
             };
         }
+        #endregion
 
-        // PATCH api/v3/elements/<id>/configurations/<configuration>
+        #region *** PATCH  ***
+        // PATCH api/v3/models/<id>/configurations/<configuration>
         [HttpPatch("{id}/configurations/{configuration}")]
         public IActionResult PatchConfiguration(string id, string configuration)
         {
@@ -145,15 +182,12 @@ namespace Rhino.Agent.Controllers
             };
         }
 
-        // PATCH api/v3/collection/<guid>
+        // PATCH api/v3/models/<guid>
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchElements(string id)
+        public async Task<IActionResult> Patchmodels(string id)
         {
             // read test case from request body
-            using var streamReader = new StreamReader(Request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-            var models =
-                JsonConvert.DeserializeObject<RhinoPageModel[]>(requestBody, jsonSettings);
+            var models = await Request.ReadAsAsync<RhinoPageModel[]>().ConfigureAwait(false);
 
             // add (generate id)
             var credentials = Request.GetAuthentication();
@@ -166,17 +200,19 @@ namespace Rhino.Agent.Controllers
             }
 
             // apply
-            foreach (var model in models)
+            foreach (var model in models.Where(i => !collection.Models.Select(i => i.Name).Contains(i.Name)))
             {
                 collection.Models.Add(model);
             }
             repository.Patch(credentials, collection);
 
             // response
-            return NoContent();
+            return Redirect($"/api/v3/models/{id}");
         }
+        #endregion
 
-        // DELETE api/v3/collection/<guid>
+        #region *** DELETE ***
+        // DELETE api/v3/models/<guid>
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
@@ -187,7 +223,7 @@ namespace Rhino.Agent.Controllers
             return response == HttpStatusCode.NotFound ? NotFound() : (IActionResult)NoContent();
         }
 
-        // DELETE api/v3/collection
+        // DELETE api/v3/models
         [HttpDelete]
         public IActionResult Delete()
         {
@@ -197,5 +233,6 @@ namespace Rhino.Agent.Controllers
             // response
             return NoContent();
         }
+        #endregion
     }
 }
