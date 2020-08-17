@@ -37,7 +37,7 @@ namespace Rhino.Agent.Domain
         public LiteDatabase LiteDb { get; }
 
         // Generates MongoDb collection name.
-        public static string GetCollectionName(Authentication  authentication , string prefix)
+        public static string GetCollectionName(Authentication authentication, string prefix)
         {
             // serialize
             var stringBody = JsonConvert.SerializeObject(authentication).ToBase64();

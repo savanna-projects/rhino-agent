@@ -71,9 +71,15 @@ namespace Rhino.Agent.Controllers
         {
             // setup
             var obj = repository.Get(Request.GetAuthentication(), id).data;
-            var responseBody = JsonConvert.SerializeObject(obj.Models, jsonSettings);
+
+            // exit conditions
+            if (obj == default)
+            {
+                return NotFound(new { Message = $"Collection [{id}] was not found." });
+            }
 
             // response
+            var responseBody = JsonConvert.SerializeObject(obj.Models, jsonSettings);
             return new ContentResult
             {
                 Content = responseBody,
@@ -88,9 +94,15 @@ namespace Rhino.Agent.Controllers
         {
             // setup
             var obj = repository.Get(Request.GetAuthentication(), id).data;
-            var responseBody = JsonConvert.SerializeObject(new { Data = new { obj.Configurations } }, jsonSettings);
+
+            // exit conditions
+            if (obj == default)
+            {
+                return NotFound(new { Message = $"Collection [{id}] was not found" });
+            }
 
             // response
+            var responseBody = JsonConvert.SerializeObject(new { Data = new { obj.Configurations } }, jsonSettings);
             return new ContentResult
             {
                 Content = responseBody,
@@ -115,19 +127,20 @@ namespace Rhino.Agent.Controllers
             return DoPost(configuration);
         }
 
+        // TODO: clean
         private async Task<IActionResult> DoPost(string configuration)
         {
-            // setup
-            var modelState = new ModelStateDictionary();
-
             // read test case from request body
             var models = await Request.ReadAsAsync<RhinoPageModel[]>().ConfigureAwait(false);
 
             // exit conditions
             if (models.Length == 0)
             {
-                modelState.AddModelError("Models.Length", "At least one model must be provided.");
-                return BadRequest(modelState);
+                return GetErrorResults(message: "At least one model must be provided.");
+            }
+            if (!models.SelectMany(i => i.Entries).Any())
+            {
+                return GetErrorResults(message: "At least one model entry must be provided.");
             }
 
             // setup
@@ -157,6 +170,15 @@ namespace Rhino.Agent.Controllers
 
             // response
             var data = new { Data = new { Id = repository.Post(credentials, collection) } };
+
+            // exit conditions
+            if (string.IsNullOrEmpty(data.Data.Id))
+            {
+                return GetErrorResults(
+                    message: "All the provided Models Collections already exists. Please provide a unique Collection.");
+            }
+
+            // results
             return new ContentResult
             {
                 Content = JsonConvert.SerializeObject(data, jsonSettings),
@@ -174,6 +196,12 @@ namespace Rhino.Agent.Controllers
             // patch
             var (statusCode, _) = repository.Patch(Request.GetAuthentication(), id, configuration);
 
+            // redirect
+            if(statusCode == HttpStatusCode.NoContent)
+            {
+                return Redirect($"/api/v3/models/{id}");
+            }
+
             // response
             return new ContentResult
             {
@@ -186,7 +214,7 @@ namespace Rhino.Agent.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> Patchmodels(string id)
         {
-            // read test case from request body
+            // setup
             var models = await Request.ReadAsAsync<RhinoPageModel[]>().ConfigureAwait(false);
 
             // add (generate id)
@@ -196,7 +224,7 @@ namespace Rhino.Agent.Controllers
             var (statusCode, collection) = repository.Get(credentials, id);
             if (statusCode == HttpStatusCode.NotFound)
             {
-                return NotFound();
+                return NotFound(new { Message = $"Collection [{id}] was not found." });
             }
 
             // apply
@@ -234,5 +262,22 @@ namespace Rhino.Agent.Controllers
             return NoContent();
         }
         #endregion
+
+        private ContentResult GetErrorResults(string message)
+        {
+            // setup
+            var obj = new
+            {
+                Message = message
+            };
+
+            // response
+            return new ContentResult
+            {
+                Content = JsonConvert.SerializeObject(obj, jsonSettings),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = HttpStatusCode.BadRequest.ToInt32()
+            };
+        }
     }
 }

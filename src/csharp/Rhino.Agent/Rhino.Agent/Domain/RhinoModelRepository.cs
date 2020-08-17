@@ -85,7 +85,15 @@ namespace Rhino.Agent.Domain
             // get collection
             var collection = LiteDb.GetCollection<RhinoPageModelCollection>(name: Collection);
 
+            // get models
+            var namesToExclude = collection.FindAll().SelectMany(i => i.Models).Select(i => i.Name);
+            data.Models = data.Models.Where(i => !namesToExclude.Contains(i.Name)).ToList();
+
             // insert
+            if (data.Models.Count == 0)
+            {
+                return string.Empty;
+            }
             collection.Insert(entity: data);
 
             // exit conditions
@@ -282,9 +290,9 @@ namespace Rhino.Agent.Domain
         /// Creates a collection based on the user details provided for this instance.
         /// </summary>
         /// <param name="authentication">Authentication object by which to access the collection.</param>
-        public void CreateCollection(Authentication  authentication )
+        public void CreateCollection(Authentication  authentication)
         {
-            Collection = GetCollectionName(authentication, prefix: "elements");
+            Collection = GetCollectionName(authentication, prefix: "models");
         }
 
         // TODO: merge with RemoveFromConfiguration

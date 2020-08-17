@@ -184,7 +184,7 @@ namespace Rhino.Agent.Domain
         /// Creates a collection based on the user details provided for this instance.
         /// </summary>
         /// <param name="authentication">Authentication object by which to access the collection.</param>
-        public void CreateCollection(Authentication  authentication )
+        public void CreateCollection(Authentication  authentication)
         {
             Collection = GetCollectionName(authentication, prefix: "configuration");
         }
