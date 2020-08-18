@@ -31,24 +31,33 @@ namespace Rhino.Agent.Controllers
             repository = provider.GetRequiredService<RhinoLogsRepository>();
         }
 
-        // GET: api/v3/logs/configuration/<configuration>/log/<log>
-        [HttpGet("configuration/{configuration}/log/{log}")]
+        // GET: api/v3/logs/<log>/configuration/<configuration>
+        [HttpGet("{log}/configuration/{configuration}")]
         public IActionResult Get(string configuration, string log)
         {
             // get credentials
             var credentials = Request.GetAuthentication();
 
+            // get
+            var (statusCode, responseBody) = repository.Get(credentials, configuration, log);
+
+            // exit conditions
+            if(statusCode== HttpStatusCode.NotFound)
+            {
+                return NotFound(new { Message = $"Log [{log}] or configuration [{configuration}] were not found." });
+            }
+
             // response
             return new ContentResult
             {
-                Content = repository.Get(credentials, configuration, log).data,
+                Content = responseBody,
                 ContentType = MediaTypeNames.Text.Plain,
                 StatusCode = HttpStatusCode.OK.ToInt32()
             };
         }
 
-        // GET: api/v3/logs/configuration/<configuration>/log/<log>/last/<numberOfLines>
-        [HttpGet("configuration/{configuration}/log/{log}/size/{size}")]
+        // GET: api/v3/logs/<log>/configuration/<configuration>/size/<size>
+        [HttpGet("{log}/configuration/{configuration}/size/{size}")]
         public IActionResult Get(string configuration, string log, int size)
         {
             // get credentials
@@ -63,7 +72,8 @@ namespace Rhino.Agent.Controllers
             };
         }
 
-        [HttpGet("configuration/{configuration}/report/{report}")]
+        // GET: api/v3/logs/<log>/configuration/<configuration>/download
+        [HttpGet("{log}/configuration/{configuration}/download")]
         public IActionResult Download(string configuration, string log)
         {
             // get credentials
