@@ -114,7 +114,7 @@ namespace Rhino.Agent.Domain
 
             // get
             var logFile = $"{logsOut}Rhino-{log}.log";
-            if (statusCode != HttpStatusCode.OK.ToInt32() || !File.Exists(path: logFile))
+            if (statusCode != HttpStatusCode.OK || !File.Exists(path: logFile))
             {
                 return (HttpStatusCode.NotFound, string.Empty);
             }

@@ -137,7 +137,7 @@ namespace Rhino.Agent.Domain
             var (statusCode, data) = configurationRepository.Get(authentication, configuration);
 
             // not found conditions
-            if (onData == default || statusCode == HttpStatusCode.NotFound.ToInt32())
+            if (onData == default || statusCode == HttpStatusCode.NotFound)
             {
                 return (HttpStatusCode.NotFound, default);
             }
@@ -193,6 +193,12 @@ namespace Rhino.Agent.Domain
         /// <returns>Updated RhinoTestCaseCollection entity.</returns>
         public (HttpStatusCode statusCode, RhinoTestCaseCollection data) Patch(Authentication  authentication , RhinoTestCaseCollection data)
         {
+            // exit conditions
+            if (data.RhinoTestCaseDocuments.Count == 0)
+            {
+                return (HttpStatusCode.BadRequest, default);
+            }
+
             // validate
             CreateCollection(authentication);
 

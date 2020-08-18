@@ -42,7 +42,7 @@ namespace Rhino.Agent.Domain
             var (statusCode, configuration) = Get(id, collection);
 
             // not found
-            if (statusCode == HttpStatusCode.NotFound.ToInt32())
+            if (statusCode == HttpStatusCode.NotFound)
             {
                 return HttpStatusCode.NotFound;
             }
@@ -88,7 +88,7 @@ namespace Rhino.Agent.Domain
         /// <param name="authentication">Authentication object by which to access the collection.</param>
         /// <param name="id">The configuration id by which to GET.</param>
         /// <returns>Status code and configuration (if any).</returns>
-        public (int statusCode, RhinoConfiguration data) Get(Authentication  authentication , string id)
+        public (HttpStatusCode statusCode, RhinoConfiguration data) Get(Authentication  authentication , string id)
         {
             // validate
             CreateCollection(authentication);
@@ -153,7 +153,7 @@ namespace Rhino.Agent.Domain
         /// <param name="id">Rhino.Api.Contracts.Configuration.RhinoConfiguration.Id to PUT.</param>
         /// <param name="data">The Rhino.Api.Contracts.Configuration.RhinoConfiguration to PUT.</param>
         /// <returns>Status code and configuration (if any).</returns>
-        public (int statusCode, RhinoConfiguration data) Put(Authentication  authentication , string id, RhinoConfiguration data)
+        public (HttpStatusCode statusCode, RhinoConfiguration data) Put(Authentication  authentication , string id, RhinoConfiguration data)
         {
             // validate
             CreateCollection(authentication);
@@ -165,7 +165,7 @@ namespace Rhino.Agent.Domain
             var (statusCode, configuration) = Get(id, collection);
 
             // not found
-            if (statusCode == HttpStatusCode.NotFound.ToInt32())
+            if (statusCode == HttpStatusCode.NotFound)
             {
                 return (statusCode, configuration);
             }
@@ -176,7 +176,7 @@ namespace Rhino.Agent.Domain
             collection.Update(entity: data);
 
             // results
-            return (HttpStatusCode.OK.ToInt32(), data);
+            return (HttpStatusCode.OK, data);
         }
         #endregion
 
@@ -190,7 +190,7 @@ namespace Rhino.Agent.Domain
         }
 
         // gets a configuration by id
-        private (int statusCode, RhinoConfiguration configuration) Get(string id, ILiteCollection<RhinoConfiguration> collection)
+        private (HttpStatusCode statusCode, RhinoConfiguration configuration) Get(string id, ILiteCollection<RhinoConfiguration> collection)
         {
             // set index            
             collection.EnsureIndex(i => i.Id);
@@ -204,11 +204,11 @@ namespace Rhino.Agent.Domain
             // not found
             if (configuration == default)
             {
-                return (HttpStatusCode.NotFound.ToInt32(), default);
+                return (HttpStatusCode.NotFound, default);
             }
 
             // delete
-            return (HttpStatusCode.OK.ToInt32(), configuration);
+            return (HttpStatusCode.OK, configuration);
         }
     }
 }

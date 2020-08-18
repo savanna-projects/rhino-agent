@@ -83,7 +83,7 @@ namespace Rhino.Agent.Controllers
             var (statusCode, configuration) = repository.Get(credentials, id);
 
             // exit conditions
-            if (statusCode == HttpStatusCode.NotFound.ToInt32())
+            if (statusCode == HttpStatusCode.NotFound)
             {
                 return NotFound(new
                 {
@@ -152,7 +152,7 @@ namespace Rhino.Agent.Controllers
             var (statusCode, _) = repository.Put(credentials, id, data: configuration);
 
             // exit conditions
-            if (statusCode == HttpStatusCode.NotFound.ToInt32())
+            if (statusCode == HttpStatusCode.NotFound)
             {
                 return NotFound(new
                 {

@@ -84,6 +84,12 @@ namespace Rhino.Agent.Extensions
             // read content
             var requestBody = await DoReadAsync(request).ConfigureAwait(false);
 
+            // exit conditions
+            if (!requestBody.IsJson())
+            {
+                throw new NotSupportedException("The request body must be JSON formatted.");
+            }
+
             // deserialize into object
             return JsonConvert.DeserializeObject<T>(requestBody);
         }
@@ -98,20 +104,10 @@ namespace Rhino.Agent.Extensions
             return DoReadAsync(request);
         }
 
-        private static async Task<string> DoReadAsync(HttpRequest request)
+        private static Task<string> DoReadAsync(HttpRequest request)
         {
-            // read content
             using var streamReader = new StreamReader(request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
-            // exit conditions
-            if (!requestBody.IsJson())
-            {
-                throw new NotSupportedException("The request body must be JSON formatted.");
-            }
-
-            // deserialize into object
-            return requestBody;
+            return streamReader.ReadToEndAsync();
         }
         #endregion
     }

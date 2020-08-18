@@ -140,7 +140,7 @@ namespace Rhino.Agent.Domain
             var (statusCode, data) = configurationRepository.Get(authentication, configuration);
 
             // not found conditions
-            if (onData == default || statusCode == HttpStatusCode.NotFound.ToInt32())
+            if (onData == default || statusCode == HttpStatusCode.NotFound)
             {
                 return (HttpStatusCode.NotFound, default);
             }

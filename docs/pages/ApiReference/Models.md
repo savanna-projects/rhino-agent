@@ -35,12 +35,12 @@ GET /api/v3/models
 
 The example response includes 2 models, with 1 entries each and 2 configurations for one of them.
 
-|Name          |Type  |Description                                      |
-|--------------|------|-------------------------------------------------|
-|id            |string|The ID of the _**Rhino Models**_.                |
-|configurations|array |All _**Rhino Models**_ which are using the model.|
-|models        |number|Total models under the models collection.        |
-|entries       |number|Total entries (elements) under the model.        |
+|Name          |Type  |Description                                              |
+|--------------|------|---------------------------------------------------------|
+|id            |string|The ID of the _**Rhino Models**_.                        |
+|configurations|array |All _**Rhino Configurations**_ which are using the model.|
+|models        |number|Total models under the models collection.                |
+|entries       |number|Total entries (elements) under the model.                |
 
 ### Response Codes
 |Code|Description                                                           |
@@ -168,6 +168,10 @@ Returns a list of available _**Rhino Configurations**_ which are associated with
 GET /api/v3/models/:collection_id/configurations
 ```
 
+|Name         |Type  |Description                                 |
+|-------------|------|--------------------------------------------|
+|collection_id|string|The ID of the _**Rhino Models**_ collection.|
+
 #### Response Content
 ```js
 {
@@ -190,6 +194,7 @@ The example response includes 2 configuration which are associated with this col
 |Code|Description                                                                   |
 |----|------------------------------------------------------------------------------|
 |200 |Success, the _**Rhino Configurations**_ were returned as part of the response.|
+|404 |Not Found, the _**Rhino Models**_ collection was not found.                   |
 |500 |Fail, the server encountered an unexpected error.                             |
 
 ## Add Models to Collection
@@ -199,6 +204,10 @@ it will be ignored.
 ```
 PATCH /api/v3/models/:collection_id
 ```
+
+|Name         |Type  |Description                                 |
+|-------------|------|--------------------------------------------|
+|collection_id|string|The ID of the _**Rhino Models**_ collection.|
 
 ### Request Fields
 The request body follows the same format as [Get Model](#get-model) response content.

@@ -235,7 +235,7 @@ namespace Rhino.Agent.Controllers
             var (statusCode, configuration) = configurationRepository.Get(credentials, id);
 
             // not found conditions
-            if (statusCode != HttpStatusCode.OK.ToInt32())
+            if (statusCode != HttpStatusCode.OK)
             {
                 return (HttpStatusCode.NotFound.ToInt32(), default);
             }

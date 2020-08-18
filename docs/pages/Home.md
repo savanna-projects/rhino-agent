@@ -4,4 +4,6 @@
 * [Register (Free)](./register.md 'Register')
 
 ## Reference
-* [Configurations](./Configurations.md 'Configurations')
+* [Configurations](./ApiReference/Configurations.md 'Configurations')
+* [Models](./ApiReference/Models.md 'Models')
+* [Test Cases (Rhino Specs)](./ApiReference/TestCases.md 'TestCases')
