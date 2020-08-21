@@ -29,7 +29,6 @@ namespace Rhino.Agent.Controllers
         // members: constants
         private readonly string Seperator =
             Environment.NewLine + Environment.NewLine + SpecSection.Separator + Environment.NewLine + Environment.NewLine;
-        private readonly string Splitter = ">>>";
         private const string CountHeader = "Rhino-Total-Specs";
 
         // members: state
@@ -218,7 +217,7 @@ namespace Rhino.Agent.Controllers
         {
             // read test case from request body
             var requestBody = await Request.ReadAsync().ConfigureAwait(false);
-            var specs = requestBody.Split(Splitter).Select(i => i.Trim());
+            var specs = requestBody.Split(SpecSection.Separator).Select(i => i.Trim());
 
             // add (generate id)
             var credentials = Request.GetAuthentication();

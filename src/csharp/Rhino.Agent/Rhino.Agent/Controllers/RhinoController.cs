@@ -15,11 +15,11 @@ using Rhino.Agent.Models;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Extensions;
+using Rhino.Api.Parser.Contracts;
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
@@ -34,6 +34,8 @@ namespace Rhino.Agent.Controllers
     {
         // constants
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
+        private readonly string Seperator =
+            Environment.NewLine + Environment.NewLine + SpecSection.Separator + Environment.NewLine + Environment.NewLine;
 
         // members: state
         private readonly IEnumerable<Type> types;
@@ -42,28 +44,30 @@ namespace Rhino.Agent.Controllers
         private readonly RhinoTestCaseRepository testCaseRepository;
         private readonly JsonSerializerSettings jsonSettings;
         private readonly IConfiguration appSettings;
+        private readonly IServiceProvider provider;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Controllers.RhinoController.
         /// </summary>
-        /// <param name="serviceProvider">Services container.</param>
-        public RhinoController(IServiceProvider serviceProvider)
+        /// <param name="provider">Services container.</param>
+        public RhinoController(IServiceProvider provider)
         {
-            types = serviceProvider.GetRequiredService<IEnumerable<Type>>();
-            configurationRepository = serviceProvider.GetRequiredService<RhinoConfigurationRepository>();
-            modelRepository = serviceProvider.GetRequiredService<RhinoModelRepository>();
-            testCaseRepository = serviceProvider.GetRequiredService<RhinoTestCaseRepository>();
-            jsonSettings = serviceProvider.GetRequiredService<JsonSerializerSettings>();
-            appSettings = serviceProvider.GetRequiredService<IConfiguration>();
+            types = provider.GetRequiredService<IEnumerable<Type>>();
+            configurationRepository = provider.GetRequiredService<RhinoConfigurationRepository>();
+            modelRepository = provider.GetRequiredService<RhinoModelRepository>();
+            testCaseRepository = provider.GetRequiredService<RhinoTestCaseRepository>();
+            jsonSettings = provider.GetRequiredService<JsonSerializerSettings>();
+            appSettings = provider.GetRequiredService<IConfiguration>();
+            this.provider = provider;
         }
 
         #region *** By Configuration  ***
-        // GET api/v3/rhino/configuration/<id>
-        [HttpGet("configuration/{configuration}")]
+        // GET api/v3/rhino/configurations/<id>
+        [HttpGet("configurations/{configuration}")]
         public IActionResult ExecuteByConfiguration(string configuration)
         {
             // get configuration
-            var (statusCode, onConfiguration) = GetConfiguration(configuration);
+            var (statusCode, onConfiguration) = GetConfiguration(configuration, allowNoTests: false);
 
             // failure response
             if (statusCode > HttpStatusCode.OK.ToInt32())
@@ -75,55 +79,67 @@ namespace Rhino.Agent.Controllers
             return ExecuteConfigurations(new[] { onConfiguration });
         }
 
-        // POST api/v3/rhino/configuration
-        [HttpPost("configuration")]
-        public IActionResult ExecuteByConfiguration([FromBody] IEnumerable<string> configurations)
+        // POST api/v3/rhino/configurations
+        [HttpPost("configurations")]
+        public IActionResult ExecuteByConfiguration()
         {
-            // get configurations
-            var statusCode = HttpStatusCode.OK.ToInt32();
+            return DoExecute();
+        }
 
-            var onCofigurations = configurations
-                .Select(GetConfiguration)
-                .Where(i => i.statusCode == statusCode)
-                .Select(i => i.configuration);
+        // POST api/v3/rhino/configurations
+        [HttpPost("configurations/ids")]
+        public IActionResult ExecuteByConfigurationIds()
+        {
+            return DoExecute();
+        }
+
+        // POST api/v3/rhino/configurations/<id>
+        [HttpPost("configurations/{configuration}")]
+        public async Task<IActionResult> ExecuteByConfigurationAndSpec(string configuration)
+        {
+            // get configuration
+            var (statusCode, onConfiguration) = GetConfiguration(configuration, allowNoTests: true);
 
             // failure response
-            if (!onCofigurations.Any())
+            if (statusCode > HttpStatusCode.OK.ToInt32())
             {
-                return new ContentResult { StatusCode = HttpStatusCode.NotFound.ToInt32() };
+                return new ContentResult { StatusCode = statusCode };
+            }
+
+            // build
+            var requestBody = await Request.ReadAsync().ConfigureAwait(false);
+            onConfiguration.TestsRepository = requestBody.Split(Seperator).Where(i => !string.IsNullOrEmpty(i));
+
+            // process request
+            return ExecuteConfigurations(new[] { onConfiguration });
+        }
+
+        private IActionResult DoExecute()
+        {
+            // get configurations
+            var cofigurations = Request.GetConfigurations(provider);
+
+            // failure response
+            if (!cofigurations.Any())
+            {
+                return NotFound(new { Message = "No configurations found or provided." });
             }
 
             // process request
-            return ExecuteConfigurations(onCofigurations);
-        }
-
-        // POST api/v3/rhino/execute
-        [HttpPost("execute")]
-        public async Task<IActionResult> ExecuteByConfiguration()
-        {
-            // read test case from request body
-            using var streamReader = new StreamReader(Request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
-            //// get configurations
-            var cofiguration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody);
-            var onCofigurations = new[] { cofiguration };
-
-            // process request
-            return ExecuteConfigurations(onCofigurations);
+            return ExecuteConfigurations(cofigurations);
         }
         #endregion
 
         #region *** By Collection     ***
-        // GET api/v3/rhino/collection/<id>
-        [HttpGet("collection/{collection}")]
+        // GET api/v3/rhino/collections/<id>
+        [HttpGet("collections/{collection}")]
         public IActionResult ExecuteByCollection(string collection)
         {
             return ByCollection(collection, configuration: string.Empty);
         }
 
-        // GET api/v3/rhino/collection/<id>/configuration/<id>
-        [HttpGet("collection/{collection}/configuration/{configuration}")]
+        // GET api/v3/rhino/collections/<id>/configurations/<id>
+        [HttpGet("collections/{collection}/configurations/{configuration}")]
         public IActionResult ExecuteByCollection(string collection, string configuration)
         {
             return ByCollection(collection, configuration);
@@ -162,13 +178,13 @@ namespace Rhino.Agent.Controllers
 
         private IEnumerable<RhinoConfiguration> Get(RhinoTestCaseCollection collection) => collection
             .Configurations
-            .Select(GetConfiguration)
+            .Select(i=> GetConfiguration(i, allowNoTests: false))
             .Where(i => i.statusCode == 200)
             .Select(i => i.configuration);
 
         private IEnumerable<RhinoConfiguration> Get(RhinoTestCaseCollection collection, string configuration) => collection
             .Configurations
-            .Select(GetConfiguration)
+            .Select(i=> GetConfiguration(i, allowNoTests: false))
             .Where(i => i.statusCode == 200 && $"{i.configuration.Id}".Equals(configuration, Compare))
             .Select(i => i.configuration);
         #endregion
@@ -180,9 +196,9 @@ namespace Rhino.Agent.Controllers
             var testRuns = new ConcurrentBag<RhinoTestRun>();
             foreach (var configuration in configurations)
             {
-                ApplyAppSettings(configuration);
+                var onConfiguration = configuration.ApplySettings(appSettings);
 
-                var testRun = configuration.Execute(types);
+                var testRun = onConfiguration.Execute(types);
                 testRuns.Add(testRun);
             }
 
@@ -200,35 +216,9 @@ namespace Rhino.Agent.Controllers
             };
         }
 
-        private void ApplyAppSettings(RhinoConfiguration configuration)
-        {
-            // reporting
-            configuration.ReportConfiguration.ReportOut =
-                appSettings.GetValue<string>("rhino:reportConfiguration:reportOut");
-
-            configuration.ReportConfiguration.LogsOut =
-                appSettings.GetValue<string>("rhino:reportConfiguration:logsOut");
-
-            configuration.ReportConfiguration.Archive =
-                appSettings.GetValue<bool>("rhino:reportConfiguration:archive");
-
-            configuration.ReportConfiguration.Reporters = appSettings
-                .GetSection("rhino:reportConfiguration:reporters")
-                .GetChildren()
-                .Select(i => i.Value)
-                .ToArray();
-
-            configuration.ReportConfiguration.ConnectionString =
-                appSettings.GetValue<string>("rhino:reportConfiguration:connectionString");
-
-            // screenshots
-            configuration.ScreenshotsConfiguration.ScreenshotsOut =
-                appSettings.GetValue<string>("rhino:screenshotsConfiguration:screenshotsOut");
-        }
-
         #region *** GET Configuration ***
         // get ready to run configuration, by ID
-        private (int statusCode, RhinoConfiguration configuration) GetConfiguration(string id)
+        private (int statusCode, RhinoConfiguration configuration) GetConfiguration(string id, bool allowNoTests)
         {
             // setup
             var credentials = Request.GetAuthentication();
@@ -246,7 +236,7 @@ namespace Rhino.Agent.Controllers
 
             // bad request conditions
             var isTests = configuration.TestsRepository.Any();
-            if (!isTests)
+            if (!isTests && !allowNoTests)
             {
                 return (HttpStatusCode.BadRequest.ToInt32(), configuration);
             }

@@ -19,8 +19,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiReference", "ApiReference", "{0E8FAD52-5AFA-4983-8F0A-9E772FA845D9}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\docs\pages\ApiReference\Configurations.md = ..\..\..\docs\pages\ApiReference\Configurations.md
+		..\..\..\docs\pages\ApiReference\Debug.md = ..\..\..\docs\pages\ApiReference\Debug.md
 		..\..\..\docs\pages\ApiReference\Logs.md = ..\..\..\docs\pages\ApiReference\Logs.md
 		..\..\..\docs\pages\ApiReference\Models.md = ..\..\..\docs\pages\ApiReference\Models.md
+		..\..\..\docs\pages\ApiReference\Rhino.md = ..\..\..\docs\pages\ApiReference\Rhino.md
 		..\..\..\docs\pages\ApiReference\TestCases.md = ..\..\..\docs\pages\ApiReference\TestCases.md
 	EndProjectSection
 EndProject

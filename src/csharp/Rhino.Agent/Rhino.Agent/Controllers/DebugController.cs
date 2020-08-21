@@ -57,7 +57,7 @@ namespace Rhino.Agent.Controllers
                 var responseBody = JsonConvert.SerializeObject(orbitResponse, jsonSettings);
                 return new ContentResult
                 {
-                    Content = JsonConvert.SerializeObject(responseBody, jsonSettings),
+                    Content = responseBody,
                     ContentType = MediaTypeNames.Application.Json,
                     StatusCode = HttpStatusCode.OK.ToInt32()
                 };

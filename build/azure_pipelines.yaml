@@ -6,11 +6,12 @@ pool:
   name: Default
 
 variables:
+  group: 'github.com'
   buildConfiguration: 'Release'
 
 steps:
 - task: DotNetCoreCLI@2
-  displayName: restore dependencies
+  displayName: Restore Dependencies
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
@@ -19,14 +20,14 @@ steps:
     verbosityRestore: 'Diagnostic'
 
 - task: DotNetCoreCLI@2
-  displayName: build projects
+  displayName: Build Projects
   inputs:
     command: 'build'
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: execute automated testing
+  displayName: Execute Automation Tests
   inputs:
     command: 'test'
     projects: '**/*[Tt]ests/*.csproj'
@@ -34,7 +35,7 @@ steps:
     testRunTitle: 'Automation Testing --- $(Build.BuildNumber)'
 
 - task: DotNetCoreCLI@2
-  displayName: publish files to $(build.artifactstagingdirectory)/$(Build.BuildNumber)
+  displayName: Publish Files to $(build.artifactstagingdirectory)/$(Build.BuildNumber)
   inputs:
     command: 'publish'
     publishWebProjects: false
@@ -43,14 +44,14 @@ steps:
     modifyOutputPath: false
 
 - task: PublishBuildArtifacts@1
-  displayName: publish artifact to container
+  displayName: Publish Artifact to Container
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
 
 - task: PowerShell@2
-  displayName: 'parse build version for GitHub tag'
+  displayName: 'Parse Build Version for GitHub Tag'
   inputs:
     targetType: 'inline'
     script: |
@@ -61,7 +62,7 @@ steps:
       Write-Host "##vso[task.setvariable variable=buildVersion]$version"
 
 - task: GitHubRelease@1
-  displayName: 'create GitHub tag'
+  displayName: 'Create GitHub Tag'
   inputs:
     gitHubConnection: 'GitHub connection - Gravity API'
     repositoryName: 'savanna-projects/rhino-agent'
@@ -74,3 +75,48 @@ steps:
     assets: '$(build.artifactstagingdirectory)\$(Build.BuildNumber)\$(Build.BuildNumber).zip'
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
+
+- task: CmdLine@2
+  displayName: 'Clone WiKi'
+  inputs:
+    script: 'git clone https://$(Rhino.PAT)@github.com/savanna-projects/rhino-agent.wiki.git'
+    failOnStderr: true
+
+- task: CmdLine@2
+  displayName: 'Navigate into WiKi Folder'
+  inputs:
+    script: 'CD rhino-agent.wiki'
+    failOnStderr: true
+
+- task: PowerShell@2
+  displayName: 'Parse & Save WiKi Files'
+  inputs:
+    targetType: 'inline'
+    script: |
+      # clean extra documents path
+      #
+      $home_md = (Get-Content -Path '.\pages\Home.md') -replace '(?<=./)[^\s]*/',''
+      #
+      # clean .md suffix
+      $home_md = (Get-Content -Path '.\pages\Home.md') -replace '.md',''
+      #
+      # save WiKi Home.md file
+      Set-Content -Path '.\pages\Home.md' -Value $home_md
+
+- task: CmdLine@2
+  displayName: 'Add WiKi Changes'
+  inputs:
+    script: 'git add .'
+    failOnStderr: true
+
+- task: CmdLine@2
+  displayName: 'Commit WiKi Changes'
+  inputs:
+    script: 'git commit -m "v$(buildVersion) - WiKi Updates"'
+    failOnStderr: true
+
+- task: CmdLine@2
+  displayName: 'Push WiKi Changes'
+  inputs:
+    script: 'git push'
+    failOnStderr: true
