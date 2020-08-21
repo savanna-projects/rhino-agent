@@ -151,7 +151,7 @@ The following system fields must be always included in the request:
 
 #### General
 |Name                                                  |Type  |Description                                                                  |
-|------------------------------------------------- ----|------|-----------------------------------------------------------------------------|
+|------------------------------------------------------|------|-----------------------------------------------------------------------------|
 |[authentication](#authentication)                     |object|A collection of extraction objects returned by Gravity API.                  |
 |[engineConfiguration](#engine-configuration)          |object|A set of data, based on the request sent to Gravity API.                     |
 |[screenshotsConfiguration](#screenshots-configuration)|object|A set of data, based on the request sent to Gravity API.                     |
