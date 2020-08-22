@@ -23,7 +23,6 @@ using Newtonsoft.Json.Serialization;
 
 using Rhino.Agent.Components;
 using Rhino.Agent.Domain;
-using Rhino.Agent.Models;
 using Rhino.Api.Extensions;
 using Rhino.Api.Parser.Components;
 
@@ -114,7 +113,6 @@ namespace Rhino.Agent
             }
             app.UseCookiePolicy();
             app.UseCors(CorsPolicy);
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapRazorPages());

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>kdd - testing automation engine, test-run results dashboard</title>
+
+<!-- Meta, title, CSS, favicons, etc. -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="icon" href="images/favicon.ico" type="image/ico" />
+
+<!-- Bootstrap -->
+<link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+<!-- iCheck -->
+<link href="../vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+
+<!-- Custom Theme Style -->
+<link href="../build/css/custom.min.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="../vendors/jquery/dist/jquery.min.js"></script>
+
+<!-- morris.js -->
+<script src="../vendors/raphael/raphael.min.js"></script>
+<script src="../vendors/morris.js/morris.min.js"></script>
+    <script type="text/javascript">
+   $(document).ready(function () {
+       var colors = ['#26B99A', '#9B59B6', '#34495E', '#ACADAC', '#3498DB'];
+       var formatter = function (y) {
+           return y;
+       };
+       var resize = true;
+       if (!($('#graph_donut_test').length)) {
+           return;
+       }
+       Morris.Donut({
+           element: 'graph_donut_test',
+           data: [
+{label:'optimal',value:1}
+           ],
+           colors: colors,
+           formatter: formatter,
+           resize: resize
+   });
+});
+</script>
+
+<script type="text/javascript">
+   $(document).ready(function () {
+       var colors = ['#26B99A', '#9B59B6', '#34495E', '#ACADAC', '#3498DB'];
+       var formatter = function (y) {
+           return y;
+       };
+       var resize = true;
+       if (!($('#graph_donut_timeouts').length)) {
+           return;
+       }
+       Morris.Donut({
+           element: 'graph_donut_timeouts',
+           data: [
+{label:'element search',value:0}
+           ],
+           colors: colors,
+           formatter: formatter,
+           resize: resize
+   });
+});
+</script>
+
+<script type="text/javascript">
+   $(document).ready(function () {
+       var colors = ['#26B99A', '#9B59B6', '#34495E', '#ACADAC', '#3498DB'];
+       var resize = true;
+       if (!($('#graph_line_time').length)) {
+           return;
+       }
+       Morris.Line({
+           element: 'graph_line_time',
+           data: [
+{y:0.154421855,a:0.154421855}
+           ],
+           xkey: 'y',
+           ykeys: ['a'],
+           hideHover: 'auto',
+           labels: ['run time (min)'],
+           resize: resize
+   });
+});
+</script>
+
+<!--[$morris.html]-->
+</head>
+
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col">
+    <div class="left_col scroll-view">
+        <div class="navbar nav_title" style="border: 0;">
+            <a href="index.html" class="site_title"><i class="fa fa-cogs"></i> <span>Main Menu</span></a>
+        </div>
+        <div class="clearfix"></div>
+
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+            <div class="menu_section">
+                <ul class="nav side-menu">
+                    <li><a href="index.html"><i class="fa fa-home"></i> Home </a></li>
+                    <li>
+                        <a><i class="fa fa-check-square-o"></i> Reports <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="index.html">Dashboard - Test Run</a></li>
+                            <li><a href="time.html">Dashboard - Test Run Timeline</a></li>
+                            <li><a href="breakdown.html">Test Cases Breakdown</a></li>
+                            <!--[$reports.html]-->
+                        </ul>
+                    </li>
+                    <!--[$menus.html]-->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+            <div class="top_nav">
+    <div class="nav_menu">
+        <nav>
+            <div class="nav toggle" style="height:57px;">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+            </div>
+            <!--[$topNavigation.html]-->
+        </nav>
+    </div>
+</div>
+
+            <div class="right_col" role="main">
+                <div class="row tile_count">
+    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+        <span class="count_top"><i class="fa fa-clock-o"></i> Run Time</span>
+        <div class="count">00:00:09</div>
+        <span class="count_bottom"><i class="green">00:00:09 </i> aggregate run time</span>
+    </div>
+    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+        <span class="count_top"><i class="fa fa-clock-o"></i> Iteration Time (average)</span>
+        <div class="count">00:00:09</div>
+    </div>
+    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+        <span class="count_top"><i class="fa fa-check-square-o"></i> Total Tests</span>
+        <div class="count">1</div>        
+    </div>
+    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+        <span class="count_top"><i class="fa fa-clock-o"></i> Optimal Time Rate</span>
+        <div class="count green">100%</div>
+    </div>
+    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+        <span class="count_top"><i class="fa fa-clock-o"></i> Not Optimal Time Rate</span>
+        <div class="count red">0%</div>
+    </div>
+    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+        <span class="count_top"><i class="fa fa-shield"></i> Timeouts</span>
+        <div class="count green">00:00:00</div>
+    </div>
+    <!--[$tilesTime.html]-->
+</div>
+                <div class="clearfix"></div>
+                <div class="row">
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><strong>Test Iterations <small>Optimal Run Count</small></strong></h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content2">
+                <div id="graph_donut_test" style="width:100%; height:300px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><strong><string>Timeout Types</string> <small>Overall Timeout/Type in Minutes</small></strong></h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content2">
+                <div id="graph_donut_timeouts" style="width:100%; height:300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><strong>Run Timeline <small>Overall Time/Run in Minutes</small></strong></h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content2">
+                <div id="graph_line_time" style="width:100%; height:300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap -->
+<script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- FastClick -->
+<script src="../vendors/fastclick/lib/fastclick.js"></script>
+
+<!-- iCheck -->
+<script src="../vendors/iCheck/icheck.min.js"></script>
+
+<!-- moment -->
+<script src="../vendors/moment/min/moment.min.js"></script>
+
+<!-- Custom Theme Scripts -->
+<script src="../build/js/custom.min.js"></script>
+</body>
+</html>

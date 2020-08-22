@@ -1,10 +1,53 @@
 ﻿@page
-@model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Rhino Widget - Action Settings Page - Cloud Native";
 }
+<button data-toggle="collapse" data-target="#widget_frame" class="btn btn-primary fixed-top" id="widget_toggle" style="visibility: hidden; top:2px; left:2px; z-index: 9999999;">
+    <img src="~/images/rhinoceros-facing-right-x32-white.png" />
+</button>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div id="widget_frame" class="collapse show" style="overflow:visible">
+    <header id="index_header" class="table-primary border-bottom box-shadow mb-3 fixed-top p-2" style="height: 95px; max-height: 95px;">
+        <div class="container" style="padding-left:45px">
+            <h4 style="padding-bottom:15px;">
+                HTML Element <span id="tag_name" class="badge badge-primary">&lt;TAG&gt;</span>
+                <small>number of attributes: <span class="badge badge-primary" id="attributes_count">0</span></small>
+            </h4>
+
+            <i title="Add test action"
+               class="fas fa-check-circle action-button action-button-green medium-action-button"
+               id="action_apply"
+               onclick="scenarioHandler();">
+            </i>
+            <i title="Clear all test actions"
+               class="fas fa-times-circle action-button action-button-red medium-action-button"
+               id="clear"
+               onclick="clearWidget(true);">
+            </i>
+            <i title="Playback test scenario against Selenium Grid"
+               class="fas fa-play-circle action-button action-button-generic medium-action-button"
+               id="action_playback"
+               onclick="actionPlaybackHandler();">
+            </i>
+            <i title="Save test scenario under application life cycle management (A.L.M)"
+               class="fas fa-arrow-circle-up action-button action-button-generic medium-action-button"
+               id="send"
+               onclick="sendHandler();">
+            </i>
+            <a asp-page="/Settings">
+                <i title="Rhino settings"
+                   class="fas fa-cogs action-button action-button-generic medium-action-button fa-pull-right"
+                   id="settings">
+                </i>
+            </a>
+        </div>
+    </header>
+
+    <div class="accordion" id="action_content">
+        <partial name="~/Pages/Partials.Home/_Locators.cshtml" />
+        <partial name="~/Pages/Partials.Home/_Action.cshtml" />
+        <partial name="~/Pages/Partials.Home/_Expected.cshtml" />
+        <partial name="~/Pages/Partials.Home/_Scenario.cshtml" />
+        <partial name="~/Pages/Partials.Home/_Help.cshtml" />
+    </div>
 </div>

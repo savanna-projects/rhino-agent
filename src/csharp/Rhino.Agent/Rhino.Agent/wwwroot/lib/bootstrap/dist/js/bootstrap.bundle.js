@@ -3597,7 +3597,7 @@
     /**
      * Modifier used to prevent the popper from being positioned outside the boundary.
      *
-     * A RhinoTestCaseDocument exists where the reference itself is not within the boundaries.<br />
+     * A scenario exists where the reference itself is not within the boundaries.<br />
      * We can say it has "escaped the boundaries" — or just "escaped".<br />
      * In this case we need to decide whether the popper should either:
      *

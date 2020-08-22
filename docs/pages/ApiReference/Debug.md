@@ -128,7 +128,7 @@ Please see below for a typical request:
       "RepeatReference": 0,
       "Actions": [],
       "ElementAttributeToActOn": "",
-      "ElementToActOn": "Jhon",
+      "ElementToActOn": "John",
       "RegularExpression": ".*",
       "Argument": "first_name"
     },

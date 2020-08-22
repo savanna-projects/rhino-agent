@@ -1,0 +1,21 @@
+﻿@page
+@model Rhino.Agent.Models.Locators;
+
+<h2>Ajax Partial Example</h2>
+
+<p><button class="btn btn-primary" id="load">Load</button></p>
+<p><a class="btn btn-primary" data-ajax="true" data-ajax-update="#grid" data-ajax-url="/api/v3/widget/operators">Load 2</a></p>
+
+<div id="grid"></div>
+
+@section scripts{
+    <script>
+        $(() => {
+            $('#load').on('click', function () {
+                $('#grid').load('/api/v3/widget/operators');
+            });
+        });
+    </script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

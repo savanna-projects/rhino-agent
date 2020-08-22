@@ -1,0 +1,93 @@
+﻿<div class="card">
+    <div class="card-header">
+        <h4 class="panel-title">
+            <a class="text-info text-decoration-none" data-toggle="collapse" href="#assertion">Expected Result</a>
+        </h4>
+    </div>
+    <div id="assertion" class="collapse" data-parent="#action_content">
+        <div class="card-body">
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Available Components</label>
+                <select class="form-control form-control-sm w-50  text-info" id="components">
+                    <option value="-1"></option>
+                    <option title="Takes the current page url as the actual result, ignoring any element selected." 
+                            value="url">
+                        Page address
+                    </option>
+                    <option title="Takes the current page title as the actual result, ignoring any element selected."
+                            value="title">
+                        Page title
+                    </option>
+                    <option title="Takes the count of the elements found by the provided locator as the actual result."
+                            value="count">
+                        Elements count
+                    </option>
+                    <option title="Takes the current web driver implementation name as the actual result, ignoring any element selected."
+                            value="driver">
+                        Web driver implementation
+                    </option>
+                    <option title="Asserts the element attribute found by the provided locator and as provided under 'Available Attributes'. The actual result is a match of the attribute value and regular expression provided under 'Action > Regular Expression Filter'."
+                            value="attribute">
+                        Element attribute
+                    </option>
+                    <option title="Asserts the element inner-text found by the provided locator. The actual result is a match of the inner-text value and regular expression provided under 'Action > Regular Expression Filter'."
+                            value="text">
+                        Element text
+                    </option>
+                    <option title="Asserts the element [enabled] status. The actual result is true if the element is enabled or false if not."
+                            value="enabled-true">
+                        Element is enabled
+                    </option>
+                    <option title="Asserts the element [enabled] status. The actual result is true if the element is disabled or false if not."
+                            value="enabled-false">
+                        Element is disabled
+                    </option>
+                    <option title="Asserts the element [exists] status. The actual result is true if the element exists or false if not."
+                            value="exists-true">
+                        Element exists
+                    </option>
+                    <option title="Asserts the element [exists] status. The actual result is true if the element does not exist or false if exists."
+                            value="exists-false">
+                        Element does not exist
+                    </option>                    
+                    <option title="Asserts the element [stale] status. The actual result is true if the element is stale or false if not."
+                            value="stale-true">
+                        Element is stale
+                    </option>                    
+                    <option title="Asserts the element [stale] status. The actual result is true if the element is not stale or false if stale."
+                            value="stale-false">
+                        Element is not stale
+                    </option>                    
+                    <option title="Asserts the element [visibility] status. The actual result is true if the element is visible or false not." 
+                            value="visible-true">
+                        Element is visible
+                    </option>                    
+                    <option title="Asserts the element [visibility] status. The actual result is true if the element is not visible or false if visible."
+                            value="visible-false">
+                        Element is not visible
+                    </option>
+                    
+                    <option title="Asserts the element [selected] status. The actual result is true if the element is selected or false not." 
+                            value="selected-true">
+                        Element is selected
+                    </option>
+                    
+                    <option title="Asserts the element [selected] status. The actual result is true if the element is not selected or false selected."
+                            value="selected-false">
+                        Element is selected
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Available Operators</label>
+                <select class="form-control form-control-sm w-50 text-info" id="operators"></select>
+            </div>
+
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Expected result</label>
+                <textarea class="form-control rounded-0 text-monospace form-control-sm text-info" rows="3" id="expected_value"></textarea>
+            </div>
+        </div>
+    </div>
+</div>

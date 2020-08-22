@@ -25,7 +25,7 @@ namespace Rhino.Agent.Components
         private const string M2 = "Knowledge Base resource [{0}] created.";
 
         // constants
-        private const string Root = "knowledge-base";
+        private const string Root = "knowledge_base";
         private const string ActionsFolder = Root + @"\actions";
         private const string MacrosFolder = Root + @"\macros";
         private const string Locators = Root + @"\available_locators.txt";
@@ -211,20 +211,12 @@ namespace Rhino.Agent.Components
                     };
                     actions.Add(model);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e != null)
                 {
-                    var a = "";
+                    // ignore exceptions
                 }
             }
             return actions;
-
-            //Actions.Select(i => new ActionLiteralModel
-            //{
-            //    Key = i.Name,
-            //    Literal = i.Name.PascalToSpaceCase(),
-            //    Verb = GetVerb(i.Name),
-            //    Action = i
-            //}
         }
 
         // gets a verb for this action from default verbs map

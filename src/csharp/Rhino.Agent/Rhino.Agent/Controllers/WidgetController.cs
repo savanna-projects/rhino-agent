@@ -158,7 +158,7 @@ namespace Rhino.Agent.Controllers
                 var testSuite = $"{token["suite"]}";
 
                 // convert into bridge object
-                var testCase = new TestCaseFactory(client).GetTestCases(string.Join("\\n\\r", testCaseSrc)).First();
+                var testCase = new TestCaseFactory(client).GetTestCases(string.Join(Environment.NewLine, testCaseSrc.Where(i => !string.IsNullOrEmpty(i)))).First();
                 testCase.TestSuite = testSuite;
                 testCase.Context["comment"] = $"{{noformat}}{DateTime.Now:yyyy-MM-dd hh:mm:ss}: Created by Rhino widget{{noformat}}";
 

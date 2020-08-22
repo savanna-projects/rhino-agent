@@ -1,0 +1,42 @@
+﻿
+<script>
+    function forceNewWindow(address) {
+        window.open(address, 'newwindow', 'fullscreen=yes');
+        return false;
+    }
+</script>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="panel-title">
+            <a class="text-info text-decoration-none" data-toggle="collapse" href="#playback_options">Playback Options</a>
+        </h4>
+    </div>
+    <div id="playback_options" class="collapse" data-parent="#settings_content">
+        <div class="card-body">
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Execute on Browser</label>
+                <select class="form-control form-control-sm w-50" id="web_driver">
+                    <option value="ChromeDriver">Google Chrome</option>
+                    <option value="FirefoxDriver">Firefox x64</option>
+                    <option value="IEDriverServer">Internet Explorer x86</option>
+                    <option value="MicrosoftWebDriver">MS Edge</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Selenium Grid Endpoint (leave blank for local driver)</label>
+                <input type="text" class="form-control form-control-sm" id="grid_endpoint" placeholder="http://localhost:4444/wd/hub">
+            </div>
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm"
+                       title="Allows to add raw capabilities object into this WebDriver including vendor specific capabilities.">Capabilities</label>
+                <textarea class="form-control rounded-0 text-monospace form-control-sm" rows="3" id="capabilities"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">3<sup>rd</sup> Party Capabilities Generator</label><br />
+                <a href="#" class="form-control-sm" onclick="forceNewWindow('https://www.lambdatest.com/capabilities-generator/')">Lambda Test</a><br />
+                <a href="#" class="form-control-sm" onclick="forceNewWindow('https://www.browserstack.com/automate/capabilities')">Browser Stack</a>
+            </div>
+        </div>
+    </div>
+</div>
