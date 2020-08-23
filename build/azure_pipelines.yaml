@@ -66,20 +66,11 @@ steps:
       # set value
       Write-Host "##vso[task.setvariable variable=buildVersion]$version"
 
-- task: GitHubRelease@1
-  displayName: 'Create GitHub Tag'
+- task: CmdLine@2
+  displayName: 'Remove WiKi Folder'
   inputs:
-    gitHubConnection: 'GitHub connection - Gravity API'
-    repositoryName: 'savanna-projects/rhino-agent'
-    action: 'create'
-    target: '$(Build.SourceVersion)'
-    tagSource: 'userSpecifiedTag'
-    tag: 'v$(buildVersion)'
-    title: 'Production v$(buildVersion)'
-    releaseNotesSource: 'inline'
-    assets: '$(build.artifactstagingdirectory)\$(Build.BuildNumber)\$(Build.BuildNumber).zip'
-    changeLogCompareToRelease: 'lastFullRelease'
-    changeLogType: 'commitBased'
+    script: 'rmdir rhino-agent.wiki /Q /S'
+    failOnStderr: true
 
 - task: CmdLine@2
   displayName: 'Clone WiKi'
