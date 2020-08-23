@@ -2,11 +2,16 @@
 
 name: Rhino.Agent.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
+trigger:
+  branches:
+    include:
+    - master
+
 pool:
   name: Default
 
 variables:
-  group: 'github.com'
+  group: github.com
   buildConfiguration: 'Release'
 
 steps:
