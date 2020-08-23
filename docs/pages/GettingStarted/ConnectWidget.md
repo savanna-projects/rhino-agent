@@ -11,7 +11,7 @@
 
 > You can install Rhino Widget from the cloud, go to the relevant market place (Google Store or Edge Market Place), search for Rhino and install.  
 
-## On Premise Installation - Google Chrome
+## On Premise Installation Google Chrome
 1. Download the latest [Rhino Widget Release](https://github.com/savanna-projects/rhino-widget/releases) ZIP file.
 2. Extract the file and place the extracted folder under the location you want to hold Rhino Widget (i.e. C:\Rhino\Widget).
 3. Open Chrome Browser.
@@ -36,7 +36,7 @@ _image 1.5 - Extensions Screen, Select Folder_
 ![image_1_7.png](../../images/image_1_7.png)
 _image 1.7 - Extensions Screen, Extension Loaded_
 
-## On Premise Installation - MS Edge
+## On Premise Installation MS Edge
 1. Download the latest [Rhino Widget Release](https://github.com/savanna-projects/rhino-widget/releases) ZIP file.
 2. Extract the file and place the extracted folder under the location you want to hold Rhino Widget (i.e. C:\Rhino\Widget).
 3. Open Chrome Browser.
