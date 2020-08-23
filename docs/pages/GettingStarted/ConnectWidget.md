@@ -87,8 +87,11 @@ The following is expected:
 1. Rhino Widget is now open.
 2. Moving the mouse around the web site will cause element to glow.  
 
+![image_1_9.png](../../images/image_1_9.png)
+_image 1.9 - Rhino Widget Connected_  
+
 > Rhino Widget is persistent which means it will work on any browser you will open once you have connected.
 > To close it, open Rhino Widget and click on ```Disconnect``` button.  
->![image_1_9.png](../../images/image_1_9.png)
->_image 1.8 - Rhino Widget Main Screen_  
+>![image_1_10.png](../../images/image_1_10.png)
+>_image 1.10 - Rhino Widget Main Screen_  
 
