@@ -26,6 +26,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiReference", "ApiReferenc
 		..\..\..\docs\pages\ApiReference\TestCases.md = ..\..\..\docs\pages\ApiReference\TestCases.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "GettingsStarted", "{93EE5C18-B0DA-4D71-B345-FC7B44BC3D79}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\docs\pages\GettingStarted\ConnectWidget.md = ..\..\..\docs\pages\GettingStarted\ConnectWidget.md
+		..\..\..\docs\pages\GettingStarted\Deployment.md = ..\..\..\docs\pages\GettingStarted\Deployment.md
+		..\..\..\docs\pages\GettingStarted\YourFirstAutomation.md = ..\..\..\docs\pages\GettingStarted\YourFirstAutomation.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +49,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0E8FAD52-5AFA-4983-8F0A-9E772FA845D9} = {3712E923-66B8-4982-9BE2-045E1B95C598}
+		{93EE5C18-B0DA-4D71-B345-FC7B44BC3D79} = {3712E923-66B8-4982-9BE2-045E1B95C598}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A97237FA-2877-4119-AE16-96138FD97CFC}
