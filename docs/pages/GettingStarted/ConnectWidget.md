@@ -2,6 +2,7 @@
 * [Installation - Google Chrome](#on-premise-installation-google-chrome)
 * [Installation - MS Edge](#on-premise-installation-ms-edge)
 * [Connect](#connect)
+* [Your First Automation](./YourFirstAutomation.md)
 
 ## Supported Browsers
 1. [Google Chrome](https://www.google.com/chrome/) - Latest
@@ -95,5 +96,3 @@ _image 1.9 - Rhino Widget Connected_
 > To close it, open Rhino Widget and click on ```Disconnect``` button.  
 >![image_1_10.png](../../images/image_1_10.png)  
 >_image 1.10 - Rhino Widget Main Screen_  
-
-[Next - Your First Automation](./YourFirstAutomation.md)
