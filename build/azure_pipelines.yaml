@@ -72,7 +72,7 @@ steps:
     script: |
       cd $(build.artifactstagingdirectory)
       rmdir rhino-agent.wiki /Q /S
-    failOnStderr: true
+    failOnStderr: false
 
 - task: CmdLine@2
   displayName: 'Clone WiKi'
