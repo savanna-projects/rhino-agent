@@ -60,3 +60,35 @@ _image 1.5 - Extensions Screen, Select Folder_
 
 ![image_1_6.png](../../images/image_1_6.png)
 _image 1.6 - Extensions Screen, Extension Loaded_
+
+## Connect
+1. Navigate into the folder in which you have extracted Rhino Agent [see Deployment](./Deployment.md) for more information.
+2. Run the following command:
+```
+dotnet Rhino.Agent.dll
+```  
+
+The following is expected:
+```
+Now listening on: https://localhost:5001
+Now listening on: http://localhost:5000
+Application started. Press Ctrl+C to shut down.
+```  
+
+3. Open Chrome or Edge.
+4. Open Rhino Widget Extension.
+5. Check ```Connect to Local Server``` check box.
+6. Click on ```Connect Recorder``` button.
+
+![image_1_8.png](../../images/image_1_8.png)
+_image 1.8 - Rhino Widget Main Screen_  
+
+The following is expected:
+1. Rhino Widget is now open.
+2. Moving the mouse around the web site will cause element to glow.  
+
+> Rhino Widget is persistent which means it will work on any browser you will open once you have connected.
+> To close it, open Rhino Widget and click on ```Disconnect``` button.  
+>![image_1_9.png](../../images/image_1_9.png)
+>_image 1.8 - Rhino Widget Main Screen_  
+

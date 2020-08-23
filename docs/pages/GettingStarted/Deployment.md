@@ -21,7 +21,10 @@ See also [HTTPS Development Certificate on Windows & Mac OS](https://docs.micros
 See also [Configuring HTTPS in ASP.NET Core Across Different Platforms](https://devblogs.microsoft.com/aspnet/configuring-https-in-asp-net-core-across-different-platforms/)
 
 ## Deploy Rhino Server (on Process)
-1. Run the following command:
+1. Download the latest [Rhino Agent](https://github.com/savanna-projects/rhino-agent/releases) ZIP file.
+2. Extract the file and place the extracted folder under the location you want to hold Rhino Widget (i.e. C:\Rhino\Widget).
+3. Navigate into the folder in which you have extracted Rhino Agent.
+4. Run the following command:
 ```
 dotnet Rhino.Agent.dll
 ```
