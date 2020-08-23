@@ -1,12 +1,15 @@
 # Connect to Widget
-Rhino API runs .NET Core 3.1.
+* [Installation - Google Chrome](#on-premise-installation-google-chrome)
+* [Installation - MS Edge](#on-premise-installation-ms-edge)
 
 ## Supported Browsers
 1. [Google Chrome](https://www.google.com/chrome/) - Latest
 2. [MS Edge Chromium](https://www.microsoft.com/en-us/edge) - Latest
 
 ## Requierments
-1. Either [Google Chrome](https://www.google.com/chrome/) or [MS Edge Chromium](https://www.microsoft.com/en-us/edge) installed.
+1. Either [Google Chrome](https://www.google.com/chrome/) or [MS Edge Chromium](https://www.microsoft.com/en-us/edge) installed.  
+
+> You can install Rhino Widget from the cloud, go to the relevant market place (Google Store or Edge Market Place), search for Rhino and install.  
 
 ## On Premise Installation - Google Chrome
 1. Download the latest [Rhino Widget Release](https://github.com/savanna-projects/rhino-widget/releases) ZIP file.
@@ -56,4 +59,4 @@ _image 1.5 - Extensions Screen, Select Folder_
 8. Click on ```Select Folder``` button.
 
 ![image_1_6.png](../../images/image_1_6.png)
-_image 1.6 - Extensions Screen, Extension Loaded_  
+_image 1.6 - Extensions Screen, Extension Loaded_
