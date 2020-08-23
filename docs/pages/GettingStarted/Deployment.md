@@ -11,7 +11,7 @@ Please read [here](https://github.com/dotnet/core/blob/master/release-notes/3.1/
 ## Configure SSL Certificate (Windows & Mac OS)
 1. Install .NET Core SDK.
 2. Open command line as administrator.
-3. Run the following commands:
+3. Run the following commands (approve any dialog if appears):
 ```
 dotnet --info
 dotnet dev-certs https --trust
