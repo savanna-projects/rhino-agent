@@ -69,7 +69,9 @@ steps:
 - task: CmdLine@2
   displayName: 'Remove WiKi Folder'
   inputs:
-    script: 'rmdir rhino-agent.wiki /Q /S'
+    script: |
+      cd $(build.artifactstagingdirectory)
+      rmdir rhino-agent.wiki /Q /S
     failOnStderr: true
 
 - task: CmdLine@2
