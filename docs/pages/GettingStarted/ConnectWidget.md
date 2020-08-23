@@ -20,22 +20,22 @@
 4. Type ```chrome://extensions/``` in the address bar, this will take you to the **Extensions** page.
 5. Switch on **Developer mode**, on the top right corner of the screen
 
-![image_1_1.png](../../images/image_1_1.png)
+![image_1_1.png](../../images/image_1_1.png)  
 _image 1.1 - Extensions Screen, Developer Mode_  
   
 6. Click on ```Load unpacked``` button.
 
-![image_1_3.png](../../images/image_1_3.png)
+![image_1_3.png](../../images/image_1_3.png)  
 _image 1.3 - Extensions Screen, Load Unpacked_  
   
 7. Select the folder you have extracted in step NO.2 (make sure ```manifest.json``` file exists in that folder).  
 
-![image_1_5.png](../../images/image_1_5.png)
+![image_1_5.png](../../images/image_1_5.png)  
 _image 1.5 - Extensions Screen, Select Folder_  
 
 8. Click on ```Select Folder``` button.
 
-![image_1_7.png](../../images/image_1_7.png)
+![image_1_7.png](../../images/image_1_7.png)  
 _image 1.7 - Extensions Screen, Extension Loaded_
 
 ## On Premise Installation MS Edge
@@ -45,22 +45,22 @@ _image 1.7 - Extensions Screen, Extension Loaded_
 4. Type ```edge://extensions/``` in the address bar, this will take you to the **Extensions** page.
 5. Switch on **Developer mode**, on the bottom left corner of the screen
 
-![image_1_2.png](../../images/image_1_2.png)
+![image_1_2.png](../../images/image_1_2.png)  
 _image 1.2 - Extensions Screen, Developer Mode_  
   
 6. Click on ```Load unpacked``` button.
 
-![image_1_4.png](../../images/image_1_4.png)
+![image_1_4.png](../../images/image_1_4.png)  
 _image 1.4 - Extensions Screen, Load Unpacked_  
   
 7. Select the folder you have extracted in step NO.2 (make sure ```manifest.json``` file exists in that folder).  
 
-![image_1_5.png](../../images/image_1_5.png)
+![image_1_5.png](../../images/image_1_5.png)  
 _image 1.5 - Extensions Screen, Select Folder_  
 
 8. Click on ```Select Folder``` button.
 
-![image_1_6.png](../../images/image_1_6.png)
+![image_1_6.png](../../images/image_1_6.png)  
 _image 1.6 - Extensions Screen, Extension Loaded_
 
 ## Connect
@@ -82,14 +82,14 @@ Application started. Press Ctrl+C to shut down.
 5. Check ```Connect to Local Server``` check box.
 6. Click on ```Connect Recorder``` button.
 
-![image_1_8.png](../../images/image_1_8.png)
+![image_1_8.png](../../images/image_1_8.png)  
 _image 1.8 - Rhino Widget Main Screen_  
 
 The following is expected:
 1. Rhino Widget is now open.
 2. Moving the mouse around the web site will cause element to glow.  
 
-![image_1_9.png](../../images/image_1_9.png)
+![image_1_9.png](../../images/image_1_9.png)  
 _image 1.9 - Rhino Widget Connected_  
 
 > Rhino Widget is persistent which means it will work on any browser you will open once you have connected.
