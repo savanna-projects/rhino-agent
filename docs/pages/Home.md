@@ -1,7 +1,7 @@
 # Rhino API Reference Guide
 
 ## Getting Started
-* [Register (Free)](./GettingStarted/register.md 'Register')
+* [Register (Free)](./GettingStarted/Register.md 'Register')
 * [Deployment](./GettingStarted/Deployment.md 'Deployment')
 * [Connect to Widget](./GettingStarted/ConnectWidget.md 'ConnectWidget')
 * [Widget Overview](./GettingStarted/WidgetOverview.md 'WidgetOverview')
