@@ -4,6 +4,7 @@
 * [Register (Free)](./register.md 'Register')
 * [Deployment](./GettingStarted/Deployment.md 'Deployment')
 * [Connect to Widget](./GettingStarted/ConnectWidget.md 'ConnectWidget')
+* [Widget Overview](./GettingStarted/WidgetOverview.md 'WidgetOverview')
 * [Your First Automation](./GettingStarted/YourFirstAutomation.md 'YourFirstAutomation')
 * [Running on a Command Line](./GettingStarted/CommandLine.md 'CommandLine')
 * [IIS Deployment](./GettingStarted/IISDeployment.md 'IISDeployment')

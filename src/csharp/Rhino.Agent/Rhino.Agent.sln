@@ -30,7 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "Gettings
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\docs\pages\GettingStarted\ConnectWidget.md = ..\..\..\docs\pages\GettingStarted\ConnectWidget.md
 		..\..\..\docs\pages\GettingStarted\Deployment.md = ..\..\..\docs\pages\GettingStarted\Deployment.md
-		..\..\..\docs\pages\GettingStarted\YourFirstAutomation.md = ..\..\..\docs\pages\GettingStarted\YourFirstAutomation.md
+		..\..\..\docs\pages\GettingStarted\Register.md = ..\..\..\docs\pages\GettingStarted\Register.md
+		..\..\..\docs\pages\GettingStarted\WidgetOverview.md = ..\..\..\docs\pages\GettingStarted\WidgetOverview.md
 	EndProjectSection
 EndProject
 Global

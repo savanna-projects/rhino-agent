@@ -2,7 +2,7 @@
 * [Installation - Google Chrome](#on-premise-installation-google-chrome)
 * [Installation - MS Edge](#on-premise-installation-ms-edge)
 * [Connect](#connect)
-* [Your First Automation](./YourFirstAutomation.md)
+* [Widget Overview](./WidgetOverview.md 'WidgetOverview')
 
 ## Supported Browsers
 1. [Google Chrome](https://www.google.com/chrome/) - Latest
