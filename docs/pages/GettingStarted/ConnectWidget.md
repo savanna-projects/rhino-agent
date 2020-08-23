@@ -55,5 +55,5 @@ _image 1.5 - Extensions Screen, Select Folder_
 
 8. Click on ```Select Folder``` button.
 
-![image_1_6.png](../../images/image_1_7.png)
+![image_1_6.png](../../images/image_1_6.png)
 _image 1.6 - Extensions Screen, Extension Loaded_  
