@@ -66,55 +66,17 @@ steps:
       # set value
       Write-Host "##vso[task.setvariable variable=buildVersion]$version"
 
-- task: CmdLine@2
-  displayName: 'Remove WiKi Folder'
+- task: GitHubRelease@1
+  displayName: 'Create GitHub Tag'
   inputs:
-    script: |
-      cd $(build.artifactstagingdirectory)
-      rmdir rhino-agent.wiki /Q /S
-    failOnStderr: false
-
-- task: CmdLine@2
-  displayName: 'Clone WiKi'
-  inputs:
-    script: 'git clone https://$(Rhino.PAT)@github.com/savanna-projects/rhino-agent.wiki.git'
-    failOnStderr: true
-
-- task: CmdLine@2
-  displayName: 'Navigate into WiKi Folder'
-  inputs:
-    script: 'CD rhino-agent.wiki'
-    failOnStderr: true
-
-- task: PowerShell@2
-  displayName: 'Parse & Save WiKi Files'
-  inputs:
-    targetType: 'inline'
-    script: |
-      # clean extra documents path
-      #
-      $home_md = (Get-Content -Path '.\pages\Home.md') -replace '(?<=./)[^\s]*/',''
-      #
-      # clean .md suffix
-      $home_md = (Get-Content -Path '.\pages\Home.md') -replace '.md',''
-      #
-      # save WiKi Home.md file
-      Set-Content -Path '.\pages\Home.md' -Value $home_md
-
-- task: CmdLine@2
-  displayName: 'Add WiKi Changes'
-  inputs:
-    script: 'git add .'
-    failOnStderr: true
-
-- task: CmdLine@2
-  displayName: 'Commit WiKi Changes'
-  inputs:
-    script: 'git commit -m "v$(buildVersion) - WiKi Updates"'
-    failOnStderr: true
-
-- task: CmdLine@2
-  displayName: 'Push WiKi Changes'
-  inputs:
-    script: 'git push'
-    failOnStderr: true
+    gitHubConnection: 'GitHub connection - Gravity API'
+    repositoryName: 'savanna-projects/rhino-agent'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'userSpecifiedTag'
+    tag: 'v$(buildVersion)'
+    title: 'Production v$(buildVersion)'
+    releaseNotesSource: 'inline'
+    assets: '$(build.artifactstagingdirectory)\$(Build.BuildNumber)\$(Build.BuildNumber).zip'
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
