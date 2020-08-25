@@ -5481,7 +5481,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"DataSource\": null,\r\n  \"Authentication\": {\r\n    \"Password\": \"{{rhino_password}}\",\r\n    \"UserName\": \"{{rhino_user}}\"\r\n  },\r\n  \"EngineConfiguration\": {\r\n    \"MaxParallel\": 1,\r\n    \"FailOnException\": false,\r\n    \"OptimalThreshold\": 3.0,\r\n    \"QualityThreshold\": 0.0,\r\n    \"ToleranceThreshold\": 0.0,\r\n    \"Priority\": 0,\r\n    \"Severity\": 0,\r\n    \"ErrorOnExitCode\": 0,\r\n    \"ElementSearchingTimeout\": 15000,\r\n    \"PageLoadTimeout\": 60000,\r\n    \"RetrunExceptions\": true,\r\n    \"ReturnPerformancePoints\": true,\r\n    \"ReturnEnvironment\": true,\r\n    \"TerminateOnAssertFailure\": false\r\n  },\r\n  \"ScreenshotsConfiguration\": {\r\n    \"KeepOriginal\": false,\r\n    \"ReturnScreenshots\": true,\r\n    \"ScreenshotsOut\": \"{{rhino_images}}\"\r\n  },\r\n  \"DriverParams\": \"{\\r\\n  \\\"driver\\\": \\\"ChromeDriver\\\",\\r\\n  \\\"driverBinaries\\\": \\\"{{grid_endpoint}}\\\"\\r\\n}\",\r\n  \"Extractions\": null,\r\n  \"Actions\": [\r\n    {\r\n      \"ActionType\": \"GoToUrl\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"https://gravitymvctestapplication.azurewebsites.net/student\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Assert\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"{{$ --url --match:gravitymvctestapplication.azurewebsites.net}}\"\r\n    },\r\n    {\r\n      \"ActionType\": \"CloseAllChildWindows\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"\"\r\n    },\r\n    {\r\n      \"ActionType\": \"SendKeys\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"//input[@id='SearchString']\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"Carson\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Click\",\r\n      \"Locator\": \"CssSelector\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"#SearchButton\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Wait\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"3000\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Assert\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"//td[@id]\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"{{$ --count --gt:0}}\"\r\n    },\r\n    {\r\n      \"ActionType\": \"RegisterParameter\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"Jhon\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"first_name\"\r\n    },\r\n    {\r\n      \"ActionType\": \"CloseBrowser\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"\"\r\n    }\r\n  ]\r\n}",
+									"raw": "{\r\n  \"DataSource\": null,\r\n  \"Authentication\": {\r\n    \"Password\": \"{{rhino_password}}\",\r\n    \"UserName\": \"{{rhino_user}}\"\r\n  },\r\n  \"EngineConfiguration\": {\r\n    \"MaxParallel\": 1,\r\n    \"FailOnException\": false,\r\n    \"OptimalThreshold\": 3.0,\r\n    \"QualityThreshold\": 0.0,\r\n    \"ToleranceThreshold\": 0.0,\r\n    \"Priority\": 0,\r\n    \"Severity\": 0,\r\n    \"ErrorOnExitCode\": 0,\r\n    \"ElementSearchingTimeout\": 15000,\r\n    \"PageLoadTimeout\": 60000,\r\n    \"RetrunExceptions\": true,\r\n    \"ReturnPerformancePoints\": true,\r\n    \"ReturnEnvironment\": true,\r\n    \"TerminateOnAssertFailure\": false\r\n  },\r\n  \"ScreenshotsConfiguration\": {\r\n    \"KeepOriginal\": false,\r\n    \"ReturnScreenshots\": true,\r\n    \"ScreenshotsOut\": \"{{rhino_images}}\"\r\n  },\r\n  \"DriverParams\": \"{\\r\\n  \\\"driver\\\": \\\"ChromeDriver\\\",\\r\\n  \\\"driverBinaries\\\": \\\"{{rhino_drivers}}\\\"\\r\\n}\",\r\n  \"Extractions\": null,\r\n  \"Actions\": [\r\n    {\r\n      \"ActionType\": \"GoToUrl\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"https://gravitymvctestapplication.azurewebsites.net/student\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Assert\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"{{$ --url --match:gravitymvctestapplication.azurewebsites.net}}\"\r\n    },\r\n    {\r\n      \"ActionType\": \"CloseAllChildWindows\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"\"\r\n    },\r\n    {\r\n      \"ActionType\": \"SendKeys\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"//input[@id='SearchString']\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"Carson\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Click\",\r\n      \"Locator\": \"CssSelector\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"#SearchButton\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Wait\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"3000\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Assert\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"//td[@id]\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"{{$ --count --gt:0}}\"\r\n    },\r\n    {\r\n      \"ActionType\": \"RegisterParameter\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"Jhon\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"first_name\"\r\n    },\r\n    {\r\n      \"ActionType\": \"CloseBrowser\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"\"\r\n    }\r\n  ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -5589,7 +5589,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"DataSource\": null,\r\n  \"Authentication\": {\r\n    \"Password\": \"{{rhino_password}}\",\r\n    \"UserName\": \"{{rhino_user}}\"\r\n  },\r\n  \"EngineConfiguration\": {\r\n    \"MaxParallel\": 1,\r\n    \"FailOnException\": false,\r\n    \"OptimalThreshold\": 3.0,\r\n    \"QualityThreshold\": 0.0,\r\n    \"ToleranceThreshold\": 0.0,\r\n    \"Priority\": 0,\r\n    \"Severity\": 0,\r\n    \"ErrorOnExitCode\": 0,\r\n    \"ElementSearchingTimeout\": 15000,\r\n    \"PageLoadTimeout\": 60000,\r\n    \"RetrunExceptions\": true,\r\n    \"ReturnPerformancePoints\": true,\r\n    \"ReturnEnvironment\": true,\r\n    \"TerminateOnAssertFailure\": false\r\n  },\r\n  \"ScreenshotsConfiguration\": {\r\n    \"KeepOriginal\": false,\r\n    \"ReturnScreenshots\": true,\r\n    \"ScreenshotsOut\": \"{{rhino_images}}\"\r\n  },\r\n  \"DriverParams\": \"{\\r\\n  \\\"driver\\\": \\\"ChromeDriver\\\",\\r\\n  \\\"driverBinaries\\\": \\\"D:\\\\\\\\automation-env\\\\\\\\web-drivers\\\"\\r\\n}\",\r\n  \"Extractions\": null,\r\n  \"Actions\": [\r\n    {\r\n      \"ActionType\": \"GoToUrl\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"https://gravitymvctestapplication.azurewebsites.net/student\"\r\n    }\r\n  ]\r\n}",
+									"raw": "{\r\n  \"DataSource\": null,\r\n  \"Authentication\": {\r\n    \"Password\": \"{{rhino_password}}\",\r\n    \"UserName\": \"{{rhino_user}}\"\r\n  },\r\n  \"EngineConfiguration\": {\r\n    \"MaxParallel\": 1,\r\n    \"FailOnException\": false,\r\n    \"OptimalThreshold\": 3.0,\r\n    \"QualityThreshold\": 0.0,\r\n    \"ToleranceThreshold\": 0.0,\r\n    \"Priority\": 0,\r\n    \"Severity\": 0,\r\n    \"ErrorOnExitCode\": 0,\r\n    \"ElementSearchingTimeout\": 15000,\r\n    \"PageLoadTimeout\": 60000,\r\n    \"RetrunExceptions\": true,\r\n    \"ReturnPerformancePoints\": true,\r\n    \"ReturnEnvironment\": true,\r\n    \"TerminateOnAssertFailure\": false\r\n  },\r\n  \"ScreenshotsConfiguration\": {\r\n    \"KeepOriginal\": false,\r\n    \"ReturnScreenshots\": true,\r\n    \"ScreenshotsOut\": \"{{rhino_images}}\"\r\n  },\r\n  \"DriverParams\": \"{\\r\\n  \\\"driver\\\": \\\"ChromeDriver\\\",\\r\\n  \\\"driverBinaries\\\": \\\"{{rhino_drivers}}\\\"\\r\\n}\",\r\n  \"Extractions\": null,\r\n  \"Actions\": [\r\n    {\r\n      \"ActionType\": \"GoToUrl\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Reference\": 0,\r\n      \"RepeatReference\": 0,\r\n      \"Actions\": [],\r\n      \"ElementAttributeToActOn\": \"\",\r\n      \"ElementToActOn\": \"\",\r\n      \"RegularExpression\": \".*\",\r\n      \"Argument\": \"https://gravitymvctestapplication.azurewebsites.net/student\"\r\n    }\r\n  ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -6241,13 +6241,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{endpoint}}/api/collections",
+							"raw": "{{endpoint}}/api/v3/tests",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"collections"
+								"v3",
+								"tests"
 							]
 						}
 					},
@@ -6292,12 +6293,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{endpoint}}/api/configurations",
+							"raw": "{{endpoint}}/api/v3/configurations",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
+								"v3",
 								"configurations"
 							]
 						}
@@ -6347,69 +6349,64 @@
 	],
 	"variable": [
 		{
-			"id": "a43ccad2-570d-45e2-9c56-deaa6e4d4a55",
+			"id": "7c9901b9-c2a8-4d3d-a5ef-b8853bb96035",
 			"key": "collection_id",
-			"value": "3b161261-55a5-4f5a-afd7-94cd60fa7f26"
+			"value": "168dca46-b91e-4af9-9ee2-85c5153b41f2"
 		},
 		{
-			"id": "4cd0cd7c-033e-4708-8f92-e52fe99920c4",
+			"id": "4a57ef8b-54d6-43bd-bbb7-3ba58048070a",
 			"key": "configuration_id",
-			"value": "64cf5275-d641-4bab-a7be-5eb0bc7dfe72"
+			"value": "4bcb5e3e-f149-4aaf-9f43-27557ddf8c12"
 		},
 		{
-			"id": "5e791ed3-39d1-480c-8ff6-3855c8fe9a62",
+			"id": "dcd15698-004e-4c57-a857-0f4b827cc201",
 			"key": "endpoint",
 			"value": "https://localhost:5001"
 		},
 		{
-			"id": "fabd42d5-bd72-401a-a456-0501e90c97db",
+			"id": "71d7a113-b35c-4841-bcac-72421a8c4705",
 			"key": "rhino_drivers",
 			"value": "."
 		},
 		{
-			"id": "d9933041-665a-49d4-be62-0b0916f351fd",
+			"id": "bea4a60f-d2a8-4aa5-9e87-4f6a95517518",
 			"key": "rhino_reports",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Test Run Reports\\\\rhino"
 		},
 		{
-			"id": "bcda4590-8cae-41b7-8840-07380c585343",
+			"id": "9d5ba8a0-cd9c-4720-ae5f-44cdf8e2141f",
 			"key": "rhino_reports_connection_string",
 			"value": "Server=.\\\\SQLExpress;Database=TestingWarehouse;Trusted_Connection=True;User Id=<db_user>;Password=<db_password>;"
 		},
 		{
-			"id": "80210736-4823-48b0-ad99-a4ca868a8676",
+			"id": "0c6bd8b9-3849-44fe-95d3-10ef4fbf2c33",
 			"key": "rhino_user",
-			"value": "automation@rhino.api"
+			"value": ""
 		},
 		{
-			"id": "4bd49502-2780-4b02-921a-03c9c49988ad",
+			"id": "905f4355-7625-457b-ab79-55b58ca6a18d",
 			"key": "rhino_password",
-			"value": "Aa123456!"
+			"value": ""
 		},
 		{
-			"id": "da11246a-7503-44be-9e5d-cc666ad66304",
+			"id": "99f5dfa3-0885-40b8-8f97-15af5e74207b",
 			"key": "rhino_images",
 			"value": "D:\\\\garbage\\\\imagesOut"
 		},
 		{
-			"id": "421692f6-1fc6-47b3-b46f-5718b9cda71c",
+			"id": "20a040df-d778-409c-8763-8ca5f844de0c",
 			"key": "rhino_logs",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Logs"
 		},
 		{
-			"id": "879b3837-033a-4708-a8a0-85faf71da8fd",
-			"key": "grid_endpoint",
-			"value": "."
-		},
-		{
-			"id": "f7b2afac-2088-49ea-a54b-8b634b22c168",
+			"id": "0d14479c-b62e-42f3-8a7c-5cfe4583603e",
 			"key": "models_id",
-			"value": "2b912580-fbf1-4c1f-90ad-8a6d65b2f14a"
+			"value": "bfdeb27d-5d8e-4e18-93f4-b6e551255c6c"
 		},
 		{
-			"id": "05a41d62-4535-4871-9c32-a1fa1f7c4046",
+			"id": "e1592478-2417-4dd6-9a14-ede844d8ac97",
 			"key": "session_id",
-			"value": "e8ee3ad9a90947cb9a0cc2e214c32ac2"
+			"value": "3e876d1126f26a2363f22b577740c404"
 		}
 	],
 	"protocolProfileBehavior": {}
