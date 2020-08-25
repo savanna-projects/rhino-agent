@@ -150,19 +150,6 @@ namespace Rhino.Agent.Controllers
                 collection.Configurations.Add(configuration);
             }
 
-            // model name
-            foreach (var model in models)
-            {
-                foreach (var entry in model.Entries)
-                {
-                    if (!string.IsNullOrEmpty(entry.Model))
-                    {
-                        continue;
-                    }
-                    entry.Model = model.Name;
-                }
-            }
-
             // get credentials
             var credentials = Request.GetAuthentication();
 
