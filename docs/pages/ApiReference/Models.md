@@ -11,25 +11,25 @@ GET /api/v3/models
 #### Response Content
 ```js
 {
-    "data": {
-        "collection": [
-            {
-                "id": "1ed4ea1c-9959-40d7-b40e-717b8fc1cfb4",
-                "configurations": [
-                    "03d1cd94-5e38-43d8-b010-e932d92f9067",
-                    "8bed8025-3cgf-52g1-0919-533cbc6d523c"
-                ],
-                "models": 1,
-                "entries": 3
-            },
-            {
-                "id": "ba6b3da7-1979-48ea-9b00-e30682f5f111",
-                "configurations": [],
-                "models": 1,
-                "entries": 3
-            }
-        ]
-    }
+  "data": {
+    "collection": [
+      {
+        "id": "1ed4ea1c-9959-40d7-b40e-717b8fc1cfb4",
+        "configurations": [
+          "03d1cd94-5e38-43d8-b010-e932d92f9067",
+          "8bed8025-3cgf-52g1-0919-533cbc6d523c"
+        ],
+        "models": 1,
+        "entries": 3
+      },
+      {
+        "id": "ba6b3da7-1979-48ea-9b00-e30682f5f111",
+        "configurations": [],
+        "models": 1,
+        "entries": 3
+      }
+    ]
+  }
 }
 ```
 
@@ -64,28 +64,28 @@ Please see below for a typical response:
 
 ```js
 [
-	{
-		"name": "Students Input Models",
-		"entries": [
-			{
-				"name": "search students text-box",
-				"value": "#SearchString",
-				"type": "css selector",
-				"comment": "Search students text-box on the top center panel under students page."
-			},
-			{
-				"name": "search students button",
-				"value": "//input[@id='SearchButton']",
-                "type": "xpath",
-				"comment": "Search students button on the top center panel under students page."
-			}	
-		],
-        "context": {
-            "pageUrl": "https://gravitymvctestapplication.azurewebsites.net/student"
-		}
-	},
-    "name": "Students Table Models",
-    ...
+  {
+    "name": "Students Input Models",
+    "entries": [
+      {
+        "name": "search students text-box",
+        "value": "#SearchString",
+        "type": "css selector",
+        "comment": "Search students text-box on the top center panel under students page."
+      },
+      {
+        "name": "search students button",
+        "value": "//input[@id='SearchButton']",
+        "type": "xpath",
+        "comment": "Search students button on the top center panel under students page."
+      }
+    ],
+    "context": {
+      "pageUrl": "https://gravitymvctestapplication.azurewebsites.net/student"
+    }
+  },
+  "name": "Students Table Models",
+  ...
 ]
 ```
 
@@ -126,26 +126,26 @@ The request body follows the same format as [Get Model](#get-model) response con
 ### Request Example
 ```js
 [
-	{
-		"name": "Students Input Models",
-		"entries": [
-			{
-				"name": "search students text-box",
-				"value": "#SearchString",
-				"type": "css selector",
-				"comment": "Search students text-box on the top center panel under students page."
-			},
-			{
-				"name": "search students button",
-				"value": "//input[@id='SearchButton']",
-                "type": "xpath",
-				"comment": "Search students button on the top center panel under students page."
-			}	
-		],
-        "context": {
-            "pageUrl": "https://gravitymvctestapplication.azurewebsites.net/student"
-		}
-	}
+  {
+    "name": "Students Input Models",
+    "entries": [
+      {
+        "name": "search students text-box",
+        "value": "#SearchString",
+        "type": "css selector",
+        "comment": "Search students text-box on the top center panel under students page."
+      },
+      {
+        "name": "search students button",
+        "value": "//input[@id='SearchButton']",
+        "type": "xpath",
+        "comment": "Search students button on the top center panel under students page."
+      }
+    ],
+    "context": {
+      "pageUrl": "https://gravitymvctestapplication.azurewebsites.net/student"
+    }
+  }
 ]
 ```
 
@@ -170,12 +170,12 @@ GET /api/v3/models/:collection_id/configurations
 #### Response Content
 ```js
 {
-    "data": {
-        "configurations": [
-            "03d1cd94-5e38-43d8-b010-e932d92f9067",
-            "8bed8025-3cgf-52g1-0919-533cbc6d523c"
-        ]
-    }
+  "data": {
+    "configurations": [
+      "03d1cd94-5e38-43d8-b010-e932d92f9067",
+      "8bed8025-3cgf-52g1-0919-533cbc6d523c"
+    ]
+  }
 }
 ```
 
@@ -210,26 +210,26 @@ The request body follows the same format as [Get Model](#get-model) response con
 ### Request Example
 ```js
 [
-	{
-		"name": "Students Input Models",
-		"entries": [
-			{
-				"name": "search students text-box",
-				"value": "#SearchString",
-				"type": "css selector",
-				"comment": "Search students text-box on the top center panel under students page."
-			},
-			{
-				"name": "search students button",
-				"value": "//input[@id='SearchButton']",
-                "type": "xpath",
-				"comment": "Search students button on the top center panel under students page."
-			}	
-		],
-        "context": {
-            "pageUrl": "https://gravitymvctestapplication.azurewebsites.net/student"
-		}
-	}
+  {
+    "name": "Students Input Models",
+    "entries": [
+      {
+        "name": "search students text-box",
+        "value": "#SearchString",
+        "type": "css selector",
+        "comment": "Search students text-box on the top center panel under students page."
+      },
+      {
+        "name": "search students button",
+        "value": "//input[@id='SearchButton']",
+        "type": "xpath",
+        "comment": "Search students button on the top center panel under students page."
+      }
+    ],
+    "context": {
+      "pageUrl": "https://gravitymvctestapplication.azurewebsites.net/student"
+    }
+  }
 ]
 ```
 
