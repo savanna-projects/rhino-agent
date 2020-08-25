@@ -64,19 +64,9 @@ namespace Rhino.Agent.Domain
 
             // get collection > configuration
             var collection = LiteDb.GetCollection<RhinoConfiguration>(name: Collection);
-            var documents = collection.FindAll();
-
-            // not found
-            if (!documents.Any())
-            {
-                return HttpStatusCode.NotFound;
-            }
 
             // delete
-            foreach (var d in documents)
-            {
-                collection.Delete(d.Id);
-            }
+            collection.DeleteAll();
             return HttpStatusCode.NoContent;
         }
         #endregion

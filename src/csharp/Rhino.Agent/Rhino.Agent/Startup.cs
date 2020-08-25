@@ -37,7 +37,7 @@ namespace Rhino.Agent
         // statics
         public static HttpClient HttpClient => new HttpClient();
         public static LiteDatabase LiteDb => new LiteDatabase("Data.dll");
-        public static JsonSerializerSettings jsonSettings => new JsonSerializerSettings
+        public static JsonSerializerSettings JsonSettings => new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
             ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -87,7 +87,7 @@ namespace Rhino.Agent
             services.AddScoped<RhinoConfigurationRepository, RhinoConfigurationRepository>();
             services.AddScoped<RhinoLogsRepository, RhinoLogsRepository>();
 
-            services.AddSingleton(typeof(JsonSerializerSettings), jsonSettings);
+            services.AddSingleton(typeof(JsonSerializerSettings), JsonSettings);
             services.AddSingleton(typeof(LiteDatabase), LiteDb);
             services.AddSingleton(typeof(IEnumerable<Type>), Utilities.Types);
             services.AddSingleton(typeof(HttpClient), HttpClient);
