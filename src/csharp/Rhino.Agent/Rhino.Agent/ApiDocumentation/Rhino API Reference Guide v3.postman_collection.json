@@ -6347,67 +6347,67 @@
 	],
 	"variable": [
 		{
-			"id": "a03be49e-eac5-47ec-b0e8-8f80c45616f2",
+			"id": "a43ccad2-570d-45e2-9c56-deaa6e4d4a55",
 			"key": "collection_id",
 			"value": "3b161261-55a5-4f5a-afd7-94cd60fa7f26"
 		},
 		{
-			"id": "48cd577e-f5f3-42ee-b422-356231ae328a",
+			"id": "4cd0cd7c-033e-4708-8f92-e52fe99920c4",
 			"key": "configuration_id",
 			"value": "64cf5275-d641-4bab-a7be-5eb0bc7dfe72"
 		},
 		{
-			"id": "29778e41-2a25-48c4-aec7-414a72d9691c",
+			"id": "5e791ed3-39d1-480c-8ff6-3855c8fe9a62",
 			"key": "endpoint",
 			"value": "https://localhost:5001"
 		},
 		{
-			"id": "ce7f231e-e140-4905-bffe-507262d1b3ad",
+			"id": "fabd42d5-bd72-401a-a456-0501e90c97db",
 			"key": "rhino_drivers",
-			"value": "D:\\\\automation-env\\\\web-drivers"
+			"value": "."
 		},
 		{
-			"id": "86ef5f34-2fb8-45f8-ae42-780e1799e5f1",
+			"id": "d9933041-665a-49d4-be62-0b0916f351fd",
 			"key": "rhino_reports",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Test Run Reports\\\\rhino"
 		},
 		{
-			"id": "1b31ea03-ce77-431e-9f9a-432c444067ab",
+			"id": "bcda4590-8cae-41b7-8840-07380c585343",
 			"key": "rhino_reports_connection_string",
 			"value": "Server=.\\\\SQLExpress;Database=TestingWarehouse;Trusted_Connection=True;User Id=<db_user>;Password=<db_password>;"
 		},
 		{
-			"id": "aa275f90-9de7-4569-8935-b370fe033678",
+			"id": "80210736-4823-48b0-ad99-a4ca868a8676",
 			"key": "rhino_user",
 			"value": "automation@rhino.api"
 		},
 		{
-			"id": "105ddc1a-0f60-4f76-b24e-6ff252110b55",
+			"id": "4bd49502-2780-4b02-921a-03c9c49988ad",
 			"key": "rhino_password",
 			"value": "Aa123456!"
 		},
 		{
-			"id": "f5e5ec86-11d3-4986-a0dd-131a85b591d4",
+			"id": "da11246a-7503-44be-9e5d-cc666ad66304",
 			"key": "rhino_images",
 			"value": "D:\\\\garbage\\\\imagesOut"
 		},
 		{
-			"id": "69a7f574-7215-4ad3-9cf0-6c12ab95ff73",
+			"id": "421692f6-1fc6-47b3-b46f-5718b9cda71c",
 			"key": "rhino_logs",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Logs"
 		},
 		{
-			"id": "c767ba72-b754-4433-bdc2-844b6ee9a714",
+			"id": "879b3837-033a-4708-a8a0-85faf71da8fd",
 			"key": "grid_endpoint",
 			"value": "."
 		},
 		{
-			"id": "45fe17d1-2341-4f0a-a451-8352486cc7b1",
+			"id": "f7b2afac-2088-49ea-a54b-8b634b22c168",
 			"key": "models_id",
 			"value": "2b912580-fbf1-4c1f-90ad-8a6d65b2f14a"
 		},
 		{
-			"id": "17fa4b17-1ba3-4eeb-a835-f0eeb4f9799d",
+			"id": "05a41d62-4535-4871-9c32-a1fa1f7c4046",
 			"key": "session_id",
 			"value": "e8ee3ad9a90947cb9a0cc2e214c32ac2"
 		}
