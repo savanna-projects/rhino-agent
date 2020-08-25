@@ -61,7 +61,7 @@ namespace Rhino.Agent.Controllers
             });
 
             // add count header
-            Response.Headers.Add(CountHeader, $"{data.Select(i=> i.Tests).Sum()}");
+            Response.Headers.Add(CountHeader, $"{data.Select(i => i.Tests).Sum()}");
 
             // response
             var responseBody = JsonConvert.SerializeObject(new { Data = new { Collections = data } }, jsonSettings);
@@ -137,32 +137,31 @@ namespace Rhino.Agent.Controllers
             return DoPost(configuration);
         }
 
-        // TODO: clean
         private async Task<IActionResult> DoPost(string configuration)
         {
             // read test case from request body
             var requestBody = await Request.ReadAsync().ConfigureAwait(false);
-
-            // exit conditions
-            if (string.IsNullOrEmpty(requestBody))
-            {
-                return GetErrorResults(message: "You must provide at least one test case.");
-            }
-
             var documents = requestBody.Split(Seperator);
 
             // setup
             var collection = new RhinoTestCaseCollection();
-            collection.Configurations ??= new List<string>();
-            if (!string.IsNullOrEmpty(configuration))
+
+            // apply configuration
+            var configurationResult = AddConfiguration(onCollection: collection, configuration);
+
+            // validate
+            if(configurationResult == HttpStatusCode.BadRequest)
             {
-                var (statusCode, _) = rhinoConfiguration.Get(Request.GetAuthentication(), configuration);
-                if(statusCode == HttpStatusCode.NotFound)
-                {
-                    return NotFound(new { Message = $"Configuration [{configuration}] was not found." });
-                }
-                collection.Configurations.Add(configuration);
+                return await this.ErrorResultAsync("You must provide a configuration").ConfigureAwait(false);
             }
+            if(configurationResult == HttpStatusCode.NotFound)
+            {
+                return await this
+                    .ErrorResultAsync($"Configuration [{configuration}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // create id for this collection
             collection.Id = Guid.NewGuid();
 
             // parse test cases
@@ -176,31 +175,53 @@ namespace Rhino.Agent.Controllers
 
             // response
             var data = new { Data = new { Id = rhinoTest.Post(credentials, collection) } };
-            return new ContentResult
+            return this.ContentResult(responseBody: data, HttpStatusCode.Created);
+        }
+
+        private HttpStatusCode AddConfiguration(RhinoTestCaseCollection onCollection, string configuration)
+        {
+            // setup
+            onCollection.Configurations ??= new List<string>();
+
+            // no configuration
+            if (string.IsNullOrEmpty(configuration))
             {
-                Content = JsonConvert.SerializeObject(data, jsonSettings),
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.Created.ToInt32()
-            };
+                return HttpStatusCode.OK;
+            }
+
+            // check configuration
+            var (statusCode, _) = rhinoConfiguration.Get(Request.GetAuthentication(), configuration);
+
+            // not found
+            if (statusCode == HttpStatusCode.NotFound)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            // put configuration
+            onCollection.Configurations.Add(configuration);
+            return HttpStatusCode.OK;
         }
         #endregion
 
         #region *** PATCH  ***
         // PATCH api/v3/tests/<id>/configurations/<configuration>
         [HttpPatch("{id}/configurations/{configuration}")]
-        public IActionResult PatchConfiguration(string id, string configuration)
+        public async Task< IActionResult> PatchConfiguration(string id, string configuration)
         {
             // patch
             var (statusCode, _) = rhinoTest.Patch(Request.GetAuthentication(), id, configuration);
 
             // exit conditions
-            if (statusCode == HttpStatusCode.NotFound)
-            {
-                return NotFound(new { Message = $"Collection [{id}] or Configuration [{configuration}] were not found." });
-            }
             if (statusCode == HttpStatusCode.BadRequest)
             {
-                return GetErrorResults("You must provide configuration ID in the request route.");
+                return await this.ErrorResultAsync("You must provide configuration ID in the request route.").ConfigureAwait(false);
+            }
+            if (statusCode == HttpStatusCode.NotFound)
+            {
+                return await this
+                    .ErrorResultAsync($"Collection [{id}] or Configuration [{configuration}] were not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
 
             // response
@@ -226,11 +247,13 @@ namespace Rhino.Agent.Controllers
             var (statusCode, collection) = rhinoTest.Get(credentials, id);
             if (statusCode == HttpStatusCode.NotFound)
             {
-                return NotFound(new { Message = $"Collection [{id}] was not found." });
+                return await this
+                    .ErrorResultAsync($"Collection [{id}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
-            if(statusCode == HttpStatusCode.BadRequest)
+            if (statusCode == HttpStatusCode.BadRequest)
             {
-                return GetErrorResults("You must provide at least one test case.");
+                return await this.ErrorResultAsync("You must provide at least one test case.").ConfigureAwait(false);
             }
 
             // create
@@ -279,22 +302,5 @@ namespace Rhino.Agent.Controllers
             return NoContent();
         }
         #endregion
-
-        private ContentResult GetErrorResults(string message)
-        {
-            // setup
-            var obj = new
-            {
-                Message = message
-            };
-
-            // response
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(obj, jsonSettings),
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.BadRequest.ToInt32()
-            };
-        }
     }
 }

@@ -2874,7 +2874,7 @@
 										"tests"
 									]
 								},
-								"description": "Creates a new _**Rhino Test Case Collection**_.\r\n\r\n```\r\nPOST /api/tests/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                                                                             |\r\n|----------------|------|----------------------------------------------------------------------------------------|\r\n|configuration_id|string|The ID of the configuration group under which to create the tests collection (optional).|\r\n\r\n### Request Fields\r\nNew _**Rhino Test Case Collection**_ using the same response format as [Get Test Case Collection](#get-test-case-collection).\r\n\r\n#### Request Sample\r\n```\r\n[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]\r\n\r\n>>>\r\n\r\n[test-id] rhino-documentation-#002\r\n...\r\n```\r\n\r\n### Response Fields\r\n|Name |Type  |Description              |\r\n|-----|------|-------------------------|\r\n|id   |string|The ID of the collection.|\r\n\r\n#### Response Sample\r\n```js\r\n{\r\n    \"data\": {\r\n        \"id\": \"73e21d1b-770b-4347-805a-eae4f622a146\"\r\n    }\r\n}\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                    |\r\n|----|---------------------------------------------------------------|\r\n|201 |Success, the _**Rhino Test Case Collection**_ was created.     |\r\n|400 |Bad Request, no test cases were provided in the request body.  |\r\n|404 |Not Found, the provide _**Rhino Configuration**_ was not found.|\r\n|500 |Fail, the server encountered an unexpected error.              |"
+								"description": "Creates a new _**Rhino Test Case Collection**_.\r\n\r\n```\r\nPOST /api/tests/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                                                                             |\r\n|----------------|------|----------------------------------------------------------------------------------------|\r\n|configuration_id|string|The ID of the configuration group under which to create the tests collection (optional).|\r\n\r\n### Request Fields\r\nNew _**Rhino Test Case Collection**_ using the same response format as [Get Test Case Collection](#get-test-case-collection).  \r\n\r\n> Please note, it is possible to create an empty collection without provided any information in the request body.\r\n\r\n#### Request Sample\r\n```\r\n[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]\r\n\r\n>>>\r\n\r\n[test-id] rhino-documentation-#002\r\n...\r\n```\r\n\r\n### Response Fields\r\n|Name |Type  |Description              |\r\n|-----|------|-------------------------|\r\n|id   |string|The ID of the collection.|\r\n\r\n#### Response Sample\r\n```js\r\n{\r\n  \"data\": {\r\n    \"id\": \"73e21d1b-770b-4347-805a-eae4f622a146\"\r\n  }\r\n}\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                    |\r\n|----|---------------------------------------------------------------|\r\n|201 |Success, the _**Rhino Test Case Collection**_ was created.     |\r\n|404 |Not Found, the provide _**Rhino Configuration**_ was not found.|\r\n|500 |Fail, the server encountered an unexpected error.              |"
 							},
 							"response": [
 								{
@@ -3003,7 +3003,7 @@
 										"tests"
 									]
 								},
-								"description": "Returns a list of available _**Rhino Models**_.\r\n\r\n```\r\nGET /api/v3/tests\r\n```\r\n\r\n#### Response Content\r\n```js\r\n{\r\n    \"data\": {\r\n        \"collection\": [\r\n            {\r\n                \"id\": \"1ed4ea1c-9959-40d7-b40e-717b8fc1cfb4\",\r\n                \"configurations\": [\r\n                    \"03d1cd94-5e38-43d8-b010-e932d92f9067\",\r\n                    \"8bed8025-3cgf-52g1-0919-533cbc6d523c\"\r\n                ],\r\n                \"tests\": 3\r\n            },\r\n            {\r\n                \"id\": \"ba6b3da7-1979-48ea-9b00-e30682f5f111\",\r\n                \"configurations\": [],\r\n                \"tests\": 3\r\n            }\r\n        ]\r\n    }\r\n}\r\n```\r\n\r\nThe example response includes 2 collections, with 3 tests in each and 2 configurations for one of them.\r\n\r\n|Name          |Type  |Description                                                   |\r\n|--------------|------|--------------------------------------------------------------|\r\n|id            |string|The ID of the _**Rhino Tests Collection**_.                   |\r\n|configurations|array |All _**Rhino Configurations**_ which are using the collection.|\r\n|tests         |number|Total models under the models collection.                     |\r\n\r\n### Response Codes\r\n|Code|Description                                                           |\r\n|----|----------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Models**_ were returned as part of the response.|\r\n|500 |Fail, the server encountered an unexpected error.                     |"
+								"description": "Returns a list of available _**Rhino Test Cases**_ collections.\r\n\r\n```\r\nGET /api/v3/tests\r\n```\r\n\r\n#### Response Content\r\n```js\r\n{\r\n  \"data\": {\r\n    \"collection\": [\r\n      {\r\n        \"id\": \"1ed4ea1c-9959-40d7-b40e-717b8fc1cfb4\",\r\n        \"configurations\": [\r\n          \"03d1cd94-5e38-43d8-b010-e932d92f9067\",\r\n          \"8bed8025-3cgf-52g1-0919-533cbc6d523c\"\r\n        ],\r\n        \"tests\": 3\r\n      },\r\n      {\r\n        \"id\": \"ba6b3da7-1979-48ea-9b00-e30682f5f111\",\r\n        \"configurations\": [],\r\n        \"tests\": 3\r\n      }\r\n    ]\r\n  }\r\n}\r\n```\r\n\r\nThe example response includes 2 collections, with 3 tests in each and 2 configurations for one of them.\r\n\r\n|Name          |Type  |Description                                                   |\r\n|--------------|------|--------------------------------------------------------------|\r\n|id            |string|The ID of the _**Rhino Tests Collection**_.                   |\r\n|configurations|array |All _**Rhino Configurations**_ which are using the collection.|\r\n|tests         |number|Total models under the models collection.                     |\r\n\r\n### Response Codes\r\n|Code|Description                                                                            |\r\n|----|---------------------------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Tests Collection**_ information returned as part of the response.|\r\n|500 |Fail, the server encountered an unexpected error.                                      |"
 							},
 							"response": [
 								{
@@ -3061,7 +3061,7 @@
 										"{{collection_id}}"
 									]
 								},
-								"description": "Returns an existing _**Rhino Test Case**_ collection.\r\n\r\n```\r\nGET /api/v3/tests/:collection_id\r\n```\r\n\r\n|Name         |Type  |Description                                    |\r\n|-------------|------|-----------------------------------------------|\r\n|collection_id|string|The ID of the _**Rhino Test Case**_ collection.|\r\n\r\n### Response Content\r\nPlease see below for a typical response:\r\n\r\n```\r\n[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]\r\n\r\n>>>\r\n\r\n[test-id] rhino-documentation-#002\r\n...\r\n```\r\n\r\nThe following system fields are always included in the response:\r\n\r\n> The response is an array of Rhino Test Spec of media type `text/plain`.\r\n> Scenarios are seperated by an empty line, followed by `>>>` followed by another empty line.\r\n> The fields are annotated following Rhino's language text format.\r\n\r\n#### Mandatory Fields\r\n|Name                 |Type|Description                                                  |\r\n|---------------------|----|-------------------------------------------------------------|\r\n|test-id              |text|The unique ID of the test case.                              |\r\n|test-scenario        |text|The title of the test case.                                  |\r\n|test-actions         |text|Line seperated list of the test actions to execute.          |\r\n\r\nThe following system fields are sometimes included in the response:\r\n\r\n#### Optional Fields\r\n|Name                 |Type|Description                                                            |\r\n|---------------------|----|-----------------------------------------------------------------------|\r\n|test-expected-results|text|Line seperated list of the test exepected results to execute.          |\r\n|test-data-provider   |text|JSON or Markdown format table (string, string) for data driven testing.|\r\n|test-priority        |text|The test priority level - must include number i.e. \"1 - High\".         |\r\n|test-severity        |text|The test severity level - must include number i.e. \"4 - Low\".          |\r\n|test-tolerance       |text|The test tolerance level - must include decimal number i.e. \"80.5%\".   |"
+								"description": "Returns an existing _**Rhino Test Case**_ collection (test suite content).\r\n\r\n```\r\nGET /api/v3/tests/:collection_id\r\n```\r\n\r\n|Name         |Type  |Description                                    |\r\n|-------------|------|-----------------------------------------------|\r\n|collection_id|string|The ID of the _**Rhino Test Case**_ collection.|\r\n\r\n### Response Content\r\nPlease see below for a typical response:\r\n\r\n```\r\n[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n  {\r\n    \"address\": \"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n    \"address-expected\": \"gravitymvctestapplication.azurewebsites.net\",\r\n    \"search-text-box\": \"//input[@id='SearchString']\",\r\n    \"search-button\": \"#SearchButton\",\r\n    \"students-table\": \"//td[@id]\"\r\n  }\r\n]\r\n\r\n>>>\r\n\r\n[test-id] rhino-documentation-#002\r\n...\r\n```\r\n\r\nThe following system fields are always included in the response:\r\n\r\n> The response is an array of Rhino Test Spec of media type `text/plain`.\r\n> Scenarios are separated by an empty line, followed by `>>>` followed by another empty line.\r\n> The fields are annotated following Rhino's language text format.\r\n\r\n#### Mandatory Fields\r\n|Name                 |Type|Description                                                  |\r\n|---------------------|----|-------------------------------------------------------------|\r\n|test-id              |text|The unique ID of the test case.                              |\r\n|test-scenario        |text|The title of the test case.                                  |\r\n|test-actions         |text|Line separated list of the test actions to execute.          |\r\n\r\nThe following system fields are sometimes included in the response:\r\n\r\n#### Optional Fields\r\n|Name                 |Type|Description                                                            |\r\n|---------------------|----|-----------------------------------------------------------------------|\r\n|test-expected-results|text|Line separated list of the test expected results to execute.           |\r\n|test-data-provider   |text|JSON or Markdown format table (string, string) for data driven testing.|\r\n|test-priority        |text|The test priority level - must include number i.e. \"1 - High\".         |\r\n|test-severity        |text|The test severity level - must include number i.e. \"4 - Low\".          |\r\n|test-tolerance       |text|The test tolerance level - must include decimal number i.e. \"80.5%\".   |\r\n\r\n### Response Codes\r\n|Code|Description                                                            |\r\n|----|-----------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Tests Cases**_ returned as part of the response. |\r\n|404 |Not Found, the provided _**Rhino Test Case Collection**_ was not found.|\r\n|500 |Fail, the server encountered an unexpected error.                      |"
 							},
 							"response": [
 								{
@@ -3140,7 +3140,7 @@
 										"configurations"
 									]
 								},
-								"description": "Returns a list of available _**Rhino Configurations**_ which are associated with this _**Rhino Test Case**_ collection.\r\n\r\n```\r\nGET /api/v3/tests/:collection_id/configurations\r\n```\r\n\r\n|Name         |Type  |Description                                    |\r\n|-------------|------|-----------------------------------------------|\r\n|collection_id|string|The ID of the _**Rhino Test Case**_ collection.|\r\n\r\n#### Response Content\r\n```js\r\n{\r\n    \"data\": {\r\n        \"configurations\": [\r\n            \"03d1cd94-5e38-43d8-b010-e932d92f9067\",\r\n            \"8bed8025-3cgf-52g1-0919-533cbc6d523c\"\r\n        ]\r\n    }\r\n}\r\n```\r\n\r\nThe example response includes 2 configuration which are associated with this collection.\r\n\r\n|Name          |Type  |Description                                      |\r\n|--------------|------|-------------------------------------------------|\r\n|configurations|array |All _**Rhino Models**_ which are using the model.|\r\n\r\n### Response Codes\r\n|Code|Description                                                                   |\r\n|----|------------------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Configurations**_ were returned as part of the response.|\r\n|404 |Not Found, the _**Rhino Test Case**_ collection was not found.                |\r\n|500 |Fail, the server encountered an unexpected error.                             |"
+								"description": "Returns a list of available _**Rhino Configurations**_ which are associated with this _**Rhino Test Case**_ collection.\r\n\r\n```\r\nGET /api/v3/tests/:collection_id/configurations\r\n```\r\n\r\n|Name         |Type  |Description                                    |\r\n|-------------|------|-----------------------------------------------|\r\n|collection_id|string|The ID of the _**Rhino Test Case**_ collection.|\r\n\r\n#### Response Content\r\n```js\r\n{\r\n  \"data\": {\r\n    \"configurations\": [\r\n      \"03d1cd94-5e38-43d8-b010-e932d92f9067\",\r\n      \"8bed8025-3cgf-52g1-0919-533cbc6d523c\"\r\n    ]\r\n  }\r\n}\r\n```\r\n\r\nThe example response includes 2 configuration which are associated with this collection.\r\n\r\n|Name          |Type  |Description                                      |\r\n|--------------|------|-------------------------------------------------|\r\n|configurations|array |All _**Rhino Models**_ which are using the model.|\r\n\r\n### Response Codes\r\n|Code|Description                                                                   |\r\n|----|------------------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Configurations**_ were returned as part of the response.|\r\n|404 |Not Found, the _**Rhino Test Case**_ collection was not found.                |\r\n|500 |Fail, the server encountered an unexpected error.                             |"
 							},
 							"response": []
 						},
@@ -3184,7 +3184,7 @@
 										"{{collection_id}}"
 									]
 								},
-								"description": "Add additional _**Rhino Test Cases**_ into an existing collection. If the _**Test Case ID**_.\r\n\r\n> Please note, there is no duplication check here, and you can add tests with the same ID.\r\n> However, Rhino Engine, will not execute them, since it will distince all IDs before running automation.\r\n\r\n```\r\nPATCH /api/v3/tests/:collection_id\r\n```\r\n\r\n|Name         |Type  |Description                                    |\r\n|-------------|------|-----------------------------------------------|\r\n|collection_id|string|The ID of the _**Rhino Test Case**_ collection.|\r\n\r\n### Request Fields\r\nThe request body follows the same format as [Get Test Case Collection](#get-test-case-collection) response content.\r\n\r\n### Request Example\r\n```\r\n[test-id] rhino-documentation-#003\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]\r\n\r\n>>>\r\n\r\n[test-id] rhino-documentation-#004\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                        |\r\n|----|-------------------------------------------------------------------|\r\n|200 |Success, the _**Collection**_ was returned as part of the response.|\r\n|400 |Bad Request, no test cases were provided in the request body.      |\r\n|404 |Not Found, the _**Collection**_ was not found.                     |\r\n|500 |Fail, the server encountered an unexpected error.                  |"
+								"description": "Add additional _**Rhino Test Cases**_ into an existing collection.  \r\n\r\n> Please note, there is no duplication check here, and you can add tests with the same ID.\r\n> However, Rhino Engine, will not execute them, since it will distinct all IDs before running automation.\r\n\r\n```\r\nPATCH /api/v3/tests/:collection_id\r\n```\r\n\r\n|Name         |Type  |Description                                    |\r\n|-------------|------|-----------------------------------------------|\r\n|collection_id|string|The ID of the _**Rhino Test Case**_ collection.|\r\n\r\n### Request Fields\r\nThe request body follows the same format as [Get Test Case Collection](#get-test-case-collection) response content.\r\n\r\n### Request Example\r\n```\r\n[test-id] rhino-documentation-#003\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n  {\r\n    \"address\": \"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n    \"address-expected\": \"gravitymvctestapplication.azurewebsites.net\",\r\n    \"search-text-box\": \"//input[@id='SearchString']\",\r\n    \"search-button\": \"#SearchButton\",\r\n    \"students-table\": \"//td[@id]\"\r\n  }\r\n]\r\n\r\n>>>\r\n\r\n[test-id] rhino-documentation-#004\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                        |\r\n|----|-------------------------------------------------------------------|\r\n|200 |Success, the _**Collection**_ was returned as part of the response.|\r\n|400 |Bad Request, no test cases were provided in the request body.      |\r\n|404 |Not Found, the _**Collection**_ was not found.                     |\r\n|500 |Fail, the server encountered an unexpected error.                  |"
 							},
 							"response": [
 								{
@@ -3348,7 +3348,7 @@
 										"{{collection_id}}"
 									]
 								},
-								"description": "Deletes an existing _**Rhino Test Case**_ collection.\r\n\r\n```\r\nDELETE /api/v3/tests/:collection_id\r\n```\r\n\r\n|Name         |Type  |Description                                    |\r\n|-------------|------|-----------------------------------------------|\r\n|collection_id|string|The ID of the _**Rhino Test Case**_ collection.|\r\n\r\n> Please Note: Deleting a collection cannot be undone and it can affect the configurations which were using the test cases.\r\n\r\n### Response Codes\r\n|Code|Description                                             |\r\n|----|--------------------------------------------------------|\r\n|204 |Success, the _**Test Case**_ collection was deleted.    |\r\n|404 |Not Found, the _**Test Case**_ collection was not found.|\r\n|500 |Fail, the server encountered an unexpected error.       |"
+								"description": "Deletes an existing _**Rhino Test Case**_ collection.\r\n\r\n```\r\nDELETE /api/v3/tests/:collection_id\r\n```\r\n\r\n|Name         |Type  |Description                                    |\r\n|-------------|------|-----------------------------------------------|\r\n|collection_id|string|The ID of the _**Rhino Test Case**_ collection.|\r\n  \r\n> Please Note: Deleting a collection cannot be undone and it can affect the configurations which were using the test cases.  \r\n\r\n### Response Codes\r\n|Code|Description                                             |\r\n|----|--------------------------------------------------------|\r\n|204 |Success, the _**Test Case**_ collection was deleted.    |\r\n|404 |Not Found, the _**Test Case**_ collection was not found.|\r\n|500 |Fail, the server encountered an unexpected error.       |"
 							},
 							"response": [
 								{
@@ -3406,7 +3406,7 @@
 										"tests"
 									]
 								},
-								"description": "Deletes all existing _**Rhino Test Case**_ collections.\r\n\r\n```\r\nDELETE /api/v3/tests\r\n```\r\n\r\n> Please Note: Deleting a collection cannot be undone and it can affect the configurations which were using the test cases.\r\n\r\n### Response Codes\r\n|Code|Description                                           |\r\n|----|------------------------------------------------------|\r\n|204 |Success, the _**Test Case**_ collections were deleted.|\r\n|500 |Fail, the server encountered an unexpected error.     |"
+								"description": "Deletes all existing _**Rhino Test Case**_ collections.\r\n\r\n```\r\nDELETE /api/v3/tests\r\n```\r\n  \r\n> Please Note: Deleting a collection cannot be undone and it can affect the configurations which were using the test cases.\r\n  \r\n### Response Codes\r\n|Code|Description                                           |\r\n|----|------------------------------------------------------|\r\n|204 |Success, the _**Test Case**_ collections were deleted.|\r\n|500 |Fail, the server encountered an unexpected error.     |"
 							},
 							"response": [
 								{
@@ -3582,8 +3582,8 @@
 									"script": {
 										"id": "e7180e33-724e-44a7-90ea-0d0f3cba07db",
 										"exec": [
-											"pm.test(\"Status code is 400\", function () {\r",
-											"    pm.response.to.have.status(400);\r",
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -6347,67 +6347,67 @@
 	],
 	"variable": [
 		{
-			"id": "f7c23d00-ed82-416f-a47a-bb2aa5a49cc7",
+			"id": "a03be49e-eac5-47ec-b0e8-8f80c45616f2",
 			"key": "collection_id",
-			"value": "6201d52e-e120-4f80-9ad8-6b79efa67e76"
+			"value": "3b161261-55a5-4f5a-afd7-94cd60fa7f26"
 		},
 		{
-			"id": "4ff8afa9-1809-4b42-9a42-951dbdfa0ec8",
+			"id": "48cd577e-f5f3-42ee-b422-356231ae328a",
 			"key": "configuration_id",
-			"value": "c77d804f-f539-43bd-a2d2-475b4400a259"
+			"value": "64cf5275-d641-4bab-a7be-5eb0bc7dfe72"
 		},
 		{
-			"id": "6aa071e6-241f-4917-a5cb-83776fe7e797",
+			"id": "29778e41-2a25-48c4-aec7-414a72d9691c",
 			"key": "endpoint",
 			"value": "https://localhost:5001"
 		},
 		{
-			"id": "81bb86e7-2195-463a-9a49-2db352d911a3",
+			"id": "ce7f231e-e140-4905-bffe-507262d1b3ad",
 			"key": "rhino_drivers",
 			"value": "D:\\\\automation-env\\\\web-drivers"
 		},
 		{
-			"id": "5363f647-e06f-4a50-ae29-2aa522d8421f",
+			"id": "86ef5f34-2fb8-45f8-ae42-780e1799e5f1",
 			"key": "rhino_reports",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Test Run Reports\\\\rhino"
 		},
 		{
-			"id": "77ad9a7e-c511-4abd-af87-dba02a3f3092",
+			"id": "1b31ea03-ce77-431e-9f9a-432c444067ab",
 			"key": "rhino_reports_connection_string",
 			"value": "Server=.\\\\SQLExpress;Database=TestingWarehouse;Trusted_Connection=True;User Id=<db_user>;Password=<db_password>;"
 		},
 		{
-			"id": "90ffbeeb-6071-4b7c-a9ae-b89e20028610",
+			"id": "aa275f90-9de7-4569-8935-b370fe033678",
 			"key": "rhino_user",
 			"value": "automation@rhino.api"
 		},
 		{
-			"id": "3cc505f1-2e9c-4e89-9c5b-916d0717631b",
+			"id": "105ddc1a-0f60-4f76-b24e-6ff252110b55",
 			"key": "rhino_password",
 			"value": "Aa123456!"
 		},
 		{
-			"id": "9cf4f3c0-66a3-4517-bdda-b24cde407197",
+			"id": "f5e5ec86-11d3-4986-a0dd-131a85b591d4",
 			"key": "rhino_images",
 			"value": "D:\\\\garbage\\\\imagesOut"
 		},
 		{
-			"id": "168dc0f8-9d28-45a7-86b2-fda0523726ad",
+			"id": "69a7f574-7215-4ad3-9cf0-6c12ab95ff73",
 			"key": "rhino_logs",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Logs"
 		},
 		{
-			"id": "8fa1265e-c553-4cb9-8f60-9488c6aad71b",
+			"id": "c767ba72-b754-4433-bdc2-844b6ee9a714",
 			"key": "grid_endpoint",
 			"value": "."
 		},
 		{
-			"id": "adbe060d-9240-4ec0-bcb0-32cb19286894",
+			"id": "45fe17d1-2341-4f0a-a451-8352486cc7b1",
 			"key": "models_id",
 			"value": "2b912580-fbf1-4c1f-90ad-8a6d65b2f14a"
 		},
 		{
-			"id": "72973caf-f4c6-4d77-9fea-888d6f7bbfe5",
+			"id": "17fa4b17-1ba3-4eeb-a835-f0eeb4f9799d",
 			"key": "session_id",
 			"value": "e8ee3ad9a90947cb9a0cc2e214c32ac2"
 		}
