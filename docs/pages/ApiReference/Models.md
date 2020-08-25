@@ -71,14 +71,12 @@ Please see below for a typical response:
 				"name": "search students text-box",
 				"value": "#SearchString",
 				"type": "css selector",
-                "model": "Students Input Models",
 				"comment": "Search students text-box on the top center panel under students page."
 			},
 			{
 				"name": "search students button",
 				"value": "//input[@id='SearchButton']",
                 "type": "xpath",
-				"model": "Students Input Models",
 				"comment": "Search students button on the top center panel under students page."
 			}	
 		],
@@ -106,7 +104,6 @@ The following system fields are always included in the response:
 |name   |string|The name of the element (required and must be compliant with Rhino's language rules).      |
 |value  |string|The value of selected locator (required).                                                  |
 |type   |string|The type of selected locator. If no type specified, default is XPath.                      |
-|model  |string|The model name to which this entry belongs to. Default is the parent model name (optional).|
 |comment|string|Any comment relevant for further describing this model entry (optional).                   |
 
 ### Response Codes
@@ -136,14 +133,12 @@ The request body follows the same format as [Get Model](#get-model) response con
 				"name": "search students text-box",
 				"value": "#SearchString",
 				"type": "css selector",
-                "model": "Students Input Models",
 				"comment": "Search students text-box on the top center panel under students page."
 			},
 			{
 				"name": "search students button",
 				"value": "//input[@id='SearchButton']",
                 "type": "xpath",
-				"model": "Students Input Models",
 				"comment": "Search students button on the top center panel under students page."
 			}	
 		],
@@ -222,14 +217,12 @@ The request body follows the same format as [Get Model](#get-model) response con
 				"name": "search students text-box",
 				"value": "#SearchString",
 				"type": "css selector",
-                "model": "Students Input Models",
 				"comment": "Search students text-box on the top center panel under students page."
 			},
 			{
 				"name": "search students button",
 				"value": "//input[@id='SearchButton']",
                 "type": "xpath",
-				"model": "Students Input Models",
 				"comment": "Search students button on the top center panel under students page."
 			}	
 		],
