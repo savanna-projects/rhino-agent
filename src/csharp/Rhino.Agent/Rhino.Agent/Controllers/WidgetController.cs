@@ -158,12 +158,17 @@ namespace Rhino.Agent.Controllers
                 var testSuite = $"{token["suite"]}";
 
                 // convert into bridge object
-                var testCase = new TestCaseFactory(client).GetTestCases(string.Join(Environment.NewLine, testCaseSrc.Where(i => !string.IsNullOrEmpty(i)))).First();
+                var testCase = new RhinoTestCaseFactory(client).GetTestCases(string.Join(Environment.NewLine, testCaseSrc.Where(i => !string.IsNullOrEmpty(i)))).First();
                 testCase.TestSuite = testSuite;
                 testCase.Context["comment"] = $"{{noformat}}{DateTime.Now:yyyy-MM-dd hh:mm:ss}: Created by Rhino widget{{noformat}}";
 
                 // get connector & create test case
                 var connector = SetConnector(types, configuration);
+                if(connector == default)
+                {
+                    return NotFound(new { Message = $"Connector [{configuration.Connector}] was not found under the connectors repository." });
+                }
+
                 connector.ProviderManager.CreateTestCase(testCase);
 
                 // return results
@@ -258,6 +263,11 @@ namespace Rhino.Agent.Controllers
             // get connector type by it's name
             var type = byAttribute
                 .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Name.Equals(configuration.Connector, C));
+
+            if (type == default)
+            {
+                return default;
+            }
 
             // activate new connector instance
             return (IConnector)Activator.CreateInstance(type, new object[] { configuration, types });

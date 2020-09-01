@@ -67,7 +67,7 @@ namespace Rhino.Agent.Components
             Client = client;
             Actions = client.Actions().Select(i => client.Actions(i));
             Macros = Client.Macros().Select(i => client.Macros(i));
-            Operators = new TestCaseFactory(Client).OperatorsMap;
+            Operators = new RhinoTestCaseFactory(Client).OperatorsMap;
         }
         #endregion
 
@@ -109,7 +109,7 @@ namespace Rhino.Agent.Components
             var m = Client.Macros();
             var a = Client.Actions();
             var l = Client.Locators().Select(i => i.PascalToSpaceCase());
-            var o = new TestCaseFactory(Client).OperatorsMap.Select(i => i.Value);
+            var o = new RhinoTestCaseFactory(Client).OperatorsMap.Select(i => i.Value);
 
             // layout
             path = path.EndsWith("\\") ? path : $"{path}\\";

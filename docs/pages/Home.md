@@ -15,4 +15,5 @@
 * [Test Cases (Rhino Specs)](./ApiReference/TestCases.md 'TestCases')
 * [Logs](./ApiReference/Logs.md 'Logs')
 * [Rhino](./ApiReference/Rhino.md 'Rhino')
+* [Plugins](./ApiReference/Plugins.md 'Plugins')
 * [Debug](./ApiReference/Debug.md 'Debug')

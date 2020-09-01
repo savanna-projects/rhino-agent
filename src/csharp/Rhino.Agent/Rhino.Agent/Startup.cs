@@ -86,6 +86,7 @@ namespace Rhino.Agent
             services.AddScoped<RhinoModelRepository, RhinoModelRepository>();
             services.AddScoped<RhinoConfigurationRepository, RhinoConfigurationRepository>();
             services.AddScoped<RhinoLogsRepository, RhinoLogsRepository>();
+            services.AddScoped<RhinoPluginRepository, RhinoPluginRepository>();
 
             services.AddSingleton(typeof(JsonSerializerSettings), JsonSettings);
             services.AddSingleton(typeof(LiteDatabase), LiteDb);
