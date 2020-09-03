@@ -78,23 +78,34 @@ namespace Rhino.Agent.Domain
             // setup
             var path = $"{Environment.CurrentDirectory}/{RhinoPluginEntry.PluginsRhinoFolder}";
             var userPath = string.IsNullOrEmpty(authentication.UserName) || string.IsNullOrEmpty(authentication.Password)
-                ? string.Empty
+                ? path
                 : path + "-" + JsonConvert.SerializeObject(authentication).ToBase64();
 
+            // setup conditions
+            var isPublic = Directory.Exists(path);
+            var isPrivate = Directory.Exists(userPath);
+
             // NotFound conditions
-            if (!Directory.Exists(path) || Directory.GetDirectories(path).Length == 0)
+            if (!isPublic && !isPrivate)
             {
                 return Array.Empty<string>();
             }
 
-            // collect
-            var plugins = Directory.GetDirectories(path).SelectMany(Directory.GetFiles).Select(File.ReadAllText);
-            var userPlugins = string.IsNullOrEmpty(userPath)
-                ? Array.Empty<string>()
-                : Directory.GetDirectories(userPath).SelectMany(Directory.GetFiles).Select(File.ReadAllText);
+            // collect plugins
+            var onPlugins = new List<string>();
+            if (isPublic)
+            {
+                var collection = Directory.GetDirectories(path).SelectMany(Directory.GetFiles).Select(File.ReadAllText);
+                onPlugins.AddRange(collection);
+            }
+            if (isPrivate && !path.Equals(userPath, StringComparison.OrdinalIgnoreCase))
+            {
+                var collection = Directory.GetDirectories(userPath).SelectMany(Directory.GetFiles).Select(File.ReadAllText);
+                onPlugins.AddRange(collection);
+            }
 
             // results
-            return plugins.Concat(userPlugins);
+            return onPlugins;
         }
         #endregion
 
@@ -192,24 +203,27 @@ namespace Rhino.Agent.Domain
                     ? path
                     : path + "-" + JsonConvert.SerializeObject(authentication).ToBase64();
 
+                // setup conditions
+                var isPublic = Directory.Exists(Path.Combine(path, id));
+                var isPrivate = Directory.Exists(Path.Combine(userPath, id));
+
                 // exit conditions
-                if (!Directory.Exists(userPath))
+                if (!isPublic && !isPrivate)
                 {
                     return (HttpStatusCode.NotFound, default);
                 }
 
-                // get plugin for delete
-                var forDelete = Array.Find(Directory
-                    .GetDirectories(userPath), i => new DirectoryInfo(i).Name.Equals(id, StringComparison.OrdinalIgnoreCase));
-
-                // exit conditions
-                if (!Directory.Exists(forDelete))
+                // delete from public
+                if (isPublic)
                 {
-                    return (HttpStatusCode.NotFound, default);
+                    DeleteFolder(path: Path.Combine(path, id));
                 }
 
-                // delete
-                DeleteFolder(forDelete);
+                // delete from private
+                if (isPrivate)
+                {
+                    DeleteFolder(path: Path.Combine(userPath, id));
+                }
             }
             catch (Exception e) when (e != null)
             {

@@ -29,7 +29,6 @@ namespace Rhino.Agent.Controllers
         private readonly string Seperator =
             Environment.NewLine + Environment.NewLine + SpecSection.Separator + Environment.NewLine + Environment.NewLine;
         private const string CountHeader = "Rhino-Total-Specs";
-        private const string PrivateHeader = "Rhino-Private-Plugin";
 
         // members: state
         private readonly RhinoPluginRepository rhinoPlugin;
@@ -90,7 +89,7 @@ namespace Rhino.Agent.Controllers
         #region *** POST   ***
         // POST api/v3/plugins?isPrivate=true
         [HttpPost]
-        public async Task<IActionResult> Post([FromQuery]bool isPrivate)
+        public async Task<IActionResult> Post([FromQuery(Name = "prvt")]bool isPrivate)
         {
             // setup
             var pluginSpecs = (await Request.ReadAsync().ConfigureAwait(false)).Split(Seperator);
@@ -101,9 +100,11 @@ namespace Rhino.Agent.Controllers
             // response
             if (statusCode == HttpStatusCode.Created)
             {
+                var responseData = rhinoPlugin.Get(Request.GetAuthentication()).data.Count();
+                Response.Headers[CountHeader] = $"{responseData}";
                 return new ContentResult
                 {
-                    Content = string.Join(Seperator, rhinoPlugin.Get(Request.GetAuthentication()).data),
+                    Content = string.Join(Seperator, responseData),
                     ContentType = MediaTypeNames.Text.Plain,
                     StatusCode = HttpStatusCode.Created.ToInt32()
                 };
