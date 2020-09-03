@@ -34,4 +34,6 @@ The following is expected:
 Now listening on: https://localhost:5001
 Now listening on: http://localhost:5000
 Application started. Press Ctrl+C to shut down.
-```
+```  
+
+[Next Step: Run Verification Tests](./VerifyDeploymnet.md)

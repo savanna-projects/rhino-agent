@@ -4,6 +4,7 @@
 * [Create an Account (Free)](./GettingStarted/Register.md 'Register')
 * [Rhino Agent Deployment - On Process](./GettingStarted/Deployment.md 'Deployment')
 * [Rhino Agent Deployment - On IIS (Internet Information Service)](./GettingStarted/IISDeployment.md 'IISDeployment')
+* [Verify Rhino Deployment - Execute a Set of Verification and Integration Tests](./GettingStarted/VerifyDeployment.md 'VerifyDeployment')
 * [Install and Connect Rhino Widget (Chrome/Edge extensions)](./GettingStarted/ConnectWidget.md 'ConnectWidget')
 * [Widget Overview - User Interface and Different Sections](./GettingStarted/WidgetOverview.md 'WidgetOverview')
 * [Create Your First Automation](./GettingStarted/YourFirstAutomation.md 'YourFirstAutomation')

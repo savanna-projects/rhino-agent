@@ -5207,6 +5207,1917 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Plugins",
+			"item": [
+				{
+					"name": "Documentation",
+					"item": [
+						{
+							"name": "Create Plugins",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "351c8b3d-8e9b-4168-a8fd-df01f972601c",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\ndepartment\r\ntotal\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								},
+								"description": "Creates one or more new _**Rhino Plugin**_.\r\n\r\n```\r\nPOST /api/v3/plugins?prvt=(false|true)\r\n```\r\n\r\n|Name|Type   |Description                                                                                         |\r\n|----|-------|----------------------------------------------------------------------------------------------------|\r\n|prvt|boolean|Set to true in order to create the plugin as a private plugin available only to the user created it.|\r\n\r\n### Request Fields\r\nThe request body follows the same format as [Get Plugin](#get-plugin) response content.\r\n\r\n### Request Example\r\n```[test-id] SearchStudent\r\n[test-scenario] Search Student by First Name and Assert Page Address and Last Name\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id] SearchCourse\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                                                             |\r\n|----|--------------------------------------------------------------------------------------------------------|\r\n|200 |Success, some of the _**Plugin(s)**_ were not created and reasons were returned as part of the response.|\r\n|201 |Created, the _**Plugin(s)**_ were created returned as part of the response.                             |\r\n|500 |Fail, the server encountered an unexpected error.                                                       |"
+							},
+							"response": [
+								{
+									"name": "Create Plugins - Public",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\ndepartment\r\ntotal\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
+										},
+										"url": {
+											"raw": "{{endpoint}}/api/v3/plugins",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"api",
+												"v3",
+												"plugins"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								},
+								{
+									"name": "Create Plugins - Private",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\ndepartment\r\ntotal\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
+										},
+										"url": {
+											"raw": "{{endpoint}}/api/v3/plugins?prvt=true",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"api",
+												"v3",
+												"plugins"
+											],
+											"query": [
+												{
+													"key": "prvt",
+													"value": "true"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						},
+						{
+							"name": "Get Plugins",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ca80202b-0e29-4ea2-a05b-acd55ba68d44",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								},
+								"description": "Returns a list of available _**Rhino Plugins**_ content.\r\n\r\n```\r\nGET /api/v3/plugins\r\n```\r\n\r\n### Response Content\r\nThe response body is an array of specs follows the same format as [Get Plugin](#get-plugin) response content.  \r\nPlease see below for a typical response:\r\n\r\n```\r\n[test-id] SearchStudent\r\n[test-scenario] Search Student by First Name and Assert Page Address and Last Name\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id] SearchCourse\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                                   |\r\n|----|------------------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Plugin**_ collection returned as part of the response.  |\r\n|404 |Not Found, no public plugins and no private plugins were found for the issuer.|\r\n|500 |Fail, the server encountered an unexpected error.                             |"
+							},
+							"response": [
+								{
+									"name": "Get Plugins - Public",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{endpoint}}/api/v3/plugins",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"api",
+												"v3",
+												"plugins"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						},
+						{
+							"name": "Get Plugin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ae25f23d-86f6-4fef-b71a-f39359e50761",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/SearchStudent",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"SearchStudent"
+									]
+								},
+								"description": "Returns an existing _**Rhino Plugins**_ content.\r\n\r\n```\r\nGET /api/v3/plugins/:plugin_id\r\n```\r\n\r\n|Name     |Type  |Description                                                                                                |\r\n|---------|------|-----------------------------------------------------------------------------------------------------------|\r\n|plugin_id|string|The ID of the _**Rhino Plugin**_ this is the unique name of the plugin as given under \"test-id\" annotation.|\r\n\r\n### Response Content\r\nPlease see below for a typical response:\r\n\r\n```\r\n[test-id] SearchStudent\r\n[test-scenario] Search Student by First Name and Assert Page Address and Last Name\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n```\r\n\r\nThe following system fields are always included in the response:\r\n\r\n> The response a Rhino Plugin Spec of media type `text/plain`.\r\n> The fields are annotated following Rhino's language text format.\r\n\r\n#### Mandatory Fields\r\n|Name         |Type  |Description                                        |\r\n|-------------|------|---------------------------------------------------|\r\n|test-id      |text  |The **unique name** of the plugin.                 |\r\n|test-scenario|text  |The title of the plugin.                           |\r\n|test-actions |text  |Line separated list of the test actions to execute.|\r\n|test-examples|object|At least one example of how to call your plugin.   |\r\n\r\nThe following system fields are sometimes included in the response:\r\n\r\n#### Optional Fields\r\n|Name                 |Type|Description                                                                                                          |\r\n|---------------------|----|---------------------------------------------------------------------------------------------------------------------|\r\n|test-expected-results|text|Line separated list of the test expected results to execute.                                                         |\r\n|test-parameters      |text|Line separated list of parameters which will be exposed when calling this plugin, using Rhino CLI integration format.|\r\n\r\n### Response Codes\r\n|Code|Description                                                      |\r\n|----|-----------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Plugin**_ returned as part of the response.|\r\n|404 |Not Found, the provided _**Rhino Plugin**_ was not found.        |\r\n|500 |Fail, the server encountered an unexpected error.                |"
+							},
+							"response": [
+								{
+									"name": "Get Plugin - Public",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{endpoint}}/api/v3/plugins/SearchStudent",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"api",
+												"v3",
+												"plugins",
+												"SearchStudent"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						},
+						{
+							"name": "Delete Plugin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d1819374-9193-420b-be15-538cbee1c6ec",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/SearchStudent",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"SearchStudent"
+									]
+								},
+								"description": "Deletes an existing _**Rhino Plugin**_.\r\n\r\n```\r\nDELETE /api/v3/configurations/:plugin_id\r\n```\r\n\r\n|Name     |Type  |Description                                                                                                |\r\n|---------|------|-----------------------------------------------------------------------------------------------------------|\r\n|plugin_id|string|The ID of the _**Rhino Plugin**_ this is the unique name of the plugin as given under \"test-id\" annotation.|\r\n\r\n> Please Note: Deleting a plugin cannot be undone and can affect test cases.\r\n\r\n### Response Codes\r\n|Code|Description                                                                         |\r\n|----|------------------------------------------------------------------------------------|\r\n|204 |Success, the _**Rhino Plugin**_ was deleted.                                        |\r\n|404 |Not Found, the _**Rhino Plugin**_ was not found under the configurations collection.|\r\n|500 |Fail, the server encountered an unexpected error.                                   |"
+							},
+							"response": [
+								{
+									"name": "Delete Plugin - Public",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{endpoint}}/api/v3/plugins/SearchStudent",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"api",
+												"v3",
+												"plugins",
+												"SearchStudent"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						},
+						{
+							"name": "Delete Plugins",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "2b5a643c-0b06-432c-a733-241921ce225d",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								},
+								"description": "Deletes all existing _**Rhino Plugin**_.\r\n\r\n```\r\nDELETE /api/v3/configurations\r\n```\r\n\r\n> Please Note: Deleting a plugin cannot be undone and can affect test cases.\r\n\r\n### Response Codes\r\n|Code|Description                                      |\r\n|----|-------------------------------------------------|\r\n|204 |Success, the _**Rhino Plugins**_ were deleted.   |\r\n|404 |Not Found, the _**Rhino Plugin**_ were not found.|\r\n|500 |Fail, the server encountered an unexpected error.|"
+							},
+							"response": [
+								{
+									"name": "Delete Plugins",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{endpoint}}/api/v3/plugins",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"api",
+												"v3",
+												"plugins"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						}
+					],
+					"description": "This guide explains how to access and use _**Rhino API**_ to create Rhino Plugins.",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8b768305-eda6-4306-81e7-72d54a9fb69e",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "39df91d9-db0f-42e3-a565-1bc323afcc0b",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Tests: Sanity",
+					"item": [
+						{
+							"name": "Flow Action #01: Create Plugins",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "272ab996-2f25-43db-8e27-97f6a1e84d03",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 4\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('4');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\ndepartment\r\ntotal\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #02: Create Plugins Repeat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "12797aa9-da2d-4480-bb81-54b9015d4300",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 4\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('4');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\ndepartment\r\ntotal\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #03: Create Plugins - Private",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "01a14234-f0d7-4796-9c74-bfa47e937b43",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 8\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('8');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id]        PrivateCircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        PrivateSearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\ndepartment\r\ntotal\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        PrivateSearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        PrivateSearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins?prvt=true",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									],
+									"query": [
+										{
+											"key": "prvt",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #04: Get Plugin - Positive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "2710ffbd-2458-495a-b220-1ef1350b75e8",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 1\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('1');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/SearchStudent",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"SearchStudent"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #05: Get Plugin - Positive Private",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "03cb1d0b-ea9b-4341-95a9-4b779646926e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 1\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('1');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/PrivateSearchStudent",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"PrivateSearchStudent"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #06: Get Plugin - Private No Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "05129adf-a08f-494f-a382-b5863cefba45",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/PrivateSearchStudent",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"PrivateSearchStudent"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #07: Get Plugin - Not Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1eb3885a-d7c8-4a95-9c39-81e043c4a91f",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/NotAPlugin",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"NotAPlugin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #08: Delete Plugin - Private No Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5797d392-3bc5-4dfc-8167-3f6fa470bfdc",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/PrivateSearchStudent",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"PrivateSearchStudent"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #09: Delete Plugin - Private Positive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "81f46578-303d-42ab-9edb-9aa5a19af757",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/PrivateSearchStudent",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"PrivateSearchStudent"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #10: Get Plugins - Positive Private",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "76318af3-a641-4f6f-84b9-105cc368d4f1",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 7\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('7');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #11: Delete Plugin - Positive with Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b10e48c4-ee7c-4c5b-bd3a-48c74e62b322",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/SearchStudent",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"SearchStudent"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #12: Delete Plugin - Positive without Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0f547244-bcf0-4521-8ae1-fa087f658c20",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins/SearchCourses",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins",
+										"SearchCourses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #13: Get Plugins - Positive Private",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "03bad126-d183-47da-b5af-faedac1dc22f",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 5\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('5');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #14: Delete All Plugins - No Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "819a9f48-48cd-4890-97e7-3135c5e1c281",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #13: Get Plugins - Positive Private",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a4158ec2-a454-426d-82c5-b3dcd9b35809",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 3\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('3');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #14: Create Plugins",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "69029973-72e6-4479-9b2c-e925a0f3ea1f",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 4\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('4');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\ndepartment\r\ntotal\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #14: Create Plugins Private User #2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "37657c57-0c7c-40c8-ba9f-5832265c9202",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 6\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('6');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "user2@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id]        Private2CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        Private2SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\ndepartment\r\ntotal\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|"
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins?prvt=true",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									],
+									"query": [
+										{
+											"key": "prvt",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #15: Delete All Plugins - Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "91f12656-81e1-4adc-8099-3c68869298f6",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #16: Get Plugins - Positive User #2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "17f148eb-23f1-4c30-b39b-4c3504d12016",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 6\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('6');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "user2@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #17: Delete All Plugins - Credentials User #2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f5398ce5-bcb3-4611-9cb7-c3976df75e16",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "user2@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #18: Get Plugins - Positive Private User #1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7935181b-9429-4e4f-b6c4-4b6dfbb72f8a",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 4\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('4');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #19: Get Plugins - Positive Private User #2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "24d1da10-5406-4b20-b8a6-b00b6131264a",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 4\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('4');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "user2@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #20: Delete All Plugins - Public No Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8e741067-0726-4b2a-a061-441192ad5cce",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #21: Get Plugins - Positive Private User #1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a1c48770-6e8a-4ebf-a097-6197a21c4e6a",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #22: Get Plugins - Positive Private User #2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b4db9051-9f92-4499-b6a3-a50f17d8240f",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "user2@rhino.api",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "user@rhino.api",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "basic",
+						"basic": [
+							{
+								"key": "password",
+								"value": "{{rhino_password}}",
+								"type": "string"
+							},
+							{
+								"key": "username",
+								"value": "{{rhino_user}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "192e7973-982f-4b5d-9d1d-167ec6ae23cc",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "82aebc36-fa58-4593-bb25-5bdccbc9faac",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Tests: Integration",
+					"item": [
+						{
+							"name": "Flow Action #01: Create Plugins",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f6b2dffe-2007-4d42-a472-3f9484c8da38",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Plugins count is 1\", () => {\r",
+											"  pm.expect(pm.response.headers.get('Rhino-Total-Specs')).to.eql('1');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\nfirst_name\r\nlast_name\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {(?i)student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|"
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #02: Create Configuration - Local Driver",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "373c53a6-0018-410a-9e98-f9d9a208c455",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"pm.collectionVariables.set('configuration_id', jsonData.data.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Rhino Automation - Chrome\",\r\n    \"testsRepository\": [ ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"D:\\\\automation-env\\\\web-drivers\"\r\n        }\r\n    ],\r\n    \"dataSource\": [ ],\r\n    \"models\": [ ],\r\n    \"connector\": \"connector_text\",\r\n    \"gravityEndpoint\": \"\",\r\n    \"authentication\": {\r\n        \"password\": \"{{rhino_user}}\",\r\n        \"userName\": \"{{rhino_password}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3.0,\r\n        \"qualityThreshold\": 0.0,\r\n        \"toleranceThreshold\": 0.0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": true,\r\n        \"screenshotsOut\": \"{{rhino_images}}\",\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reportOut\": \"{{rhino_reports}}\",\r\n        \"logsOut\": \"{{rhino_logs}}\",\r\n        \"reporters\": [\"reporter_basic\", \"reporter_warehouse\"],\r\n        \"connectionString\": \"{{rhino_reports_connection_string}}\",\r\n        \"dataProvider\": null,\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/configurations",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"configurations"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #03: Run by Collection (one configuration)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8b27cb28-438b-4a85-9066-1a4ec968a802",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"No failed tests\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.totalFail).to.eql(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {https://gravitymvctestapplication.azurewebsites.net/student} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. search student {{$ --first_name:Carson --last_name:Alexander}}\r\n5. wait for {3000} milliseconds\r\n6. close browser"
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/rhino/configurations/{{configuration_id}}",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"rhino",
+										"configurations",
+										"{{configuration_id}}"
+									]
+								},
+								"description": "Runs _**Rhino Spec**_ directly from the request body.\r\n\r\n```\r\nPOST /api/v3/rhino/configurations/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                             |\r\n|----------------|------|----------------------------------------|\r\n|configuration_id|string|The ID of the _**Rhino Configuration**_.|\r\n\r\n### Request Fields\r\nThe request body follows the same format as _**Get Test Case Collection**_ response content.\r\n\r\n### Request Example\r\nPlease see below for a typical request:\r\n\r\n```\r\n[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]\r\n\r\n>>>\r\n\r\n[test-id] rhino-documentation-#002\r\n...\r\n```\r\n\r\n## Response Content\r\n\r\nThe response body follows the same format as [Run by Configuration](#run-by-configuration) response content.\r\n\r\n### Response Codes\r\n|Code|Description                                                         |\r\n|----|--------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Result**_ is returned as part of the response.|\r\n|400 |Bad Request, _**Rhino Configuration**_ was not provided.            |\r\n|404 |Not Found, the _**Rhino Configuration**_ was not found.             |\r\n|500 |Fail, the server encountered an unexpected error.                   |"
+							},
+							"response": [
+								{
+									"name": "Run by Collection (one configuration)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]"
+										},
+										"url": {
+											"raw": "{{endpoint}}/api/v3/rhino/configurations/{{configuration_id}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"api",
+												"v3",
+												"rhino",
+												"configurations",
+												"{{configuration_id}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Thu, 20 Aug 2020 18:59:12 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Content-Length",
+											"value": "5004"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"key\": \"unattached-2020.08.20.09.58.56.303\",\n    \"actual\": true,\n    \"reasonPhrase\": \"\",\n    \"title\": \"Rhino Automation - Test Run Generator (ID: 2020.08.20.09.58.56.303); (Configuration: Rhino Automation - Chrome)\",\n    \"start\": \"2020-08-20T21:58:56.3039452+03:00\",\n    \"end\": \"2020-08-20T21:59:10.6548002+03:00\",\n    \"runTime\": \"00:00:14.3508550\",\n    \"testCases\": [\n        {\n            \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0\",\n            \"key\": \"rhino-documentation-#001\",\n            \"testSuite\": \"\",\n            \"testRunKey\": \"unattached-2020.08.20.09.58.56.303\",\n            \"scenario\": \"search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\",\n            \"reasonPhrase\": \"\",\n            \"actual\": true,\n            \"steps\": [\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-0\",\n                    \"testCase\": \"\",\n                    \"action\": \"1. go to url {https://gravitymvctestapplication.azurewebsites.net/student} using any compliant web-browser\",\n                    \"command\": \"GoToUrl\",\n                    \"expected\": \"<span>assert {url} match {gravitymvctestapplication.azurewebsites.net}</span>\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:03.9650295\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-1\",\n                    \"testCase\": \"\",\n                    \"action\": \"2. close all child windows (to make sure only the web site is open and visible)\",\n                    \"command\": \"CloseAllChildWindows\",\n                    \"expected\": \"\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:00.3620576\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-2\",\n                    \"testCase\": \"\",\n                    \"action\": \"3. send keys {Carson} into {//input[@id='SearchString']} text-box\",\n                    \"command\": \"SendKeys\",\n                    \"expected\": \"\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:00.4648217\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-3\",\n                    \"testCase\": \"\",\n                    \"action\": \"4. click on {#SearchButton} using {css selector}\",\n                    \"command\": \"Click\",\n                    \"expected\": \"\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:00.6452210\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-4\",\n                    \"testCase\": \"\",\n                    \"action\": \"5. wait for {3000} milliseconds\",\n                    \"command\": \"Wait\",\n                    \"expected\": \"<span>assert {count} on {//input[@id='SearchString']} is greater than {0}</span>\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:03.7343510\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-5\",\n                    \"testCase\": \"\",\n                    \"action\": \"6. close browser\",\n                    \"command\": \"CloseBrowser\",\n                    \"expected\": \"\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:00.1413591\"\n                }\n            ],\n            \"totalSteps\": 6,\n            \"link\": \"\",\n            \"iteration\": 0,\n            \"dataSource\": [\n                {\n                    \"address\": \"https://gravitymvctestapplication.azurewebsites.net/student\",\n                    \"address-expected\": \"gravitymvctestapplication.azurewebsites.net\",\n                    \"search-text-box\": \"//input[@id='SearchString']\",\n                    \"search-button\": \"#SearchButton\",\n                    \"students-table\": \"//td[@id]\"\n                }\n            ],\n            \"modelEntries\": [],\n            \"priority\": \"\",\n            \"severity\": \"\",\n            \"tolerance\": 0,\n            \"passedOnAttempt\": 0,\n            \"qualityRank\": 100,\n            \"inconclusive\": false,\n            \"start\": \"2020-08-20T21:58:56.5027089+03:00\",\n            \"end\": \"2020-08-20T21:59:10.632288+03:00\",\n            \"runTime\": \"00:00:14.1295791\",\n            \"environment\": {\n                \"applicationParams\": {},\n                \"macroParams\": {},\n                \"sessionParams\": {}\n            }\n        }\n    ],\n    \"totalTests\": 1,\n    \"totalSteps\": 6,\n    \"totalPass\": 1,\n    \"totalPassSteps\": 6,\n    \"totalFail\": 0,\n    \"totalFailSteps\": 0,\n    \"totalIterations\": 1,\n    \"totalInconclusive\": 0,\n    \"successRate\": 100,\n    \"qualityRank\": 100,\n    \"link\": null,\n    \"performancePoints\": {\n        \"rhino-documentation-#001_0\": 0.235492985\n    },\n    \"priorityPoints\": {\n        \"\": 0\n    },\n    \"severityPoints\": {\n        \"\": 0\n    },\n    \"aboveOptimalRate\": 0,\n    \"aboveOptimalCount\": 0,\n    \"belowOptimalRate\": 100,\n    \"belowOptimalCount\": 1,\n    \"averageTestTime\": \"00:00:14.1295791\",\n    \"totalTimeouts\": \"00:00:00\",\n    \"loadTimeouts\": \"00:00:00\",\n    \"elementTimeouts\": \"00:00:00\",\n    \"severity\": 0,\n    \"priority\": 0,\n    \"tolerance\": 0\n}"
+								}
+							]
+						},
+						{
+							"name": "Flow Action #04: Delete Configurations",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "01c9f5ab-ed6e-4da2-a617-2a1eec6885da",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/configurations",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"configurations"
+									]
+								},
+								"description": "Delete all configurations"
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #05: Delete All Plugins - Public No Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6d619e4c-8dd8-4262-b7d0-433c4adce171",
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/api/v3/plugins",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"plugins"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"description": "# API - Introduction\r\nUse the following API methods to request details about _**Rhino Plugins**_ and to create or modify them.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "75f86621-8bc0-45fc-a983-0eb286f63ccd",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "55934e52-1a0b-4f1d-a52d-73841d6fb705",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Logs & Analysis",
 			"item": [
 				{
@@ -6349,64 +8260,64 @@
 	],
 	"variable": [
 		{
-			"id": "7c9901b9-c2a8-4d3d-a5ef-b8853bb96035",
+			"id": "95996471-5ebf-4f42-bcc6-f2fbb5322f1b",
 			"key": "collection_id",
-			"value": "168dca46-b91e-4af9-9ee2-85c5153b41f2"
+			"value": "0d2b99a6-330b-4ac3-9774-892cf63591f1"
 		},
 		{
-			"id": "4a57ef8b-54d6-43bd-bbb7-3ba58048070a",
+			"id": "111a4f24-9465-4413-af5d-e8718ca0b9cc",
 			"key": "configuration_id",
-			"value": "4bcb5e3e-f149-4aaf-9f43-27557ddf8c12"
+			"value": "1166ab84-e855-41e6-8e25-ee5c07df2dda"
 		},
 		{
-			"id": "dcd15698-004e-4c57-a857-0f4b827cc201",
+			"id": "d440ecc1-e948-43a3-ae52-ad4035a9ae42",
 			"key": "endpoint",
 			"value": "https://localhost:5001"
 		},
 		{
-			"id": "71d7a113-b35c-4841-bcac-72421a8c4705",
+			"id": "14af5451-0139-4b26-9999-2ca318c889bd",
 			"key": "rhino_drivers",
 			"value": "."
 		},
 		{
-			"id": "bea4a60f-d2a8-4aa5-9e87-4f6a95517518",
+			"id": "3cb341d7-e594-4b82-a8b9-dc7f28f9ce4e",
 			"key": "rhino_reports",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Test Run Reports\\\\rhino"
 		},
 		{
-			"id": "9d5ba8a0-cd9c-4720-ae5f-44cdf8e2141f",
+			"id": "ee3b375b-dd5c-40f0-93ee-81d9c143a3a8",
 			"key": "rhino_reports_connection_string",
 			"value": "Server=.\\\\SQLExpress;Database=TestingWarehouse;Trusted_Connection=True;User Id=<db_user>;Password=<db_password>;"
 		},
 		{
-			"id": "0c6bd8b9-3849-44fe-95d3-10ef4fbf2c33",
+			"id": "93977464-646e-44cd-9e54-6cbebfdfc898",
 			"key": "rhino_user",
 			"value": ""
 		},
 		{
-			"id": "905f4355-7625-457b-ab79-55b58ca6a18d",
+			"id": "5ec33ff3-b69c-4ec6-afc4-84f0121ac417",
 			"key": "rhino_password",
 			"value": ""
 		},
 		{
-			"id": "99f5dfa3-0885-40b8-8f97-15af5e74207b",
+			"id": "6989e93d-57bf-4151-9a42-0ef0da0e8835",
 			"key": "rhino_images",
 			"value": "D:\\\\garbage\\\\imagesOut"
 		},
 		{
-			"id": "20a040df-d778-409c-8763-8ca5f844de0c",
+			"id": "79943d84-b070-4f22-bc93-9cdcd9a63bd3",
 			"key": "rhino_logs",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Logs"
 		},
 		{
-			"id": "0d14479c-b62e-42f3-8a7c-5cfe4583603e",
+			"id": "9373ef83-86d1-4606-bac3-2fc15d85d219",
 			"key": "models_id",
-			"value": "bfdeb27d-5d8e-4e18-93f4-b6e551255c6c"
+			"value": "533ceca6-0a92-4176-8453-3720af8e44d7"
 		},
 		{
-			"id": "e1592478-2417-4dd6-9a14-ede844d8ac97",
+			"id": "9fe81197-9a6f-407e-96a7-bacd207fa635",
 			"key": "session_id",
-			"value": "3e876d1126f26a2363f22b577740c404"
+			"value": "cd0993bdad42f1fe8bb5121a7845b22b"
 		}
 	],
 	"protocolProfileBehavior": {}
