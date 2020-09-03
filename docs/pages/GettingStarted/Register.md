@@ -9,4 +9,6 @@ In order to execute your plugins using Gravity/Rhino API, you need to create an 
 4. Validate your password
 5. Click on "Register" button
 
-![image_1_0.png](../../images/image_1_0.png)
+![image_1_0.png](../../images/image_1_0.png)  
+
+[Next Step: Get Rhino](./Deploymnet.md)
