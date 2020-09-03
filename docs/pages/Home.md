@@ -1,15 +1,15 @@
 # Rhino API Reference Guide
 
 ## Getting Started
-* [Register (Free)](./GettingStarted/Register.md 'Register')
-* [Deployment](./GettingStarted/Deployment.md 'Deployment')
-* [Connect to Widget](./GettingStarted/ConnectWidget.md 'ConnectWidget')
-* [Widget Overview](./GettingStarted/WidgetOverview.md 'WidgetOverview')
-* [Your First Automation](./GettingStarted/YourFirstAutomation.md 'YourFirstAutomation')
-* [Running on a Command Line](./GettingStarted/CommandLine.md 'CommandLine')
-* [IIS Deployment](./GettingStarted/IISDeployment.md 'IISDeployment')
+* [Create an Account (Free)](./GettingStarted/Register.md 'Register')
+* [Rhino Agent Deployment - On Process](./GettingStarted/Deployment.md 'Deployment')
+* [Rhino Agent Deployment - On IIS (Internet Information Service)](./GettingStarted/IISDeployment.md 'IISDeployment')
+* [Install and Connect Rhino Widget (Chrome/Edge extensions)](./GettingStarted/ConnectWidget.md 'ConnectWidget')
+* [Widget Overview - User Interface and Different Sections](./GettingStarted/WidgetOverview.md 'WidgetOverview')
+* [Create Your First Automation](./GettingStarted/YourFirstAutomation.md 'YourFirstAutomation')
+* [Run Your Automation from a Command Line](./GettingStarted/CommandLine.md 'CommandLine')
 
-## Reference
+## API Reference
 * [Configurations](./ApiReference/Configurations.md 'Configurations')
 * [Models](./ApiReference/Models.md 'Models')
 * [Test Cases (Rhino Specs)](./ApiReference/TestCases.md 'TestCases')
