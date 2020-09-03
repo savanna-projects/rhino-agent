@@ -11,7 +11,9 @@
 ## Requierments
 1. Either [Google Chrome](https://www.google.com/chrome/) or [MS Edge Chromium](https://www.microsoft.com/en-us/edge) installed.  
 
-> You can install Rhino Widget from the cloud, go to the relevant market place (Google Store or Edge Market Place), search for Rhino and install.  
+> You can install Rhino Widget from the cloud.  
+> [Google Store](https://chrome.google.com/webstore/detail/rhino-steps-recorder-and/giekjanbmlmabfagaddfkpcijefpgkdf)  
+> [Edge Market Place](https://microsoftedge.microsoft.com/addons/detail/rhino-steps-recorder-and-/afmifehgcfflgnlhkfggdkmdlfmhpjag)
 
 ## On Premise Installation Google Chrome
 1. Download the latest [Rhino Widget Release](https://github.com/savanna-projects/rhino-widget/releases) ZIP file.
@@ -41,7 +43,7 @@ _image 1.7 - Extensions Screen, Extension Loaded_
 ## On Premise Installation MS Edge
 1. Download the latest [Rhino Widget Release](https://github.com/savanna-projects/rhino-widget/releases) ZIP file.
 2. Extract the file and place the extracted folder under the location you want to hold Rhino Widget (i.e. C:\Rhino\Widget).
-3. Open Chrome Browser.
+3. Open Edge Browser.
 4. Type ```edge://extensions/``` in the address bar, this will take you to the **Extensions** page.
 5. Switch on **Developer mode**, on the bottom left corner of the screen
 
