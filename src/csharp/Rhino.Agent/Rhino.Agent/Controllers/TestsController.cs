@@ -39,7 +39,7 @@ namespace Rhino.Agent.Controllers
         /// <summary>
         /// Creates a new instance of this Rhino.Agent.Controllers.TestsController.
         /// </summary>
-        /// <param name="provider"><see cref="IServiceProvider"/> to use with this Rhino.Agent.Controllers.ModelsController.</param>
+        /// <param name="provider"><see cref="IServiceProvider"/> to use with this Rhino.Agent.Controllers.TestsController.</param>
         public TestsController(IServiceProvider provider)
         {
             rhinoTest = provider.GetRequiredService<RhinoTestCaseRepository>();

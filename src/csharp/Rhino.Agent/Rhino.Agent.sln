@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiReference", "ApiReferenc
 		..\..\..\docs\pages\ApiReference\Debug.md = ..\..\..\docs\pages\ApiReference\Debug.md
 		..\..\..\docs\pages\ApiReference\Logs.md = ..\..\..\docs\pages\ApiReference\Logs.md
 		..\..\..\docs\pages\ApiReference\Models.md = ..\..\..\docs\pages\ApiReference\Models.md
+		..\..\..\docs\pages\ApiReference\Plugins.md = ..\..\..\docs\pages\ApiReference\Plugins.md
 		..\..\..\docs\pages\ApiReference\Rhino.md = ..\..\..\docs\pages\ApiReference\Rhino.md
 		..\..\..\docs\pages\ApiReference\TestCases.md = ..\..\..\docs\pages\ApiReference\TestCases.md
 	EndProjectSection
@@ -31,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "Gettings
 		..\..\..\docs\pages\GettingStarted\ConnectWidget.md = ..\..\..\docs\pages\GettingStarted\ConnectWidget.md
 		..\..\..\docs\pages\GettingStarted\Deployment.md = ..\..\..\docs\pages\GettingStarted\Deployment.md
 		..\..\..\docs\pages\GettingStarted\Register.md = ..\..\..\docs\pages\GettingStarted\Register.md
+		..\..\..\docs\pages\GettingStarted\ServerSettings.md = ..\..\..\docs\pages\GettingStarted\ServerSettings.md
+		..\..\..\docs\pages\GettingStarted\VerifyDeployment.md = ..\..\..\docs\pages\GettingStarted\VerifyDeployment.md
 		..\..\..\docs\pages\GettingStarted\WidgetOverview.md = ..\..\..\docs\pages\GettingStarted\WidgetOverview.md
 	EndProjectSection
 EndProject

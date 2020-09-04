@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
+
+using Gravity.Abstraction.Logging;
 using Gravity.Services.Comet;
 
 using LiteDB;
@@ -21,7 +23,6 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-using Rhino.Agent.Components;
 using Rhino.Agent.Domain;
 using Rhino.Api.Extensions;
 using Rhino.Api.Parser.Components;
@@ -79,19 +80,31 @@ namespace Rhino.Agent
             services.AddCors(o => o.AddPolicy(CorsPolicy, builder
                 => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
-            // This lambda determines the DI container mapping            
-            services.AddScoped<KnowledgeBaseManager, KnowledgeBaseManager>();
+            // This lambda determines the DI container mapping
             services.AddScoped<PluginParser, PluginParser>();
             services.AddScoped<RhinoTestCaseRepository, RhinoTestCaseRepository>();
             services.AddScoped<RhinoModelRepository, RhinoModelRepository>();
             services.AddScoped<RhinoConfigurationRepository, RhinoConfigurationRepository>();
             services.AddScoped<RhinoLogsRepository, RhinoLogsRepository>();
+            services.AddScoped<RhinoPluginRepository, RhinoPluginRepository>();
+            services.AddScoped<RhinoKbRepository, RhinoKbRepository>();
 
             services.AddSingleton(typeof(JsonSerializerSettings), JsonSettings);
             services.AddSingleton(typeof(LiteDatabase), LiteDb);
             services.AddSingleton(typeof(IEnumerable<Type>), Utilities.Types);
             services.AddSingleton(typeof(HttpClient), HttpClient);
             services.AddSingleton(typeof(Orbit), new Orbit(Utilities.Types));
+            services.AddSingleton(typeof(ILogger), GetLogger());
+        }
+
+        private ILogger GetLogger()
+        {
+            // get in folder
+            var inFolder = Configuration.GetValue<string>("rhino:reportConfiguration:logsOut");
+            inFolder = string.IsNullOrEmpty(inFolder) ? Environment.CurrentDirectory + "/Logs" : inFolder;
+
+            // setup logger
+            return new TraceLogger(applicationName: "RhinoAgent", loggerName: string.Empty, inFolder);
         }
 
         /// <summary>

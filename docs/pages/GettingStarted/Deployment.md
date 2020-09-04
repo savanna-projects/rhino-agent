@@ -22,7 +22,7 @@ See also [Configuring HTTPS in ASP.NET Core Across Different Platforms](https://
 
 ## Deploy Rhino Server (on Process)
 1. Download the latest [Rhino Agent](https://github.com/savanna-projects/rhino-agent/releases) ZIP file.
-2. Extract the file and place the extracted folder under the location you want to hold Rhino Widget (i.e. C:\Rhino\Widget).
+2. Extract the file and place the extracted folder under the location you want to hold Rhino Agent (i.e. C:\Rhino\Agent).
 3. Navigate into the folder in which you have extracted Rhino Agent.
 4. Run the following command:
 ```
@@ -34,4 +34,6 @@ The following is expected:
 Now listening on: https://localhost:5001
 Now listening on: http://localhost:5000
 Application started. Press Ctrl+C to shut down.
-```
+```  
+
+[Next Step: Server Settings](./ServerSettings.md)
