@@ -3,32 +3,28 @@
  * 
  * RESSOURCES
  */
+using Gravity.Abstraction.Logging;
 using Gravity.Services.Comet;
-using Gravity.Services.Comet.Engine.Extensions;
 using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Rhino.Agent.Domain;
 using Rhino.Agent.Extensions;
-using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.Configuration;
-using Rhino.Api.Contracts.Interfaces;
 using Rhino.Api.Parser;
 using Rhino.Connectors.Text;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Rhino.Agent.Controllers
@@ -52,18 +48,20 @@ namespace Rhino.Agent.Controllers
         private readonly RhinoKbRepository manager;
         private readonly Orbit client;
         private readonly IEnumerable<Type> types;
-        private readonly ILogger<WidgetController> logger;
+        private readonly ILogger logger;
+        private readonly IConfiguration appSettings;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Controllers.WidgetController
         /// </summary>
-        public WidgetController(IServiceProvider serviceProvider)
+        public WidgetController(IServiceProvider provider)
         {
-            manager = serviceProvider.GetRequiredService<RhinoKbRepository>();
-            types = serviceProvider.GetRequiredService<IEnumerable<Type>>();
-            logger = serviceProvider.GetRequiredService<ILogger<WidgetController>>();
-            jsonSettings = serviceProvider.GetRequiredService<JsonSerializerSettings>();
-            client = serviceProvider.GetRequiredService<Orbit>();
+            appSettings = provider.GetRequiredService<IConfiguration>();
+            manager = provider.GetRequiredService<RhinoKbRepository>();
+            types = provider.GetRequiredService<IEnumerable<Type>>();
+            logger = provider.GetRequiredService<ILogger>().CreateChildLogger(loggerName: nameof(WidgetController));
+            jsonSettings = provider.GetRequiredService<JsonSerializerSettings>();
+            client = provider.GetRequiredService<Orbit>();
         }
 
         // GET api/v3/widget/action
@@ -124,8 +122,7 @@ namespace Rhino.Agent.Controllers
         public async Task<IActionResult> Playback()
         {
             // read test case from request body
-            var streamReader = new StreamReader(Request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+            var requestBody = await Request.ReadAsync().ConfigureAwait(false);
 
             try
             {
@@ -134,24 +131,28 @@ namespace Rhino.Agent.Controllers
 
                 // parse test case & configuration
                 var configuration = token["config"].ToObject<RhinoConfiguration>();
+                configuration.ApplySettings(appSettings);
                 configuration.EngineConfiguration.PageLoadTimeout = 60000;
                 configuration.EngineConfiguration.ElementSearchingTimeout = 15000;
+                configuration.ReportConfiguration.LocalReport = false;
+                configuration.ScreenshotsConfiguration.ReturnScreenshots = false;
 
                 // execute case
-                var connector = new TextConnector(configuration, types);
+                var connector = new TextConnector(configuration, types, logger);
                 var testResults = connector.Connect().Execute();
 
                 // return results
                 return Ok(testResults);
             }
-            catch (Exception ex)
+            catch (Exception e) when (e != null)
             {
-                logger.LogCritical(ex, ex.Message, requestBody);
-                return new StatusCodeResult(500);
-            }
-            finally
-            {
-                streamReader.Dispose();
+                logger?.Error(e.Message, e);
+                return new ContentResult
+                {
+                    Content = $"{e}",
+                    ContentType = MediaTypeNames.Text.Plain,
+                    StatusCode = HttpStatusCode.InternalServerError.ToInt32()
+                };
             }
         }
 
@@ -160,8 +161,7 @@ namespace Rhino.Agent.Controllers
         public async Task<IActionResult> Send()
         {
             // read test case from request body
-            using var streamReader = new StreamReader(Request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+            var requestBody = await Request.ReadAsync().ConfigureAwait(false);
 
             try
             {
@@ -179,7 +179,7 @@ namespace Rhino.Agent.Controllers
                 testCase.Context["comment"] = $"{{noformat}}{DateTime.Now:yyyy-MM-dd hh:mm:ss}: Created by Rhino widget{{noformat}}";
 
                 // get connector & create test case
-                var connector = SetConnector(types, configuration);
+                var connector = configuration.GetConnector(types);
                 if(connector == default)
                 {
                     return NotFound(new { Message = $"Connector [{configuration.Connector}] was not found under the connectors repository." });
@@ -204,89 +204,6 @@ namespace Rhino.Agent.Controllers
                     StatusCode = HttpStatusCode.InternalServerError.ToInt32()
                 };
             }
-        }
-
-        // POST api/v3/widget/run
-        [HttpPost]
-        public async Task<IActionResult> Run()
-        {
-            // read test case from request body
-            using var streamReader = new StreamReader(Request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
-            try
-            {
-                // parse test case & configuration
-                var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody);
-
-                // get connector & create test case
-                var connector = SetConnector(types, configuration);
-                var testResults = connector.Connect().Execute();
-
-                // return results
-                var statusCode = testResults.TestCases.Any(i => !i.Actual)
-                    ? HttpStatusCode.BadRequest
-                    : HttpStatusCode.OK;
-
-                // build failed results dictionary
-                var failedResults = new Dictionary<string, string>();
-                foreach (var failedResult in testResults.TestCases.Where(i => !i.Actual))
-                {
-                    failedResults[failedResult.Key] = failedResult.Link;
-                }
-                return statusCode == HttpStatusCode.BadRequest ? BadRequest(failedResults) : (IActionResult)Ok();
-            }
-            catch (Exception ex)
-            {
-                logger.LogCritical(ex, ex.Message, requestBody);
-                return new StatusCodeResult(500);
-            }
-        }
-
-        // POST api/v3/widget/automation
-        [HttpPost]
-        public async Task<IActionResult> Automation()
-        {
-            // read test case from request body
-            using var streamReader = new StreamReader(Request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
-            try
-            {
-                // parse test case & configuration
-                var automation = JsonConvert.DeserializeObject<WebAutomation>(requestBody);
-
-                // return results
-                var response = automation.Send();
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                logger.LogCritical(ex, ex.Message, requestBody);
-                return new StatusCodeResult(500);
-            }
-        }
-
-        private IConnector SetConnector(IEnumerable<Type> types, RhinoConfiguration configuration)
-        {
-            // constants
-            const StringComparison C = StringComparison.OrdinalIgnoreCase;
-
-            // types loading pipeline
-            var byContract = types.Where(t => typeof(IConnector).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
-            var byAttribute = byContract.Where(t => t.GetCustomAttribute<ConnectorAttribute>() != null);
-
-            // get connector type by it's name
-            var type = byAttribute
-                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Name.Equals(configuration.Connector, C));
-
-            if (type == default)
-            {
-                return default;
-            }
-
-            // activate new connector instance
-            return (IConnector)Activator.CreateInstance(type, new object[] { configuration, types });
         }
     }
 }

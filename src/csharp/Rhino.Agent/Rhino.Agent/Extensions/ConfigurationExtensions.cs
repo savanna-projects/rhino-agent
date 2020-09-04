@@ -12,12 +12,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 using Rhino.Agent.Domain;
+using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Contracts.Interfaces;
+using Rhino.Api.Extensions;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 
 namespace Rhino.Agent.Extensions
 {
@@ -60,6 +64,51 @@ namespace Rhino.Agent.Extensions
             // updated state
             return configuration;
         }
+
+        #region *** Connector     ***
+        /// <summary>
+        /// Gets a connector.
+        /// </summary>
+        /// <param name="configuration">RhinoConfiguration by which to factor RhinoConnector</param>
+        /// <returns>RhinoConnector implementation.</returns>
+        public static IConnector GetConnector(this RhinoConfiguration configuration)
+        {
+            return DoGetConnector(configuration, Utilities.Types);
+        }
+
+        /// <summary>
+        /// Gets a connector.
+        /// </summary>
+        /// <param name="configuration">RhinoConfiguration by which to factor RhinoConnector</param>
+        /// <param name="types">A collection of <see cref="Type>"/> in which to search for RhinoConnector.</param>
+        /// <returns>RhinoConnector implementation.</returns>
+        public static IConnector GetConnector(this RhinoConfiguration configuration, IEnumerable<Type> types)
+        {
+            return DoGetConnector(configuration, types);
+        }
+
+        private static IConnector DoGetConnector(RhinoConfiguration configuration, IEnumerable<Type> types)
+        {
+            // constants
+            const StringComparison C = StringComparison.OrdinalIgnoreCase;
+
+            // types loading pipeline
+            var byContract = types.Where(t => typeof(IConnector).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+            var byAttribute = byContract.Where(t => t.GetCustomAttribute<ConnectorAttribute>() != null);
+
+            // get connector type by it's name
+            var type = byAttribute
+                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Name.Equals(configuration.Connector, C));
+
+            if (type == default)
+            {
+                return default;
+            }
+
+            // activate new connector instance
+            return (IConnector)Activator.CreateInstance(type, new object[] { configuration, types });
+        }
+        #endregion
 
         #region *** Configuration ***
         /// <summary>

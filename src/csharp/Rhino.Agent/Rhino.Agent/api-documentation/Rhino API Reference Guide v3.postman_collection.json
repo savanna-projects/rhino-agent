@@ -5233,7 +5233,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                         |\r\n|----------|----------------------------------------------------|\r\n|department|Department name. Will be used for searching courses.|\r\n|total     |Total courses. Will be used asserting results.      |\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
+									"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {(?i)student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                         |\r\n|----------|----------------------------------------------------|\r\n|department|Department name. Will be used for searching courses.|\r\n|total     |Total courses. Will be used asserting results.      |\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {(?i)student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
 								},
 								"url": {
 									"raw": "{{endpoint}}/api/v3/plugins",
@@ -8260,64 +8260,64 @@
 	],
 	"variable": [
 		{
-			"id": "a2a88f10-7875-4542-9ecc-b3eac14bc101",
+			"id": "3fead036-4510-4d6a-b9b4-0229d2b6cc1c",
 			"key": "collection_id",
-			"value": "0d2b99a6-330b-4ac3-9774-892cf63591f1"
+			"value": "e869c1e6-a81d-4d7c-8a6e-8dae7365ec67"
 		},
 		{
-			"id": "ac51f1c5-f12a-458f-820c-fecd794d388f",
+			"id": "bcdfb69d-ad70-40ba-bee1-d086a68c517f",
 			"key": "configuration_id",
-			"value": "1166ab84-e855-41e6-8e25-ee5c07df2dda"
+			"value": "f645c26c-7208-45b9-982c-6de9b4c11991"
 		},
 		{
-			"id": "8d42fd27-8dba-4d13-aa0f-09b830fe85ac",
+			"id": "1827c697-0c2f-4fbd-8019-8b06651c8ebe",
 			"key": "endpoint",
 			"value": "https://localhost:5001"
 		},
 		{
-			"id": "155b81c8-e497-45cf-b3fd-cb05cf3eb372",
+			"id": "36f0ca84-e4e0-4038-8431-756041299dbd",
 			"key": "rhino_drivers",
 			"value": "."
 		},
 		{
-			"id": "b916abae-8ea0-4491-bd27-8c1d6042d910",
+			"id": "6a80f338-448e-4857-90a0-1b863022aeb6",
 			"key": "rhino_reports",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Test Run Reports\\\\rhino"
 		},
 		{
-			"id": "51d04d90-d6bd-4f73-94f7-78a9c79280cc",
+			"id": "172be483-7b5b-47a0-9b05-ab3e4428f0a4",
 			"key": "rhino_reports_connection_string",
 			"value": "Server=.\\\\SQLExpress;Database=TestingWarehouse;Trusted_Connection=True;User Id=<db_user>;Password=<db_password>;"
 		},
 		{
-			"id": "61ccaad9-eca3-4ff3-bc20-c868d647335b",
+			"id": "6c8ca48f-7009-4fc0-988c-3ad27ba5046a",
 			"key": "rhino_user",
 			"value": ""
 		},
 		{
-			"id": "f9729cab-e595-4e7b-b28c-ff2ea8b7e115",
+			"id": "3dd5fb87-ac1c-4d0f-8e7a-330b1f362bb9",
 			"key": "rhino_password",
 			"value": ""
 		},
 		{
-			"id": "6c79dbf9-6084-4f41-af5e-981129fc1d2a",
+			"id": "f5541d50-d397-4c3b-b854-5b3f3333e636",
 			"key": "rhino_images",
 			"value": "D:\\\\garbage\\\\imagesOut"
 		},
 		{
-			"id": "9c00cb82-eea6-4701-9a6d-45f385e4efd0",
+			"id": "3597454c-6d06-42db-b64b-e24a35d537c1",
 			"key": "rhino_logs",
 			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Logs"
 		},
 		{
-			"id": "a7eb9d0a-a20c-4fc4-bd73-9896781f0bac",
+			"id": "32016541-1028-4b14-ab7b-e0283f05e297",
 			"key": "models_id",
-			"value": "533ceca6-0a92-4176-8453-3720af8e44d7"
+			"value": "b8fd7ead-bc41-423d-bd7b-02b535ec4cc6"
 		},
 		{
-			"id": "8c0efc95-b99a-46c9-a376-ba81a84c0910",
+			"id": "61f37aee-e65d-42ce-90f5-1130c260ca40",
 			"key": "session_id",
-			"value": "cd0993bdad42f1fe8bb5121a7845b22b"
+			"value": "73c41a9aa676b8de59f38ff4e127b73b"
 		}
 	],
 	"protocolProfileBehavior": {}
