@@ -2,11 +2,9 @@
 using Gravity.Extensions;
 using Gravity.Services.Comet;
 using Gravity.Services.Comet.Engine.Attributes;
-using Gravity.Services.DataContracts;
 
 using Newtonsoft.Json;
 
-using Rhino.Agent.Models;
 using Rhino.Api.Extensions;
 using Rhino.Api.Parser;
 
@@ -34,13 +32,6 @@ namespace Rhino.Agent.Components
         private const string OperatorsList = Root + @"\available_operators.txt";
         private const string ReadMe = "README.md";
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
-
-        private static IDictionary<string, string[]> VerbMap => new Dictionary<string, string[]>
-        {
-            ["into"] = new[] { ActionType.SendKeys, ActionType.TrySendKeys },
-            ["take"] = new[] { ActionType.SelectFromComboBox, ActionType.RegisterParameter, ActionType.GoToUrl },
-            ["of"] = new[] { ActionType.GetScreenshot }
-        };
 
         #region *** constructors ***
         /// <summary>
@@ -189,41 +180,6 @@ namespace Rhino.Agent.Components
                 File.WriteAllText(fileName, json);
                 Logger?.DebugFormat(M2, fileName);
             });
-        }
-
-        /// <summary>
-        /// Gets a list of non conditional actions with their literals default verbs
-        /// </summary>
-        /// <returns>List of non conditional actions</returns>
-        public IEnumerable<ActionLiteralModel> GetActionsLiteral()
-        {
-            var actions = new List<ActionLiteralModel>();
-            foreach (var onAction in Actions)
-            {
-                try
-                {
-                    var model = new ActionLiteralModel
-                    {
-                        Key = onAction.Name,
-                        Literal = onAction.Name.PascalToSpaceCase(),
-                        Verb = GetVerb(onAction.Name),
-                        Action = onAction
-                    };
-                    actions.Add(model);
-                }
-                catch (Exception e) when (e != null)
-                {
-                    // ignore exceptions
-                }
-            }
-            return actions;
-        }
-
-        // gets a verb for this action from default verbs map
-        private string GetVerb(string action)
-        {
-            var verb = VerbMap.FirstOrDefault(i => i.Value.Contains(action)).Key;
-            return verb == default ? "on" : verb;
         }
     }
 }

@@ -10,8 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Newtonsoft.Json;
 
-using OpenQA.Selenium.Remote;
-
 using Rhino.Api.Contracts.AutomationProvider;
 
 using System;

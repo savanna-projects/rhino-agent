@@ -20,8 +20,10 @@ Please see below for a typical response:
 [test-scenario] Search Student by First Name and Assert Page Address and Last Name
 
 [test-parameters]
-first_name
-last_name
+|Parameter |Description                                            |
+|----------|-------------------------------------------------------|
+|first_name|Student first name. Will be used for searching student.|
+|last_name |Student last name. Will be used asserting results.     |
 
 [test-actions]
 1. send keys {first_name} into {#SearchString} using {css selector}
@@ -54,10 +56,10 @@ The following system fields are always included in the response:
 The following system fields are sometimes included in the response:
 
 #### Optional Fields
-|Name                 |Type|Description                                                                                                          |
-|---------------------|----|---------------------------------------------------------------------------------------------------------------------|
-|test-expected-results|text|Line separated list of the test expected results to execute.                                                         |
-|test-parameters      |text|Line separated list of parameters which will be exposed when calling this plugin, using Rhino CLI integration format.|
+|Name                 |Type  |Description                                                                   |
+|---------------------|------|------------------------------------------------------------------------------|
+|test-expected-results|text  |Line separated list of the test expected results to execute.                  |
+|test-parameters      |object|A list of parameters including a short description of what the parameter does.|
 
 ### Response Codes
 |Code|Description                                                      |
@@ -82,8 +84,10 @@ Please see below for a typical response:
 [test-scenario] Search Student by First Name and Assert Page Address and Last Name
 
 [test-parameters]
-first_name
-last_name
+|Parameter |Description                                            |
+|----------|-------------------------------------------------------|
+|first_name|Student first name. Will be used for searching student.|
+|last_name |Student last name. Will be used asserting results.     |
 
 [test-actions]
 1. send keys {first_name} into {#SearchString} using {css selector}
@@ -127,12 +131,15 @@ POST /api/v3/plugins?prvt=(false|true)
 The request body follows the same format as [Get Plugin](#get-plugin) response content.
 
 ### Request Example
-```[test-id] SearchStudent
+```
+[test-id] SearchStudent
 [test-scenario] Search Student by First Name and Assert Page Address and Last Name
 
 [test-parameters]
-first_name
-last_name
+|Parameter |Description                                            |
+|----------|-------------------------------------------------------|
+|first_name|Student first name. Will be used for searching student.|
+|last_name |Student last name. Will be used asserting results.     |
 
 [test-actions]
 1. send keys {first_name} into {#SearchString} using {css selector}

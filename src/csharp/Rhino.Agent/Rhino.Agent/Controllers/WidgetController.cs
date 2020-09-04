@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using Rhino.Agent.Components;
+using Rhino.Agent.Domain;
 using Rhino.Agent.Extensions;
 using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.Configuration;
@@ -49,7 +49,7 @@ namespace Rhino.Agent.Controllers
 
         // members
         private readonly JsonSerializerSettings jsonSettings;
-        private readonly KnowledgeBaseManager manager;
+        private readonly RhinoKbRepository manager;
         private readonly Orbit client;
         private readonly IEnumerable<Type> types;
         private readonly ILogger<WidgetController> logger;
@@ -59,7 +59,7 @@ namespace Rhino.Agent.Controllers
         /// </summary>
         public WidgetController(IServiceProvider serviceProvider)
         {
-            manager = serviceProvider.GetRequiredService<KnowledgeBaseManager>();
+            manager = serviceProvider.GetRequiredService<RhinoKbRepository>();
             types = serviceProvider.GetRequiredService<IEnumerable<Type>>();
             logger = serviceProvider.GetRequiredService<ILogger<WidgetController>>();
             jsonSettings = serviceProvider.GetRequiredService<JsonSerializerSettings>();
@@ -71,11 +71,27 @@ namespace Rhino.Agent.Controllers
         public IActionResult Actions()
         {
             // get actions
-            var actions = manager.GetActionsLiteral().Where(i => !ExcludeActions.Contains(i.Key));
+            var actions = manager
+                .GetActionsLiteral(Request.GetAuthentication())
+                .Where(i => !ExcludeActions.Contains(i.Key) && !string.IsNullOrEmpty(i.Key))
+                .OrderBy(i => i.Action.Name);
+
+            // serialize results
             var value = JsonConvert.SerializeObject(actions, jsonSettings);
 
             // exit conditions
-            return !actions.Any() ? (IActionResult)NotFound() : Ok(value);
+            if (!actions.Any())
+            {
+                return NotFound();
+            }
+
+            // response
+            return new ContentResult
+            {
+                Content = value,
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = HttpStatusCode.OK.ToInt32()
+            };
         }
 
         // GET api/v3/widget/help?action=:action
@@ -90,7 +106,7 @@ namespace Rhino.Agent.Controllers
 
             // extract action from manager
             var actions = manager
-                .GetActionsLiteral()
+                .GetActionsLiteral(Request.GetAuthentication())
                 .FirstOrDefault(i => i.Action.Name.Equals(action, StringComparison.OrdinalIgnoreCase));
             var value = JsonConvert.SerializeObject(actions, jsonSettings);
 

@@ -6,7 +6,6 @@
 using Gravity.Services.DataContracts;
 using LiteDB;
 
-using Rhino.Agent.Extensions;
 using Rhino.Api.Contracts.Configuration;
 
 using System;
