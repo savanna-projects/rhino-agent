@@ -36,4 +36,4 @@ Now listening on: http://localhost:5000
 Application started. Press Ctrl+C to shut down.
 ```  
 
-[Next Step: Run Verification Tests](./VerifyDeploymnet.md)
+[Next Step: Server Settings](./ServerSettings.md)
