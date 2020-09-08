@@ -116,8 +116,8 @@ Please see below for a typical response:
 |404 |Not Found, no public plugins and no private plugins were found for the issuer.|
 |500 |Fail, the server encountered an unexpected error.                             |
 
-## Create Plugins
-Creates one or more new _**Rhino Plugin**_.
+## Create or Update Plugins
+Creates new or Updates existing one or more _**Rhino Plugin**_.
 
 ```
 POST /api/v3/plugins?prvt=(false|true)
