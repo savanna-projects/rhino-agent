@@ -16,6 +16,7 @@ using Newtonsoft.Json.Linq;
 
 using Rhino.Agent.Domain;
 using Rhino.Agent.Extensions;
+using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Parser;
 using Rhino.Connectors.Text;
@@ -25,6 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Rhino.Agent.Controllers
@@ -154,6 +156,24 @@ namespace Rhino.Agent.Controllers
                     StatusCode = HttpStatusCode.InternalServerError.ToInt32()
                 };
             }
+        }
+
+        // GET /api/v3/widget/connectors
+        [HttpGet]
+        public IActionResult Connectors()
+        {
+            // setup
+            var connectorTypes = types.Where(i => i.GetCustomAttribute<ConnectorAttribute>() != null);
+            var attributes = connectorTypes.Select(i => i.GetCustomAttribute<ConnectorAttribute>());
+
+            // results
+            var content = JsonConvert.SerializeObject(attributes, jsonSettings);
+            return new ContentResult
+            {
+                Content = content,
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = HttpStatusCode.OK.ToInt32()
+            };
         }
 
         // POST api/v3/widget/send

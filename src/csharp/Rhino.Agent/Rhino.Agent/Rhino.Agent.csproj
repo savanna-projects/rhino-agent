@@ -9,7 +9,8 @@
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="5.0.9" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="Rhino.Connectors.Text" Version="2020.9.4.2" />
+    <PackageReference Include="Rhino.Connectors.Text" Version="2020.9.13.1" />
+    <PackageReference Include="Rhino.Connectors.Xray" Version="2020.9.13.3" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="85.0.4183.8700" />
   </ItemGroup>
 

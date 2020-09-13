@@ -3,6 +3,7 @@
 // -- A --
 var R_ACTION = "/api/v3/widget/help?action=";
 var R_ACTIONS = "/api/v3/widget/actions";
+var R_CONNECTORS = "/api/v3/widget/connectors";
 // -- E --
 var R_EXTENSION_ID = "giekjanbmlmabfagaddfkpcijefpgkdf";
 // -- O --
@@ -125,9 +126,14 @@ $(document).ready(() => {
     // server side - async calls and user interface population
     get(R_ACTIONS, (data) => {
         actionsHandler(data);
-        get(R_OPERATORS, (data) => {
-            operatorsHandler(data);
-            loadState();
+
+        get(R_CONNECTORS, (data) => {
+            connectorsHandler(data)
+
+            get(R_OPERATORS, (data) => {
+                operatorsHandler(data);
+                loadState();
+            });
         });
     });
 
@@ -211,6 +217,16 @@ function actionsHandler(data) {
  */
 function operatorsHandler(data) {
     populateSelect(data, E_OPERATORS, (response) => new Option(response, response));
+}
+// #endregion
+
+// #region *** WIDGET: get connector ***
+/**
+ * Summary. Handles available connector population when page loads
+ * @param {any} data Data Object fetched from the server
+ */
+function connectorsHandler(data) {
+    populateSelect(data, E_CONNECTOR_TYPE, (response) => new Option(response.name, response.value));
 }
 // #endregion
 
@@ -658,8 +674,10 @@ function getConfiguration() {
     driver_parameters.capabilities.project = "Rhino Actions Recorder";
 
     return {
+        engineConfiguration: {
+            errorOnExitCode: 10
+        },
         connector: "connector_text",
-        errorOnExitCode: 10,
         authentication: {
             userName: settings.rhino_options.rhino_user_name,
             password: settings.rhino_options.rhino_password
@@ -726,20 +744,17 @@ function sendHandler() {
 
     // get objects for test creation
     var config = getConfiguration();
-
-    var isCloud = settings.connector_options.connector_type === 'jiraCloud';
-    config.connector = isCloud ? "jira" : settings.connector_options.connector_type;
-    config.jiraConfiguration = {
+    config.connector = settings.connector_options.connector_type;
+    config.providerConfiguration = {
         collection: settings.connector_options.server_address,
         project: settings.connector_options.project,
         user: settings.connector_options.user_name,
-        password: settings.connector_options.password,
-        isCloud: isCloud
+        password: settings.connector_options.password
     };
 
     // parse test case script
     var testObj = getTestCaseObject();
-    var testSrc = JSON.stringify(getTestCaseScript(testObj));//.join(C_NEW_LINE);
+    var testSrc = JSON.stringify(getTestCaseScript(testObj));
     var requestBody = { config: config, test: testSrc, suite: settings.connector_options.test_suite };
 
     // send

@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Mime;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Rhino.Agent.Domain;
@@ -21,30 +22,32 @@ namespace Rhino.Agent.Controllers
     {
         // members: state
         private readonly RhinoLogsRepository repository;
+        private readonly string logPath;
 
         /// <summary>
         /// Creates a new instance of this Rhino.Agent.Controllers.LogsController.
         /// </summary>
         /// <param name="provider"><see cref="IServiceProvider"/> to use with this Rhino.Agent.Controllers.LogsController.</param>
-        public LogsController(IServiceProvider provider)
+        public LogsController(IServiceProvider provider, IConfiguration appSettings)
         {
             repository = provider.GetRequiredService<RhinoLogsRepository>();
+
+            // get in-folder
+            var inFolder = appSettings.GetValue<string>("rhino:reportConfiguration:logsOut");
+            logPath = string.IsNullOrEmpty(inFolder) ? Environment.CurrentDirectory + "/Logs" : inFolder;
         }
 
-        // GET: api/v3/logs/<log>/configuration/<configuration>
-        [HttpGet("{log}/configuration/{configuration}")]
-        public IActionResult Get(string configuration, string log)
+        // GET: api/v3/logs/<log>
+        [HttpGet("{log}")]
+        public IActionResult Get(string log)
         {
-            // get credentials
-            var credentials = Request.GetAuthentication();
-
             // get
-            var (statusCode, responseBody) = repository.Get(credentials, configuration, log);
+            var (statusCode, responseBody) = repository.Get(logPath, log);
 
             // exit conditions
-            if(statusCode== HttpStatusCode.NotFound)
+            if (statusCode == HttpStatusCode.NotFound)
             {
-                return NotFound(new { Message = $"Log [{log}] or configuration [{configuration}] were not found." });
+                return NotFound(new { Message = $"Log [{log}] or configuration [{logPath}] were not found." });
             }
 
             // response
@@ -56,47 +59,41 @@ namespace Rhino.Agent.Controllers
             };
         }
 
-        // GET: api/v3/logs/<log>/configuration/<configuration>/size/<size>
-        [HttpGet("{log}/configuration/{configuration}/size/{size}")]
-        public IActionResult Get(string configuration, string log, int size)
+        // GET: api/v3/logs/<log>/size/<size>
+        [HttpGet("{log}/size/{size}")]
+        public IActionResult Get(string log, int size)
         {
-            // get credentials
-            var credentials = Request.GetAuthentication();
-
-            // response
             return new ContentResult
             {
-                Content = repository.Get(credentials, configuration, log, size).data,
+                Content = repository.Get(logPath, log, size).data,
                 ContentType = MediaTypeNames.Text.Plain,
                 StatusCode = HttpStatusCode.OK.ToInt32()
             };
         }
 
-        // GET: api/v3/logs/<log>/configuration/<configuration>/download
-        [HttpGet("{log}/configuration/{configuration}/download")]
-        public IActionResult Download(string configuration, string log)
+        // GET: api/v3/logs/<log>/download
+        [HttpGet("{log}/download")]
+        public IActionResult Download(string log)
         {
-            // get credentials
-            var credentials = Request.GetAuthentication();
-
             // setup
-            var logName = $"Rhino-{log}.log";
+            var logName = $"RhinoApi-{log}";
+            var fullLogName = logName + ".log";
 
             // get report
-            var (statusCode, stream) = repository.GetAsMemoryStream(credentials, configuration, log);
+            var (statusCode, stream) = repository.GetAsMemoryStream(logPath, log);
 
             // exit conditions
             if (statusCode == HttpStatusCode.NotFound)
             {
                 return NotFound(new
                 {
-                    Message = $"Log [{logName}] under configuration [{configuration}] was not found."
+                    Message = $"Log [{fullLogName}] under configuration [{logPath}] was not found."
                 });
             }
 
             // response
             var zipContent = stream.Zip(logName);
-            return File(zipContent, MediaTypeNames.Application.Zip, logName);
+            return File(zipContent, MediaTypeNames.Application.Zip, logName + ".zip");
         }
     }
 }
