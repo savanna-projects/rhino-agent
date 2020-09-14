@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="api-documentation\Rhino API Reference Guide v3 - XRay Connector.postman_collection.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="api-documentation\Rhino API Reference Guide v3.postman_collection.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

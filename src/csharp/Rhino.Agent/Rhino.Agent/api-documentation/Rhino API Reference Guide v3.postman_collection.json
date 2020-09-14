@@ -178,7 +178,7 @@
 										"{{configuration_id}}"
 									]
 								},
-								"description": "Returns an existing _**Rhino Configuration**_.\r\n\r\n```\r\nGET /api/v3/configurations/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                             |\r\n|----------------|------|----------------------------------------|\r\n|configuration_id|string|The ID of the _**Rhino Configuration**_.|\r\n\r\n### Response Content\r\nPlease see below for a typical response:\r\n\r\n```js\r\n{\r\n    \"name\": \"Rhino Automation - Chrome & Firefox\",\r\n    \"testsRepository\": [\r\n        \"8bed8025-3cgf-52g1-0919-533cbc6d523c\"\r\n    ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"http://localhost:4444/wd/hub\"\r\n        },\r\n        {\r\n            \"driver\": \"FirefoxDriver\",\r\n            \"driverBinaries\": \"http://localhost:4444/wd/hub\"\r\n        }\r\n    ],\r\n    \"dataSource\": [],\r\n    \"models\": [\r\n        \"7adc7914-2bfe-41f0-9808-422bab5c412b\"\r\n    ],\r\n    \"connector\": \"connector_text\",\r\n    \"gravityEndpoint\": \"\",\r\n    \"authentication\": {\r\n        \"password\": \"<rhino_user>\",\r\n        \"userName\": \"<rhino_password>\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3.0,\r\n        \"qualityThreshold\": 0.0,\r\n        \"toleranceThreshold\": 0.0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": false,\r\n        \"screenshotsOut\": \"<path_to_screenshots_folder>\",\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reportOut\": \"<path_to_reports_folder>\",\r\n        \"logsOut\": \"<path_to_logs_folder>\",\r\n        \"reporters\": null,\r\n        \"connectionString\": null,\r\n        \"dataProvider\": null,\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}\r\n```\r\n\r\nThe following system fields are always included in the response:\r\n\r\n#### General\r\n|Name                    |Type  |Description                                                                                            |\r\n|------------------------|------|-------------------------------------------------------------------------------------------------------|\r\n|name                    |string|The name of this _**Rhino Configuration**_.                                                            |\r\n|testsRepository         |array |A collection of folders and files in which there are _**Rhino Test Cases**_.                           |\r\n|driverParameters        |array |A collection of parameters which represents the target platforms on which the tests will run.          |\r\n|dataSource              |array |A collection of data objects which will be cascaded as primary table for all _**Rhino Test Cases**_.   |\r\n|models                  |array |A collection of _**Rhino Page Models**_ sources.                                                       |\r\n|connector               |string|Connector implementation type to use with this _**Rhino Configuration**_.                              |\r\n|gravityEndpoint         |string|Gravity Server endpoint. Use to send requests using remote gravity service instead of embedded service.|\r\n|authentication          |string|User name and password for authentication on Rhino Service.                                            |\r\n|engineConfiguration     |object|Configure the automation engine behavior.                                                              |\r\n|screenshotsConfiguration|object|Configure the screenshot behavior.                                                                     |\r\n|reportConfiguration     |object|Configure the reporting behavior.                                                                      |\r\n\r\n#### Engine Authentication\r\n|Name    |Type  |Description                 |\r\n|--------|------|----------------------------|\r\n|userName|string|A valid Rhino API user name.|\r\n|password|string|A valid Rhino API password. |\r\n\r\n#### Engine Configuration\r\n|Name                    |Type   |Description                                                                                                            |\r\n|------------------------|-------|-----------------------------------------------------------------------------------------------------------------------|\r\n|maxParallel             |number |The maximum number of tests that will be executed in parallel.                                                         |\r\n|failOnException         |boolean|When set to true, test cases will fail if exceptions were thrown during test regardless of assertions passed or failed.|\r\n|optimalThreshold        |decimal|Any test which violates this threshold (in minutes), will be marked as non-optimal.                                    |\r\n|qualityThreshold        |decimal|Any test which violates this threshold (in percents), will be marked as failed.                                        |\r\n|toleranceThreshold      |decimal|Any test which falls within this threshold (in percents), will be marked as warning when fail.                         |\r\n|priority                |number |All tests with priority lower than this number will be marked as warning when fail.                                    |\r\n|severity                |number |All tests with severity lower than this number will be marked as warning when fail.                                    |\r\n|errorOnExitCode         |number |The error code (console application error code) which will cause the CI/CD process to fail.                            |\r\n|elementSearchingTimeout |number |The timeout in millisecond when searching for elements.                                                                |\r\n|pageLoadTimeout         |number |The timeout in millisecond when loading a page or application.                                                         |\r\n|retrunExceptions        |boolean|When set to false, exceptions will not be returned by Gravity engine. This might affect the tests results.             |\r\n|returnPerformancePoints |boolean|When set to false, performance data will not be returned by Gravity engine. This might affect the tests results.       |\r\n|returnEnvironment       |boolean|When set to true, will return the current Gravity Environment parameters.                                              |\r\n|terminateOnAssertFailure|boolean|When set to true, automation will stop if assertion any assertion action failed.                                       |\r\n|Integration             |string |3rd party platform integration. Available integrations are, BrowserStack and LambdaTest.                               |\r\n\r\n#### Screenshots Configuration\r\n|Name             |Type   |Description                                                                                               |\r\n|-----------------|-------|----------------------------------------------------------------------------------------------------------|\r\n|keepOriginal     |boolean|When set to true, will keep the original file created by Gravity engine, when creating a new Rhino report.|\r\n|onExceptionOnly  |boolean|When set to true, returns a screenshot only if exception was thrown during execution.                     |\r\n|returnScreenshots|boolean|When set to false, screenshots will be returned from Gravity engine.                                      |\r\n|screenshotsOut   |decimal|The directory in which to save automatic screenshots.                                                     |\r\n\r\n#### Report Configuration\r\n|Name            |Type   |Description                                                                                               |\r\n|----------------|-------|----------------------------------------------------------------------------------------------------------|\r\n|reportOut       |string |The directory in which to save reports.                                                                   |\r\n|logsOut         |string |The directory in which to save logs.                                                                      |\r\n|reporters       |array  |Reporters implementations to use with this configuration.                                                 |\r\n|connectionString|string |The reporter connection string (if needed or used by the provided implementations).                       |\r\n|dataProvider    |string |The reporter data provider (if needed or used by provided implementations).                               |\r\n|archive         |boolean|When set to true, will archive the report out folder as zip file and delete the original folder.          |\r\n|localReport     |boolean|When set to false, will not generate Rhino report.                                                        |\r\n|addGravityData  |boolean|When set to true, will save Gravity API requests and response along with the reports and logs information.|\r\n\r\n### Response Codes\r\n|Code|Description                                                           |\r\n|----|----------------------------------------------------------------------|\r\n|200 |Success, the _**Configuration**_ was returned as part of the response.|\r\n|500 |Fail, the server encountered an unexpected error.                     |"
+								"description": "Returns an existing _**Rhino Configuration**_.\r\n\r\n```\r\nGET /api/v3/configurations/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                             |\r\n|----------------|------|----------------------------------------|\r\n|configuration_id|string|The ID of the _**Rhino Configuration**_.|\r\n\r\n### Response Content\r\nPlease see below for a typical response:\r\n\r\n```js\r\n{\r\n  \"name\": \"Rhino Automation - Chrome & Firefox\",\r\n  \"testsRepository\": [\r\n    \"8bed8025-3cgf-52g1-0919-533cbc6d523c\"\r\n  ],\r\n  \"driverParameters\": [\r\n    {\r\n      \"driver\": \"ChromeDriver\",\r\n      \"driverBinaries\": \"http://localhost:4444/wd/hub\"\r\n    },\r\n    {\r\n      \"driver\": \"FirefoxDriver\",\r\n      \"driverBinaries\": \"http://localhost:4444/wd/hub\"\r\n    }\r\n  ],\r\n  \"dataSource\": [],\r\n  \"models\": [\r\n    \"7adc7914-2bfe-41f0-9808-422bab5c412b\"\r\n  ],\r\n  \"connector\": \"connector_xray\",\r\n  \"gravityEndpoint\": \"\",\r\n  \"authentication\": {\r\n    \"password\": \"<rhino_user>\",\r\n    \"userName\": \"<rhino_password>\"\r\n  },\r\n  \"engineConfiguration\": {\r\n    \"maxParallel\": 1,\r\n    \"failOnException\": false,\r\n    \"optimalThreshold\": 3,\r\n    \"qualityThreshold\": 0,\r\n    \"toleranceThreshold\": 0,\r\n    \"priority\": 0,\r\n    \"severity\": 0,\r\n    \"errorOnExitCode\": 0,\r\n    \"elementSearchingTimeout\": 15000,\r\n    \"pageLoadTimeout\": 60000,\r\n    \"retrunExceptions\": true,\r\n    \"returnPerformancePoints\": true,\r\n    \"returnEnvironment\": true,\r\n    \"terminateOnAssertFailure\": false\r\n  },\r\n  \"screenshotsConfiguration\": {\r\n    \"keepOriginal\": false,\r\n    \"returnScreenshots\": false,\r\n    \"screenshotsOut\": \"<path_to_screenshots_folder>\",\r\n    \"onExceptionOnly\": false\r\n  },\r\n  \"reportConfiguration\": {\r\n    \"reportOut\": \"<path_to_reports_folder>\",\r\n    \"logsOut\": \"<path_to_logs_folder>\",\r\n    \"reporters\": null,\r\n    \"connectionString\": null,\r\n    \"dataProvider\": null,\r\n    \"archive\": false,\r\n    \"localReport\": true,\r\n    \"addGravityData\": true\r\n  },\r\n  \"providerConfiguration\": {\r\n    \"collection\": \"http://localhost:8080\",\r\n    \"password\": \"admin\",\r\n    \"user\": \"admin\",\r\n    \"project\": \"XDP\",\r\n    \"bugManager\": true,\r\n    \"capabilities\": {\r\n      \"bucketSize\": 15,\r\n      \"dryRun\": false\r\n    }\r\n  }\r\n}\r\n```\r\n\r\nThe following system fields are always included in the response:\r\n\r\n#### General\r\n|Name                                                  |Type  |Description                                                                                            |\r\n|------------------------------------------------------|------|-------------------------------------------------------------------------------------------------------|\r\n|name                                                  |string|The name of this _**Rhino Configuration**_.                                                            |\r\n|testsRepository                                       |array |A collection of folders and files in which there are _**Rhino Test Cases**_.                           |\r\n|driverParameters                                      |array |A collection of parameters which represents the target platforms on which the tests will run.          |\r\n|dataSource                                            |array |A collection of data objects which will be cascaded as primary table for all _**Rhino Test Cases**_.   |\r\n|models                                                |array |A collection of _**Rhino Page Models**_ sources.                                                       |\r\n|connector                                             |string|Connector implementation type to use with this _**Rhino Configuration**_.                              |\r\n|gravityEndpoint                                       |string|Gravity Server endpoint. Use to send requests using remote gravity service instead of embedded service.|\r\n|[authentication](#authentication)                     |string|User name and password for authentication on Rhino Service.                                            |\r\n|[engineConfiguration](#engine-configuration)          |object|Configure the automation engine behavior.                                                              |\r\n|[screenshotsConfiguration](#screenshots-configuration)|object|Configure the screenshot behavior.                                                                     |\r\n|[reportConfiguration](#report-configuration)          |object|Configure the reporting behavior.                                                                      |\r\n|[providerConfiguration](#provider-configuration)      |object|Configure the behavior against 3rd party automation provider such as Jira, Test Rail or Azure DevOps.  |\r\n\r\n#### Authentication\r\n|Name    |Type  |Description                 |\r\n|--------|------|----------------------------|\r\n|userName|string|A valid Rhino API user name.|\r\n|password|string|A valid Rhino API password. |\r\n\r\n#### Engine Configuration\r\n|Name                    |Type   |Description                                                                                                            |\r\n|------------------------|-------|-----------------------------------------------------------------------------------------------------------------------|\r\n|maxParallel             |number |The maximum number of tests that will be executed in parallel.                                                         |\r\n|failOnException         |boolean|When set to true, test cases will fail if exceptions were thrown during test regardless of assertions passed or failed.|\r\n|optimalThreshold        |decimal|Any test which violates this threshold (in minutes), will be marked as non-optimal.                                    |\r\n|qualityThreshold        |decimal|Any test which violates this threshold (in percents), will be marked as failed.                                        |\r\n|toleranceThreshold      |decimal|Any test which falls within this threshold (in percents), will be marked as warning when fail.                         |\r\n|priority                |number |All tests with priority lower than this number will be marked as warning when fail.                                    |\r\n|severity                |number |All tests with severity lower than this number will be marked as warning when fail.                                    |\r\n|errorOnExitCode         |number |The error code (console application error code) which will cause the CI/CD process to fail.                            |\r\n|elementSearchingTimeout |number |The timeout in millisecond when searching for elements.                                                                |\r\n|pageLoadTimeout         |number |The timeout in millisecond when loading a page or application.                                                         |\r\n|retrunExceptions        |boolean|When set to false, exceptions will not be returned by Gravity engine. This might affect the tests results.             |\r\n|returnPerformancePoints |boolean|When set to false, performance data will not be returned by Gravity engine. This might affect the tests results.       |\r\n|returnEnvironment       |boolean|When set to true, will return the current Gravity Environment parameters.                                              |\r\n|terminateOnAssertFailure|boolean|When set to true, automation will stop if assertion any assertion action failed.                                       |\r\n|Integration             |string |3rd party platform integration. Available integrations are, BrowserStack and LambdaTest.                               |\r\n\r\n#### Screenshots Configuration\r\n|Name             |Type   |Description                                                                                               |\r\n|-----------------|-------|----------------------------------------------------------------------------------------------------------|\r\n|keepOriginal     |boolean|When set to true, will keep the original file created by Gravity engine, when creating a new Rhino report.|\r\n|onExceptionOnly  |boolean|When set to true, returns a screenshot only if exception was thrown during execution.                     |\r\n|returnScreenshots|boolean|When set to false, screenshots will be returned from Gravity engine.                                      |\r\n|screenshotsOut   |decimal|The directory in which to save automatic screenshots.                                                     |\r\n\r\n#### Report Configuration\r\n|Name            |Type   |Description                                                                                               |\r\n|----------------|-------|----------------------------------------------------------------------------------------------------------|\r\n|reportOut       |string |The directory in which to save reports.                                                                   |\r\n|logsOut         |string |The directory in which to save logs.                                                                      |\r\n|reporters       |array  |Reporters implementations to use with this configuration.                                                 |\r\n|connectionString|string |The reporter connection string (if needed or used by the provided implementations).                       |\r\n|dataProvider    |string |The reporter data provider (if needed or used by provided implementations).                               |\r\n|archive         |boolean|When set to true, will archive the report out folder as zip file and delete the original folder.          |\r\n|localReport     |boolean|When set to false, will not generate Rhino report.                                                        |\r\n|addGravityData  |boolean|When set to true, will save Gravity API requests and response along with the reports and logs information.|\r\n\r\n### Response Codes\r\n|Code|Description                                                                          |\r\n|----|-------------------------------------------------------------------------------------|\r\n|200 |Success, the _**Configuration**_ was returned as part of the response.               |\r\n|404 |Not Found, the _**Configuration**_ was not found under the configurations collection.|\r\n|500 |Fail, the server encountered an unexpected error.                                    |\r\n\r\n#### Provider Configuration\r\n|Name        |Type   |Description                                                                                                                                       |\r\n|------------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|collection  |string |The server base address under which the application is hosted (i.e. Jira or DevOps server endpoint).                                              |\r\n|password    |string |A valid password for your application (i.e. Jira or DevOps password).                                                                             |\r\n|user        |string |A valid user for your application (i.e. Jira or DevOps password). The use must have create permissions for **Tests**, **Bugs** and **Executions**.|\r\n|project     |string |The project name or ID (depends on the connector implementation) under which to find and execute tests.                                           |\r\n|bugManager  |boolean|Set to **true** in order to activate the bug manager feature for the selected connector.                                                          |\r\n|capabilities|object |A set of key/value for passing explicit settings and parameters to your automation provider connector.                                            |"
 							},
 							"response": [
 								{
@@ -2856,7 +2856,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "[test-id] rhino-documentation-#001\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\n\n[test-actions]\n1. go to url {@address} using any compliant web-browser\n2. close all child windows (to make sure only the web site is open and visible)\n3. send keys {Carson} into {@search-text-box} text-box\n4. click on {@search-button} using {css selector}\n5. wait for {3000} milliseconds\n6. close browser\n\n[test-expected-results]\n[1] assert {url} match {@address-expected}\n[5] assert {count} on {@search-text-box} is greater than {0}\n\n[test-data-provider]\n[\n\t{\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\n\t\t\"search-button\":\"#SearchButton\",\n\t\t\"students-table\": \"//td[@id]\"\n\t}\n]",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "text"
@@ -4302,7 +4302,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Rhino Automation - Chrome\",\r\n    \"testsRepository\": [ ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"{{rhino_drivers}}\"\r\n        }\r\n    ],\r\n    \"dataSource\": [ ],\r\n    \"models\": [ ],\r\n    \"connector\": \"connector_text\",\r\n    \"gravityEndpoint\": \"\",\r\n    \"authentication\": {\r\n        \"password\": \"{{rhino_user}}\",\r\n        \"userName\": \"{{rhino_password}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3.0,\r\n        \"qualityThreshold\": 0.0,\r\n        \"toleranceThreshold\": 0.0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": true,\r\n        \"screenshotsOut\": \"{{rhino_images}}\",\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reportOut\": \"{{rhino_reports}}\",\r\n        \"logsOut\": \"{{rhino_logs}}\",\r\n        \"reporters\": [\"reporter_basic\", \"reporter_warehouse\"],\r\n        \"connectionString\": \"{{rhino_reports_connection_string}}\",\r\n        \"dataProvider\": null,\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}",
+									"raw": "{\r\n    \"name\": \"Rhino Automation - Chrome\",\r\n    \"testsRepository\": [ ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"{{rhino_drivers}}\"\r\n        }\r\n    ],\r\n    \"dataSource\": [ ],\r\n    \"models\": [ ],\r\n    \"connector\": \"connector_text\",\r\n    \"gravityEndpoint\": \"\",\r\n    \"authentication\": {\r\n        \"password\": \"{{rhino_user}}\",\r\n        \"userName\": \"{{rhino_password}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3.0,\r\n        \"qualityThreshold\": 0.0,\r\n        \"toleranceThreshold\": 0.0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": true,\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reporters\": [\"reporter_basic\", \"reporter_warehouse\"],\r\n        \"connectionString\": \"{{rhino_reports_connection_string}}\",\r\n        \"dataProvider\": null,\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4347,7 +4347,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "[test-id] rhino-documentation-#001\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\n\n[test-actions]\n1. go to url {@address} using any compliant web-browser\n2. close all child windows (to make sure only the web site is open and visible)\n3. send keys {Carson} into {@search-text-box}\n4. click on {@search-button} using {css selector}\n5. wait for {3000} milliseconds\n6. register parameter {first_name} take {Jhon}\n7. close browser\n\n[test-expected-results]\n[1] assert {url} match {@address-expected}\n[5] assert {count} on {@students-table} is greater than {0}\n\n[test-data-provider]\n[\n\t{\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\n\t\t\"search-button\":\"#SearchButton\",\n\t\t\"students-table\": \"//td[@id]\"\n\t}\n]",
+									"raw": "[test-id] rhino-documentation-001\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\n\n[test-actions]\n1. go to url {@address} using any compliant web-browser\n2. close all child windows (to make sure only the web site is open and visible)\n3. send keys {Carson} into {@search-text-box}\n4. click on {@search-button} using {css selector}\n5. wait for {3000} milliseconds\n6. register parameter {first_name} take {Jhon}\n7. close browser\n\n[test-expected-results]\n[1] assert {url} match {@address-expected}\n[5] assert {count} on {@students-table} is greater than {0}\n\n[test-data-provider]\n[\n\t{\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\n\t\t\"search-button\":\"#SearchButton\",\n\t\t\"students-table\": \"//td[@id]\"\n\t}\n]",
 									"options": {
 										"raw": {
 											"language": "text"
@@ -5213,7 +5213,7 @@
 					"name": "Documentation",
 					"item": [
 						{
-							"name": "Create Plugins",
+							"name": "Create or Update Plugins",
 							"event": [
 								{
 									"listen": "test",
@@ -5246,7 +5246,7 @@
 										"plugins"
 									]
 								},
-								"description": "Creates one or more new _**Rhino Plugin**_.\r\n\r\n```\r\nPOST /api/v3/plugins?prvt=(false|true)\r\n```\r\n\r\n|Name|Type   |Description                                                                                         |\r\n|----|-------|----------------------------------------------------------------------------------------------------|\r\n|prvt|boolean|Set to true in order to create the plugin as a private plugin available only to the user created it.|\r\n\r\n### Request Fields\r\nThe request body follows the same format as [Get Plugin](#get-plugin) response content.\r\n\r\n### Request Example\r\n```\r\n[test-id] SearchStudent\r\n[test-scenario] Search Student by First Name and Assert Page Address and Last Name\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id] SearchCourse\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                                                             |\r\n|----|--------------------------------------------------------------------------------------------------------|\r\n|200 |Success, some of the _**Plugin(s)**_ were not created and reasons were returned as part of the response.|\r\n|201 |Created, the _**Plugin(s)**_ were created returned as part of the response.                             |\r\n|500 |Fail, the server encountered an unexpected error.                                                       |"
+								"description": "Creates new or Updates existing one or more _**Rhino Plugin**_.\r\n\r\n```\r\nPOST /api/v3/plugins?prvt=(false|true)\r\n```\r\n\r\n|Name|Type   |Description                                                                                         |\r\n|----|-------|----------------------------------------------------------------------------------------------------|\r\n|prvt|boolean|Set to true in order to create the plugin as a private plugin available only to the user created it.|\r\n\r\n### Request Fields\r\nThe request body follows the same format as [Get Plugin](#get-plugin) response content.\r\n\r\n### Request Example\r\n```\r\n[test-id] SearchStudent\r\n[test-scenario] Search Student by First Name and Assert Page Address and Last Name\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id] SearchCourse\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                                                             |\r\n|----|--------------------------------------------------------------------------------------------------------|\r\n|200 |Success, some of the _**Plugin(s)**_ were not created and reasons were returned as part of the response.|\r\n|201 |Created, the _**Plugin(s)**_ were created returned as part of the response.                             |\r\n|500 |Fail, the server encountered an unexpected error.                                                       |"
 							},
 							"response": [
 								{
@@ -7136,7 +7136,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{endpoint}}/api/v3/logs/20200818/configuration/{{configuration_id}}",
+									"raw": "{{endpoint}}/api/v3/logs/20200913",
 									"host": [
 										"{{endpoint}}"
 									],
@@ -7144,12 +7144,10 @@
 										"api",
 										"v3",
 										"logs",
-										"20200818",
-										"configuration",
-										"{{configuration_id}}"
+										"20200913"
 									]
 								},
-								"description": "Returns an existing _**Automation Log**_.\r\n\r\n> Configuration key to set logs folder is ```reportConfiguration.logsOut```.\r\n> If not specified, the default logs directory is ```<current_directory>\\Logs```.\r\n\r\n```\r\nGET /api/logs/:log_id/configuration/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                                                                                |\r\n|----------------|------|-------------------------------------------------------------------------------------------|\r\n|log_id          |string|The ID of the _**Automation Log**_. Will be the date in the following format ```yyyyMMdd```|\r\n|configuration_id|string|The ID of the configuration group.                                                         |\r\n\r\n#### Response Content\r\n> The response is an array of log entries of media type ```text/plain```.\r\n> Log entries are separated by an empty line.\r\n\r\n```\r\nDBG - 2020-07-08 07:31:29.092\r\n    Application: kdd.engine\r\n    Logger     : kdd.engine.text-connector\r\n    LogLevel   : DEBUG\r\n    TimeStamp  : 2020-07-08 07:31:29.092\r\n    MachineName: DESKTOP-G1MC8H7\r\n    Message    : [OnBeforeTestExecution] does not need an implementation for this connector\r\n\r\nAutomation.Kdd.Agent Information: 0 : INF - 2020-07-08 07:31:29.094\r\n    Application: kdd.engine\r\n    Logger     : kdd.engine.text-connector\r\n    LogLevel   : INFO\r\n    TimeStamp  : 2020-07-08 07:31:29.094\r\n    MachineName: DESKTOP-G1MC8H7\r\n    Message    : executing 'Login'\r\n\r\nAutomation.Kdd.Agent Information: 0 : [GoToUrl]; argument [https://gravitymvctestapplication.azurewebsites.net/] executed\r\nAutomation.Kdd.Agent Information: 0 : [SendKeys]; element [Username]; argument [userName] executed\r\nAutomation.Kdd.Agent Information: 0 : [SendKeys]; element [Password]; argument [password] executed\r\nAutomation.Kdd.Agent Information: 0 : [Click]; element [//button[contains(.,'Log In')]] executed\r\nAutomation.Kdd.Agent Information: 0 : [WaitForUrl] executed\r\nAutomation.Kdd.Agent Information: 0 : [Assert]; argument [{{$ --url --match:Dashboard}}] executed\r\nAutomation.Kdd.Agent Information: 0 : [CloseBrowser] executed\r\nAutomation.Kdd.Agent Information: 0 : [web-automation]; argument [1/1] executed\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                            |\r\n|----|-----------------------------------------------------------------------|\r\n|200 |Success, the _**Automation Logs**_ is returned as part of the response.|\r\n|404 |Not Found, the _**Automation Logs**_ were not found.                   |\r\n|500 |Fail, the server encountered an unexpected error.                      |"
+								"description": "Returns an existing _**Automation Log**_.\r\n\r\n> Configuration key to set logs folder is ```reportConfiguration.logsOut```.\r\n> If not specified, the default logs directory is ```<current_directory>\\Logs```.\r\n\r\n```\r\nGET /api/logs/:log_id/configuration/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                                                                                |\r\n|----------------|------|-------------------------------------------------------------------------------------------|\r\n|log_id          |string|The ID of the _**Automation Log**_. Will be the date in the following format ```yyyyMMdd```|\r\n\r\n#### Response Content\r\n> The response is an array of log entries of media type ```text/plain```.\r\n> Log entries are separated by an empty line.\r\n\r\n```\r\nDBG - 2020-07-08 07:31:29.092\r\n    Application: kdd.engine\r\n    Logger     : kdd.engine.text-connector\r\n    LogLevel   : DEBUG\r\n    TimeStamp  : 2020-07-08 07:31:29.092\r\n    MachineName: DESKTOP-G1MC8H7\r\n    Message    : [OnBeforeTestExecution] does not need an implementation for this connector\r\n\r\nAutomation.Kdd.Agent Information: 0 : INF - 2020-07-08 07:31:29.094\r\n    Application: kdd.engine\r\n    Logger     : kdd.engine.text-connector\r\n    LogLevel   : INFO\r\n    TimeStamp  : 2020-07-08 07:31:29.094\r\n    MachineName: DESKTOP-G1MC8H7\r\n    Message    : executing 'Login'\r\n\r\nAutomation.Kdd.Agent Information: 0 : [GoToUrl]; argument [https://gravitymvctestapplication.azurewebsites.net/] executed\r\nAutomation.Kdd.Agent Information: 0 : [SendKeys]; element [Username]; argument [userName] executed\r\nAutomation.Kdd.Agent Information: 0 : [SendKeys]; element [Password]; argument [password] executed\r\nAutomation.Kdd.Agent Information: 0 : [Click]; element [//button[contains(.,'Log In')]] executed\r\nAutomation.Kdd.Agent Information: 0 : [WaitForUrl] executed\r\nAutomation.Kdd.Agent Information: 0 : [Assert]; argument [{{$ --url --match:Dashboard}}] executed\r\nAutomation.Kdd.Agent Information: 0 : [CloseBrowser] executed\r\nAutomation.Kdd.Agent Information: 0 : [web-automation]; argument [1/1] executed\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                            |\r\n|----|-----------------------------------------------------------------------|\r\n|200 |Success, the _**Automation Logs**_ is returned as part of the response.|\r\n|404 |Not Found, the _**Automation Logs**_ were not found.                   |\r\n|500 |Fail, the server encountered an unexpected error.                      |"
 							},
 							"response": [
 								{
@@ -7162,7 +7160,7 @@
 											"raw": ""
 										},
 										"url": {
-											"raw": "{{endpoint}}/api/v3/logs/20200818/configuration/{{configuration_id}}",
+											"raw": "{{endpoint}}/api/v3/logs/20200818",
 											"host": [
 												"{{endpoint}}"
 											],
@@ -7170,35 +7168,14 @@
 												"api",
 												"v3",
 												"logs",
-												"20200818",
-												"configuration",
-												"{{configuration_id}}"
+												"20200818"
 											]
 										}
 									},
-									"status": "Not Found",
-									"code": 404,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Tue, 18 Aug 2020 19:19:24 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Server",
-											"value": "Kestrel"
-										},
-										{
-											"key": "Transfer-Encoding",
-											"value": "chunked"
-										}
-									],
+									"_postman_previewlanguage": null,
+									"header": null,
 									"cookie": [],
-									"body": "{\n    \"message\": \"Log [20200818] or configuration [345bf818-ce8a-4532-8cfd-cffadac9f627] were not found.\"\n}"
+									"body": null
 								}
 							]
 						},
@@ -7208,7 +7185,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/api/v3/logs/20200818/configuration/{{configuration_id}}/size/500",
+									"raw": "{{endpoint}}/api/v3/logs/20200913/size/500",
 									"host": [
 										"{{endpoint}}"
 									],
@@ -7216,14 +7193,12 @@
 										"api",
 										"v3",
 										"logs",
-										"20200818",
-										"configuration",
-										"{{configuration_id}}",
+										"20200913",
 										"size",
 										"500"
 									]
 								},
-								"description": "Returns an existing _**Automation Log**_ tail, by specific size.\r\n\r\n> Configuration key to set logs folder is ```reportConfiguration.logsOut```.\r\n> If not specified, the default logs directory is ```<current_directory>\\Logs```.\r\n\r\n```\r\nGET /api/logs/:log_id/configuration/:configuration_id/size/:size\r\n```\r\n\r\n|Name            |Type  |Description                                                                                |\r\n|----------------|------|-------------------------------------------------------------------------------------------|\r\n|log_id          |string|The ID of the _**Automation Log**_. Will be the date in the following format ```yyyyMMdd```|\r\n|configuration_id|string|The ID of the configuration group.                                                         |\r\n|size            |number|A fixed number of lines from the end of the log upwards.                                   |\r\n\r\n#### Response Content\r\n> The response is an array of log entries of media type ```text/plain```.\r\n> Log entries are separated by an empty line.\r\n\r\n```\r\nDBG - 2020-07-08 07:31:29.092\r\n    Application: kdd.engine\r\n    Logger     : kdd.engine.text-connector\r\n    LogLevel   : DEBUG\r\n    TimeStamp  : 2020-07-08 07:31:29.092\r\n    MachineName: DESKTOP-G1MC8H7\r\n    Message    : [OnBeforeTestExecution] does not need an implementation for this connector\r\n\r\nAutomation.Kdd.Agent Information: 0 : INF - 2020-07-08 07:31:29.094\r\n    Application: kdd.engine\r\n    Logger     : kdd.engine.text-connector\r\n    LogLevel   : INFO\r\n    TimeStamp  : 2020-07-08 07:31:29.094\r\n    MachineName: DESKTOP-G1MC8H7\r\n    Message    : executing 'Login'\r\n\r\nAutomation.Kdd.Agent Information: 0 : [GoToUrl]; argument [https://gravitymvctestapplication.azurewebsites.net/] executed\r\nAutomation.Kdd.Agent Information: 0 : [SendKeys]; element [Username]; argument [userName] executed\r\nAutomation.Kdd.Agent Information: 0 : [SendKeys]; element [Password]; argument [password] executed\r\nAutomation.Kdd.Agent Information: 0 : [Click]; element [//button[contains(.,'Log In')]] executed\r\nAutomation.Kdd.Agent Information: 0 : [WaitForUrl] executed\r\nAutomation.Kdd.Agent Information: 0 : [Assert]; argument [{{$ --url --match:Dashboard}}] executed\r\nAutomation.Kdd.Agent Information: 0 : [CloseBrowser] executed\r\nAutomation.Kdd.Agent Information: 0 : [web-automation]; argument [1/1] executed\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                            |\r\n|----|-----------------------------------------------------------------------|\r\n|200 |Success, the _**Automation Logs**_ is returned as part of the response.|\r\n|404 |Not Found, the _**Automation Logs**_ were not found.                   |\r\n|500 |Fail, the server encountered an unexpected error.                      |"
+								"description": "Returns an existing _**Automation Log**_ tail, by specific size.\r\n\r\n> Configuration key to set logs folder is ```reportConfiguration.logsOut```.\r\n> If not specified, the default logs directory is ```<current_directory>\\Logs```.\r\n\r\n```\r\nGET /api/logs/:log_id/size/:size\r\n```\r\n\r\n|Name            |Type  |Description                                                                                |\r\n|----------------|------|-------------------------------------------------------------------------------------------|\r\n|log_id          |string|The ID of the _**Automation Log**_. Will be the date in the following format ```yyyyMMdd```|\r\n|size            |number|A fixed number of lines from the end of the log upwards.                                   |\r\n\r\n#### Response Content\r\n> The response is an array of log entries of media type ```text/plain```.\r\n> Log entries are separated by an empty line.\r\n\r\n```\r\nDBG - 2020-07-08 07:31:29.092\r\n    Application: kdd.engine\r\n    Logger     : kdd.engine.text-connector\r\n    LogLevel   : DEBUG\r\n    TimeStamp  : 2020-07-08 07:31:29.092\r\n    MachineName: DESKTOP-G1MC8H7\r\n    Message    : [OnBeforeTestExecution] does not need an implementation for this connector\r\n\r\nAutomation.Kdd.Agent Information: 0 : INF - 2020-07-08 07:31:29.094\r\n    Application: kdd.engine\r\n    Logger     : kdd.engine.text-connector\r\n    LogLevel   : INFO\r\n    TimeStamp  : 2020-07-08 07:31:29.094\r\n    MachineName: DESKTOP-G1MC8H7\r\n    Message    : executing 'Login'\r\n\r\nAutomation.Kdd.Agent Information: 0 : [GoToUrl]; argument [https://gravitymvctestapplication.azurewebsites.net/] executed\r\nAutomation.Kdd.Agent Information: 0 : [SendKeys]; element [Username]; argument [userName] executed\r\nAutomation.Kdd.Agent Information: 0 : [SendKeys]; element [Password]; argument [password] executed\r\nAutomation.Kdd.Agent Information: 0 : [Click]; element [//button[contains(.,'Log In')]] executed\r\nAutomation.Kdd.Agent Information: 0 : [WaitForUrl] executed\r\nAutomation.Kdd.Agent Information: 0 : [Assert]; argument [{{$ --url --match:Dashboard}}] executed\r\nAutomation.Kdd.Agent Information: 0 : [CloseBrowser] executed\r\nAutomation.Kdd.Agent Information: 0 : [web-automation]; argument [1/1] executed\r\n...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                            |\r\n|----|-----------------------------------------------------------------------|\r\n|200 |Success, the _**Automation Logs**_ is returned as part of the response.|\r\n|404 |Not Found, the _**Automation Logs**_ were not found.                   |\r\n|500 |Fail, the server encountered an unexpected error.                      |"
 							},
 							"response": [
 								{
@@ -7232,7 +7207,7 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{endpoint}}/api/v3/logs/20200818/configuration/{{configuration_id}}/size/500",
+											"raw": "{{endpoint}}/api/v3/logs/20200818/size/500",
 											"host": [
 												"{{endpoint}}"
 											],
@@ -7241,8 +7216,6 @@
 												"v3",
 												"logs",
 												"20200818",
-												"configuration",
-												"{{configuration_id}}",
 												"size",
 												"500"
 											]
@@ -7261,7 +7234,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/api/v3/logs/20200818/configuration/{{configuration_id}}/download",
+									"raw": "{{endpoint}}/api/v3/logs/20200913/download",
 									"host": [
 										"{{endpoint}}"
 									],
@@ -7269,13 +7242,11 @@
 										"api",
 										"v3",
 										"logs",
-										"20200818",
-										"configuration",
-										"{{configuration_id}}",
+										"20200913",
 										"download"
 									]
 								},
-								"description": "Downloads an existing _**Automation Log**_ as _**zip**_ file.\r\n\r\n> Configuration key to set logs folder is ```reportConfiguration.logsOut```.\r\n> If not specified, the default logs directory is ```<current_directory>\\Logs```.\r\n\r\n```\r\nGET /api/logs/:log_id/configuration/:configuration_id/download\r\n```\r\n\r\n|Name            |Type  |Description                                                                                |\r\n|----------------|------|-------------------------------------------------------------------------------------------|\r\n|log_id          |string|The ID of the _**Automation Log**_. Will be the date in the following format ```yyyyMMdd```|\r\n|configuration_id|string|The ID of the configuration group.                                                         |\r\n\r\n#### Response Content\r\n> The response is a file of media type ```application/zip```.\r\n\r\n### Response Codes\r\n|Code|Description                                                            |\r\n|----|-----------------------------------------------------------------------|\r\n|200 |Success, the _**Automation Logs**_ is returned as part of the response.|\r\n|404 |Not Found, the _**Automation Logs**_ were not found.                   |\r\n|500 |Fail, the server encountered an unexpected error.                      |"
+								"description": "Downloads an existing _**Automation Log**_ as _**zip**_ file.\r\n\r\n> Configuration key to set logs folder is ```reportConfiguration.logsOut```.\r\n> If not specified, the default logs directory is ```<current_directory>\\Logs```.\r\n\r\n```\r\nGET /api/logs/:log_id/download\r\n```\r\n\r\n|Name            |Type  |Description                                                                                |\r\n|----------------|------|-------------------------------------------------------------------------------------------|\r\n|log_id          |string|The ID of the _**Automation Log**_. Will be the date in the following format ```yyyyMMdd```|\r\n\r\n#### Response Content\r\n> The response is a file of media type ```application/zip```.\r\n\r\n### Response Codes\r\n|Code|Description                                                            |\r\n|----|-----------------------------------------------------------------------|\r\n|200 |Success, the _**Automation Logs**_ is returned as part of the response.|\r\n|404 |Not Found, the _**Automation Logs**_ were not found.                   |\r\n|500 |Fail, the server encountered an unexpected error.                      |"
 							},
 							"response": [
 								{
@@ -7284,7 +7255,7 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{endpoint}}/api/v3/logs/20200818/configuration/{{configuration_id}}/download",
+											"raw": "{{endpoint}}/api/v3/logs/20200818/download",
 											"host": [
 												"{{endpoint}}"
 											],
@@ -7293,8 +7264,6 @@
 												"v3",
 												"logs",
 												"20200818",
-												"configuration",
-												"{{configuration_id}}",
 												"download"
 											]
 										}
@@ -8260,64 +8229,49 @@
 	],
 	"variable": [
 		{
-			"id": "3fead036-4510-4d6a-b9b4-0229d2b6cc1c",
+			"id": "bc38f51c-9716-4f4f-b71e-ed96fe2c82b1",
 			"key": "collection_id",
-			"value": "e869c1e6-a81d-4d7c-8a6e-8dae7365ec67"
+			"value": "dc2d5071-8fa3-49c1-9426-3de555716315"
 		},
 		{
-			"id": "bcdfb69d-ad70-40ba-bee1-d086a68c517f",
+			"id": "13006c12-de7c-4461-b7ee-e268c11f6b09",
 			"key": "configuration_id",
-			"value": "f645c26c-7208-45b9-982c-6de9b4c11991"
+			"value": "4bd235ae-3de2-4ff7-b516-8c3294b3c881"
 		},
 		{
-			"id": "1827c697-0c2f-4fbd-8019-8b06651c8ebe",
+			"id": "e8b98309-827f-4536-92de-d1812f68db62",
 			"key": "endpoint",
 			"value": "https://localhost:5001"
 		},
 		{
-			"id": "36f0ca84-e4e0-4038-8431-756041299dbd",
+			"id": "90eac6fe-b74f-4843-a140-aeb2cf69b29b",
 			"key": "rhino_drivers",
 			"value": "."
 		},
 		{
-			"id": "6a80f338-448e-4857-90a0-1b863022aeb6",
-			"key": "rhino_reports",
-			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Test Run Reports\\\\rhino"
-		},
-		{
-			"id": "172be483-7b5b-47a0-9b05-ab3e4428f0a4",
+			"id": "1e1413d4-568f-4db1-bb50-f5259b292d99",
 			"key": "rhino_reports_connection_string",
 			"value": "Server=.\\\\SQLExpress;Database=TestingWarehouse;Trusted_Connection=True;User Id=<db_user>;Password=<db_password>;"
 		},
 		{
-			"id": "6c8ca48f-7009-4fc0-988c-3ad27ba5046a",
+			"id": "95e8dad8-73f6-479e-a495-116c1093acfb",
 			"key": "rhino_user",
 			"value": ""
 		},
 		{
-			"id": "3dd5fb87-ac1c-4d0f-8e7a-330b1f362bb9",
+			"id": "81624554-a09e-41ea-8909-69d294de1fec",
 			"key": "rhino_password",
 			"value": ""
 		},
 		{
-			"id": "f5541d50-d397-4c3b-b854-5b3f3333e636",
-			"key": "rhino_images",
-			"value": "D:\\\\garbage\\\\imagesOut"
-		},
-		{
-			"id": "3597454c-6d06-42db-b64b-e24a35d537c1",
-			"key": "rhino_logs",
-			"value": "D:\\\\garbage\\\\RhinoReportPortal\\\\Logs"
-		},
-		{
-			"id": "32016541-1028-4b14-ab7b-e0283f05e297",
+			"id": "3c8bc899-790f-47fc-ac32-9e4b06d20abe",
 			"key": "models_id",
-			"value": "b8fd7ead-bc41-423d-bd7b-02b535ec4cc6"
+			"value": "e42b3455-2a84-4c3e-80eb-8d1feebc97f2"
 		},
 		{
-			"id": "61f37aee-e65d-42ce-90f5-1130c260ca40",
+			"id": "455658df-b31f-4dd0-843a-02db515fe879",
 			"key": "session_id",
-			"value": "73c41a9aa676b8de59f38ff4e127b73b"
+			"value": "c633a67e5278577e114668468599ac97"
 		}
 	],
 	"protocolProfileBehavior": {}
