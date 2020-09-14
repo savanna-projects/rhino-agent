@@ -26,7 +26,7 @@ namespace Rhino.Agent.Extensions
             using ZipArchive zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true);
 
             // create zip entry
-            var zipEntry = zipArchive.CreateEntry(fileName);
+            var zipEntry = zipArchive.CreateEntry(fileName + ".zip");
 
             // write to new stream
             using (var writer = new StreamWriter(zipEntry.Open()))

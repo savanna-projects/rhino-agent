@@ -1,0 +1,548 @@
+{
+	"info": {
+		"_postman_id": "6a738f9f-8a4f-4fcb-96f3-e7535b6f4464",
+		"name": "Rhino API Reference Guide v3 - XRay Connector",
+		"description": "Learn how to access and use Rhino’s API to integrate automated testing frameworks, submit test results, and automate various other aspects of your applications via simple HTTP requests.\r\n\r\n## Capabilities\r\nYou can find a full list of supported capabilities [here](https://github.com/savanna-projects/rhino-connectors-atlassian)\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Configuration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "884e3040-3a3a-40a2-9eb8-4ba806e39cd2",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set('configuration_id', jsonData.data.id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Rhino Automation - Chrome & Firefox\",\r\n  \"testsRepository\": [],\r\n  \"driverParameters\": [\r\n    {\r\n      \"driver\": \"ChromeDriver\",\r\n      \"driverBinaries\": \"{{rhino_drivers}}\"\r\n    }\r\n  ],\r\n  \"dataSource\": [],\r\n  \"models\": [],\r\n  \"connector\": \"connector_xray\",\r\n  \"gravityEndpoint\": \"\",\r\n  \"authentication\": {\r\n    \"password\": \"{{rhino_password}}\",\r\n    \"userName\": \"{{rhino_user}}\"\r\n  },\r\n  \"engineConfiguration\": {\r\n    \"maxParallel\": 1,\r\n    \"failOnException\": false,\r\n    \"optimalThreshold\": 3,\r\n    \"qualityThreshold\": 0,\r\n    \"toleranceThreshold\": 0,\r\n    \"errorOnExitCode\": 0,\r\n    \"elementSearchingTimeout\": 15000,\r\n    \"pageLoadTimeout\": 60000,\r\n    \"retrunExceptions\": true,\r\n    \"returnPerformancePoints\": true,\r\n    \"returnEnvironment\": true,\r\n    \"terminateOnAssertFailure\": false,\r\n    \"priority\": 0\r\n  },\r\n  \"screenshotsConfiguration\": {\r\n    \"keepOriginal\": false,\r\n    \"returnScreenshots\": false,\r\n    \"onExceptionOnly\": false\r\n  },\r\n  \"reportConfiguration\": {\r\n    \"reporters\": [\r\n      \"reporter_basic\",\r\n      \"reporter_warehouse\"\r\n    ],\r\n    \"connectionString\": \"{{rhino_reports_connection_string}}\",\r\n    \"dataProvider\": null,\r\n    \"archive\": false,\r\n    \"localReport\": true,\r\n    \"addGravityData\": true\r\n  },\r\n  \"providerConfiguration\": {\r\n    \"collection\": \"{{jira_server}}\",\r\n    \"password\": \"{{jira_user}}\",\r\n    \"user\": \"{{jira_password}}\",\r\n    \"project\": \"{{jira_project}}\",\r\n    \"bugManager\": true,\r\n    \"capabilities\": {\r\n      \"bucketSize\": 15\r\n    }\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/api/v3/configurations",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"configurations"
+					]
+				},
+				"description": "Creates a new _**Rhino Configuration**_.\r\n\r\n```\r\nPOST /api/v3/configurations\r\n```\r\n\r\n### Request Fields\r\nThe request body follows the same format as [Get Configuration](#get-configuration) response content.\r\n\r\n### Request Example\r\n```js\r\n{\r\n    \"name\": \"Rhino Automation - Chrome & Firefox\",\r\n    \"testsRepository\": [ ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"http://localhost:4444/wd/hub\"\r\n        },\r\n        {\r\n            \"driver\": \"FirefoxDriver\",\r\n            \"driverBinaries\": \"http://localhost:4444/wd/hub\"\r\n        }\r\n    ],\r\n    \"dataSource\": [],\r\n    \"models\": [ ],\r\n    \"connector\": \"connector_text\",\r\n    \"gravityEndpoint\": \"\",\r\n    \"authentication\": {\r\n        \"password\": \"<rhino_user>\",\r\n        \"userName\": \"<rhino_password>\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3.0,\r\n        \"qualityThreshold\": 0.0,\r\n        \"toleranceThreshold\": 0.0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": false,\r\n        \"screenshotsOut\": \"<path_to_screenshots_folder>\",\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reportOut\": \"<path_to_reports_folder>\",\r\n        \"logsOut\": \"<path_to_logs_folder>\",\r\n        \"reporters\": null,\r\n        \"connectionString\": null,\r\n        \"dataProvider\": null,\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                                                  |\r\n|----|---------------------------------------------------------------------------------------------|\r\n|201 |Success, the _**Configuration**_ created and identifier was returned as part of the response.|\r\n|400 |Bad Request, the request is missing a mandatory field(s) or bad formatted.                   |\r\n|500 |Fail, the server encountered an unexpected error.                                            |"
+			},
+			"response": [
+				{
+					"name": "Create Configuration",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Rhino Automation - Chrome & Firefox\",\r\n    \"testsRepository\": [ ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"{{rhino_drivers}}\"\r\n        },\r\n        {\r\n            \"driver\": \"FirefoxDriver\",\r\n            \"driverBinaries\": \"{{rhino_drivers}}\"\r\n        }\r\n    ],\r\n    \"dataSource\": [],\r\n    \"models\": [ ],\r\n    \"connector\": \"connector_text\",\r\n    \"gravityEndpoint\": \"\",\r\n    \"authentication\": {\r\n        \"password\": \"{{rhino_user}}\",\r\n        \"userName\": \"{{rhino_password}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3.0,\r\n        \"qualityThreshold\": 0.0,\r\n        \"toleranceThreshold\": 0.0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": false,\r\n        \"screenshotsOut\": \"{{rhino_images}}\",\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reportOut\": \"{{rhino_reports}}\",\r\n        \"logsOut\": \"{{rhino_logs}}\",\r\n        \"reporters\": [\"reporter_basic\", \"reporter_warehouse\"],\r\n        \"connectionString\": \"{{rhino_reports_connection_string}}\",\r\n        \"dataProvider\": null,\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/v3/configurations",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"configurations"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "Create Tests Collection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ddfea768-22c9-4fef-b05b-67dbfb5e7403",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {    \r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set('collection_id', jsonData.data.id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/api/v3/tests/{{configuration_id}}",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"tests",
+						"{{configuration_id}}"
+					]
+				},
+				"description": "Creates a new _**Rhino Test Case Collection**_.\r\n\r\n```\r\nPOST /api/tests/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                                                                             |\r\n|----------------|------|----------------------------------------------------------------------------------------|\r\n|configuration_id|string|The ID of the configuration group under which to create the tests collection (optional).|\r\n\r\n### Request Fields\r\nThe body is an array of tests, sets or plans keys from Jira. It is possible to combine them in a single request.\r\n\r\n> Please note, it is possible to create an empty collection without provided any information in the request body.\r\n\r\n#### Request Sample\r\n```\r\nXDP-240\r\n\r\n>>>\r\n\r\nXDP-37\r\n\r\n>>>\r\n\r\nXDP...\r\n```\r\n\r\n### Response Fields\r\n|Name |Type  |Description              |\r\n|-----|------|-------------------------|\r\n|id   |string|The ID of the collection.|\r\n\r\n#### Response Sample\r\n```js\r\n{\r\n  \"data\": {\r\n    \"id\": \"73e21d1b-770b-4347-805a-eae4f622a146\"\r\n  }\r\n}\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                    |\r\n|----|---------------------------------------------------------------|\r\n|201 |Success, the _**Rhino Test Case Collection**_ was created.     |\r\n|404 |Not Found, the provide _**Rhino Configuration**_ was not found.|\r\n|500 |Fail, the server encountered an unexpected error.              |"
+			},
+			"response": [
+				{
+					"name": "Create Collection - Single Test, No Data, with Configuration",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[test-id] 001\n[test-scenario] search on google.com web-site - positive\n\n[test-actions]\n1. go to url {https://www.google.com/} using any compliant web-browser\n2. close all child windows (to make sure only the web site is open and visible)\n3. send keys {automation} into {@search-box} text-box (//input[@name='q'])\n4. click on the first {//ul[@role='listbox']/li}\n5. wait for {3000} milliseconds\n6. close browser\n\n[test-expected-results]\n[1] assert {url} match {google.com}\n[3] assert on {//input[@name='q']} get value from {value} attribute must match {gravity}",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/v3/tests/{{configuration_id}}",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"tests",
+								"{{configuration_id}}"
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				},
+				{
+					"name": "Create Collection - Single Test, Data Driven",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[test-id] 001\n[test-scenario] search on google.com web-site - positive\n\n[test-actions]\n1. go to url {@address} using any compliant web-browser\n2. close all child windows (to make sure only the web site is open and visible)\n3. send keys {automation} into {@search-box} text-box (search text-box)\n4. click on the first {@auto-complete-item}\n5. wait for {3000} milliseconds\n6. close browser\n\n[test-expected-results]\n[1] assert {url} match {@address-expected}\n[3] assert on {@search-box} get value from {value} attribute must match {gravity}\n\n[test-data-provider]\n[\n\t{\n\t\t\"address\":\"https://www.google.com/\",\n\t\t\"address-expected\":\"google.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@role='listbox']/li\"\n\t},\n\t{\n\t\t\"address\":\"https://www.bing.com/\",\n\t\t\"address-expected\":\"bing.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@id='sa_ul']/li\"\n\t}\n]",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/v3/tests",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"tests"
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				},
+				{
+					"name": "Create Collection - Multiple Tests, Data Driven",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[test-id] 001\n[test-scenario] search on google.com web-site - positive\n\n[test-actions]\n1. go to url {@address} using any compliant web-browser\n2. close all child windows (to make sure only the web site is open and visible)\n3. send keys {automation} into {@search-box} text-box (search text-box)\n4. click on the first {@auto-complete-item}\n5. wait for {3000} milliseconds\n6. close browser\n\n[test-expected-results]\n[1] assert {url} match {@address-expected}\n[3] assert on {@search-box} get value from {value} attribute must match {gravity}\n\n[test-data-provider]\n[\n\t{\n\t\t\"address\":\"https://www.google.com/\",\n\t\t\"address-expected\":\"google.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@role='listbox']/li\"\n\t},\n\t{\n\t\t\"address\":\"https://www.bing.com/\",\n\t\t\"address-expected\":\"bing.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@id='sa_ul']/li\"\n\t}\n]\n\n>>>\n\n[test-id] 002\n[test-scenario] search on google.com web-site - positive\n\n[test-actions]\n1. go to url {@address} using any compliant web-browser\n2. close all child windows (to make sure only the web site is open and visible)\n3. send keys {automation} into {@search-box} text-box (search text-box)\n4. click on the first {@auto-complete-item}\n5. wait for {3000} milliseconds\n6. close browser\n\n[test-expected-results]\n[1] assert {url} match {@address-expected}\n[3] assert on {@search-box} get value from {value} attribute must match {gravity}\n\n[test-data-provider]\n[\n\t{\n\t\t\"address\":\"https://www.google.com/\",\n\t\t\"address-expected\":\"google.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@role='listbox']/li\"\n\t},\n\t{\n\t\t\"address\":\"https://www.bing.com/\",\n\t\t\"address-expected\":\"bing.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@id='sa_ul']/li\"\n\t}\n]",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/v3/tests",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"tests"
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "Add Tests to Collection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7ebe0694-ce0d-493b-803c-82f3dff4eb14",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "XDP-240",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/api/v3/tests/{{collection_id}}",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"tests",
+						"{{collection_id}}"
+					]
+				},
+				"description": "Add additional _**Rhino Test Cases**_ into an existing collection.  \r\n\r\n> Please note, there is no duplication check here, and you can add tests with the same ID.\r\n> However, Rhino Engine, will not execute them, since it will distinct all IDs before running automation.\r\n\r\n```\r\nPATCH /api/v3/tests/:collection_id\r\n```\r\n\r\n|Name         |Type  |Description                                    |\r\n|-------------|------|-----------------------------------------------|\r\n|collection_id|string|The ID of the _**Rhino Test Case**_ collection.|\r\n\r\n### Request Fields\r\nThe body is an array of tests, sets or plans keys from Jira. It is possible to combine them in a single request.\r\n\r\n### Request Example\r\n```\r\nXDP-240\r\n\r\n>>>\r\n\r\nXDP-37\r\n\r\n>>>\r\n\r\nXDP...\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                        |\r\n|----|-------------------------------------------------------------------|\r\n|200 |Success, the _**Collection**_ was returned as part of the response.|\r\n|400 |Bad Request, no test cases were provided in the request body.      |\r\n|404 |Not Found, the _**Collection**_ was not found.                     |\r\n|500 |Fail, the server encountered an unexpected error.                  |"
+			},
+			"response": [
+				{
+					"name": "Add Tests to Collection",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[test-id] rhino-documentation-#003\n[test-scenario] search on google.com web-site - positive\n\n[test-actions]\n1. go to url {@address} using any compliant web-browser\n2. close all child windows (to make sure only the web site is open and visible)\n3. send keys {automation} into {@search-box} text-box (search text-box)\n4. click on the first {@auto-complete-item}\n5. wait for {3000} milliseconds\n6. close browser\n\n[test-expected-results]\n[1] assert {url} match {@address-expected}\n[3] assert on {@search-box} get value from {value} attribute must match {gravity}\n\n[test-data-provider]\n[\n\t{\n\t\t\"address\":\"https://www.google.com/\",\n\t\t\"address-expected\":\"google.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@role='listbox']/li\"\n\t},\n\t{\n\t\t\"address\":\"https://www.bing.com/\",\n\t\t\"address-expected\":\"bing.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@id='sa_ul']/li\"\n\t}\n]\n\n>>>\n\n[test-id] rhino-documentation-#004\n[test-scenario] search on google.com web-site - positive\n\n[test-actions]\n1. go to url {@address} using any compliant web-browser\n2. close all child windows (to make sure only the web site is open and visible)\n3. send keys {automation} into {@search-box} text-box (search text-box)\n4. click on the first {@auto-complete-item}\n5. wait for {3000} milliseconds\n6. close browser\n\n[test-expected-results]\n[1] assert {url} match {@address-expected}\n[3] assert on {@search-box} get value from {value} attribute must match {gravity}\n\n[test-data-provider]\n[\n\t{\n\t\t\"address\":\"https://www.google.com/\",\n\t\t\"address-expected\":\"google.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@role='listbox']/li\"\n\t},\n\t{\n\t\t\"address\":\"https://www.bing.com/\",\n\t\t\"address-expected\":\"bing.com\",\n\t\t\"search-box\":\"//input[@name='q']\",\n\t\t\"auto-complete-item\":\"//ul[@id='sa_ul']/li\"\n\t}\n]",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/v3/tests/{{collection_id}}",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"tests",
+								"{{collection_id}}"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "Run by Collection (one configuration)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "abd919e5-dd13-4fe8-987f-03dc635d28be",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/api/v3/rhino/collections/{{collection_id}}/configurations/{{configuration_id}}",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"rhino",
+						"collections",
+						"{{collection_id}}",
+						"configurations",
+						"{{configuration_id}}"
+					]
+				},
+				"description": "Runs an existing _**Rhino Test Case**_ collection and returns _**Rhino Test Run**_ object.\r\n\r\n```\r\nGET /api/v3/rhino/collections/:collection_id/configurations/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                             |\r\n|----------------|------|----------------------------------------|\r\n|collection_id   |string|The ID of the _**Rhino Collection**_.   |\r\n|configuration_id|string|The ID of the _**Rhino Configuration**_.|\r\n\r\n## Response Content\r\n\r\nThe response body follows the same format as [Run by Configuration](#run-by-configuration) response content.\r\n\r\n### Response Codes\r\n|Code|Description                                                                         |\r\n|----|------------------------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Result**_ is returned as part of the response.                |\r\n|400 |Bad Request, _**Rhino Collection**_ or  _**Rhino Configuration**_ were not provided.|\r\n|404 |Not Found, the _**Rhino Collection**_ or  _**Rhino Configuration**_ were not found. |\r\n|500 |Fail, the server encountered an unexpected error.                                   |"
+			},
+			"response": [
+				{
+					"name": "Run by Collection (one configuration)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{endpoint}}/api/v3/rhino/collections/{{collection_id}}/configurations/{{configuration_id}}",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"rhino",
+								"collections",
+								"{{collection_id}}",
+								"configurations",
+								"{{configuration_id}}"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "Delete Test Case Collections",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/api/v3/tests",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"tests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Page Model Collections",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "80aa6bad-c2be-4c91-aac9-d0d6af6b3c49",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/api/v3/models",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"models"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Configurations",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/api/v3/configurations",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"configurations"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{rhino_password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{rhino_user}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "019efcd3-7657-4499-a9f2-05a8418c758d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "cd37f694-8ffb-4e9a-85c8-505da63c2c78",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "7b6cd855-13fb-415b-b9ef-8c978e574d2c",
+			"key": "collection_id",
+			"value": "75ba0260-525b-4a20-9eb7-acf99188601f"
+		},
+		{
+			"id": "fa5d873f-1560-4448-ae4e-2ce8fdf9f863",
+			"key": "configuration_id",
+			"value": "2c582c28-3305-4dc8-8c22-1a8e16e96c26"
+		},
+		{
+			"id": "15babb67-501d-402c-b93a-0453cb12c433",
+			"key": "endpoint",
+			"value": "https://localhost:5001"
+		},
+		{
+			"id": "9f252d9c-22a0-43cd-ab8c-63b5f678c3ab",
+			"key": "rhino_drivers",
+			"value": "."
+		},
+		{
+			"id": "d3e9ab71-0e72-40cf-a0d9-03e92b18dd60",
+			"key": "rhino_reports_connection_string",
+			"value": "Server=.\\\\SQLExpress;Database=TestingWarehouse;Trusted_Connection=True;User Id=<db_user>;Password=<db_password>;"
+		},
+		{
+			"id": "97b2d864-097c-4f43-a768-bcda15ae513e",
+			"key": "rhino_user",
+			"value": ""
+		},
+		{
+			"id": "3d5a681f-dd87-4254-80b9-bd9e56dd60f6",
+			"key": "rhino_password",
+			"value": ""
+		},
+		{
+			"id": "b6eac12d-43d8-4356-b4bb-3be728a00a55",
+			"key": "models_id",
+			"value": "dcd8035c-77b0-4778-8bd0-1a36b1de637e"
+		},
+		{
+			"id": "108677e8-b996-4599-8a09-8e5a68c2814f",
+			"key": "session_id",
+			"value": "73c41a9aa676b8de59f38ff4e127b73b"
+		},
+		{
+			"id": "6cc46811-8df8-4d75-acbd-497cddf8e030",
+			"key": "jira_server",
+			"value": "http://localhost:8080"
+		},
+		{
+			"id": "a95b40dc-49e8-49a5-b595-71e01c14eacd",
+			"key": "jira_user",
+			"value": "admin"
+		},
+		{
+			"id": "aaff8560-8ac3-4ee4-9a41-b59a75a37df3",
+			"key": "jira_password",
+			"value": "admin"
+		},
+		{
+			"id": "69369e1e-0857-45fb-b2ff-429f75781bde",
+			"key": "jira_project",
+			"value": "XDP"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

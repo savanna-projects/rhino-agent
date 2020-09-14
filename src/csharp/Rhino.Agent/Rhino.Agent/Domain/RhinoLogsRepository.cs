@@ -41,23 +41,22 @@ namespace Rhino.Agent.Domain
         /// <param name="configuration">The configuration id by which to GET.</param>
         /// <param name="log">The log id (current date as yyyyMMdd).</param>
         /// <returns>Status code and logs (if any).</returns>
-        public (HttpStatusCode statusCode, string data) Get(Authentication authentication, string configuration, string log)
+        public (HttpStatusCode statusCode, string data) Get(string configuration, string log)
         {
-            return DoGet(authentication, configuration, log);
+            return DoGet(configuration, log);
         }
 
         /// <summary>
         /// GET logs from this domain state.
         /// </summary>
-        /// <param name="authentication">Authentication object by which to get logs.</param>
-        /// <param name="configuration">The configuration id by which to GET.</param>
+        /// <param name="logPath">The path under which the logs are written.</param>
         /// <param name="log">The log id (current date as yyyyMMdd).</param>
         /// <param name="size">A fixed number of lines from the end of the log upwards.</param>
         /// <returns>Status code and logs (if any).</returns>
-        public (HttpStatusCode statusCode, string data) Get(Authentication authentication, string configuration, string log, int size)
+        public (HttpStatusCode statusCode, string data) Get(string logPath, string log, int size)
         {
             // get
-            var (statusCode, data) = DoGet(authentication, configuration, log);
+            var (statusCode, data) = DoGet(logPath, log);
 
             // exit conditions
             if (statusCode != HttpStatusCode.OK)
@@ -76,17 +75,15 @@ namespace Rhino.Agent.Domain
         /// <summary>
         /// GET a zip file contains test run report.
         /// </summary>
-        /// <param name="authentication">Authentication object by which to get logs.</param>
-        /// <param name="configuration">The configuration id by which to GET.</param>
+        /// <param name="logPath">The path under which the logs are written.</param>
         /// <param name="log">The log id (current date as yyyyMMdd).</param>
         /// <returns>Status code and memory stream.</returns>
         public (HttpStatusCode statusCode, MemoryStream stream) GetAsMemoryStream(
-            Authentication authentication,
-            string configuration,
+            string logPath,
             string log)
         {
             // get
-            var (statusCode, data) = DoGet(authentication, configuration, log);
+            var (statusCode, data) = DoGet(logPath, log);
 
             // exit conditions
             if (statusCode != HttpStatusCode.OK)
@@ -99,20 +96,21 @@ namespace Rhino.Agent.Domain
             return (HttpStatusCode.OK, memoryStream);
         }
 
-        private (HttpStatusCode statusCode, string data) DoGet(Authentication authentication, string configuration, string log)
+        private (HttpStatusCode statusCode, string data) DoGet(string logsPath, string log)
         {
-            // validate
-            var (statusCode, data) = configurationRepository.Get(authentication, configuration);
+            // exit conditions
+            if (!Directory.Exists(logsPath))
+            {
+                return (HttpStatusCode.NotFound, string.Empty);
+            }
 
             // parse
-            var logsOut = data.ReportConfiguration.LogsOut == "."
-                ? $"{Environment.CurrentDirectory}\\logs\\"
-                : data.ReportConfiguration.LogsOut;
+            var logsOut = logsPath == "." ? $"{Environment.CurrentDirectory}\\logs\\" : logsPath;
             logsOut = logsOut.EndsWith("\\") ? logsOut : logsOut + "\\";
 
             // get
-            var logFile = $"{logsOut}Rhino-{log}.log";
-            if (statusCode != HttpStatusCode.OK || !File.Exists(path: logFile))
+            var logFile = $"{logsOut}RhinoApi-{log}.log";
+            if (!File.Exists(path: logFile))
             {
                 return (HttpStatusCode.NotFound, string.Empty);
             }

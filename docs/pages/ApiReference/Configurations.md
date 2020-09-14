@@ -57,62 +57,73 @@ Please see below for a typical response:
 
 ```js
 {
-    "name": "Rhino Automation - Chrome & Firefox",
-    "testsRepository": [
-        "8bed8025-3cgf-52g1-0919-533cbc6d523c"
-    ],
-    "driverParameters": [
-        {
-            "driver": "ChromeDriver",
-            "driverBinaries": "http://localhost:4444/wd/hub"
-        },
-        {
-            "driver": "FirefoxDriver",
-            "driverBinaries": "http://localhost:4444/wd/hub"
-        }
-    ],
-    "dataSource": [],
-    "models": [
-        "7adc7914-2bfe-41f0-9808-422bab5c412b"
-    ],
-    "connector": "connector_text",
-    "gravityEndpoint": "",
-    "authentication": {
-        "password": "<rhino_user>",
-        "userName": "<rhino_password>"
+  "name": "Rhino Automation - Chrome & Firefox",
+  "testsRepository": [
+    "8bed8025-3cgf-52g1-0919-533cbc6d523c"
+  ],
+  "driverParameters": [
+    {
+      "driver": "ChromeDriver",
+      "driverBinaries": "http://localhost:4444/wd/hub"
     },
-    "engineConfiguration": {
-        "maxParallel": 1,
-        "failOnException": false,
-        "optimalThreshold": 3.0,
-        "qualityThreshold": 0.0,
-        "toleranceThreshold": 0.0,
-        "priority": 0,
-        "severity": 0,
-        "errorOnExitCode": 0,
-        "elementSearchingTimeout": 15000,
-        "pageLoadTimeout": 60000,
-        "retrunExceptions": true,
-        "returnPerformancePoints": true,
-        "returnEnvironment": true,
-        "terminateOnAssertFailure": false
-    },
-    "screenshotsConfiguration": {
-        "keepOriginal": false,
-        "returnScreenshots": false,
-        "screenshotsOut": "<path_to_screenshots_folder>",
-        "onExceptionOnly": false
-    },
-    "reportConfiguration": {
-        "reportOut": "<path_to_reports_folder>",
-        "logsOut": "<path_to_logs_folder>",
-        "reporters": null,
-        "connectionString": null,
-        "dataProvider": null,
-        "archive": false,
-        "localReport": true,
-        "addGravityData": true
+    {
+      "driver": "FirefoxDriver",
+      "driverBinaries": "http://localhost:4444/wd/hub"
     }
+  ],
+  "dataSource": [],
+  "models": [
+    "7adc7914-2bfe-41f0-9808-422bab5c412b"
+  ],
+  "connector": "connector_xray",
+  "gravityEndpoint": "",
+  "authentication": {
+    "password": "<rhino_user>",
+    "userName": "<rhino_password>"
+  },
+  "engineConfiguration": {
+    "maxParallel": 1,
+    "failOnException": false,
+    "optimalThreshold": 3,
+    "qualityThreshold": 0,
+    "toleranceThreshold": 0,
+    "priority": 0,
+    "severity": 0,
+    "errorOnExitCode": 0,
+    "elementSearchingTimeout": 15000,
+    "pageLoadTimeout": 60000,
+    "retrunExceptions": true,
+    "returnPerformancePoints": true,
+    "returnEnvironment": true,
+    "terminateOnAssertFailure": false
+  },
+  "screenshotsConfiguration": {
+    "keepOriginal": false,
+    "returnScreenshots": false,
+    "screenshotsOut": "<path_to_screenshots_folder>",
+    "onExceptionOnly": false
+  },
+  "reportConfiguration": {
+    "reportOut": "<path_to_reports_folder>",
+    "logsOut": "<path_to_logs_folder>",
+    "reporters": null,
+    "connectionString": null,
+    "dataProvider": null,
+    "archive": false,
+    "localReport": true,
+    "addGravityData": true
+  },
+  "providerConfiguration": {
+    "collection": "http://localhost:8080",
+    "password": "admin",
+    "user": "admin",
+    "project": "XDP",
+    "bugManager": true,
+    "capabilities": {
+      "bucketSize": 15,
+      "dryRun": false
+    }
+  }
 }
 ```
 
@@ -132,6 +143,7 @@ The following system fields are always included in the response:
 |[engineConfiguration](#engine-configuration)          |object|Configure the automation engine behavior.                                                              |
 |[screenshotsConfiguration](#screenshots-configuration)|object|Configure the screenshot behavior.                                                                     |
 |[reportConfiguration](#report-configuration)          |object|Configure the reporting behavior.                                                                      |
+|[providerConfiguration](#provider-configuration)      |object|Configure the behavior against 3rd party automation provider such as Jira, Test Rail or Azure DevOps.  |
 
 #### Authentication
 |Name    |Type  |Description                 |
@@ -184,6 +196,16 @@ The following system fields are always included in the response:
 |200 |Success, the _**Configuration**_ was returned as part of the response.               |
 |404 |Not Found, the _**Configuration**_ was not found under the configurations collection.|
 |500 |Fail, the server encountered an unexpected error.                                    |
+
+#### Provider Configuration
+|Name        |Type   |Description                                                                                                                                       |
+|------------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+|collection  |string |The server base address under which the application is hosted (i.e. Jira or DevOps server endpoint).                                              |
+|password    |string |A valid password for your application (i.e. Jira or DevOps password).                                                                             |
+|user        |string |A valid user for your application (i.e. Jira or DevOps password). The use must have create permissions for **Tests**, **Bugs** and **Executions**.|
+|project     |string |The project name or ID (depends on the connector implementation) under which to find and execute tests.                                           |
+|bugManager  |boolean|Set to **true** in order to activate the bug manager feature for the selected connector.                                                          |
+|capabilities|object |A set of key/value for passing explicit settings and parameters to your automation provider connector.                                            |
 
 ## Create Configuration
 Creates a new _**Rhino Configuration**_.

@@ -104,7 +104,7 @@ namespace Rhino.Agent
             inFolder = string.IsNullOrEmpty(inFolder) ? Environment.CurrentDirectory + "/Logs" : inFolder;
 
             // setup logger
-            return new TraceLogger(applicationName: "RhinoAgent", loggerName: string.Empty, inFolder);
+            return new TraceLogger(applicationName: "RhinoApi", loggerName: string.Empty, inFolder);
         }
 
         /// <summary>

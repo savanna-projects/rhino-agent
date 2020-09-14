@@ -13,3 +13,7 @@ and execute Rhino Specs.
 
 ## You can find more information on the following resources
 * [Documentation](./docs/pages/Home.md)
+
+## Available Connectors
+[Plain Text](https://github.com/savanna-projects/rhino-connectors-text)
+[Jira - XRay](https://github.com/savanna-projects/rhino-connectors-atlassian)

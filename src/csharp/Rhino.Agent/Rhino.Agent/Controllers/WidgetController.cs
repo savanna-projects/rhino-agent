@@ -16,7 +16,10 @@ using Newtonsoft.Json.Linq;
 
 using Rhino.Agent.Domain;
 using Rhino.Agent.Extensions;
+using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Contracts.Interfaces;
+using Rhino.Api.Extensions;
 using Rhino.Api.Parser;
 using Rhino.Connectors.Text;
 
@@ -25,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Rhino.Agent.Controllers
@@ -156,6 +160,26 @@ namespace Rhino.Agent.Controllers
             }
         }
 
+        // GET /api/v3/widget/connectors
+        [HttpGet]
+        public IActionResult Connectors()
+        {
+            // setup
+            // types loading pipeline
+            var onTypes = types.Where(t => typeof(IConnector).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+            var connectorTypes = onTypes.Where(i => i.GetCustomAttribute<ConnectorAttribute>() != null);
+            var attributes = connectorTypes.Select(i => i.GetCustomAttribute<ConnectorAttribute>());
+
+            // results
+            var content = JsonConvert.SerializeObject(attributes, jsonSettings);
+            return new ContentResult
+            {
+                Content = content,
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = HttpStatusCode.OK.ToInt32()
+            };
+        }
+
         // POST api/v3/widget/send
         [HttpPost]
         public async Task<IActionResult> Send()
@@ -173,18 +197,35 @@ namespace Rhino.Agent.Controllers
                 var testCaseSrc = JsonConvert.DeserializeObject<string[]>($"{token["test"]}");
                 var testSuite = $"{token["suite"]}";
 
+                // text connector
+                if (configuration.Connector.Equals(Connector.Text))
+                {
+                    return new ContentResult
+                    {
+                        Content = string.Join(Environment.NewLine, testCaseSrc),
+                        ContentType = MediaTypeNames.Text.Plain,
+                        StatusCode = HttpStatusCode.OK.ToInt32()
+                    };
+                }
+
                 // convert into bridge object
-                var testCase = new RhinoTestCaseFactory(client).GetTestCases(string.Join(Environment.NewLine, testCaseSrc.Where(i => !string.IsNullOrEmpty(i)))).First();
+                var testCase = new RhinoTestCaseFactory(client)
+                    .GetTestCases(string.Join(Environment.NewLine, testCaseSrc.Where(i => !string.IsNullOrEmpty(i))))
+                    .First();
                 testCase.TestSuite = testSuite;
-                testCase.Context["comment"] = $"{{noformat}}{DateTime.Now:yyyy-MM-dd hh:mm:ss}: Created by Rhino widget{{noformat}}";
+                testCase.Context["comment"] = Utilities.GetActionSignature("created");
 
                 // get connector & create test case
-                var connector = configuration.GetConnector(types);
-                if(connector == default)
+                var connectorType = configuration.GetConnector(types);
+                if(connectorType == default)
                 {
                     return NotFound(new { Message = $"Connector [{configuration.Connector}] was not found under the connectors repository." });
                 }
 
+                var connector = (IConnector)Activator.CreateInstance(connectorType, new object[]
+                {
+                    configuration, types, logger, false
+                });
                 connector.ProviderManager.CreateTestCase(testCase);
 
                 // return results

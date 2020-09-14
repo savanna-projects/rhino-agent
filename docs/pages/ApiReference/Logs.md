@@ -8,13 +8,12 @@ Returns an existing _**Automation Log**_.
 > If not specified, the default logs directory is ```<current_directory>\Logs```.
 
 ```
-GET /api/logs/:log_id/configuration/:configuration_id
+GET /api/logs/:log_id
 ```
 
 |Name            |Type  |Description                                                                                |
 |----------------|------|-------------------------------------------------------------------------------------------|
 |log_id          |string|The ID of the _**Automation Log**_. Will be the date in the following format ```yyyyMMdd```|
-|configuration_id|string|The ID of the configuration group.                                                         |
 
 #### Response Content
 > The response is an array of log entries of media type ```text/plain```.
@@ -62,13 +61,12 @@ Returns an existing _**Automation Log**_ tail, by specific size.
 > If not specified, the default logs directory is ```<current_directory>\Logs```.
 
 ```
-GET /api/logs/:log_id/configuration/:configuration_id/size/:size
+GET /api/logs/:log_id/size/:size
 ```
 
 |Name            |Type  |Description                                                                                |
 |----------------|------|-------------------------------------------------------------------------------------------|
 |log_id          |string|The ID of the _**Automation Log**_. Will be the date in the following format ```yyyyMMdd```|
-|configuration_id|string|The ID of the configuration group.                                                         |
 |size            |number|A fixed number of lines from the end of the log upwards.                                   |
 
 #### Response Content
@@ -91,13 +89,12 @@ Downloads an existing _**Automation Log**_ as _**zip**_ file.
 > If not specified, the default logs directory is ```<current_directory>\Logs```.
 
 ```
-GET /api/logs/:log_id/configuration/:configuration_id/download
+GET /api/logs/:log_id/download
 ```
 
 |Name            |Type  |Description                                                                                |
 |----------------|------|-------------------------------------------------------------------------------------------|
 |log_id          |string|The ID of the _**Automation Log**_. Will be the date in the following format ```yyyyMMdd```|
-|configuration_id|string|The ID of the configuration group.                                                         |
 
 #### Response Content
 > The response is a file of media type ```application/zip```.

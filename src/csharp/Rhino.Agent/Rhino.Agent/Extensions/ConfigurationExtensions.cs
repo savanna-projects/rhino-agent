@@ -71,7 +71,7 @@ namespace Rhino.Agent.Extensions
         /// </summary>
         /// <param name="configuration">RhinoConfiguration by which to factor RhinoConnector</param>
         /// <returns>RhinoConnector implementation.</returns>
-        public static IConnector GetConnector(this RhinoConfiguration configuration)
+        public static Type GetConnector(this RhinoConfiguration configuration)
         {
             return DoGetConnector(configuration, Utilities.Types);
         }
@@ -82,12 +82,12 @@ namespace Rhino.Agent.Extensions
         /// <param name="configuration">RhinoConfiguration by which to factor RhinoConnector</param>
         /// <param name="types">A collection of <see cref="Type>"/> in which to search for RhinoConnector.</param>
         /// <returns>RhinoConnector implementation.</returns>
-        public static IConnector GetConnector(this RhinoConfiguration configuration, IEnumerable<Type> types)
+        public static Type GetConnector(this RhinoConfiguration configuration, IEnumerable<Type> types)
         {
             return DoGetConnector(configuration, types);
         }
 
-        private static IConnector DoGetConnector(RhinoConfiguration configuration, IEnumerable<Type> types)
+        private static Type DoGetConnector(RhinoConfiguration configuration, IEnumerable<Type> types)
         {
             // constants
             const StringComparison C = StringComparison.OrdinalIgnoreCase;
@@ -98,7 +98,7 @@ namespace Rhino.Agent.Extensions
 
             // get connector type by it's name
             var type = byAttribute
-                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Name.Equals(configuration.Connector, C));
+                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Value.Equals(configuration.Connector, C));
 
             if (type == default)
             {
@@ -106,7 +106,7 @@ namespace Rhino.Agent.Extensions
             }
 
             // activate new connector instance
-            return (IConnector)Activator.CreateInstance(type, new object[] { configuration, types });
+            return type;
         }
         #endregion
 
