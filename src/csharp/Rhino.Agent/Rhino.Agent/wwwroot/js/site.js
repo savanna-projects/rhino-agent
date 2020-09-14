@@ -27,11 +27,14 @@ var E_ATTRIBUTES_COUNT = "#attributes_count";
 // -- B --
 var E_BODY = document.body;
 // -- C --
-var E_CAPABILITIES = "#capabilities";
 var E_CLEAR = "#clear";
 var E_COMPONENTS = "#components";
+var E_CONNECTOR_CAPABILITIES = "#connector_capabilities";
 var E_CONNECTOR_TYPE = "#connector_type";
 var E_CONTENT_WRAPPER = "#content_wrapper";
+// -- D ---
+var E_DRIVER_CAPABILITIES = "#driver_capabilities";
+var E_DRIVER_OPTIONS = "#driver_options";
 // -- E --
 var E_EXPECTED_VALUE = "#expected_value";
 // -- F --
@@ -133,6 +136,7 @@ $(document).ready(() => {
             get(R_OPERATORS, (data) => {
                 operatorsHandler(data);
                 loadState();
+                loadSettings();
             });
         });
     });
@@ -144,8 +148,6 @@ $(document).ready(() => {
     $(E_RADIO_QUERY_SELECTOR).change(helpHandler);
     $(E_RADIO_PATH).change(helpHandler);
     $(E_RADIO_PATH_ID).change(helpHandler);
-
-    loadSettings();
 });
 
 // #region *** WIDGET: message event ***
@@ -637,6 +639,7 @@ function actionPlaybackHandler() {
     }, () => $(E_PLAYBACK_PROGRESS).remove());
 }
 
+// TODO: clean
 function getConfiguration() {
     // load settings
     var settings = getObjectFromStorage(C_STATE_SETTINGS_OBJECT_KEY);
@@ -653,25 +656,34 @@ function getConfiguration() {
         ? '{}'
         : settings.playback_options.capabilities
 
+    settings.playback_options.options = settings.playback_options.capabilities === ""
+        ? '{}'
+        : settings.playback_options.options
+
     // setup conditions
     var driver_parameters = !settings.playback_options.grid_endpoint.startsWith("http")
         ? [{
             driver: settings.playback_options.web_driver,
-            driverBinaries: settings.playback_options.grid_endpoint
+            driverBinaries: settings.playback_options.grid_endpoint,
         }]
         : [{
             driver: settings.playback_options.web_driver,
-            driverBinaries: settings.playback_options.grid_endpoint
+            driverBinaries: settings.playback_options.grid_endpoint,
         }];
 
     // capabilities
-    driver_parameters.capabilities = JSON.parse(settings.playback_options.capabilities);
-    var stateObj = getObjectFromStorage(C_STATE_OBJECT_KEY);
-    if (stateObj !== null && typeof stateObj !== 'undefined') {
-        driver_parameters.capabilities.name = stateObj.test_case_scenario.test_case_title;
+    for (var i = 0; i < driver_parameters.length; i++) {
+        driver_parameters[i].capabilities = JSON.parse(settings.playback_options.capabilities);
+        var stateObj = getObjectFromStorage(C_STATE_OBJECT_KEY);
+        if (stateObj !== null && typeof stateObj !== 'undefined') {
+            driver_parameters[i].capabilities.name = stateObj.test_case_scenario.test_case_title;
+        }
+        driver_parameters[i].capabilities.build = "Rhino Widget: " + new Date().toISOString().substring(0, 10);
+        driver_parameters[i].capabilities.project = "Rhino Actions Recorder";
+
+        // options
+        driver_parameters[i].options = JSON.parse(settings.playback_options.options);
     }
-    driver_parameters.capabilities.build = "Rhino Widget: " + new Date().toISOString().substring(0, 10);
-    driver_parameters.capabilities.project = "Rhino Actions Recorder";
 
     return {
         engineConfiguration: {
@@ -736,7 +748,8 @@ function sendHandler() {
     var settings = getObjectFromStorage(C_STATE_SETTINGS_OBJECT_KEY);
 
     // exit conditions
-    if (settings === null || settings.connector_options.connector_type === C_EMPTY_OPTION) {
+    var connector_type = settings.connector_options.connector_type;
+    if (settings === null || connector_type === C_EMPTY_OPTION || connector_type === "connector_text") {
         sendAsString();
         putLiteral();
         return;
@@ -806,11 +819,13 @@ function loadAllSettings(stateObj) {
     $(E_TEST_SUITE).val(stateObj.connector_options.test_suite);
     $(E_USER_NAME).val(stateObj.connector_options.user_name);
     $(E_PASSEORD).val(stateObj.connector_options.password);
+    $(E_CONNECTOR_CAPABILITIES).val(stateObj.connector_options.capabilities);
 
     // playback options
     $(E_WEB_DRIVER).val(stateObj.playback_options.web_driver);
     $(E_GRID_ENDPOINT).val(stateObj.playback_options.grid_endpoint);
-    $(E_CAPABILITIES).val(stateObj.playback_options.capabilities);
+    $(E_DRIVER_CAPABILITIES).val(stateObj.playback_options.capabilities);
+    $(E_DRIVER_OPTIONS).val(stateObj.playback_options.options);
 
     // rhino options
     $(E_RHINO_USER_NAME).val(stateObj.rhino_options.rhino_user_name);
@@ -860,7 +875,8 @@ function getPlaybackOptionsState() {
     return {
         web_driver: $(E_WEB_DRIVER + " option").length > 0 ? $(E_WEB_DRIVER + " option:selected").val() : C_EMPTY_OPTION,
         grid_endpoint: $(E_GRID_ENDPOINT).val(),
-        capabilities: $(E_CAPABILITIES).val()
+        capabilities: $(E_DRIVER_CAPABILITIES).val(),
+        options: $(E_DRIVER_OPTIONS).val()
     };
 }
 
@@ -885,7 +901,8 @@ function getConnectorOptions() {
         project: $(E_PROJECT).val(),
         test_suite: $(E_TEST_SUITE).val(),
         user_name: $(E_USER_NAME).val(),
-        password: $(E_PASSEORD).val()
+        password: $(E_PASSEORD).val(),
+        capabilities: $(E_CONNECTOR_CAPABILITIES).val()
     };
 }
 
@@ -1127,6 +1144,11 @@ function get(routing, onSuccess) {
  * @param {any} onAlways  Finalize callback action, will always be executed
  */
 function post(routing, data, onSuccess, onAlways) {
+    // elevate properties
+    //data.config.driverCapabilities = data.config.driverParameters.capabilities;
+    //data.config.driverOptions = data.config.driverParameters.options;
+
+    // send
     $.ajax({
         url: routing,
         type: "POST",
