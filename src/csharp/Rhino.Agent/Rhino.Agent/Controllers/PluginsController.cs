@@ -18,7 +18,6 @@ using Rhino.Agent.Domain;
 using Rhino.Agent.Extensions;
 using Rhino.Api.Parser.Contracts;
 
-
 namespace Rhino.Agent.Controllers
 {
     [Route("api/v3/[controller]")]

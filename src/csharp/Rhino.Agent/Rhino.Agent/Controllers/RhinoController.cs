@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Newtonsoft.Json;
-
+using Newtonsoft.Json.Linq;
 using Rhino.Agent.Domain;
 using Rhino.Agent.Extensions;
 using Rhino.Agent.Models;
@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 namespace Rhino.Agent.Controllers
 {
     [Route("api/v3/[controller]")]
+    [Route("api/latest/[controller]")]
     [ApiController]
     public class RhinoController : ControllerBase
     {
@@ -84,6 +85,45 @@ namespace Rhino.Agent.Controllers
         public IActionResult ExecuteByConfiguration()
         {
             return DoExecute();
+        }
+
+        // POST api/v3/rhino/execute
+        [HttpPost("execute")]
+        public IActionResult Execute()
+        {
+            try
+            {
+                // get configuration
+                var requestBody = Request.ReadAsync().GetAwaiter().GetResult();
+                var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody).ApplySettings(appSettings);
+
+                // get provider capabilities
+                var jsonObject = JObject.Parse(requestBody);
+                var token = jsonObject.SelectToken("..providerConfiguration.capabilities");
+                configuration.ProviderConfiguration.Capabilities = token != null
+                    ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{token}")
+                    : new Dictionary<string, object>();
+
+                // execute
+                var response = configuration.Execute(types);
+
+                // response
+                return new ContentResult
+                {
+                    Content = JsonConvert.SerializeObject(response),
+                    ContentType = MediaTypeNames.Application.Json,
+                    StatusCode = HttpStatusCode.OK.ToInt32()
+                };
+            }
+            catch (Exception e) when (e != null)
+            {
+                return new ContentResult
+                {
+                    Content = $"{e}",
+                    ContentType = MediaTypeNames.Text.Plain,
+                    StatusCode = HttpStatusCode.InternalServerError.ToInt32()
+                };
+            }
         }
 
         // POST api/v3/rhino/configurations
