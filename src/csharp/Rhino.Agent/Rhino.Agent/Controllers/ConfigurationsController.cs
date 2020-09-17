@@ -6,30 +6,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
 using Rhino.Agent.Domain;
 using Rhino.Agent.Extensions;
-using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace Rhino.Agent.Controllers
 {
     [Route("api/v3/[controller]")]
+    [Route("api/latest/[controller]")]
     [ApiController]
     public class ConfigurationsController : ControllerBase
     {
         // members: state
         private readonly RhinoConfigurationRepository repository;
-        private readonly JsonSerializerSettings jsonSettings;
 
         /// <summary>
         /// Creates a new instance of this Rhino.Agent.Controllers.ConfigurationsController.
@@ -38,7 +32,6 @@ namespace Rhino.Agent.Controllers
         public ConfigurationsController(IServiceProvider provider)
         {
             repository = provider.GetRequiredService<RhinoConfigurationRepository>();
-            jsonSettings = provider.GetRequiredService<JsonSerializerSettings>();
         }
 
         // GET: api/v3/configuration
@@ -49,32 +42,29 @@ namespace Rhino.Agent.Controllers
             var credentials = Request.GetAuthentication();
 
             // get response
-            var data = repository.Get(credentials).Select(i => new
+            var responseBody = repository.Get(credentials).Select(i => new
             {
                 Data = new
                 {
                     Configurations = new[]
                     {
-                        new { Id = $"{i.Id}", Elements = i.Models, Tests = i.TestsRepository }
+                        new
+                        {
+                            Id = $"{i.Id}",
+                            Elements = i.Models,
+                            Tests = i.TestsRepository
+                        }
                     }
                 }
             });
 
-            // response
-            var responseBody = JsonConvert.SerializeObject(data, jsonSettings);
-
             // return
-            return new ContentResult
-            {
-                Content = responseBody,
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentResult(responseBody);
         }
 
         // GET: api/v3/configuration/<guid>
         [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
             // get credentials
             var credentials = Request.GetAuthentication();
@@ -85,22 +75,13 @@ namespace Rhino.Agent.Controllers
             // exit conditions
             if (statusCode == HttpStatusCode.NotFound)
             {
-                return NotFound(new
-                {
-                    Message = $"Configuration [{id}] was not found."
-                });
+                return await this
+                    .ErrorResultAsync($"Configuration [{id}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
 
-            // response
-            var responseBody = JsonConvert.SerializeObject(configuration, jsonSettings);
-
             // return
-            return new ContentResult
-            {
-                Content = responseBody,
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentResult(responseBody: configuration);
         }
 
         // POST: api/v3/configuration
@@ -113,23 +94,20 @@ namespace Rhino.Agent.Controllers
             // exit conditions
             if (!configuration.DriverParameters.Any())
             {
-                return GetErrorResults("You must provide at least one driver parameter.");
+                return await this
+                    .ErrorResultAsync("You must provide at least one driver parameter.")
+                    .ConfigureAwait(false);
             }
 
             // parse driver parameters
-            configuration.DriverParameters = ParseDriverParameters(configuration.DriverParameters);
+            configuration.DriverParameters = Utilities.ParseDriverParameters(configuration.DriverParameters);
 
             // get credentials
             var credentials = Request.GetAuthentication();
 
             // response
             var responseBody = new { Data = new { Id = repository.Post(credentials, configuration) } };
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(responseBody, jsonSettings),
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.Created.ToInt32()
-            };
+            return this.ContentResult(responseBody);
         }
 
         // PUT: api/v3/configuration/<guid>
@@ -142,7 +120,9 @@ namespace Rhino.Agent.Controllers
             // exit conditions
             if (!configuration.DriverParameters.Any())
             {
-                return GetErrorResults("You must provide at least one driver parameter.");
+                return await this
+                    .ErrorResultAsync("You must provide at least one driver parameter.")
+                    .ConfigureAwait(false);
             }
 
             // get credentials
@@ -154,10 +134,9 @@ namespace Rhino.Agent.Controllers
             // exit conditions
             if (statusCode == HttpStatusCode.NotFound)
             {
-                return NotFound(new
-                {
-                    Message = $"Configuration [{id}] was not found."
-                });
+                return await this
+                    .ErrorResultAsync($"Configuration [{id}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
 
             // response
@@ -172,11 +151,9 @@ namespace Rhino.Agent.Controllers
             var credentials = Request.GetAuthentication();
 
             // results
-            return new ContentResult
-            {
-                Content = default,
-                StatusCode = repository.Delete(credentials, id).ToInt32()
-            };
+            return this.ContentResult(
+                responseBody: default,
+                statusCode: repository.Delete(credentials, id));
         }
 
         // DELETE: api/v3/configuration
@@ -187,52 +164,9 @@ namespace Rhino.Agent.Controllers
             var credentials = Request.GetAuthentication();
 
             // results
-            return new ContentResult
-            {
-                Content = default,
-                StatusCode = repository.Delete(credentials).ToInt32()
-            };
-        }
-
-        // TODO: move to extensions
-        // UTILITIES
-        private IEnumerable<IDictionary<string, object>> ParseDriverParameters(IEnumerable<IDictionary<string, object>> driverParameters)
-        {
-            // setup
-            var onDriverParameters = new List<IDictionary<string, object>>();
-
-            // iterate
-            foreach (var item in driverParameters)
-            {
-                var driverParam = item;
-                if (driverParam.ContainsKey(ContextEntry.Capabilities))
-                {
-                    var capabilitiesBody = ((JObject)driverParam[ContextEntry.Capabilities]).ToString();
-                    driverParam[ContextEntry.Capabilities] =
-                        JsonConvert.DeserializeObject<Dictionary<string, object>>(capabilitiesBody);
-                }
-                onDriverParameters.Add(driverParam);
-            }
-
-            // results
-            return onDriverParameters;
-        }
-
-        private ContentResult GetErrorResults(string message)
-        {
-            // setup
-            var obj = new
-            {
-                Message = message
-            };
-
-            // response
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(obj, jsonSettings),
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.BadRequest.ToInt32()
-            };
+            return this.ContentResult(
+                responseBody: default,
+                statusCode: repository.Delete(credentials));
         }
     }
 }

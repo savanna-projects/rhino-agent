@@ -73,7 +73,7 @@ namespace Rhino.Agent.Extensions
         /// <returns>RhinoConnector implementation.</returns>
         public static Type GetConnector(this RhinoConfiguration configuration)
         {
-            return DoGetConnector(configuration, Utilities.Types);
+            return DoGetConnector(configuration, Api.Extensions.Utilities.Types);
         }
 
         /// <summary>

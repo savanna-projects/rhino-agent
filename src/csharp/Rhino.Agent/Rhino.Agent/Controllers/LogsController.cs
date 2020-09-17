@@ -6,6 +6,7 @@
 using System;
 using System.Net;
 using System.Net.Mime;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +18,7 @@ using Rhino.Agent.Extensions;
 namespace Rhino.Agent.Controllers
 {
     [Route("api/v3/[controller]")]
+    [Route("api/latest/[controller]")]
     [ApiController]
     public class LogsController : ControllerBase
     {
@@ -51,29 +53,21 @@ namespace Rhino.Agent.Controllers
             }
 
             // response
-            return new ContentResult
-            {
-                Content = responseBody,
-                ContentType = MediaTypeNames.Text.Plain,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentTextResult(responseBody, HttpStatusCode.OK);
         }
 
         // GET: api/v3/logs/<log>/size/<size>
         [HttpGet("{log}/size/{size}")]
         public IActionResult Get(string log, int size)
         {
-            return new ContentResult
-            {
-                Content = repository.Get(logPath, log, size).data,
-                ContentType = MediaTypeNames.Text.Plain,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentTextResult(
+                responseBody: repository.Get(logPath, log, size).data,
+                statusCode: HttpStatusCode.OK);
         }
 
         // GET: api/v3/logs/<log>/download
         [HttpGet("{log}/download")]
-        public IActionResult Download(string log)
+        public async Task<IActionResult> Download(string log)
         {
             // setup
             var logName = $"RhinoApi-{log}";
@@ -85,10 +79,9 @@ namespace Rhino.Agent.Controllers
             // exit conditions
             if (statusCode == HttpStatusCode.NotFound)
             {
-                return NotFound(new
-                {
-                    Message = $"Log [{fullLogName}] under configuration [{logPath}] was not found."
-                });
+                return await this
+                    .ErrorResultAsync($"Log [{fullLogName}] under configuration [{logPath}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
 
             // response

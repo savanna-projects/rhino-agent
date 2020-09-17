@@ -7,8 +7,6 @@ using Gravity.Services.DataContracts;
 using LiteDB;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using Rhino.Agent.Extensions;
 using Rhino.Agent.Models;
 using Rhino.Api.Contracts.Configuration;
 
@@ -362,7 +360,7 @@ namespace Rhino.Agent.Domain
         }
 
         // gets a configuration by id
-        private (HttpStatusCode statusCode, RhinoTestCaseCollection data) Get(string id, ILiteCollection<RhinoTestCaseCollection> collection)
+        private static (HttpStatusCode statusCode, RhinoTestCaseCollection data) Get(string id, ILiteCollection<RhinoTestCaseCollection> collection)
         {
             // set index            
             collection.EnsureIndex(i => i.Id);
