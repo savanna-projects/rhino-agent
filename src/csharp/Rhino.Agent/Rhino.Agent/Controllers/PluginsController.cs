@@ -99,7 +99,7 @@ namespace Rhino.Agent.Controllers
                 Message = "Some plugins were not created.",
                 Data = data
             };
-            return this.ContentResult(responseBody);
+            return this.ContentResult(responseBody, HttpStatusCode.Created);
         }
         #endregion
 

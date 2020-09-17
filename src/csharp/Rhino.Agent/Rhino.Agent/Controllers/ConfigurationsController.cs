@@ -107,7 +107,7 @@ namespace Rhino.Agent.Controllers
 
             // response
             var responseBody = new { Data = new { Id = repository.Post(credentials, configuration) } };
-            return this.ContentResult(responseBody);
+            return this.ContentResult(responseBody, HttpStatusCode.Created);
         }
 
         // PUT: api/v3/configuration/<guid>

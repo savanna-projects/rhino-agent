@@ -91,16 +91,21 @@ namespace Rhino.Agent.Controllers
 
         // GET api/v3/tests/<id>/configuration
         [HttpGet("{id}/configurations")]
-        public IActionResult GetConfigurations(string id)
+        public async Task< IActionResult> GetConfigurations(string id)
         {
             // setup
-            var (_, data) = rhinoTest.Get(Request.GetAuthentication(), id);
-            var responseBody = data == default
-                ? default
-                : new { Data = new { data.Configurations } };
+            var (statusCode, data) = rhinoTest.Get(Request.GetAuthentication(), id);
+
+            // not found
+            if (statusCode == HttpStatusCode.NotFound && data == default)
+            {
+                return await this
+                    .ErrorResultAsync($"Collection [{id}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
+            }
 
             // response
-            return this.ContentResult(responseBody);
+            return this.ContentResult(new { Data = new { data.Configurations } });
         }
         #endregion
 

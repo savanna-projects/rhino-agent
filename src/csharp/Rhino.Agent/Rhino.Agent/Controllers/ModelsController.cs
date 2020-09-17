@@ -151,14 +151,14 @@ namespace Rhino.Agent.Controllers
             }
 
             // results
-            return this.ContentResult(responseBody);
+            return this.ContentResult(responseBody, HttpStatusCode.Created);
         }
         #endregion
 
         #region *** PATCH  ***
         // PATCH api/v3/models/<id>/configurations/<configuration>
         [HttpPatch("{id}/configurations/{configuration}")]
-        public IActionResult PatchConfiguration(string id, string configuration)
+        public async Task<IActionResult> PatchConfiguration(string id, string configuration)
         {
             // patch
             var (statusCode, _) = repository.Patch(Request.GetAuthentication(), id, configuration);
@@ -170,7 +170,9 @@ namespace Rhino.Agent.Controllers
             }
 
             // response
-            return this.ContentResult(responseBody: default);
+            return await this
+                .ErrorResultAsync("Models collection or configuration were not found.", HttpStatusCode.NotFound)
+                .ConfigureAwait(false);
         }
 
         // PATCH api/v3/models/<guid>

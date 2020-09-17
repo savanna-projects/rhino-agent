@@ -7018,7 +7018,100 @@
 							]
 						},
 						{
-							"name": "Flow Action #04: Delete Configurations",
+							"name": "Flow Action #04: Run by Collection (one configuration)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "de75e47c-9028-4748-b712-81c7ab85f087",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"No failed tests\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.totalFail).to.eql(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {https://gravitymvctestapplication.azurewebsites.net/student} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. search student {{$ --first_name:Carson --last_name:Alexander}}\r\n5. wait for {3000} milliseconds\r\n6. close browser"
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/v3/rhino/configurations/{{configuration_id}}",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"v3",
+										"rhino",
+										"configurations",
+										"{{configuration_id}}"
+									]
+								},
+								"description": "Runs _**Rhino Spec**_ directly from the request body.\r\n\r\n```\r\nPOST /api/v3/rhino/configurations/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                             |\r\n|----------------|------|----------------------------------------|\r\n|configuration_id|string|The ID of the _**Rhino Configuration**_.|\r\n\r\n### Request Fields\r\nThe request body follows the same format as _**Get Test Case Collection**_ response content.\r\n\r\n### Request Example\r\nPlease see below for a typical request:\r\n\r\n```\r\n[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]\r\n\r\n>>>\r\n\r\n[test-id] rhino-documentation-#002\r\n...\r\n```\r\n\r\n## Response Content\r\n\r\nThe response body follows the same format as [Run by Configuration](#run-by-configuration) response content.\r\n\r\n### Response Codes\r\n|Code|Description                                                         |\r\n|----|--------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Result**_ is returned as part of the response.|\r\n|400 |Bad Request, _**Rhino Configuration**_ was not provided.            |\r\n|404 |Not Found, the _**Rhino Configuration**_ was not found.             |\r\n|500 |Fail, the server encountered an unexpected error.                   |"
+							},
+							"response": [
+								{
+									"name": "Run by Collection (one configuration)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "[test-id] rhino-documentation-#001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]"
+										},
+										"url": {
+											"raw": "{{endpoint}}/api/v3/rhino/configurations/{{configuration_id}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"api",
+												"v3",
+												"rhino",
+												"configurations",
+												"{{configuration_id}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Thu, 20 Aug 2020 18:59:12 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Content-Length",
+											"value": "5004"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"key\": \"unattached-2020.08.20.09.58.56.303\",\n    \"actual\": true,\n    \"reasonPhrase\": \"\",\n    \"title\": \"Rhino Automation - Test Run Generator (ID: 2020.08.20.09.58.56.303); (Configuration: Rhino Automation - Chrome)\",\n    \"start\": \"2020-08-20T21:58:56.3039452+03:00\",\n    \"end\": \"2020-08-20T21:59:10.6548002+03:00\",\n    \"runTime\": \"00:00:14.3508550\",\n    \"testCases\": [\n        {\n            \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0\",\n            \"key\": \"rhino-documentation-#001\",\n            \"testSuite\": \"\",\n            \"testRunKey\": \"unattached-2020.08.20.09.58.56.303\",\n            \"scenario\": \"search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\",\n            \"reasonPhrase\": \"\",\n            \"actual\": true,\n            \"steps\": [\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-0\",\n                    \"testCase\": \"\",\n                    \"action\": \"1. go to url {https://gravitymvctestapplication.azurewebsites.net/student} using any compliant web-browser\",\n                    \"command\": \"GoToUrl\",\n                    \"expected\": \"<span>assert {url} match {gravitymvctestapplication.azurewebsites.net}</span>\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:03.9650295\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-1\",\n                    \"testCase\": \"\",\n                    \"action\": \"2. close all child windows (to make sure only the web site is open and visible)\",\n                    \"command\": \"CloseAllChildWindows\",\n                    \"expected\": \"\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:00.3620576\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-2\",\n                    \"testCase\": \"\",\n                    \"action\": \"3. send keys {Carson} into {//input[@id='SearchString']} text-box\",\n                    \"command\": \"SendKeys\",\n                    \"expected\": \"\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:00.4648217\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-3\",\n                    \"testCase\": \"\",\n                    \"action\": \"4. click on {#SearchButton} using {css selector}\",\n                    \"command\": \"Click\",\n                    \"expected\": \"\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:00.6452210\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-4\",\n                    \"testCase\": \"\",\n                    \"action\": \"5. wait for {3000} milliseconds\",\n                    \"command\": \"Wait\",\n                    \"expected\": \"<span>assert {count} on {//input[@id='SearchString']} is greater than {0}</span>\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:03.7343510\"\n                },\n                {\n                    \"identifier\": \"unattached-2020.08.20.09.58.56.303-rhino-documentation-#001-0-0-5\",\n                    \"testCase\": \"\",\n                    \"action\": \"6. close browser\",\n                    \"command\": \"CloseBrowser\",\n                    \"expected\": \"\",\n                    \"actual\": true,\n                    \"reasonPhrase\": \"\",\n                    \"link\": \"\",\n                    \"runTime\": \"00:00:00.1413591\"\n                }\n            ],\n            \"totalSteps\": 6,\n            \"link\": \"\",\n            \"iteration\": 0,\n            \"dataSource\": [\n                {\n                    \"address\": \"https://gravitymvctestapplication.azurewebsites.net/student\",\n                    \"address-expected\": \"gravitymvctestapplication.azurewebsites.net\",\n                    \"search-text-box\": \"//input[@id='SearchString']\",\n                    \"search-button\": \"#SearchButton\",\n                    \"students-table\": \"//td[@id]\"\n                }\n            ],\n            \"modelEntries\": [],\n            \"priority\": \"\",\n            \"severity\": \"\",\n            \"tolerance\": 0,\n            \"passedOnAttempt\": 0,\n            \"qualityRank\": 100,\n            \"inconclusive\": false,\n            \"start\": \"2020-08-20T21:58:56.5027089+03:00\",\n            \"end\": \"2020-08-20T21:59:10.632288+03:00\",\n            \"runTime\": \"00:00:14.1295791\",\n            \"environment\": {\n                \"applicationParams\": {},\n                \"macroParams\": {},\n                \"sessionParams\": {}\n            }\n        }\n    ],\n    \"totalTests\": 1,\n    \"totalSteps\": 6,\n    \"totalPass\": 1,\n    \"totalPassSteps\": 6,\n    \"totalFail\": 0,\n    \"totalFailSteps\": 0,\n    \"totalIterations\": 1,\n    \"totalInconclusive\": 0,\n    \"successRate\": 100,\n    \"qualityRank\": 100,\n    \"link\": null,\n    \"performancePoints\": {\n        \"rhino-documentation-#001_0\": 0.235492985\n    },\n    \"priorityPoints\": {\n        \"\": 0\n    },\n    \"severityPoints\": {\n        \"\": 0\n    },\n    \"aboveOptimalRate\": 0,\n    \"aboveOptimalCount\": 0,\n    \"belowOptimalRate\": 100,\n    \"belowOptimalCount\": 1,\n    \"averageTestTime\": \"00:00:14.1295791\",\n    \"totalTimeouts\": \"00:00:00\",\n    \"loadTimeouts\": \"00:00:00\",\n    \"elementTimeouts\": \"00:00:00\",\n    \"severity\": 0,\n    \"priority\": 0,\n    \"tolerance\": 0\n}"
+								}
+							]
+						},
+						{
+							"name": "Flow Action #05: Delete Configurations",
 							"event": [
 								{
 									"listen": "test",
@@ -7052,7 +7145,7 @@
 							"response": []
 						},
 						{
-							"name": "Flow Action #05: Delete All Plugins - Public No Credentials",
+							"name": "Flow Action #06: Delete All Plugins - Public No Credentials",
 							"event": [
 								{
 									"listen": "test",
@@ -8229,49 +8322,49 @@
 	],
 	"variable": [
 		{
-			"id": "bc38f51c-9716-4f4f-b71e-ed96fe2c82b1",
+			"id": "17af6f52-e11e-4fd8-bd81-f3b5b31b937f",
 			"key": "collection_id",
-			"value": "dc2d5071-8fa3-49c1-9426-3de555716315"
+			"value": "030230f0-7b84-4d0f-b0f4-c461abd2a379"
 		},
 		{
-			"id": "13006c12-de7c-4461-b7ee-e268c11f6b09",
+			"id": "f6757b2b-e129-4626-930f-014d849d5e68",
 			"key": "configuration_id",
-			"value": "4bd235ae-3de2-4ff7-b516-8c3294b3c881"
+			"value": "cdfc307d-2317-46e5-8112-d8871574b470"
 		},
 		{
-			"id": "e8b98309-827f-4536-92de-d1812f68db62",
+			"id": "9589ec16-a6da-4133-8cca-4819a0123983",
 			"key": "endpoint",
 			"value": "https://localhost:5001"
 		},
 		{
-			"id": "90eac6fe-b74f-4843-a140-aeb2cf69b29b",
+			"id": "96e3ce89-b920-4a28-976a-5d034c111f3d",
 			"key": "rhino_drivers",
 			"value": "."
 		},
 		{
-			"id": "1e1413d4-568f-4db1-bb50-f5259b292d99",
+			"id": "47c0928b-82e4-46aa-8bff-063859af344a",
 			"key": "rhino_reports_connection_string",
 			"value": "Server=.\\\\SQLExpress;Database=TestingWarehouse;Trusted_Connection=True;User Id=<db_user>;Password=<db_password>;"
 		},
 		{
-			"id": "95e8dad8-73f6-479e-a495-116c1093acfb",
+			"id": "f1e98556-61de-4e07-a402-c32fbe6f4530",
 			"key": "rhino_user",
 			"value": ""
 		},
 		{
-			"id": "81624554-a09e-41ea-8909-69d294de1fec",
+			"id": "54554c2c-be30-434a-a3c2-c06af673804f",
 			"key": "rhino_password",
 			"value": ""
 		},
 		{
-			"id": "3c8bc899-790f-47fc-ac32-9e4b06d20abe",
+			"id": "eb8a4713-4949-4a11-8e29-5d981dbb0afa",
 			"key": "models_id",
-			"value": "e42b3455-2a84-4c3e-80eb-8d1feebc97f2"
+			"value": "9645c03a-6ab1-422c-883b-d1d9ae6a3877"
 		},
 		{
-			"id": "455658df-b31f-4dd0-843a-02db515fe879",
+			"id": "204a9bc3-acdf-4fb6-8a62-9db561f849c4",
 			"key": "session_id",
-			"value": "c633a67e5278577e114668468599ac97"
+			"value": "f7e910fa634880341214ae135b8e582d"
 		}
 	],
 	"protocolProfileBehavior": {}
