@@ -6,14 +6,13 @@
 using Gravity.Extensions;
 using Gravity.Services.DataContracts;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Newtonsoft.Json;
 
 using Rhino.Api.Contracts.AutomationProvider;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -23,17 +22,12 @@ namespace Rhino.Agent.Domain
 {
     public class RhinoPluginRepository : Repository
     {
-        // members: state
-        private readonly RhinoConfigurationRepository configurationRepository;
-
         /// <summary>
         /// Creates a new instance of this Rhino.Agent.Domain.Repository.
         /// </summary>
         /// <param name="provider"><see cref="IServiceProvider"/> to use with this Rhino.Agent.Domain.RhinoPluginRepository.</param>
         public RhinoPluginRepository(IServiceProvider provider) : base(provider)
-        {
-            configurationRepository = provider.GetRequiredService<RhinoConfigurationRepository>();
-        }
+        { }
 
         #region *** GET    ***
         /// <summary>
@@ -71,6 +65,7 @@ namespace Rhino.Agent.Domain
             return (statusCode, new[] { plugin });
         }
 
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Repository methods cannot be static")]
         private IEnumerable<string> DoGet(Authentication authentication)
         {
             // setup
@@ -140,6 +135,7 @@ namespace Rhino.Agent.Domain
                 : (HttpStatusCode.Created, Array.Empty<string>());
         }
 
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Repository methods cannot be static")]
         private Exception WritePluginSpec(string path, string spec)
         {
             Exception exception = default;
@@ -230,6 +226,7 @@ namespace Rhino.Agent.Domain
             return (HttpStatusCode.NoContent, default);
         }
 
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Repository methods cannot be static")]
         private void DeleteFolder(string path)
         {
             if (!Directory.Exists(path))

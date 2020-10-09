@@ -630,7 +630,7 @@ function actionPlaybackHandler() {
     }
 
     //-- show async progress bar while playback is active
-    showPlaybackProgress();
+    showPlaybackProgress("Automation is currently running, this can take a while. Please wait...");
 
     //-- run async operation
     post(R_PLAYBACK, { config: c }, (testRun) => {
@@ -700,16 +700,16 @@ function getConfiguration() {
     };
 }
 
-function showPlaybackProgress() {
+function showPlaybackProgress(message) {
     var html = `
         <div id="playback_progress" class="alert alert-dismissible alert-info bring-to-front fixed-bottom">
             <h4 class="alert-heading">Information</h4>
-            <p class="mb-0">Automation is currently running, this can take a while. Please wait...</p>
+            <p class="mb-0">[message]</p>
             <div class="progress">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
             </div>
         </div>
-    `;
+    `.replace("[message]", message);
     $(E_BODY).append(html);
 }
 
@@ -757,12 +757,12 @@ function sendHandler() {
 
     // get objects for test creation
     var config = getConfiguration();
-    config.connector = settings.connector_options.connector_type;
-    config.providerConfiguration = {
+    config.connectorConfiguration = {
         collection: settings.connector_options.server_address,
         project: settings.connector_options.project,
         user: settings.connector_options.user_name,
-        password: settings.connector_options.password
+        password: settings.connector_options.password,
+        connector: settings.connector_options.connector_type
     };
 
     // parse test case script
@@ -770,8 +770,13 @@ function sendHandler() {
     var testSrc = JSON.stringify(getTestCaseScript(testObj));
     var requestBody = { config: config, test: testSrc, suite: settings.connector_options.test_suite };
 
-    // send
-    post(R_SEND, requestBody, (data) => console.log(data));
+    //-- show async progress bar while playback is active
+    showPlaybackProgress("Creating test on target provider, Please wait...");
+
+    //-- run async operation
+    post(R_SEND, requestBody, (data) => {
+        console.log(data);
+    }, () => $(E_PLAYBACK_PROGRESS).remove());
 }
 
 function sendAsString() {

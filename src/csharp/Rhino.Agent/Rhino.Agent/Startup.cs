@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 using Rhino.Agent.Domain;
+using Rhino.Agent.Middleware;
 using Rhino.Api.Extensions;
 using Rhino.Api.Parser.Components;
 
@@ -124,6 +125,7 @@ namespace Rhino.Agent
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+            app.ConfigureExceptionHandler(GetLogger().CreateChildLogger("ExceptionHandler"));
             app.UseCookiePolicy();
             app.UseCors(CorsPolicy);
             app.UseStaticFiles();

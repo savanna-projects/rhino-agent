@@ -7,13 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Mime;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-
-using Newtonsoft.Json;
 
 using Rhino.Agent.Domain;
 using Rhino.Agent.Extensions;
@@ -23,6 +20,7 @@ using Rhino.Api.Parser.Contracts;
 namespace Rhino.Agent.Controllers
 {
     [Route("api/v3/[controller]")]
+    [Route("api/latest/[controller]")]
     [ApiController]
     public class TestsController : ControllerBase
     {
@@ -34,7 +32,6 @@ namespace Rhino.Agent.Controllers
         // members: state
         private readonly RhinoTestCaseRepository rhinoTest;
         private readonly RhinoConfigurationRepository rhinoConfiguration;
-        private readonly JsonSerializerSettings jsonSettings;
 
         /// <summary>
         /// Creates a new instance of this Rhino.Agent.Controllers.TestsController.
@@ -44,7 +41,6 @@ namespace Rhino.Agent.Controllers
         {
             rhinoTest = provider.GetRequiredService<RhinoTestCaseRepository>();
             rhinoConfiguration = provider.GetRequiredService<RhinoConfigurationRepository>();
-            jsonSettings = provider.GetRequiredService<JsonSerializerSettings>();
         }
 
         #region *** GET    ***
@@ -64,18 +60,12 @@ namespace Rhino.Agent.Controllers
             Response.Headers.Add(CountHeader, $"{data.Select(i => i.Tests).Sum()}");
 
             // response
-            var responseBody = JsonConvert.SerializeObject(new { Data = new { Collections = data } }, jsonSettings);
-            return new ContentResult
-            {
-                Content = responseBody,
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentResult(responseBody: new { Data = new { Collections = data } });
         }
 
         // GET api/v3/tests/<id>
         [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
             // setup
             var obj = rhinoTest.Get(Request.GetAuthentication(), id).data;
@@ -83,7 +73,9 @@ namespace Rhino.Agent.Controllers
             // exit conditions
             if (obj == default)
             {
-                return NotFound(new { Message = $"Collection [{id}] was not found." });
+                return await this
+                    .ErrorResultAsync("Collection [{id}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
 
             // setup
@@ -94,31 +86,26 @@ namespace Rhino.Agent.Controllers
             Response.Headers.Add(CountHeader, $"{specs.Count()}");
 
             // response
-            return new ContentResult
-            {
-                Content = responseBody,
-                ContentType = MediaTypeNames.Text.Plain,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentResult(responseBody);
         }
 
         // GET api/v3/tests/<id>/configuration
         [HttpGet("{id}/configurations")]
-        public IActionResult GetConfigurations(string id)
+        public async Task< IActionResult> GetConfigurations(string id)
         {
             // setup
             var (statusCode, data) = rhinoTest.Get(Request.GetAuthentication(), id);
-            var content = data == default
-                ? string.Empty
-                : JsonConvert.SerializeObject(new { Data = new { data.Configurations } }, jsonSettings);
+
+            // not found
+            if (statusCode == HttpStatusCode.NotFound && data == default)
+            {
+                return await this
+                    .ErrorResultAsync($"Collection [{id}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
+            }
 
             // response
-            return new ContentResult
-            {
-                Content = content,
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = statusCode.ToInt32()
-            };
+            return this.ContentResult(new { Data = new { data.Configurations } });
         }
         #endregion
 
@@ -207,7 +194,7 @@ namespace Rhino.Agent.Controllers
         #region *** PATCH  ***
         // PATCH api/v3/tests/<id>/configurations/<configuration>
         [HttpPatch("{id}/configurations/{configuration}")]
-        public async Task< IActionResult> PatchConfiguration(string id, string configuration)
+        public async Task<IActionResult> PatchConfiguration(string id, string configuration)
         {
             // patch
             var (statusCode, _) = rhinoTest.Patch(Request.GetAuthentication(), id, configuration);
@@ -225,11 +212,7 @@ namespace Rhino.Agent.Controllers
             }
 
             // response
-            return new ContentResult
-            {
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = statusCode.ToInt32()
-            };
+            return this.ContentResult(responseBody: default, statusCode);
         }
 
         // PATCH api/v3/tests/<guid>
@@ -253,7 +236,9 @@ namespace Rhino.Agent.Controllers
             }
             if (statusCode == HttpStatusCode.BadRequest)
             {
-                return await this.ErrorResultAsync("You must provide at least one test case.").ConfigureAwait(false);
+                return await this
+                    .ErrorResultAsync("You must provide at least one test case.")
+                    .ConfigureAwait(false);
             }
 
             // create
@@ -280,15 +265,19 @@ namespace Rhino.Agent.Controllers
         #region *** DELETE ***
         // DELETE api/v3/tests/<guid>
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             // execute
             var response = rhinoTest.Delete(Request.GetAuthentication(), id);
 
             // exit conditions
-            return response == HttpStatusCode.NotFound
-                ? NotFound(new { Message = $"Collection [{id}] was not found." })
-                : (IActionResult)NoContent();
+            if (response == HttpStatusCode.NotFound)
+            {
+                return await this
+                    .ErrorResultAsync($"Collection [{id}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
+            }
+            return NoContent();
         }
 
         // DELETE api/v3/tests

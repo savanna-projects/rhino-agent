@@ -22,7 +22,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Mime;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -43,7 +42,6 @@ namespace Rhino.Agent.Controllers
         private readonly RhinoConfigurationRepository configurationRepository;
         private readonly RhinoModelRepository modelRepository;
         private readonly RhinoTestCaseRepository testCaseRepository;
-        private readonly JsonSerializerSettings jsonSettings;
         private readonly IConfiguration appSettings;
         private readonly IServiceProvider provider;
 
@@ -57,7 +55,6 @@ namespace Rhino.Agent.Controllers
             configurationRepository = provider.GetRequiredService<RhinoConfigurationRepository>();
             modelRepository = provider.GetRequiredService<RhinoModelRepository>();
             testCaseRepository = provider.GetRequiredService<RhinoTestCaseRepository>();
-            jsonSettings = provider.GetRequiredService<JsonSerializerSettings>();
             appSettings = provider.GetRequiredService<IConfiguration>();
             this.provider = provider;
         }
@@ -71,9 +68,9 @@ namespace Rhino.Agent.Controllers
             var (statusCode, onConfiguration) = GetConfiguration(configuration, allowNoTests: false);
 
             // failure response
-            if (statusCode > HttpStatusCode.OK.ToInt32())
+            if (statusCode.ToInt32() > HttpStatusCode.OK.ToInt32())
             {
-                return new ContentResult { StatusCode = statusCode };
+                return this.ContentResult(responseBody: default, statusCode);
             }
 
             // process request
@@ -82,53 +79,45 @@ namespace Rhino.Agent.Controllers
 
         // POST api/v3/rhino/configurations
         [HttpPost("configurations")]
-        public IActionResult ExecuteByConfiguration()
+        public Task<IActionResult> ExecuteByConfiguration()
         {
             return DoExecute();
         }
 
+        // TODO: implement recursive convertion JToken to <string, object>
         // POST api/v3/rhino/execute
         [HttpPost("execute")]
         public IActionResult Execute()
         {
-            try
-            {
-                // get configuration
-                var requestBody = Request.ReadAsync().GetAwaiter().GetResult();
-                var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody).ApplySettings(appSettings);
+            // get configuration
+            var requestBody = Request.ReadAsync().GetAwaiter().GetResult();
+            var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody).ApplySettings(appSettings);
 
-                // get provider capabilities
-                var jsonObject = JObject.Parse(requestBody);
-                var token = jsonObject.SelectToken("..providerConfiguration.capabilities");
-                configuration.ProviderConfiguration.Capabilities = token != null
-                    ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{token}")
-                    : new Dictionary<string, object>();
+            // get provider capabilities
+            var jsonObject = JObject.Parse(requestBody);
+            var capabilities = jsonObject.SelectToken("capabilities");
+            var options = jsonObject.SelectToken($"capabilities.{configuration.ConnectorConfiguration.Connector}:options");
 
-                // execute
-                var response = configuration.Execute(types);
+            var onOptions = options!= null
+                ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{options}")
+                : new Dictionary<string, object>();
 
-                // response
-                return new ContentResult
-                {
-                    Content = JsonConvert.SerializeObject(response),
-                    ContentType = MediaTypeNames.Application.Json,
-                    StatusCode = HttpStatusCode.OK.ToInt32()
-                };
-            }
-            catch (Exception e) when (e != null)
-            {
-                return new ContentResult
-                {
-                    Content = $"{e}",
-                    ContentType = MediaTypeNames.Text.Plain,
-                    StatusCode = HttpStatusCode.InternalServerError.ToInt32()
-                };
-            }
+            configuration.Capabilities = capabilities != null
+                ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{capabilities}")
+                : new Dictionary<string, object>();
+
+            configuration.Capabilities[$"{configuration.ConnectorConfiguration.Connector}:options"] = onOptions;
+
+            // execute
+            var responseBody = configuration.Execute(types);
+
+            // response
+            return this.ContentResult(responseBody);
         }
 
         // POST api/v3/rhino/configurations
         [HttpPost("configurations/ids")]
-        public IActionResult ExecuteByConfigurationIds()
+        public Task<IActionResult> ExecuteByConfigurationIds()
         {
             return DoExecute();
         }
@@ -141,9 +130,9 @@ namespace Rhino.Agent.Controllers
             var (statusCode, onConfiguration) = GetConfiguration(configuration, allowNoTests: true);
 
             // failure response
-            if (statusCode > HttpStatusCode.OK.ToInt32())
+            if (statusCode.ToInt32() > HttpStatusCode.OK.ToInt32())
             {
-                return new ContentResult { StatusCode = statusCode };
+                return this.ContentResult(responseBody: default, statusCode);
             }
 
             // build
@@ -154,7 +143,7 @@ namespace Rhino.Agent.Controllers
             return ExecuteConfigurations(new[] { onConfiguration });
         }
 
-        private IActionResult DoExecute()
+        private async Task<IActionResult> DoExecute()
         {
             // get configurations
             var cofigurations = Request.GetConfigurations(provider);
@@ -162,7 +151,9 @@ namespace Rhino.Agent.Controllers
             // failure response
             if (!cofigurations.Any())
             {
-                return NotFound(new { Message = "No configurations found or provided." });
+                return await this
+                    .ErrorResultAsync("No configurations found or provided.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
 
             // process request
@@ -194,7 +185,7 @@ namespace Rhino.Agent.Controllers
             var (statusCode, onCollection) = testCaseRepository.Get(credentials, id: collection);
             if (statusCode != HttpStatusCode.OK)
             {
-                return new ContentResult { StatusCode = statusCode.ToInt32() };
+                return this.ContentResult(responseBody: default, statusCode);
             }
 
             // setup configurations > setup scenarios
@@ -219,13 +210,13 @@ namespace Rhino.Agent.Controllers
         private IEnumerable<RhinoConfiguration> Get(RhinoTestCaseCollection collection) => collection
             .Configurations
             .Select(i=> GetConfiguration(i, allowNoTests: false))
-            .Where(i => i.statusCode == 200)
+            .Where(i => i.statusCode == HttpStatusCode.OK)
             .Select(i => i.configuration);
 
         private IEnumerable<RhinoConfiguration> Get(RhinoTestCaseCollection collection, string configuration) => collection
             .Configurations
             .Select(i=> GetConfiguration(i, allowNoTests: false))
-            .Where(i => i.statusCode == 200 && $"{i.configuration.Id}".Equals(configuration, Compare))
+            .Where(i => i.statusCode == HttpStatusCode.OK && $"{i.configuration.Id}".Equals(configuration, Compare))
             .Select(i => i.configuration);
         #endregion
 
@@ -243,22 +234,15 @@ namespace Rhino.Agent.Controllers
             }
 
             // process response body
-            var content = testRuns.Count == 1
-                ? JsonConvert.SerializeObject(testRuns.ElementAt(0), jsonSettings)
-                : JsonConvert.SerializeObject(testRuns, jsonSettings);
+            var content = testRuns.Count == 1 ? (object)testRuns.ElementAt(0) : testRuns;
 
             // compose response
-            return new ContentResult
-            {
-                Content = content,
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentResult(responseBody: content);
         }
 
         #region *** GET Configuration ***
         // get ready to run configuration, by ID
-        private (int statusCode, RhinoConfiguration configuration) GetConfiguration(string id, bool allowNoTests)
+        private (HttpStatusCode statusCode, RhinoConfiguration configuration) GetConfiguration(string id, bool allowNoTests)
         {
             // setup
             var credentials = Request.GetAuthentication();
@@ -267,7 +251,7 @@ namespace Rhino.Agent.Controllers
             // not found conditions
             if (statusCode != HttpStatusCode.OK)
             {
-                return (HttpStatusCode.NotFound.ToInt32(), default);
+                return (HttpStatusCode.NotFound, default);
             }
 
             // populate scenarios > populate elements
@@ -278,11 +262,11 @@ namespace Rhino.Agent.Controllers
             var isTests = configuration.TestsRepository.Any();
             if (!isTests && !allowNoTests)
             {
-                return (HttpStatusCode.BadRequest.ToInt32(), configuration);
+                return (HttpStatusCode.BadRequest, configuration);
             }
 
             // results
-            return (HttpStatusCode.OK.ToInt32(), configuration);
+            return (HttpStatusCode.OK, configuration);
         }
 
         // collect scenarios for configuration

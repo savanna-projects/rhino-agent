@@ -179,7 +179,7 @@ namespace Rhino.Agent.Domain
         }
 
         // gets a configuration by id
-        private (HttpStatusCode statusCode, RhinoConfiguration configuration) Get(string id, ILiteCollection<RhinoConfiguration> collection)
+        private static (HttpStatusCode statusCode, RhinoConfiguration configuration) Get(string id, ILiteCollection<RhinoConfiguration> collection)
         {
             // set index            
             collection.EnsureIndex(i => i.Id);

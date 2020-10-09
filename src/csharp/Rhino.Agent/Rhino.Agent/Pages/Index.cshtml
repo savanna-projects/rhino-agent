@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Rhino Widget - Action Settings Page - Cloud Native";
 }
+
 <button data-toggle="collapse" data-target="#widget_frame" class="btn btn-primary fixed-top" id="widget_toggle" style="visibility: hidden; top:2px; left:2px; z-index: 9999999;">
     <img src="~/images/rhinoceros-facing-right-x32-white.png" />
 </button>
@@ -17,22 +18,26 @@
             <i title="Add test action"
                class="fas fa-check-circle action-button action-button-green medium-action-button"
                id="action_apply"
-               onclick="scenarioHandler();">
+               onclick="scenarioHandler();"
+               style="cursor: pointer">
             </i>
             <i title="Clear all test actions"
                class="fas fa-times-circle action-button action-button-red medium-action-button"
                id="clear"
-               onclick="clearWidget(true);">
+               onclick="clearWidget(true);"
+               style="cursor: pointer">
             </i>
             <i title="Playback test scenario against Selenium Grid"
                class="fas fa-play-circle action-button action-button-generic medium-action-button"
                id="action_playback"
-               onclick="actionPlaybackHandler();">
+               onclick="actionPlaybackHandler();"
+               style="cursor: pointer">
             </i>
             <i title="Save test scenario under application life cycle management (A.L.M)"
                class="fas fa-arrow-circle-up action-button action-button-generic medium-action-button"
                id="send"
-               onclick="sendHandler();">
+               onclick="sendHandler();"
+               style="cursor: pointer">
             </i>
             <a asp-page="/Settings">
                 <i title="Rhino settings"

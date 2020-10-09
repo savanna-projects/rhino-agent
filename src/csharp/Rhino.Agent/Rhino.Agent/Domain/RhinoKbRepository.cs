@@ -22,21 +22,6 @@ namespace Rhino.Agent.Domain
 {
     public class RhinoKbRepository : Repository
     {
-        // constants: logging
-        private const string E1 = "Cannot find [{0}] resource under [{1}] assembly manifest.";
-        private const string M2 = "Knowledge Base resource [{0}] created.";
-
-        // constants
-        private const string Root = "knowledge_base";
-        private const string ActionsFolder = Root + @"\actions";
-        private const string MacrosFolder = Root + @"\macros";
-        private const string Locators = Root + @"\available_locators.txt";
-        private const string ActionsList = Root + @"\available_actions.txt";
-        private const string MacrosList = Root + @"\available_macros.txt";
-        private const string OperatorsList = Root + @"\available_operators.txt";
-        private const string ReadMe = "README.md";
-        private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
-
         // members: state
         private readonly RhinoPluginRepository rhinoPlugin;
         private static IDictionary<string, string[]> VerbMap => new Dictionary<string, string[]>
@@ -130,7 +115,7 @@ namespace Rhino.Agent.Domain
         }
 
         // gets a verb for this action from default verbs map
-        private string GetVerb(string action)
+        private static string GetVerb(string action)
         {
             var verb = VerbMap.FirstOrDefault(i => i.Value.Contains(action)).Key;
             return verb == default ? "on" : verb;

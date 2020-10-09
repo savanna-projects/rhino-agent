@@ -1,13 +1,5 @@
-﻿/*
- * CHANGE LOG - keep only last 5 threads
- * 
- * RESSOURCES
- */
-using Gravity.Services.DataContracts;
-
-using Microsoft.Extensions.DependencyInjection;
-
-using System;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -20,18 +12,13 @@ namespace Rhino.Agent.Domain
     /// </summary>
     public class RhinoLogsRepository : Repository
     {
-        // members: state
-        private readonly RhinoConfigurationRepository configurationRepository;
-
         /// <summary>
         /// Creates a new instance of this Rhino.Agent.Domain.Repository.
         /// </summary>
         /// <param name="provider"><see cref="IServiceProvider"/> to use with this Rhino.Agent.Domain.RhinoTestCaseRepository.</param>
         public RhinoLogsRepository(IServiceProvider provider)
             : base(provider)
-        {
-            configurationRepository = provider.GetRequiredService<RhinoConfigurationRepository>();
-        }
+        { }
 
         #region *** GET    ***
         /// <summary>
@@ -96,6 +83,7 @@ namespace Rhino.Agent.Domain
             return (HttpStatusCode.OK, memoryStream);
         }
 
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Repository methods cannot be static")]
         private (HttpStatusCode statusCode, string data) DoGet(string logsPath, string log)
         {
             // exit conditions

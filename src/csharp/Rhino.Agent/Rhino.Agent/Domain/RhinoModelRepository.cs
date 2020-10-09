@@ -2,13 +2,12 @@
 using LiteDB;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using Rhino.Agent.Extensions;
 using Rhino.Agent.Models;
 using Rhino.Api.Contracts.Configuration;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 
@@ -358,6 +357,7 @@ namespace Rhino.Agent.Domain
         }
 
         // gets a configuration by id
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Repository methods cannot be static")]
         private (HttpStatusCode statusCode, RhinoPageModelCollection data) Get(string id, ILiteCollection<RhinoPageModelCollection> collection)
         {
             // set index            

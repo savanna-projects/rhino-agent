@@ -7,13 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Mime;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-
-using Newtonsoft.Json;
 
 using Rhino.Agent.Domain;
 using Rhino.Agent.Extensions;
@@ -23,12 +20,12 @@ using Rhino.Api.Contracts.AutomationProvider;
 namespace Rhino.Agent.Controllers
 {
     [Route("api/v3/[controller]")]
+    [Route("api/latest/[controller]")]
     [ApiController]
     public class ModelsController : ControllerBase
     {
         // members: state
         private readonly RhinoModelRepository repository;
-        private readonly JsonSerializerSettings jsonSettings;
 
         /// <summary>
         /// Creates a new instance of this Rhino.Agent.Controllers.ModelsController.
@@ -37,7 +34,6 @@ namespace Rhino.Agent.Controllers
         public ModelsController(IServiceProvider provider)
         {
             repository = provider.GetRequiredService<RhinoModelRepository>();
-            jsonSettings = provider.GetRequiredService<JsonSerializerSettings>();
         }
 
         #region *** GET    ***
@@ -51,21 +47,16 @@ namespace Rhino.Agent.Controllers
                 i.Id,
                 i.Configurations,
                 Models = i.Models.Count,
-                Entries = i.Models.SelectMany(i=>i.Entries).Count()
+                Entries = i.Models.SelectMany(i => i.Entries).Count()
             });
 
             // response
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(new { Data = new { Collection = responseBody } }, jsonSettings),
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentResult(responseBody: new { Data = new { Collection = responseBody } });
         }
 
         // GET api/v3/models/<id>
         [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        public async Task< IActionResult> Get(string id)
         {
             // setup
             var obj = repository.Get(Request.GetAuthentication(), id).data;
@@ -73,22 +64,18 @@ namespace Rhino.Agent.Controllers
             // exit conditions
             if (obj == default)
             {
-                return NotFound(new { Message = $"Collection [{id}] was not found." });
+                return await this
+                    .ErrorResultAsync($"Collection [{id}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
 
             // response
-            var responseBody = JsonConvert.SerializeObject(obj.Models, jsonSettings);
-            return new ContentResult
-            {
-                Content = responseBody,
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentResult(responseBody: obj.Models);
         }
 
         // GET api/v3/models/<id>/configuration
         [HttpGet("{id}/configurations")]
-        public IActionResult GetConfigurations(string id)
+        public async Task<IActionResult> GetConfigurations(string id)
         {
             // setup
             var obj = repository.Get(Request.GetAuthentication(), id).data;
@@ -96,17 +83,13 @@ namespace Rhino.Agent.Controllers
             // exit conditions
             if (obj == default)
             {
-                return NotFound(new { Message = $"Collection [{id}] was not found" });
+                return await this
+                    .ErrorResultAsync($"Collection [{id}] was not found", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
 
             // response
-            var responseBody = JsonConvert.SerializeObject(new { Data = new { obj.Configurations } }, jsonSettings);
-            return new ContentResult
-            {
-                Content = responseBody,
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.OK.ToInt32()
-            };
+            return this.ContentResult(new { Data = new { obj.Configurations } });
         }
         #endregion
 
@@ -125,7 +108,6 @@ namespace Rhino.Agent.Controllers
             return DoPost(configuration);
         }
 
-        // TODO: clean
         private async Task<IActionResult> DoPost(string configuration)
         {
             // read test case from request body
@@ -134,11 +116,15 @@ namespace Rhino.Agent.Controllers
             // exit conditions
             if (models.Length == 0)
             {
-                return GetErrorResults(message: "At least one model must be provided.");
+                return await this
+                    .ErrorResultAsync("At least one model must be provided.", HttpStatusCode.BadRequest)
+                    .ConfigureAwait(false);
             }
             if (!models.SelectMany(i => i.Entries).Any())
             {
-                return GetErrorResults(message: "At least one model entry must be provided.");
+                return await this
+                    .ErrorResultAsync("At least one model entry must be provided.", HttpStatusCode.BadRequest)
+                    .ConfigureAwait(false);
             }
 
             // setup
@@ -154,45 +140,39 @@ namespace Rhino.Agent.Controllers
             var credentials = Request.GetAuthentication();
 
             // response
-            var data = new { Data = new { Id = repository.Post(credentials, collection) } };
+            var responseBody = new { Data = new { Id = repository.Post(credentials, collection) } };
 
             // exit conditions
-            if (string.IsNullOrEmpty(data.Data.Id))
+            if (string.IsNullOrEmpty(responseBody.Data.Id))
             {
-                return GetErrorResults(
-                    message: "All the provided Models Collections already exists. Please provide a unique Collection.");
+                return await this
+                    .ErrorResultAsync("All the provided Models Collections already exists. Please provide a unique Collection or clean old ones.")
+                    .ConfigureAwait(false);
             }
 
             // results
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(data, jsonSettings),
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.Created.ToInt32()
-            };
+            return this.ContentResult(responseBody, HttpStatusCode.Created);
         }
         #endregion
 
         #region *** PATCH  ***
         // PATCH api/v3/models/<id>/configurations/<configuration>
         [HttpPatch("{id}/configurations/{configuration}")]
-        public IActionResult PatchConfiguration(string id, string configuration)
+        public async Task<IActionResult> PatchConfiguration(string id, string configuration)
         {
             // patch
             var (statusCode, _) = repository.Patch(Request.GetAuthentication(), id, configuration);
 
             // redirect
-            if(statusCode == HttpStatusCode.NoContent)
+            if (statusCode == HttpStatusCode.NoContent)
             {
                 return Redirect($"/api/v3/models/{id}");
             }
 
             // response
-            return new ContentResult
-            {
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = statusCode.ToInt32()
-            };
+            return await this
+                .ErrorResultAsync("Models collection or configuration were not found.", HttpStatusCode.NotFound)
+                .ConfigureAwait(false);
         }
 
         // PATCH api/v3/models/<guid>
@@ -209,7 +189,9 @@ namespace Rhino.Agent.Controllers
             var (statusCode, collection) = repository.Get(credentials, id);
             if (statusCode == HttpStatusCode.NotFound)
             {
-                return NotFound(new { Message = $"Collection [{id}] was not found." });
+                return await this
+                    .ErrorResultAsync($"Collection [{id}] was not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
             }
 
             // apply
@@ -247,22 +229,5 @@ namespace Rhino.Agent.Controllers
             return NoContent();
         }
         #endregion
-
-        private ContentResult GetErrorResults(string message)
-        {
-            // setup
-            var obj = new
-            {
-                Message = message
-            };
-
-            // response
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(obj, jsonSettings),
-                ContentType = MediaTypeNames.Application.Json,
-                StatusCode = HttpStatusCode.BadRequest.ToInt32()
-            };
-        }
     }
 }
