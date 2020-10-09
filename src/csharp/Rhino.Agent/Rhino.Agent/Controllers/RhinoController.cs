@@ -84,6 +84,7 @@ namespace Rhino.Agent.Controllers
             return DoExecute();
         }
 
+        // TODO: implement recursive convertion JToken to <string, object>
         // POST api/v3/rhino/execute
         [HttpPost("execute")]
         public IActionResult Execute()
@@ -94,10 +95,18 @@ namespace Rhino.Agent.Controllers
 
             // get provider capabilities
             var jsonObject = JObject.Parse(requestBody);
-            var token = jsonObject.SelectToken("..providerConfiguration.capabilities");
-            configuration.ProviderConfiguration.Capabilities = token != null
-                ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{token}")
+            var capabilities = jsonObject.SelectToken("capabilities");
+            var options = jsonObject.SelectToken($"capabilities.{configuration.ConnectorConfiguration.Connector}:options");
+
+            var onOptions = options!= null
+                ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{options}")
                 : new Dictionary<string, object>();
+
+            configuration.Capabilities = capabilities != null
+                ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{capabilities}")
+                : new Dictionary<string, object>();
+
+            configuration.Capabilities[$"{configuration.ConnectorConfiguration.Connector}:options"] = onOptions;
 
             // execute
             var responseBody = configuration.Execute(types);

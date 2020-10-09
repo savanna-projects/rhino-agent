@@ -107,7 +107,7 @@ namespace Rhino.Agent
 
             // get connector type by it's name
             var type = byAttribute
-                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Name.Equals(configuration.Connector, C));
+                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Name.Equals(configuration.ConnectorConfiguration.Connector, C));
 
             // exit conditions - will abort on azure devops task as well
             OnConnectorError(configuration, type == default);
@@ -251,7 +251,7 @@ namespace Rhino.Agent
             }
 
             // failure on getting connector
-            Console.Error.WriteLine(string.Format(M, configuration.Connector));
+            Console.Error.WriteLine(string.Format(M, configuration.ConnectorConfiguration.Connector));
             Environment.Exit(errorCode);
         }
 

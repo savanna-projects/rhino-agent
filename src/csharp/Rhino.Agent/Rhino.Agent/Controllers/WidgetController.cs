@@ -180,10 +180,10 @@ namespace Rhino.Agent.Controllers
             // parse test case & configuration
             var configuration = token["config"].ToObject<RhinoConfiguration>();
             var testCaseSrc = JsonConvert.DeserializeObject<string[]>($"{token["test"]}");
-            var testSuite = $"{token["suite"]}";
+            var testSuites = $"{token["suite"]}".Split(";");
 
             // text connector
-            if (configuration.Connector.Equals(Connector.Text))
+            if (configuration.ConnectorConfiguration.Connector.Equals(Connector.Text))
             {
                 return this.ContentTextResult(string.Join(Environment.NewLine, testCaseSrc), HttpStatusCode.OK);
             }
@@ -192,14 +192,14 @@ namespace Rhino.Agent.Controllers
             var testCase = new RhinoTestCaseFactory(client)
                 .GetTestCases(string.Join(Environment.NewLine, testCaseSrc.Where(i => !string.IsNullOrEmpty(i))))
                 .First();
-            testCase.TestSuite = testSuite;
+            testCase.TestSuites = testSuites;
             testCase.Context["comment"] = Api.Extensions.Utilities.GetActionSignature("created");
 
             // get connector & create test case
             var connectorType = configuration.GetConnector(types);
             if (connectorType == default)
             {
-                return NotFound(new { Message = $"Connector [{configuration.Connector}] was not found under the connectors repository." });
+                return NotFound(new { Message = $"Connector [{configuration.ConnectorConfiguration.Connector}] was not found under the connectors repository." });
             }
 
             var connector = (IConnector)Activator.CreateInstance(connectorType, new object[]

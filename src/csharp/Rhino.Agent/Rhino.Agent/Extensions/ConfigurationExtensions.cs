@@ -54,8 +54,8 @@ namespace Rhino.Agent.Extensions
                 .Select(i => i.Value)
                 .ToArray();
 
-            configuration.ReportConfiguration.ConnectionString =
-                appSettings.GetValue<string>("rhino:reportConfiguration:connectionString");
+            //configuration.ReportConfiguration..ConnectionString =
+            //    appSettings.GetValue<string>("rhino:reportConfiguration:connectionString");
 
             // screenshots
             configuration.ScreenshotsConfiguration.ScreenshotsOut =
@@ -98,7 +98,7 @@ namespace Rhino.Agent.Extensions
 
             // get connector type by it's name
             var type = byAttribute
-                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Value.Equals(configuration.Connector, C));
+                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Value.Equals(configuration.ConnectorConfiguration.Connector, C));
 
             if (type == default)
             {
