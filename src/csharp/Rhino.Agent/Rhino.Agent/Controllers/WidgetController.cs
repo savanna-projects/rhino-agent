@@ -72,8 +72,8 @@ namespace Rhino.Agent.Controllers
             // get actions
             var actions = manager
                 .GetActionsLiteral(Request.GetAuthentication())
-                .Where(i => !ExcludeActions.Contains(i.Key) && !string.IsNullOrEmpty(i.Key))
-                .OrderBy(i => i.Action.Name);
+                .Where(i => !ExcludeActions.Contains(i.Model.Key) && !string.IsNullOrEmpty(i.Model.Key))
+                .OrderBy(i => i.Model.Action.Name);
 
             // exit conditions
             if (!actions.Any())
@@ -98,7 +98,7 @@ namespace Rhino.Agent.Controllers
             // extract action from manager
             var actions = manager
                 .GetActionsLiteral(Request.GetAuthentication())
-                .FirstOrDefault(i => i.Action.Name.Equals(action, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(i => i.Model.Action.Name.Equals(action, StringComparison.OrdinalIgnoreCase));
 
             // response
             if (actions == default)
