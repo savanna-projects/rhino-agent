@@ -15,6 +15,7 @@ var R_SEND = "/api/v3/widget/send";
 
 // REPOSITORY: elements
 // -- A --
+var E_ACCESSIBILITY = "#accessibility_id";
 var E_ACTION_APPLY = "#action_apply";
 var E_ACTION_PLAYBACK = "#action_playback";
 var E_ACTION_PLABACK_LINK = "#action_content > div:nth-child(4) > div.card-header > h4 > a";
@@ -68,6 +69,7 @@ var E_PROJECT = "#project";
 var E_QUERY_SELECTOR = "#query_selector";
 // -- R --
 var E_RADIO_ALIAS = "#radio_alias";
+var E_RADIO_ACCESSIBILITY = "#radio_accessibility_id";
 var E_RADIO_ELEMENT_ID = "#radio_element_id";
 var E_RADIO_LINK_TEXT = "#radio_link_text";
 var E_RADIO_PATH = "#radio_path";
@@ -94,6 +96,8 @@ var E_WIDGET_FRAME = "#widget_frame";
 var E_WIDGET_TOGGLE = "#widget_toggle";
 
 // REPOSITORY: constants
+// -- A --
+var C_ACCESSIBILITY = "accessibility id";
 // -- C --
 var C_CONFIGURATION_NAME = "sr-temp-configuration";
 var C_CSS_SELECTOR = "css selector";
@@ -938,11 +942,11 @@ function getRhinoOptions() {
  */
 function getRhinoActions(actionLiteralModel, isUi = false) {
     var rhinoActions = [];
-    $(actionLiteralModel.action.examples).each((i, e) => {
+    $(actionLiteralModel.item2.action.examples).each((i, e) => {
         rhinoAction = {
-            actionPlugin: actionLiteralModel.key,
-            actionLiteral: actionLiteralModel.literal,
-            verb: actionLiteralModel.verb,
+            actionPlugin: actionLiteralModel.item2.key,
+            actionLiteral: actionLiteralModel.item2.literal,
+            verb: actionLiteralModel.item2.verb,
             actionRule: e.actionExample,
             description: e.description,
             id: i
@@ -981,6 +985,7 @@ function getLocatorData(rhinoAction, isUi) {
     var isPath = $(E_RADIO_PATH_ID)[0].checked;
     var isElementId = $(E_RADIO_ELEMENT_ID)[0].checked;
     var isLinkText = $(E_RADIO_LINK_TEXT)[0].checked;
+    var isAccessibility = $(E_RADIO_ACCESSIBILITY)[0].checked;
 
     // take from action-rule
     if (!isUi) {
@@ -1015,6 +1020,10 @@ function getLocatorData(rhinoAction, isUi) {
     if (isLinkText) {
         data.locator = C_LINK_TEXT;
         data.element = $(E_LINK_TEXT).val();
+    }
+    if (isAccessibility) {
+        data.locator = C_ACCESSIBILITY;
+        data.element = $(E_ACCESSIBILITY).val();
     }
     return data;
 }
