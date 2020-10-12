@@ -208,7 +208,15 @@ function optionsHandler(options, e) {
  * @param {any} data Data Object fetched from the server
  */
 function actionsHandler(data) {
-    populateSelect(data, E_ACTIONS, (response) => new Option(response.literal, response.key));
+    // empty first line
+    $(E_ACTIONS).append(new Option(C_EMPTY_STRING, -1));
+
+    // actions
+    for (var i = 0; i < data.length; i++) {
+        var css = data[i].item1 === "code" ? "text-info" : "text-danger";
+        var option = '<option class="' + css + '" value="' + data[i].item2.key + '">' + data[i].item2.literal + "</option>";
+        $(E_ACTIONS).append(option);
+    }
 }
 // #endregion
 

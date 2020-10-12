@@ -66,7 +66,7 @@ namespace Rhino.Agent.Domain
         /// </summary>
         /// <param name="authentication">Authentication object by which to get logs.</param>
         /// <returns>A collection of ActionAttribute.</returns>
-        public IEnumerable<ActionAttribute> GetActionsAsAttributes(Authentication authentication)
+        public IEnumerable<(string Type, ActionAttribute Model)> GetActionsAsAttributes(Authentication authentication)
         {
             return DoGetActions(authentication);
         }
@@ -90,21 +90,21 @@ namespace Rhino.Agent.Domain
         /// Gets a list of non conditional actions with their literals default verbs
         /// </summary>
         /// <returns>List of non conditional actions</returns>
-        public IEnumerable<ActionLiteralModel> GetActionsLiteral(Authentication authentication)
+        public IEnumerable<(string Type, ActionLiteralModel Model)> GetActionsLiteral(Authentication authentication)
         {
-            var actions = new List<ActionLiteralModel>();
+            var actions = new List<(string Type, ActionLiteralModel Model)>();
             foreach (var onAction in DoGetActions(authentication))
             {
                 try
                 {
                     var model = new ActionLiteralModel
                     {
-                        Key = onAction.Name,
-                        Literal = onAction.Name.PascalToSpaceCase(),
-                        Verb = GetVerb(onAction.Name),
-                        Action = onAction
+                        Key = onAction.Action.Name,
+                        Literal = onAction.Action.Name.PascalToSpaceCase(),
+                        Verb = GetVerb(onAction.Action.Name),
+                        Action = onAction.Action
                     };
-                    actions.Add(model);
+                    actions.Add((onAction.Type, model));
                 }
                 catch (Exception e) when (e != null)
                 {
@@ -121,17 +121,17 @@ namespace Rhino.Agent.Domain
             return verb == default ? "on" : verb;
         }
 
-        private IEnumerable<ActionAttribute> DoGetActions(Authentication authentication)
+        private IEnumerable<(string Type, ActionAttribute Action)> DoGetActions(Authentication authentication)
         {
             // setup
             var pluginSpecs = rhinoPlugin.Get(authentication).data;
             var pluginObjcs = new RhinoPluginFactory().GetRhinoPlugins(pluginSpecs.ToArray());
 
             // convert
-            var attributes = pluginObjcs.Select(i => i.ToActionAttribute());
+            var attributes = pluginObjcs.Select(i => ("plugin", i.ToActionAttribute()));
 
             // return all actions
-            return Client.Actions().Select(i => Client.Actions(i)).Concat(attributes);
+            return Client.Actions().Select(i => ("code", Client.Actions(i))).Concat(attributes);
         }
     }
 }
