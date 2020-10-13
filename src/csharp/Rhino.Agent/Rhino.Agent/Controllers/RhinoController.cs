@@ -98,7 +98,7 @@ namespace Rhino.Agent.Controllers
             var capabilities = jsonObject.SelectToken("capabilities");
             var options = jsonObject.SelectToken($"capabilities.{configuration.ConnectorConfiguration.Connector}:options");
 
-            var onOptions = options!= null
+            var onOptions = options != null
                 ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{options}")
                 : new Dictionary<string, object>();
 
