@@ -772,7 +772,7 @@ function sendHandler() {
     config.connectorConfiguration = {
         collection: settings.connector_options.server_address,
         project: settings.connector_options.project,
-        user: settings.connector_options.user_name,
+        userName: settings.connector_options.user_name,
         password: settings.connector_options.password,
         connector: settings.connector_options.connector_type
     };
