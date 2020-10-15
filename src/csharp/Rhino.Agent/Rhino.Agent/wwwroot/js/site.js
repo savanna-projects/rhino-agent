@@ -701,7 +701,6 @@ function getConfiguration() {
         engineConfiguration: {
             errorOnExitCode: 10
         },
-        connector: "connector_text",
         authentication: {
             userName: settings.rhino_options.rhino_user_name,
             password: settings.rhino_options.rhino_password
