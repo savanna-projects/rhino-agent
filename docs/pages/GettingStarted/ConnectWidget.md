@@ -1,21 +1,33 @@
+[Home](../Home.md 'Home')  
+
 # Connect to Widget
-* [Installation - Google Chrome](#on-premise-installation-google-chrome)
-* [Installation - MS Edge](#on-premise-installation-ms-edge)
+10/19/2020 - 25 minutes to read
+
+## In This Article
+* [Supported Browsers](#supported-browsers)
+* [Requirements](#requierments)
+* [Google Chrome Installation](#google-chrome-installation)
+* [MS Edge Chromium Installation](#ms-edge-chromium-installation)
 * [Connect](#connect)
-* [Widget Overview](./WidgetOverview.md 'WidgetOverview')
+* [Disconnect](#disconnect)
+* [Standalone Mode](#standalone-mode)
+
+Rhino Widget is a **[Chrome Extension](https://developer.chrome.com/extensions) Exploratory Testing Tool** that works seamlessly integrated with Rhino actions repository and connectors.
+It allows users to define exploratory testing scenarios, record and manipulate actions, set expected results, playback the recorded tests, automatically create tests using the different connectors and more.
+It works integrated with Rhino Server Recorder, but can also be used in a standalone mode (directly from Rhino Server). 
+
+> You can install Rhino Widget from the cloud.  
+> [Google Store](https://chrome.google.com/webstore/detail/rhino-steps-recorder-and/giekjanbmlmabfagaddfkpcijefpgkdf)  
+> [Edge Market Place](https://microsoftedge.microsoft.com/addons/detail/rhino-steps-recorder-and-/afmifehgcfflgnlhkfggdkmdlfmhpjag)  
 
 ## Supported Browsers
 1. [Google Chrome](https://www.google.com/chrome/) - Latest
 2. [MS Edge Chromium](https://www.microsoft.com/en-us/edge) - Latest
 
-## Requierments
+## Requirements
 1. Either [Google Chrome](https://www.google.com/chrome/) or [MS Edge Chromium](https://www.microsoft.com/en-us/edge) installed.  
 
-> You can install Rhino Widget from the cloud.  
-> [Google Store](https://chrome.google.com/webstore/detail/rhino-steps-recorder-and/giekjanbmlmabfagaddfkpcijefpgkdf)  
-> [Edge Market Place](https://microsoftedge.microsoft.com/addons/detail/rhino-steps-recorder-and-/afmifehgcfflgnlhkfggdkmdlfmhpjag)
-
-## On Premise Installation Google Chrome
+## Google Chrome Installation
 1. Download the latest [Rhino Widget Release](https://github.com/savanna-projects/rhino-widget/releases) ZIP file.
 2. Extract the file and place the extracted folder under the location you want to hold Rhino Widget (i.e. C:\Rhino\Widget).
 3. Open Chrome Browser.
@@ -23,24 +35,24 @@
 5. Switch on **Developer mode**, on the top right corner of the screen
 
 ![image_1_1.png](../../images/image_1_1.png)  
-_image 1.1 - Extensions Screen, Developer Mode_  
+_image - Extensions Screen, Developer Mode_  
   
 6. Click on ```Load unpacked``` button.
 
 ![image_1_3.png](../../images/image_1_3.png)  
-_image 1.3 - Extensions Screen, Load Unpacked_  
+_image - Extensions Screen, Load Unpacked_  
   
 7. Select the folder you have extracted in step NO.2 (make sure ```manifest.json``` file exists in that folder).  
 
 ![image_1_5.png](../../images/image_1_5.png)  
-_image 1.5 - Extensions Screen, Select Folder_  
+_image - Extensions Screen, Select Folder_  
 
 8. Click on ```Select Folder``` button.
 
 ![image_1_7.png](../../images/image_1_7.png)  
-_image 1.7 - Extensions Screen, Extension Loaded_
+_image - Extensions Screen, Extension Loaded_
 
-## On Premise Installation MS Edge
+## MS Edge Chromium Installation
 1. Download the latest [Rhino Widget Release](https://github.com/savanna-projects/rhino-widget/releases) ZIP file.
 2. Extract the file and place the extracted folder under the location you want to hold Rhino Widget (i.e. C:\Rhino\Widget).
 3. Open Edge Browser.
@@ -48,31 +60,31 @@ _image 1.7 - Extensions Screen, Extension Loaded_
 5. Switch on **Developer mode**, on the bottom left corner of the screen
 
 ![image_1_2.png](../../images/image_1_2.png)  
-_image 1.2 - Extensions Screen, Developer Mode_  
+_image - Extensions Screen, Developer Mode_  
   
 6. Click on ```Load unpacked``` button.
 
 ![image_1_4.png](../../images/image_1_4.png)  
-_image 1.4 - Extensions Screen, Load Unpacked_  
+_image - Extensions Screen, Load Unpacked_  
   
 7. Select the folder you have extracted in step NO.2 (make sure ```manifest.json``` file exists in that folder).  
 
 ![image_1_5.png](../../images/image_1_5.png)  
-_image 1.5 - Extensions Screen, Select Folder_  
+_image - Extensions Screen, Select Folder_  
 
 8. Click on ```Select Folder``` button.
 
 ![image_1_6.png](../../images/image_1_6.png)  
-_image 1.6 - Extensions Screen, Extension Loaded_
+_image - Extensions Screen, Extension Loaded_
 
 ## Connect
-1. Navigate into the folder in which you have extracted Rhino Agent [see Deployment](./Deployment.md) for more information.
+1. Navigate into the folder in which you have extracted Rhino Agent **[see Deployment](./Deployment.md)** for more information.
 2. Run the following command:
 ```
 dotnet Rhino.Agent.dll
 ```  
 
-The following is expected:
+The following output is expected:
 ```
 Now listening on: https://localhost:5001
 Now listening on: http://localhost:5000
@@ -85,16 +97,50 @@ Application started. Press Ctrl+C to shut down.
 6. Click on ```Connect Recorder``` button.
 
 ![image_1_8.png](../../images/image_1_8.png)  
-_image 1.8 - Rhino Widget Main Screen_  
+_image - Rhino Widget Main Screen_  
 
-The following is expected:
-1. Rhino Widget is now open.
-2. Moving the mouse around the web site will cause element to glow.  
+The following behavior is expected:
+1. Rhino Widget is now open in a different browser window.
+2. Moving the mouse around the web site will cause elements to glow.  
 
 ![image_1_9.png](../../images/image_1_9.png)  
-_image 1.9 - Rhino Widget Connected_  
+_image - Rhino Widget Connected_  
 
-> Rhino Widget is persistent which means it will work on any browser you will open once you have connected.
-> To close it, open Rhino Widget and click on ```Disconnect``` button.  
->![image_1_10.png](../../images/image_1_10.png)  
->_image 1.10 - Rhino Widget Main Screen_  
+## Disconnect
+> Disconnect the widget will not delete you current work and you can allows connect again and continue from where you have left.  
+
+Rhino Widget is persistent which means it will work on any browser you will open once you have connected. To close it (disconnect), please follow these steps:
+1. Open Rhino Widget Chrome Extension.
+2. Click on ```Disconnect``` button.  
+
+![image_1_10.png](../../images/image_1_10.png)  
+_image - Rhino Widget Main Screen_  
+
+## Standalone Mode
+1. Navigate into the folder in which you have extracted Rhino Agent **[see Deployment](./Deployment.md)** for more information.
+2. Run the following command:
+```
+dotnet Rhino.Agent.dll
+```  
+
+The following output is expected:
+```
+Now listening on: https://localhost:5001
+Now listening on: http://localhost:5000
+Application started. Press Ctrl+C to shut down.
+```  
+
+3. Open any modern browser.
+4. Type ```https://localhost:5001``` in the address bar.  
+
+![image_1_11.png](../../images/image_1_11.png)  
+_image - Rhino Widget Standalone_  
+
+## Next Steps
+* [Widget Overview - User Interface and Different Sections](./GettingStarted/WidgetOverview.md 'WidgetOverview')
+* [Create Your First Automation](./GettingStarted/CreateYourFirstAutomation.md 'CreateYourFirstAutomation')
+
+## See Also
+* [Rhino Server Deployment](./Deployment.md)
+* [Rhino Atlassian Connectors](https://github.com/savanna-projects/rhino-connectors-atlassian)
+* [Rhino Plain Text Connector](https://github.com/savanna-projects/rhino-connectors-text)
