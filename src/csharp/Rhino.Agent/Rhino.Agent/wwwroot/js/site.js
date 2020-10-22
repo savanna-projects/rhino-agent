@@ -572,7 +572,7 @@ function putHelp(actionLiteralModel) {
     // setup metadata
     $(E_HELP_ACTION).text(actionLiteralModel.literal);
     $(E_HELP_BADGE).text(actionLiteralModel.key);
-    $(E_HELP_DESCRIPTION).text(actionLiteralModel.action.description);
+    $(E_HELP_DESCRIPTION).text(actionLiteralModel.item2.action.description);
 
     // populate new action
     for (var i = 0; i < actions.length; i++) {
