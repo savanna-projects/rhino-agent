@@ -147,7 +147,7 @@ namespace Rhino.Agent.Controllers
 
             // execute case
             var connector = new TextConnector(configuration, types, logger);
-            var testResults = connector.Connect().Execute();
+            var testResults = connector.Execute();
 
             // return results
             return this.ContentResult(responseBody: testResults);

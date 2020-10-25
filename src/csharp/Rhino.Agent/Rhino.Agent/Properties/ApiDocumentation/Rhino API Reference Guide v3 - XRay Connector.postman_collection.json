@@ -1,0 +1,343 @@
+{
+	"info": {
+		"_postman_id": "6a738f9f-8a4f-4fcb-96f3-e7535b6f4464",
+		"name": "Rhino API Reference Guide v3 - XRay Connector",
+		"description": "Learn how to access and use Rhino’s API to integrate automated testing frameworks, submit test results, and automate various other aspects of your applications via simple HTTP requests.\r\n\r\n## Capabilities\r\nYou can find a full list of supported capabilities [here](https://github.com/savanna-projects/rhino-connectors-atlassian)\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Delete Test Case Collections",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/tests",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"tests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Page Model Collections",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "80aa6bad-c2be-4c91-aac9-d0d6af6b3c49",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/models",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"models"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Configurations",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/configurations",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"configurations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Configuration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "884e3040-3a3a-40a2-9eb8-4ba806e39cd2",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set('configuration_id', jsonData.data.id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Rhino Automation - Chrome\",\r\n  \"testsRepository\": [],\r\n  \"driverParameters\": [\r\n    {\r\n      \"driver\": \"ChromeDriver\",\r\n      \"driverBinaries\": \"{{rhino_drivers}}\"\r\n    }\r\n  ],\r\n  \"authentication\": {\r\n    \"password\": \"{{rhino_password}}\",\r\n    \"userName\": \"{{rhino_user}}\"\r\n  },\r\n  \"engineConfiguration\": {\r\n    \"maxParallel\": 1,\r\n    \"elementSearchingTimeout\": 15000,\r\n    \"pageLoadTimeout\": 60000\r\n  },\r\n  \"screenshotsConfiguration\": {\r\n    \"keepOriginal\": false,\r\n    \"returnScreenshots\": true,\r\n    \"onExceptionOnly\": false\r\n  },\r\n  \"reportConfiguration\": {\r\n    \"reporters\": [\r\n      \"reporter_basic\",\r\n      \"reporter_warehouse\"\r\n    ],\r\n    \"archive\": false,\r\n    \"localReport\": true,\r\n    \"addGravityData\": true\r\n  },\r\n  \"connectorConfiguration\": {\r\n    \"collection\": \"{{jira_server}}\",\r\n    \"password\": \"{{jira_user}}\",\r\n    \"userName\": \"{{jira_password}}\",\r\n    \"project\": \"{{jira_project}}\",\r\n    \"connector\": \"{{jira_connector}}\"\r\n  },\r\n  \"capabilities\": {\r\n    \"{{jira_connector}}:options\": {\r\n      \"bucketSize\": 15\r\n    }\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/configurations",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"configurations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Tests Collection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ddfea768-22c9-4fef-b05b-67dbfb5e7403",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {    \r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set('collection_id', jsonData.data.id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/tests/{{configuration_id}}",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"tests",
+						"{{configuration_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Tests to Collection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7ebe0694-ce0d-493b-803c-82f3dff4eb14",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "XDP-240",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/tests/{{collection_id}}",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"tests",
+						"{{collection_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Run by Collection (one configuration)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "abd919e5-dd13-4fe8-987f-03dc635d28be",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/rhino/collections/{{collection_id}}/configurations/{{configuration_id}}",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"rhino",
+						"collections",
+						"{{collection_id}}",
+						"configurations",
+						"{{configuration_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{rhino_password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{rhino_user}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "019efcd3-7657-4499-a9f2-05a8418c758d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "cd37f694-8ffb-4e9a-85c8-505da63c2c78",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "796b66ce-aef8-4fee-9213-6d8d85e429bf",
+			"key": "collection_id",
+			"value": "590ecf7a-dfa4-4ca5-9bea-6fed89a52d01"
+		},
+		{
+			"id": "351ab4af-218d-4cbe-89c9-e63c056a12ff",
+			"key": "configuration_id",
+			"value": "81a211e0-cde9-446e-9195-c63483f945b5"
+		},
+		{
+			"id": "200c182c-f5f1-4a2d-8378-9d80972bc830",
+			"key": "models_id",
+			"value": "dcd8035c-77b0-4778-8bd0-1a36b1de637e"
+		},
+		{
+			"id": "a8f660a9-923a-489b-b346-4b48513d67c8",
+			"key": "session_id",
+			"value": "73c41a9aa676b8de59f38ff4e127b73b"
+		},
+		{
+			"id": "3809c3ae-7e4f-43d4-a67d-702ff84a3181",
+			"key": "endpoint",
+			"value": "https://localhost:5001/api/v3"
+		},
+		{
+			"id": "1874c7f7-5520-46d2-a0fb-cb9ffd2f313e",
+			"key": "rhino_drivers",
+			"value": "."
+		},
+		{
+			"id": "734f0ead-c8bc-4d5c-ac8a-984e436283d6",
+			"key": "rhino_user",
+			"value": ""
+		},
+		{
+			"id": "309150f3-ba2c-4e80-99fe-2a0b93461931",
+			"key": "rhino_password",
+			"value": ""
+		},
+		{
+			"id": "7df76284-2934-4179-b8ac-821dd32d74f2",
+			"key": "jira_server",
+			"value": "http://localhost:8080"
+		},
+		{
+			"id": "f08684f2-20a1-46b5-a89b-b215bfd92972",
+			"key": "jira_user",
+			"value": "admin"
+		},
+		{
+			"id": "47b5f239-4645-4611-8437-da982ec22581",
+			"key": "jira_password",
+			"value": "admin"
+		},
+		{
+			"id": "05d20025-fcce-4300-a4db-60a469891531",
+			"key": "jira_project",
+			"value": "RA"
+		},
+		{
+			"id": "b35ef200-adef-4708-bbcc-a0934a217b41",
+			"key": "jira_connector",
+			"value": "connector_xray"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

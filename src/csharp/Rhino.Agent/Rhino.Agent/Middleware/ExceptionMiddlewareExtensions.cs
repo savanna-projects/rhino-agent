@@ -8,6 +8,7 @@ using Rhino.Agent.Models;
 
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Rhino.Agent.Middleware
 {
@@ -23,27 +24,41 @@ namespace Rhino.Agent.Middleware
         /// <param name="logger">Logger implementation to use with this middleware</param>
         public static void ConfigureExceptionHandler(this IApplicationBuilder app, ILogger logger)
         {
-            app.UseExceptionHandler(appError =>
+            app.UseExceptionHandler(appError => AppError(appError, logger));
+        }
+
+        private static void AppError(IApplicationBuilder appError, ILogger logger)
+        {
+            appError.Run(async context
+                => await RunContextAsync(context, logger).ConfigureAwait(false));
+        }
+
+        private static async Task RunContextAsync(HttpContext context, ILogger logger)
+        {
+            // setup
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            context.Response.ContentType = "application/json";
+            var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+
+            // exit conditions
+            if (contextFeature == null)
             {
-                appError.Run(async context =>
-                {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    context.Response.ContentType = "application/json";
-                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-                    if (contextFeature != null)
-                    {
-                        logger.Fatal($"{Environment.NewLine}Something went wrong", contextFeature.Error);
-                        await context.Response.WriteAsync(new ErrorDetails()
-                        {
-                            StatusCode = context.Response.StatusCode,
-                            Message = contextFeature.Error.Message,
-                            Stack = $"{contextFeature.Error}"
-                        }
-                        .ToString())
-                        .ConfigureAwait(false);
-                    }
-                });
-            });
+                return;
+            }
+
+            // handler: logging
+            logger.Fatal($"{Environment.NewLine}Something went wrong", contextFeature.Error);
+
+            // handler: error details
+            var errorDetails = new ErrorDetails()
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = contextFeature.Error.Message,
+                Stack = $"{contextFeature.Error}"
+            };
+
+            // write
+            await context.Response.WriteAsync(errorDetails.ToString()).ConfigureAwait(false);
         }
     }
 }

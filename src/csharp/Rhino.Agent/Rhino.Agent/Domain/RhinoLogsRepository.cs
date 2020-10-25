@@ -93,11 +93,12 @@ namespace Rhino.Agent.Domain
             }
 
             // parse
-            var logsOut = logsPath == "." ? $"{Environment.CurrentDirectory}\\logs\\" : logsPath;
-            logsOut = logsOut.EndsWith("\\") ? logsOut : logsOut + "\\";
+            var logsOut = logsPath == "."
+                ? Path.Join($"{Environment.CurrentDirectory}", "Logs")
+                : logsPath;
 
             // get
-            var logFile = $"{logsOut}RhinoApi-{log}.log";
+            var logFile = Path.Join(logsOut, $"{logsOut}RhinoApi-{log}.log");
             if (!File.Exists(path: logFile))
             {
                 return (HttpStatusCode.NotFound, string.Empty);
