@@ -97,7 +97,7 @@ steps:
   displayName: 'Create Docker Image - Linux'
   inputs:
     containerRegistry: 'docker.io'
-    repository: 'rhino-agent'
+    repository: 'rhinoapi/rhino-agent'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
     tags: |
