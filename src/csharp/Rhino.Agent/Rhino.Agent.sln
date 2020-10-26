@@ -45,6 +45,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "Gettings
 		..\..\..\docs\pages\GettingStarted\WidgetOverviewSettings.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewSettings.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{F0581530-31D7-40C5-BD78-4322BD64C4F0}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+		DockerfileWindows = DockerfileWindows
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

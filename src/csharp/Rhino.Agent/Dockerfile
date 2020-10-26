@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["Rhino.Agent.csproj", "Rhino.Agent/"]
+COPY ["Rhino.Agent/Rhino.Agent.csproj", "Rhino.Agent/"]
 RUN dotnet restore "Rhino.Agent/Rhino.Agent.csproj"
 COPY . .
 WORKDIR "/src/Rhino.Agent"
