@@ -80,3 +80,14 @@ steps:
     assets: '$(build.artifactstagingdirectory)\$(Build.BuildNumber)\$(Build.BuildNumber).zip'
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
+
+- task: Docker@2
+  displayName: 'Create Docker Image - Linux'
+  inputs:
+    containerRegistry: 'docker.io'
+    repository: 'rhino-agent'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
+    tags: |
+      latest
+      v$(buildVersion)
