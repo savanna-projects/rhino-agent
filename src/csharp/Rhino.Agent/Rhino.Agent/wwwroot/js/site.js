@@ -566,13 +566,13 @@ function putHelp(actionLiteralModel) {
     // collect new actions to populate
     var isElement = $(E_IS_ELEMENT)[0].checked;
     var actions = isElement
-        ? getRhinoActions(actionLiteralModel, true)// fromAction(actionLiteralModel)
+        ? getRhinoActions(actionLiteralModel, true)
         : getRhinoActions(actionLiteralModel);
 
     // setup metadata
-    $(E_HELP_ACTION).text(actionLiteralModel.literal);
-    $(E_HELP_BADGE).text(actionLiteralModel.key);
-    $(E_HELP_DESCRIPTION).text(actionLiteralModel.action.description);
+    $(E_HELP_ACTION).text(actionLiteralModel.item2.literal);
+    $(E_HELP_BADGE).text(actionLiteralModel.item2.key);
+    $(E_HELP_DESCRIPTION).text(actionLiteralModel.item2.action.description);
 
     // populate new action
     for (var i = 0; i < actions.length; i++) {
@@ -701,7 +701,6 @@ function getConfiguration() {
         engineConfiguration: {
             errorOnExitCode: 10
         },
-        connector: "connector_text",
         authentication: {
             userName: settings.rhino_options.rhino_user_name,
             password: settings.rhino_options.rhino_password

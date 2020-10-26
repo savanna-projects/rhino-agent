@@ -18,6 +18,8 @@ using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Extensions;
 using Rhino.Api.Contracts.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Rhino.Agent
 {
@@ -66,7 +68,6 @@ namespace Rhino.Agent
             ExportTestCases(connector);
             var outcome = connector.Connect().Execute();
             ProcessOutcome(outcome);
-            logger.Info("Automation ends");
         }
 
         #region *** pipeline: server  ***
@@ -107,7 +108,7 @@ namespace Rhino.Agent
 
             // get connector type by it's name
             var type = byAttribute
-                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Name.Equals(configuration.ConnectorConfiguration.Connector, C));
+                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Value.Equals(configuration.ConnectorConfiguration.Connector, C));
 
             // exit conditions - will abort on azure devops task as well
             OnConnectorError(configuration, type == default);
@@ -175,6 +176,10 @@ namespace Rhino.Agent
 
         private static void ProcessOutcome(RhinoTestRun outcome)
         {
+            // output
+            var jsonSettings = Gravity.Extensions.Utilities.GetJsonSettings<CamelCaseNamingStrategy>(Formatting.Indented);
+            Console.WriteLine(JsonConvert.SerializeObject(outcome, jsonSettings));
+
             // constants: logging
             const string M =
                 "Total of [{0}] tests failed and stopped the process. Please review your tests results report.";

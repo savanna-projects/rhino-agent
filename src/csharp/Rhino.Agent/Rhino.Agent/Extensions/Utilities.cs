@@ -3,19 +3,22 @@
  * 
  * RESSOURCES
  */
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Rhino.Api.Contracts.AutomationProvider;
-
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Rhino.Agent.Extensions
 {
     /// <summary>
     /// Internal Utilities package.
     /// </summary>
-    internal static class Utilities
+    public static class Utilities
     {
         /// <summary>
         /// Normalize driver parameters to match Gravity's driver parameters contract.
@@ -42,6 +45,42 @@ namespace Rhino.Agent.Extensions
 
             // results
             return onDriverParameters;
+        }
+
+        /// <summary>
+        /// Gets a list of available reports created by automation runs.
+        /// </summary>
+        /// <param name="configuration"><see cref="IConfiguration"/> by which to fetch settings.</param>
+        /// <returns>A list of reports.</returns>
+        public static IEnumerable<(string Path, string Name)> GetReports(IConfiguration configuration)
+        {
+            // setup
+            var path = DoGetStaticReportsFolder(configuration);
+            var reports = Directory.GetDirectories(path).Select(i => (i, Path.GetFileName(i)));
+
+            return reports;
+        }
+
+        /// <summary>
+        /// Gets the static reports folder in which static reports can be served.
+        /// </summary>
+        /// <param name="configuration"><see cref="IConfiguration"/> by which to fetch settings.</param>
+        /// <returns>Servable static repotrs folder.</returns>
+        public static string GetStaticReportsFolder(IConfiguration configuration)
+        {
+            return DoGetStaticReportsFolder(configuration);
+        }
+
+        // INTERNAL
+        private static string DoGetStaticReportsFolder(IConfiguration configuration)
+        {
+            // setup
+            var onFolder = configuration.GetValue("rhino:reportConfiguration:reportOut", ".");
+            onFolder = onFolder.Substring(0, onFolder.LastIndexOf(Path.DirectorySeparatorChar));
+            onFolder = onFolder == "." ? Path.Join(Environment.CurrentDirectory, "outputs", "reports") : onFolder;
+
+            // get
+            return Path.IsPathRooted(onFolder) ? onFolder : Path.Join(Environment.CurrentDirectory, onFolder);
         }
     }
 }

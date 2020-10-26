@@ -3,27 +3,30 @@
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<UserSecretsId>560fcd40-f4c0-4803-88d0-390796909059</UserSecretsId>
-		<DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="CRhinoOutputsLogs\**" />
+	  <Content Remove="CRhinoOutputsLogs\**" />
+	  <EmbeddedResource Remove="CRhinoOutputsLogs\**" />
+	  <None Remove="CRhinoOutputsLogs\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="LiteDB" Version="5.0.9" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-		<PackageReference Include="Rhino.Connectors.Text" Version="2020.10.12.1" />
-		<PackageReference Include="Rhino.Connectors.Xray" Version="2020.10.13.3" />
-		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2020.10.13.3" />
+		<PackageReference Include="Rhino.Connectors.Text" Version="2020.10.26.1" />
+		<PackageReference Include="Rhino.Connectors.Xray" Version="2020.10.26.2" />
+		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2020.10.26.2" />
 		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="86.0.4240.2200" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="api-documentation\" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Update="api-documentation\Rhino API Reference Guide v3 - XRay Connector.postman_collection.json">
+		<Content Update="Properties\ApiDocumentation\Rhino API Reference Guide v3 - XRay Connector.postman_collection.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Update="api-documentation\Rhino API Reference Guide v3.postman_collection.json">
+		<Content Update="Properties\ApiDocumentation\Rhino API Reference Guide v3.postman_collection.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

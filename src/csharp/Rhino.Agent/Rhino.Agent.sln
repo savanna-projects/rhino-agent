@@ -30,11 +30,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "GettingsStarted", "{93EE5C18-B0DA-4D71-B345-FC7B44BC3D79}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\docs\pages\GettingStarted\ConnectWidget.md = ..\..\..\docs\pages\GettingStarted\ConnectWidget.md
+		..\..\..\docs\pages\GettingStarted\CreateYourFirstAutomation.md = ..\..\..\docs\pages\GettingStarted\CreateYourFirstAutomation.md
 		..\..\..\docs\pages\GettingStarted\Deployment.md = ..\..\..\docs\pages\GettingStarted\Deployment.md
 		..\..\..\docs\pages\GettingStarted\Register.md = ..\..\..\docs\pages\GettingStarted\Register.md
 		..\..\..\docs\pages\GettingStarted\ServerSettings.md = ..\..\..\docs\pages\GettingStarted\ServerSettings.md
 		..\..\..\docs\pages\GettingStarted\VerifyDeployment.md = ..\..\..\docs\pages\GettingStarted\VerifyDeployment.md
 		..\..\..\docs\pages\GettingStarted\WidgetOverview.md = ..\..\..\docs\pages\GettingStarted\WidgetOverview.md
+		..\..\..\docs\pages\GettingStarted\WidgetOverviewActions.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewActions.md
+		..\..\..\docs\pages\GettingStarted\WidgetOverviewButtons.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewButtons.md
+		..\..\..\docs\pages\GettingStarted\WidgetOverviewExpected.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewExpected.md
+		..\..\..\docs\pages\GettingStarted\WidgetOverviewHelp.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewHelp.md
+		..\..\..\docs\pages\GettingStarted\WidgetOverviewLocators.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewLocators.md
+		..\..\..\docs\pages\GettingStarted\WidgetOverviewScenario.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewScenario.md
+		..\..\..\docs\pages\GettingStarted\WidgetOverviewSettings.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewSettings.md
 	EndProjectSection
 EndProject
 Global

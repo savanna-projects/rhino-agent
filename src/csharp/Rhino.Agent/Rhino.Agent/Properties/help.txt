@@ -1,7 +1,7 @@
 ﻿SDK commands:
   run               Executes configuration or run Rhino Server Standalone.
   generate          Generates Gravity based entities like requests or knowledge base files.
-  license           Apply or new license or read old one.
+  license           Apply new license or read old one.
   delete            Clean test runs using the given connector (or configuration).
   help              Show command line help.
 
