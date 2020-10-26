@@ -4,14 +4,8 @@
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<UserSecretsId>560fcd40-f4c0-4803-88d0-390796909059</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileFile>../Dockerfile</DockerfileFile>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Compile Remove="CRhinoOutputsLogs\**" />
-	  <Content Remove="CRhinoOutputsLogs\**" />
-	  <EmbeddedResource Remove="CRhinoOutputsLogs\**" />
-	  <None Remove="CRhinoOutputsLogs\**" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="LiteDB" Version="5.0.9" />
