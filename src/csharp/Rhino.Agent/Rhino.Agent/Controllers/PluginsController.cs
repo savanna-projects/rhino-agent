@@ -23,8 +23,6 @@ namespace Rhino.Agent.Controllers
     public class PluginsController : ControllerBase
     {
         // members: constants
-        private readonly string Seperator =
-            Environment.NewLine + Environment.NewLine + SpecSection.Separator + Environment.NewLine + Environment.NewLine;
         private const string CountHeader = "Rhino-Total-Specs";
 
         // members: state
@@ -72,7 +70,7 @@ namespace Rhino.Agent.Controllers
             Response.Headers.Add(CountHeader, $"{data.Count()}");
 
             // response
-            return this.ContentTextResult(string.Join(Seperator, data), HttpStatusCode.OK);
+            return this.ContentTextResult(string.Join(SpecSection.Separator, data), HttpStatusCode.OK);
         }
         #endregion
 
@@ -82,7 +80,9 @@ namespace Rhino.Agent.Controllers
         public async Task<IActionResult> Post([FromQuery(Name = "prvt")] bool isPrivate)
         {
             // setup
-            var pluginSpecs = (await Request.ReadAsync().ConfigureAwait(false)).Split(Seperator);
+            var pluginSpecs = (await Request.ReadAsync().ConfigureAwait(false))
+                .Split(SpecSection.Separator)
+                .Select(i => i.Trim());
 
             // create plugins
             var (statusCode, data) = repository.Post(Request.GetAuthentication(), pluginSpecs, isPrivate);
