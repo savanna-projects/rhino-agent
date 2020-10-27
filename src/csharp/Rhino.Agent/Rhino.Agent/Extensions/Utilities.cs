@@ -76,7 +76,7 @@ namespace Rhino.Agent.Extensions
         {
             // setup
             var onFolder = configuration.GetValue("rhino:reportConfiguration:reportOut", ".");
-            onFolder = onFolder.Substring(0, onFolder.LastIndexOf(Path.DirectorySeparatorChar));
+            onFolder = Path.GetFileName(onFolder);
             onFolder = onFolder == "." ? Path.Join(Environment.CurrentDirectory, "outputs", "reports") : onFolder;
 
             // get
