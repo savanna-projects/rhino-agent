@@ -95,7 +95,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"Rhino Automation - Chrome\",\r\n  \"testsRepository\": [],\r\n  \"driverParameters\": [\r\n    {\r\n      \"driver\": \"ChromeDriver\",\r\n      \"driverBinaries\": \"{{rhino_drivers}}\"\r\n    }\r\n  ],\r\n  \"authentication\": {\r\n    \"password\": \"{{rhino_password}}\",\r\n    \"userName\": \"{{rhino_user}}\"\r\n  },\r\n  \"engineConfiguration\": {\r\n    \"maxParallel\": 1,\r\n    \"elementSearchingTimeout\": 15000,\r\n    \"pageLoadTimeout\": 60000\r\n  },\r\n  \"screenshotsConfiguration\": {\r\n    \"keepOriginal\": false,\r\n    \"returnScreenshots\": true,\r\n    \"onExceptionOnly\": false\r\n  },\r\n  \"reportConfiguration\": {\r\n    \"reporters\": [\r\n      \"reporter_basic\",\r\n      \"reporter_warehouse\"\r\n    ],\r\n    \"archive\": false,\r\n    \"localReport\": true,\r\n    \"addGravityData\": true\r\n  },\r\n  \"connectorConfiguration\": {\r\n    \"collection\": \"{{jira_server}}\",\r\n    \"password\": \"{{jira_user}}\",\r\n    \"userName\": \"{{jira_password}}\",\r\n    \"project\": \"{{jira_project}}\",\r\n    \"connector\": \"{{jira_connector}}\"\r\n  },\r\n  \"capabilities\": {\r\n    \"{{jira_connector}}:options\": {\r\n      \"bucketSize\": 15\r\n    }\r\n  }\r\n}",
+					"raw": "{\r\n  \"name\": \"Rhino Automation - Chrome\",\r\n  \"testsRepository\": [],\r\n  \"driverParameters\": [\r\n    {\r\n      \"driver\": \"ChromeDriver\",\r\n      \"driverBinaries\": \"{{rhino_drivers}}\"\r\n    }\r\n  ],\r\n  \"authentication\": {\r\n    \"password\": \"{{rhino_password}}\",\r\n    \"userName\": \"{{rhino_user}}\"\r\n  },\r\n  \"engineConfiguration\": {\r\n    \"maxParallel\": 1,\r\n    \"elementSearchingTimeout\": 15000,\r\n    \"pageLoadTimeout\": 60000\r\n  },\r\n  \"screenshotsConfiguration\": {\r\n    \"keepOriginal\": false,\r\n    \"returnScreenshots\": true,\r\n    \"onExceptionOnly\": false\r\n  },\r\n  \"reportConfiguration\": {\r\n    \"reporters\": [\r\n      \"reporter_basic\",\r\n      \"reporter_warehouse\"\r\n    ],\r\n    \"archive\": false,\r\n    \"localReport\": true,\r\n    \"addGravityData\": true\r\n  },\r\n  \"connectorConfiguration\": {\r\n    \"collection\": \"{{jira_server}}\",\r\n    \"password\": \"{{jira_user}}\",\r\n    \"user\": \"{{jira_password}}\",\r\n    \"project\": \"{{jira_project}}\",\r\n    \"connector\": \"{{jira_connector}}\"\r\n  },\r\n  \"capabilities\": {\r\n    \"{{jira_connector}}:options\": {\r\n      \"bucketSize\": 15\r\n    }\r\n  }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -274,67 +274,67 @@
 	],
 	"variable": [
 		{
-			"id": "796b66ce-aef8-4fee-9213-6d8d85e429bf",
+			"id": "0ee7250c-092d-45c2-aefc-3793f8462cbb",
 			"key": "collection_id",
 			"value": "590ecf7a-dfa4-4ca5-9bea-6fed89a52d01"
 		},
 		{
-			"id": "351ab4af-218d-4cbe-89c9-e63c056a12ff",
+			"id": "6ddd04d0-4168-410f-b08f-ec4f00698ffa",
 			"key": "configuration_id",
 			"value": "81a211e0-cde9-446e-9195-c63483f945b5"
 		},
 		{
-			"id": "200c182c-f5f1-4a2d-8378-9d80972bc830",
+			"id": "74e09150-36b8-4360-beb1-a80473fe6562",
 			"key": "models_id",
 			"value": "dcd8035c-77b0-4778-8bd0-1a36b1de637e"
 		},
 		{
-			"id": "a8f660a9-923a-489b-b346-4b48513d67c8",
+			"id": "091df7ae-08f7-491a-9846-1d710df66dfc",
 			"key": "session_id",
 			"value": "73c41a9aa676b8de59f38ff4e127b73b"
 		},
 		{
-			"id": "3809c3ae-7e4f-43d4-a67d-702ff84a3181",
+			"id": "66b5bb54-6d1f-4e9e-a225-82d7f7599ea7",
 			"key": "endpoint",
 			"value": "https://localhost:5001/api/v3"
 		},
 		{
-			"id": "1874c7f7-5520-46d2-a0fb-cb9ffd2f313e",
+			"id": "3ae7a339-b749-4e18-9620-909118ea5126",
 			"key": "rhino_drivers",
 			"value": "."
 		},
 		{
-			"id": "734f0ead-c8bc-4d5c-ac8a-984e436283d6",
+			"id": "e5a91b8b-0123-44f5-86d0-15c9f408ebbe",
 			"key": "rhino_user",
 			"value": ""
 		},
 		{
-			"id": "309150f3-ba2c-4e80-99fe-2a0b93461931",
+			"id": "c71b67c6-0e94-4958-bed1-88110f7dc8c9",
 			"key": "rhino_password",
 			"value": ""
 		},
 		{
-			"id": "7df76284-2934-4179-b8ac-821dd32d74f2",
+			"id": "d4aa3d22-6261-428a-bda0-12754e24cd02",
 			"key": "jira_server",
 			"value": "http://localhost:8080"
 		},
 		{
-			"id": "f08684f2-20a1-46b5-a89b-b215bfd92972",
+			"id": "7c74ca2c-383e-4b53-9419-11a85b898013",
 			"key": "jira_user",
 			"value": "admin"
 		},
 		{
-			"id": "47b5f239-4645-4611-8437-da982ec22581",
+			"id": "16578b98-ca5e-4c85-b3d2-16c7fece319f",
 			"key": "jira_password",
 			"value": "admin"
 		},
 		{
-			"id": "05d20025-fcce-4300-a4db-60a469891531",
+			"id": "390ec541-cd1b-4978-822f-eee2d10283ec",
 			"key": "jira_project",
 			"value": "RA"
 		},
 		{
-			"id": "b35ef200-adef-4708-bbcc-a0934a217b41",
+			"id": "23459238-d49d-47dc-82df-17cb09e143da",
 			"key": "jira_connector",
 			"value": "connector_xray"
 		}
