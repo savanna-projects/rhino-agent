@@ -56,9 +56,9 @@ namespace Rhino.Agent.Extensions
         {
             // setup
             var path = DoGetStaticReportsFolder(configuration);
-            var reports = Directory.GetDirectories(path).Select(i => (i, Path.GetFileName(i)));
 
-            return reports;
+            // get
+            return Directory.GetDirectories(path).Select(i => (i, Path.GetFileName(i)));
         }
 
         /// <summary>
@@ -76,10 +76,15 @@ namespace Rhino.Agent.Extensions
         {
             // setup
             var onFolder = configuration.GetValue("rhino:reportConfiguration:reportOut", ".");
-            onFolder = Path.GetFileName(onFolder);
-            onFolder = onFolder == "." ? Path.Join(Environment.CurrentDirectory, "outputs", "reports") : onFolder;
 
-            // get
+            // is current location
+            if(onFolder == ".")
+            {
+                onFolder = Path.Join(Environment.CurrentDirectory, "outputs", "reports", "rhino");
+            }
+            onFolder = onFolder.Replace(Path.GetFileName(onFolder), string.Empty);
+
+            // setup
             return Path.IsPathRooted(onFolder) ? onFolder : Path.Join(Environment.CurrentDirectory, onFolder);
         }
     }
