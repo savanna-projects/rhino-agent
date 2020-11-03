@@ -18,10 +18,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Update="Properties\ApiDocumentation\Rhino API Reference Guide v3 - XRay Connector.postman_collection.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<Content Update="ApiDocumentation\Rhino API Reference Guide v3 - XRay Connector.postman_collection.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Update="Properties\ApiDocumentation\Rhino API Reference Guide v3.postman_collection.json">
+		<Content Update="ApiDocumentation\Rhino API Reference Guide v3.postman_collection.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
