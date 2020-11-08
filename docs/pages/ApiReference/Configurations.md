@@ -11,19 +11,20 @@ GET /api/v3/configurations
 #### Response Content
 ```js
 {
-    "data": {
-        "configurations": [
-        {
-            "id": "03d1cd94-5e38-43d8-b010-e932d92f9067",
-            "models": [
-                "7adc7914-2bfe-41f0-9808-422bab5c412b"
-            ],
-            "tests": [
-                "8bed8025-3cgf-52g1-0919-533cbc6d523c"
-            ]
-        },
-        ...
-    ]}
+  "data": {
+    "configurations": [
+      {
+        "id": "03d1cd94-5e38-43d8-b010-e932d92f9067",
+        "models": [
+          "7adc7914-2bfe-41f0-9808-422bab5c412b"
+        ],
+        "tests": [
+          "8bed8025-3cgf-52g1-0919-533cbc6d523c"
+        ]
+      },
+      ...
+    ]
+  }
 }
 ```
 
@@ -113,16 +114,16 @@ Please see below for a typical response:
     "localReport": true,
     "addGravityData": true
   },
-  "providerConfiguration": {
+  "connectorConfiguration": {
     "collection": "http://localhost:8080",
     "password": "admin",
     "user": "admin",
     "project": "XDP",
     "bugManager": true,
-    "capabilities": {
-      "bucketSize": 15,
-      "dryRun": false
-    }
+    "dryRun": false
+  }
+  "capabilities": {
+    "bucketSize": 15
   }
 }
 ```
@@ -138,6 +139,7 @@ The following system fields are always included in the response:
 |dataSource                                            |array |A collection of data objects which will be cascaded as primary table for all _**Rhino Test Cases**_.   |
 |models                                                |array |A collection of _**Rhino Page Models**_ sources.                                                       |
 |gravityEndpoint                                       |string|Gravity Server endpoint. Use to send requests using remote gravity service instead of embedded service.|
+|capabilities                                          |object|A set of key/value for passing explicit settings and parameters to your automation provider connector or other plugins implementations.|
 |[authentication](#authentication)                     |string|User name and password for authentication on Rhino Service.                                            |
 |[engineConfiguration](#engine-configuration)          |object|Configure the automation engine behavior.                                                              |
 |[screenshotsConfiguration](#screenshots-configuration)|object|Configure the screenshot behavior.                                                                     |
@@ -196,7 +198,7 @@ The following system fields are always included in the response:
 |userName    |string |A valid user for your application (i.e. Jira or DevOps password). The use must have create permissions for **Tests**, **Bugs** and **Executions**.|
 |project     |string |The project name or ID (depends on the connector implementation) under which to find and execute tests.                                           |
 |bugManager  |boolean|Set to **true** in order to activate the bug manager feature for the selected connector.                                                          |
-|capabilities|object |A set of key/value for passing explicit settings and parameters to your automation provider connector or other plugins implementations.           |
+|dryRun      |boolean|When set to **true** all integration implementation which creates or manipulates A.L.M entities, will be ignored.                                 |
 
 ### Response Codes
 |Code|Description                                                                          |
@@ -291,58 +293,58 @@ The request body follows the same format as [Get Configuration](#get-configurati
 ### Request Example
 ```js
 {
-    "name": "Rhino Automation - Chrome & Firefox - After Update",
-    "testsRepository": [ ],
-    "driverParameters": [
-        {
-            "driver": "ChromeDriver",
-            "driverBinaries": "http://localhost:4444/wd/hub"
-        },
-        {
-            "driver": "FirefoxDriver",
-            "driverBinaries": "http://localhost:4444/wd/hub"
-        }
-    ],
-    "dataSource": [],
-    "models": [ ],
-    "connector": "connector_text",
-    "gravityEndpoint": "",
-    "authentication": {
-        "password": "<rhino_user>",
-        "userName": "<rhino_password>"
+  "name": "Rhino Automation - Chrome & Firefox - After Update",
+  "testsRepository": [],
+  "driverParameters": [
+    {
+      "driver": "ChromeDriver",
+      "driverBinaries": "http://localhost:4444/wd/hub"
     },
-    "engineConfiguration": {
-        "maxParallel": 1,
-        "failOnException": false,
-        "optimalThreshold": 3.0,
-        "qualityThreshold": 0.0,
-        "toleranceThreshold": 0.0,
-        "priority": 0,
-        "severity": 0,
-        "errorOnExitCode": 0,
-        "elementSearchingTimeout": 15000,
-        "pageLoadTimeout": 60000,
-        "retrunExceptions": true,
-        "returnPerformancePoints": true,
-        "returnEnvironment": true,
-        "terminateOnAssertFailure": false
-    },
-    "screenshotsConfiguration": {
-        "keepOriginal": false,
-        "returnScreenshots": false,
-        "screenshotsOut": "<path_to_screenshots_folder>",
-        "onExceptionOnly": false
-    },
-    "reportConfiguration": {
-        "reportOut": "<path_to_reports_folder>",
-        "logsOut": "<path_to_logs_folder>",
-        "reporters": null,
-        "connectionString": null,
-        "dataProvider": null,
-        "archive": false,
-        "localReport": true,
-        "addGravityData": true
+    {
+      "driver": "FirefoxDriver",
+      "driverBinaries": "http://localhost:4444/wd/hub"
     }
+  ],
+  "dataSource": [],
+  "models": [],
+  "connector": "connector_text",
+  "gravityEndpoint": "",
+  "authentication": {
+    "password": "<rhino_user>",
+    "userName": "<rhino_password>"
+  },
+  "engineConfiguration": {
+    "maxParallel": 1,
+    "failOnException": false,
+    "optimalThreshold": 3,
+    "qualityThreshold": 0,
+    "toleranceThreshold": 0,
+    "priority": 0,
+    "severity": 0,
+    "errorOnExitCode": 0,
+    "elementSearchingTimeout": 15000,
+    "pageLoadTimeout": 60000,
+    "retrunExceptions": true,
+    "returnPerformancePoints": true,
+    "returnEnvironment": true,
+    "terminateOnAssertFailure": false
+  },
+  "screenshotsConfiguration": {
+    "keepOriginal": false,
+    "returnScreenshots": false,
+    "screenshotsOut": "<path_to_screenshots_folder>",
+    "onExceptionOnly": false
+  },
+  "reportConfiguration": {
+    "reportOut": "<path_to_reports_folder>",
+    "logsOut": "<path_to_logs_folder>",
+    "reporters": null,
+    "connectionString": null,
+    "dataProvider": null,
+    "archive": false,
+    "localReport": true,
+    "addGravityData": true
+  }
 }
 ```
 
