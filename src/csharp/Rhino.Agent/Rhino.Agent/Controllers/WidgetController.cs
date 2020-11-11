@@ -4,6 +4,7 @@
  * RESSOURCES
  */
 using Gravity.Abstraction.Logging;
+using Gravity.Abstraction.WebDriver;
 using Gravity.Services.Comet;
 using Gravity.Services.DataContracts;
 
@@ -164,7 +165,7 @@ namespace Rhino.Agent.Controllers
             var attributes = connectorTypes.Select(i => i.GetCustomAttribute<ConnectorAttribute>());
 
             // results
-            return this.ContentResult(responseBody: attributes);
+            return this.ContentResult(responseBody: attributes.OrderBy(i => i.Name));
         }
 
         // POST api/v3/widget/send
@@ -210,6 +211,34 @@ namespace Rhino.Agent.Controllers
 
             // return results
             return this.ContentResult(responseBody: testCase);
+        }
+
+        // GET /api/v3/widget/drivers
+        [HttpGet]
+        public IActionResult Drivers()
+        {
+            // setup
+            var driverFactory = types.FirstOrDefault(t => t == typeof(DriverFactory));
+            if(driverFactory == default)
+            {
+                return this.ContentResult(responseBody: Array.Empty<string>());
+            }
+
+            // binding flags
+            const BindingFlags Binding = BindingFlags.Instance | BindingFlags.NonPublic;
+
+            // fetch attributes
+            var drivers = driverFactory
+                .GetMethods(Binding)
+                .SelectMany(i => i.CustomAttributes)
+                .Where(i => i.AttributeType.Name == nameof(DriverMethodAttribute))
+                .SelectMany(i => i.NamedArguments.Where(i => i.MemberName == nameof(DriverMethodAttribute.Driver)))
+                .Select(i => $"{i.TypedValue.Value}")
+                .Distinct()
+                .OrderBy(i => i);
+
+            // results
+            return this.ContentResult(responseBody: drivers);
         }
     }
 }
