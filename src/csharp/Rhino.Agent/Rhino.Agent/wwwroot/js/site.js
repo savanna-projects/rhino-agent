@@ -818,13 +818,13 @@ function loadSettings() {
     }
 
     // deserialize last state
-    var stateObj = getObjectFromStorage(C_STATE_SETTINGS_OBJECT_KEY);
-    if (stateObj === null) {
-        return;
-    }
+    var requestBody = { type: "getSettings" };
 
-    // apply last state
-    loadAllSettings(stateObj);
+    // get
+    chrome.runtime.sendMessage(R_EXTENSION_ID, requestBody, function (stateObj) {
+        console.log("Settings loaded.");
+        loadAllSettings(stateObj);
+    });
 }
 
 function loadAllSettings(stateObj) {
@@ -1317,7 +1317,10 @@ function dismissErrorAlert(htmlNode) {
  * @param   {any} obj Settings object
  */
 function sendSettings(stateObj) {
-    chrome.runtime.sendMessage(R_EXTENSION_ID, stateObj, function () {
+    // setup
+    var requestBody = { type: "putSettings", data: stateObj };
+
+    chrome.runtime.sendMessage(R_EXTENSION_ID, requestBody, function () {
         console.log("Settings saved.");
     });
 }
