@@ -21,6 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -37,6 +38,7 @@ namespace Rhino.Agent
     {
         // constants
         private const string CorsPolicy = "CorsPolicy";
+        private const string Version = "v3";
 
         // statics
         public static HttpClient HttpClient => new HttpClient();
@@ -71,6 +73,9 @@ namespace Rhino.Agent
                 i.JsonSerializerOptions.IgnoreNullValues = true;
                 i.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
+
+            services.AddSwaggerGen(c
+                => c.SwaggerDoc("v3", new OpenApiInfo { Title = "Rhino Api", Version = Version }));
 
             // This lambda determines whether user consent for non-essential cookies is needed for a given request.
             services.Configure<CookiePolicyOptions>(options =>
@@ -121,6 +126,8 @@ namespace Rhino.Agent
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", $"RhinoApi {Version}"));
             }
             else
             {
