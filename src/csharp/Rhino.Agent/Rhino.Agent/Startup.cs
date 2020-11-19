@@ -5,11 +5,15 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.Json;
 
 using Gravity.Abstraction.Logging;
+using Gravity.Extensions;
 using Gravity.Services.Comet;
 
 using LiteDB;
@@ -27,7 +31,6 @@ using Newtonsoft.Json.Serialization;
 
 using Rhino.Agent.Domain;
 using Rhino.Agent.Middleware;
-using Rhino.Api.Extensions;
 using Rhino.Api.Parser.Components;
 
 #pragma warning disable CA1822
@@ -39,6 +42,7 @@ namespace Rhino.Agent
         private const string CorsPolicy = "CorsPolicy";
 
         // statics
+        private static readonly IEnumerable<Type> types = GetTypes();
         public static HttpClient HttpClient => new HttpClient();
         public static LiteDatabase LiteDb => new LiteDatabase("Data.dll");
         public static JsonSerializerSettings JsonSettings => new JsonSerializerSettings
@@ -94,10 +98,123 @@ namespace Rhino.Agent
 
             services.AddSingleton(typeof(JsonSerializerSettings), JsonSettings);
             services.AddSingleton(typeof(LiteDatabase), LiteDb);
-            services.AddSingleton(typeof(IEnumerable<Type>), Utilities.Types);
+            services.AddSingleton(typeof(IEnumerable<Type>), types);
             services.AddSingleton(typeof(HttpClient), HttpClient);
-            services.AddSingleton(typeof(Orbit), new Orbit(Utilities.Types));
+            services.AddSingleton(typeof(Orbit), new Orbit(types));
             services.AddSingleton(typeof(ILogger), GetLogger());
+        }
+
+        // loads all referenced assemblies from: executing, calling & entry
+        private static IEnumerable<Type> GetTypes()
+        {
+            // get all referenced assemblies
+            var referenced = GetReferencedAssemblies();
+            var attached = GetAttachedAssemblies(referenced);
+
+            // build assemblies list
+            var assemblies = new List<Assembly>();
+            assemblies.AddRange(referenced);
+            assemblies.AddRange(attached);
+
+            // load all sub-references
+            var subReferences = new List<Assembly>();
+            foreach (var a in assemblies)
+            {
+                try
+                {
+                    var r = a.GetReferencedAssemblies();
+                    subReferences.AddRange(r.Select(Assembly.Load));
+                }
+                catch
+                {
+                    // ignore failed assemblies
+                }
+            }
+            assemblies.AddRange(subReferences);
+
+            // load all assemblies excluding the executing assembly
+            var types = new List<Type>();
+            foreach (var a in assemblies)
+            {
+                try
+                {
+                    types.AddRange(a.GetTypes());
+                }
+                catch (Exception e) when (e != null)
+                {
+                    // ignore exceptions
+                }
+            }
+            return types.DistinctBy(i => i.FullName);
+        }
+
+        private static IEnumerable<Assembly> GetReferencedAssemblies()
+        {
+            // shortcuts
+            var executing = Assembly.GetExecutingAssembly();
+            var calling = Assembly.GetCallingAssembly();
+            var entry = Assembly.GetEntryAssembly();
+
+            // initialize results collection
+            var assemblies = new List<Assembly> { executing, calling, entry }.Where(r => r != null).ToList();
+            var referenced = new List<AssemblyName>
+            {
+                executing.GetName(),
+                calling.GetName(),
+                entry?.GetName()
+            }
+            .Where(r => r != null).ToList();
+
+            // cache all assemblies references
+            referenced.TryAddRange(executing?.GetReferencedAssemblies());
+            referenced.TryAddRange(calling?.GetReferencedAssemblies());
+            referenced.TryAddRange(entry?.GetReferencedAssemblies());
+
+            // load assemblies            
+            assemblies.AddRange(referenced.Select(Assembly.Load));
+            return assemblies;
+        }
+
+        [SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "A special case when need to load by file path.")]
+        private static IEnumerable<Assembly> GetAttachedAssemblies(IEnumerable<Assembly> referenced)
+        {
+            // short-cuts
+            var working = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var current = Environment.CurrentDirectory;
+
+            // get all referenced names
+            var referencedNames = referenced.Select(r => Path.Combine(working, $"{r.GetName().Name}.dll"));
+
+            // load assemblies
+            var w = Directory.GetFiles(working).Where(f => f.EndsWith(".dll") && !referencedNames.Contains(f));
+            var c = Directory.GetFiles(current).Where(f => f.EndsWith(".dll") && !referencedNames.Contains(f));
+
+            // build names
+            var attachedAssembliesNames = new List<string>();
+            attachedAssembliesNames.TryAddRange(w);
+            attachedAssembliesNames.TryAddRange(c);
+
+            // build results
+            var loadedAssemblies = new List<Assembly>();
+            foreach (var a in attachedAssembliesNames)
+            {
+                try
+                {
+                    var name = AssemblyName.GetAssemblyName(a);
+                    var range = Assembly.Load(name);
+                    loadedAssemblies.Add(range);
+                }
+                catch (Exception e) when (e is FileNotFoundException && !e.Message.Contains("cannot access the file"))
+                {
+                    var range = Assembly.LoadFile(path: a);
+                    loadedAssemblies.Add(range);
+                }
+                catch (Exception e) when (e != null)
+                {
+                    // ignore exceptions
+                }
+            }
+            return loadedAssemblies;
         }
 
         private ILogger GetLogger()
