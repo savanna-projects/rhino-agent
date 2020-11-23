@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net5.0</TargetFramework>
 		<UserSecretsId>560fcd40-f4c0-4803-88d0-390796909059</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileFile>../Dockerfile</DockerfileFile>
@@ -10,11 +10,15 @@
 	<ItemGroup>
 		<PackageReference Include="LiteDB" Version="5.0.9" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-		<PackageReference Include="Rhino.Connectors.Gurock" Version="2020.11.9.1" />
-		<PackageReference Include="Rhino.Connectors.Text" Version="2020.11.9.1" />
-		<PackageReference Include="Rhino.Connectors.Xray" Version="2020.11.9.1" />
-		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2020.11.9.1" />
-		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="86.0.4240.2200" />
+		<PackageReference Include="Rhino.Connectors.Gurock" Version="2020.11.23.1" />
+		<PackageReference Include="Rhino.Connectors.Text" Version="2020.11.23.1" />
+		<PackageReference Include="Rhino.Connectors.Xray" Version="2020.11.23.1" />
+		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2020.11.23.1" />
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="87.0.4280.2000" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.0" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
 	</ItemGroup>
 
 	<ItemGroup>

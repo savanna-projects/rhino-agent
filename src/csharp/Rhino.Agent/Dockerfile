@@ -1,11 +1,11 @@
 # Setup: Base
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
 # Build
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["Rhino.Agent/Rhino.Agent.csproj", "Rhino.Agent/"]
 RUN dotnet restore "Rhino.Agent/Rhino.Agent.csproj"
@@ -28,7 +28,8 @@ RUN apt-get update && \
     apt-get install -y wget
 RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
 RUN dpkg -i packages-microsoft-prod.deb
-RUN apt-get update && apt install curl && apt-get install -y \
+RUN apt-get update && apt-get install -y \
+    curl \
     apt-transport-https \
     dotnet-sdk-3.1 \
     vim \
