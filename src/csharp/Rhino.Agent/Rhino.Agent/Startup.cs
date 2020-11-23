@@ -66,6 +66,7 @@ namespace Rhino.Agent
         /// <param name="services">Specifies the contract for a collection of service descriptors.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // Componenets settings
             services.AddRazorPages();
             services.AddControllers().AddJsonOptions(i =>
             {
@@ -74,6 +75,7 @@ namespace Rhino.Agent
                 i.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
 
+            // Swagger settings
             services.AddSwaggerGen(c
                 => c.SwaggerDoc("v3", new OpenApiInfo { Title = "Rhino Api", Version = Version }));
 

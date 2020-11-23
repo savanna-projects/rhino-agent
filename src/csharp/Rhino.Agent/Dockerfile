@@ -1,8 +1,8 @@
 # Setup: Base
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 9000
+EXPOSE 9001
 
 # Build
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
@@ -34,17 +34,6 @@ RUN apt-get update && apt-get install -y \
     dotnet-sdk-3.1 \
     vim \
     jq     
-RUN dotnet dev-certs https
-
-# Setup: Rhino Development Certificate
-RUN cd SSL \
-    openssl verify -CAfile https.crt https.crt && \
-    cp https.crt /usr/local/share/ca-certificates/ && \
-    update-ca-certificates && \
-    ls /etc/ssl/certs/https.pem && \
-    openssl verify https.crt && \
-    cat appsettings.json | jq  '. + { "Kestrel": { "Certificates": { "Default": { "Path": "/app/https.pfx", "Password": "" } } } }'
-
 
 # Environment
-ENV ASPNETCORE_URLS=http://+:80;https://+:443
+ENV ASPNETCORE_URLS=http://+:9000;https://+:9001
