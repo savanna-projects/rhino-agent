@@ -620,97 +620,46 @@ function putHelpRow(rhinoAction, id) {
  * Summary. Playback the current recorded test case against available Selenium Gird
  */
 function actionPlaybackHandler() {
-    // load temporary configuration
-    var c = getConfiguration();
+    // deserialize last state
+    var requestBody = { type: "getSettings" };
 
-    // parse test case script
-    var testObj = getTestCaseObject();
-    var testSrc = getTestCaseScript(testObj).join(C_NEW_LINE);
-    c.testsRepository = [testSrc];
+    // get
+    chrome.runtime.sendMessage(R_EXTENSION_ID, requestBody, function (stateObj) {
+        console.log("Settings loaded.");
 
-    // exit conditions
-    if ($(E_PLAYBACK_PROGRESS).length) {
-        console.log("Another playback is currently on progress, please wait until it finish and try again.");
-        return;
-    }
+        // load temporary configuration
+        var c = getConfiguration(stateObj);
 
-    // RUN PLAYBACK
-    //-- toggle into test-case-scenario panel (if not already)
-    var headerScenario = $(E_HEADER_SCENARIO);
-    if (headerScenario.attr("aria-expanded") !== "true") {
-        headerScenario.click();
-    }
+        // parse test case script
+        var testObj = getTestCaseObject();
+        var testSrc = getTestCaseScript(testObj).join(C_NEW_LINE);
+        c.testsRepository = [testSrc];
 
-    //-- show async progress bar while playback is active
-    showPlaybackProgress("Automation is currently running, this can take a while. Please wait...");
+        // exit conditions
+        if ($(E_PLAYBACK_PROGRESS).length) {
+            console.log("Another playback is currently on progress, please wait until it finish and try again.");
+            return;
+        }
 
-    //-- run async operation
-    post(R_PLAYBACK, { config: c }, (testRun) => {
-        console.log(testRun);
-        publishTestRun(testRun);
-    }, () => $(E_PLAYBACK_PROGRESS).remove());
+        // RUN PLAYBACK
+        //-- toggle into test-case-scenario panel (if not already)
+        var headerScenario = $(E_HEADER_SCENARIO);
+        if (headerScenario.attr("aria-expanded") !== "true") {
+            headerScenario.click();
+        }
+
+        //-- show async progress bar while playback is active
+        showPlaybackProgress("Automation is currently running, this can take a while. Please wait...");
+
+        //-- run async operation
+        post(R_PLAYBACK, { config: c }, (testRun) => {
+            console.log(testRun);
+            publishTestRun(testRun);
+        }, () => $(E_PLAYBACK_PROGRESS).remove());
+    });
 }
 
 // TODO: clean
-function getConfiguration() {
-    // load settings
-    var settings = getObjectFromStorage(C_STATE_SETTINGS_OBJECT_KEY);
-
-    // exit conditions
-    if (settings === null) {
-        console.error("Was not able to load playback settings. " +
-            "Please make sure you have configured and saved settings for this domain (under Rhino Settings page).");
-        return;
-    }
-
-    // normalize
-    settings.playback_options.capabilities = settings.playback_options.capabilities === ""
-        ? '{}'
-        : settings.playback_options.capabilities
-
-    settings.playback_options.options = settings.playback_options.capabilities === ""
-        ? '{}'
-        : settings.playback_options.options
-
-    // setup conditions
-    var driver_parameters = !settings.playback_options.grid_endpoint.startsWith("http")
-        ? [{
-            driver: settings.playback_options.web_driver,
-            driverBinaries: settings.playback_options.grid_endpoint,
-        }]
-        : [{
-            driver: settings.playback_options.web_driver,
-            driverBinaries: settings.playback_options.grid_endpoint,
-        }];
-
-    // capabilities
-    for (var i = 0; i < driver_parameters.length; i++) {
-        driver_parameters[i].capabilities = JSON.parse(settings.playback_options.capabilities);
-        var stateObj = getObjectFromStorage(C_STATE_OBJECT_KEY);
-        if (stateObj !== null && typeof stateObj !== 'undefined') {
-            driver_parameters[i].capabilities.name = stateObj.test_case_scenario.test_case_title;
-        }
-        driver_parameters[i].capabilities.build = "Rhino Widget: " + new Date().toISOString().substring(0, 10);
-        driver_parameters[i].capabilities.project = "Rhino Actions Recorder";
-
-        // options
-        driver_parameters[i].options = JSON.parse(settings.playback_options.options);
-    }
-
-    return {
-        engineConfiguration: {
-            errorOnExitCode: 10
-        },
-        authentication: {
-            userName: settings.rhino_options.rhino_user_name,
-            password: settings.rhino_options.rhino_password
-        },
-        driverParameters: driver_parameters,
-        unattached: true,
-        name: C_CONFIGURATION_NAME
-    };
-}
-
 function showPlaybackProgress(message) {
     var html = `
         <div id="playback_progress" class="alert alert-dismissible alert-info bring-to-front fixed-bottom">
@@ -755,39 +704,45 @@ function publishTestRun(testRun) {
 
 // #region *** WIDGET: send to ALM   ***
 function sendHandler() {
-    // setup
-    var settings = getObjectFromStorage(C_STATE_SETTINGS_OBJECT_KEY);
+    // deserialize last state
+    var requestBody = { type: "getSettings" };
 
-    // exit conditions
-    var connector_type = settings.connector_options.connector_type;
-    if (settings === null || connector_type === C_EMPTY_OPTION || connector_type === "connector_text") {
-        sendAsString();
-        putLiteral();
-        return;
-    }
+    // get
+    chrome.runtime.sendMessage(R_EXTENSION_ID, requestBody, function (stateObj) {
+        console.log("Settings loaded.");
 
-    // get objects for test creation
-    var config = getConfiguration();
-    config.connectorConfiguration = {
-        collection: settings.connector_options.server_address,
-        project: settings.connector_options.project,
-        userName: settings.connector_options.user_name,
-        password: settings.connector_options.password,
-        connector: settings.connector_options.connector_type
-    };
+        // exit conditions
+        var connector_type = stateObj.connector_options.connector_type;
+        if (stateObj === null || connector_type === C_EMPTY_OPTION || connector_type === "connector_text") {
+            sendAsString();
+            putLiteral();
+            return;
+        }
 
-    // parse test case script
-    var testObj = getTestCaseObject();
-    var testSrc = JSON.stringify(getTestCaseScript(testObj));
-    var requestBody = { config: config, test: testSrc, suite: settings.connector_options.test_suite };
+        // get objects for test creation
+        var config = getConfiguration(stateObj);
+        config.connectorConfiguration = {
+            collection: stateObj.connector_options.server_address,
+            project: stateObj.connector_options.project,
+            userName: stateObj.connector_options.user_name,
+            password: stateObj.connector_options.password,
+            connector: stateObj.connector_options.connector_type,
+            asOsUser: stateObj.connector_options.as_os_user
+        };
 
-    //-- show async progress bar while playback is active
-    showPlaybackProgress("Creating test on target provider, Please wait...");
+        // parse test case script
+        var testObj = getTestCaseObject();
+        var testSrc = JSON.stringify(getTestCaseScript(testObj));
+        var requestBody = { config: config, test: testSrc, suite: stateObj.connector_options.test_suite };
 
-    //-- run async operation
-    post(R_SEND, requestBody, (data) => {
-        console.log(data);
-    }, () => $(E_PLAYBACK_PROGRESS).remove());
+        //-- show async progress bar while playback is active
+        showPlaybackProgress("Creating test on target provider, Please wait...");
+
+        //-- run async operation
+        post(R_SEND, requestBody, (data) => {
+            console.log(data);
+        }, () => $(E_PLAYBACK_PROGRESS).remove());
+    });
 }
 
 function sendAsString() {
@@ -1117,6 +1072,62 @@ function getActionSpan(action) {
 // #endregion
 
 // UTILITIES
+function getConfiguration(settings) {
+    // exit conditions
+    if (settings === null) {
+        console.error("Was not able to load playback settings. " +
+            "Please make sure you have configured and saved settings for this domain (under Rhino Settings page).");
+        return;
+    }
+
+    // normalize
+    settings.playback_options.capabilities = settings.playback_options.capabilities === ""
+        ? '{}'
+        : settings.playback_options.capabilities
+
+    settings.playback_options.options = settings.playback_options.capabilities === ""
+        ? '{}'
+        : settings.playback_options.options
+
+    // setup conditions
+    var driver_parameters = !settings.playback_options.grid_endpoint.startsWith("http")
+        ? [{
+            driver: settings.playback_options.web_driver,
+            driverBinaries: settings.playback_options.grid_endpoint,
+        }]
+        : [{
+            driver: settings.playback_options.web_driver,
+            driverBinaries: settings.playback_options.grid_endpoint,
+        }];
+
+    // capabilities
+    for (var i = 0; i < driver_parameters.length; i++) {
+        driver_parameters[i].capabilities = JSON.parse(settings.playback_options.capabilities);
+        var stateObj = getObjectFromStorage(C_STATE_OBJECT_KEY);
+        if (stateObj !== null && typeof stateObj !== 'undefined') {
+            driver_parameters[i].capabilities.name = stateObj.test_case_scenario.test_case_title;
+        }
+        driver_parameters[i].capabilities.build = "Rhino Widget: " + new Date().toISOString().substring(0, 10);
+        driver_parameters[i].capabilities.project = "Rhino Actions Recorder";
+
+        // options
+        driver_parameters[i].options = JSON.parse(settings.playback_options.options);
+    }
+
+    return {
+        engineConfiguration: {
+            errorOnExitCode: 10
+        },
+        authentication: {
+            userName: settings.rhino_options.rhino_user_name,
+            password: settings.rhino_options.rhino_password
+        },
+        driverParameters: driver_parameters,
+        unattached: true,
+        name: C_CONFIGURATION_NAME
+    };
+}
+
 /**
  * Summary. Executes a get request to fetch an action from the server with onSuccess callback.
  * 

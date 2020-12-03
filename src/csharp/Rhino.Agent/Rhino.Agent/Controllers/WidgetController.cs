@@ -194,6 +194,7 @@ namespace Rhino.Agent.Controllers
                 .GetTestCases(string.Join(Environment.NewLine, testCaseSrc.Where(i => !string.IsNullOrEmpty(i))))
                 .First();
             testCase.TestSuites = testSuites;
+            testCase.Priority = "2";
             testCase.Context["comment"] = Api.Extensions.Utilities.GetActionSignature("created");
 
             // get connector & create test case
