@@ -11,4 +11,4 @@ In order to execute your plugins using Gravity/Rhino API, you need to create an 
 
 ![image_1_0.png](../../images/image_1_0.png)  
 
-[Next Step: Get Rhino](.\Deployment.md)
+[Next Step: Get Rhino](./Deployment.md)
