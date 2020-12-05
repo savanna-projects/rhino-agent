@@ -3,7 +3,7 @@ In order to execute your plugins using Gravity/Rhino API, you need to create an 
 
 > Gravity/Rhino user is email formatted. That means you do not need to provide a real email (no email verification), as long as the user name you choose is a standard email phrase.
 
-1. [Navigate to Gravity/Rhino API Registration Page](https://g-api.azurewebsites.net/Identity/Account/Register){:target="_blank"}
+1. [Navigate to Gravity/Rhino API Registration Page](https://g-api.azurewebsites.net/Identity/Account/Register)
 2. Fill in the email you wish to register with
 3. Set your password
 4. Validate your password
@@ -11,4 +11,4 @@ In order to execute your plugins using Gravity/Rhino API, you need to create an 
 
 ![image_1_0.png](../../images/image_1_0.png)  
 
-[Next Step: Get Rhino](./Deploymnet.md)
+[Next Step: Get Rhino](.\Deployment.md)
