@@ -4,7 +4,7 @@
 10/19/2020 - 20 minutes to read
 
 ## In This Article
-* [Supported OS](#run-as-Process)
+* [Supported OS](#supported-os)
 * [Requirements](#requirements)
 * [Configure SSL Certificate](#configure-ssl-certificate)
 * [Run as Process](#run-as-process)  
