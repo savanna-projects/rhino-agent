@@ -78,3 +78,5 @@ Rhino API use Postman for documentation and verification tests. Each  version co
 
 At this point, a set of tests will run against Rhino API. If some tests will fail, checking the response under the failed test will explain why and
 suggest how to fix the problem (if any).  
+
+[Next Step: Create your First Automation](./CreateYourFirstAutomation.md 'CreateYourFirstAutomation')

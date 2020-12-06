@@ -3,6 +3,7 @@
 ## Getting Started
 * [Create an Account (Free)](./GettingStarted/Register.md 'Register')
 * [Rhino Agent Deployment - On Process](./GettingStarted/Deployment.md 'Deployment')
+* [Rhino Agent Deployment - Docker](./GettingStarted/DockerDeployment.md 'Deployment')
 * [Rhino Agent Deployment - On IIS (Internet Information Service)](./GettingStarted/IISDeployment.md 'IISDeployment')
 * [Server Settings - Set Reporters and Logs Locations and Behavior](./GettingStarted/ServerSettings.md 'ServerSettings')
 * [Verify Rhino Deployment - Execute a Set of Verification and Integration Tests](./GettingStarted/VerifyDeployment.md 'VerifyDeployment')

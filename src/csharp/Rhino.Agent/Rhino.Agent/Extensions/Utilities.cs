@@ -65,7 +65,7 @@ namespace Rhino.Agent.Extensions
         /// Gets the static reports folder in which static reports can be served.
         /// </summary>
         /// <param name="configuration"><see cref="IConfiguration"/> by which to fetch settings.</param>
-        /// <returns>Servable static repotrs folder.</returns>
+        /// <returns>Static reports folder.</returns>
         public static string GetStaticReportsFolder(IConfiguration configuration)
         {
             return DoGetStaticReportsFolder(configuration);
