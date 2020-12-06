@@ -5,7 +5,7 @@
 
 ## In This Article
 * [Supported Browsers](#supported-browsers)
-* [Requirements](#requierments)
+* [Requirements](#requirements)
 * [Google Chrome Installation](#google-chrome-installation)
 * [MS Edge Chromium Installation](#ms-edge-chromium-installation)
 * [Connect](#connect)
@@ -86,8 +86,8 @@ dotnet Rhino.Agent.dll
 
 The following output is expected:
 ```
-Now listening on: https://localhost:5001
-Now listening on: http://localhost:5000
+Now listening on: https://localhost:9001
+Now listening on: http://localhost:9000
 Application started. Press Ctrl+C to shut down.
 ```  
 
@@ -125,20 +125,20 @@ dotnet Rhino.Agent.dll
 
 The following output is expected:
 ```
-Now listening on: https://localhost:5001
-Now listening on: http://localhost:5000
+Now listening on: https://localhost:9001
+Now listening on: http://localhost:9000
 Application started. Press Ctrl+C to shut down.
 ```  
 
 3. Open any modern browser.
-4. Type ```https://localhost:5001``` in the address bar.  
+4. Type ```https://localhost:9001``` in the address bar.  
 
 ![image_1_11.png](../../images/image_1_11.png)  
 _image - Rhino Widget Standalone_  
 
 ## Next Steps
-* [Widget Overview - User Interface and Different Sections](./GettingStarted/WidgetOverview.md 'WidgetOverview')
-* [Create Your First Automation](./GettingStarted/CreateYourFirstAutomation.md 'CreateYourFirstAutomation')
+* [Widget Overview - User Interface and Different Sections](./WidgetOverview.md 'WidgetOverview')
+* [Create Your First Automation](./CreateYourFirstAutomation.md 'CreateYourFirstAutomation')
 
 ## See Also
 * [Rhino Server Deployment](./Deployment.md)
