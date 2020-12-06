@@ -40,8 +40,8 @@ dotnet Rhino.Agent.dll
 
 The following is expected:
 ```
-Now listening on: https://localhost:5001
-Now listening on: http://localhost:5000
+Now listening on: https://localhost:9001
+Now listening on: http://localhost:9000
 Application started. Press Ctrl+C to shut down.
 ```
 
