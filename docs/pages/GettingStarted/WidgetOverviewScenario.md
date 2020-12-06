@@ -46,4 +46,7 @@ This is the test case raw form and it represents the format by which Rhino autom
 
 ## See Also
 * [Rhino Text Connector](https://github.com/savanna-projects/rhino-connectors-text)
+* [Rhino Gurock (TestRail) Connector](https://github.com/savanna-projects/rhino-connectors-gurock)
+* [Rhino Atlassian (Jira + XRay) Connector](https://github.com/savanna-projects/rhino-connectors-atlassian)
+* [Rhino Azure (TFS/Azure DevOps) Connector](https://github.com/savanna-projects/rhino-connectors-azure)
 * [Rhino API Reference - Test Cases](../ApiReference/TestCases.md 'TestCases')
