@@ -31,7 +31,6 @@ using Rhino.Agent.Middleware;
 using Rhino.Api.Extensions;
 using Rhino.Api.Parser.Components;
 
-#pragma warning disable CA1822
 namespace Rhino.Agent
 {
     public class Startup
@@ -66,7 +65,7 @@ namespace Rhino.Agent
         /// <param name="services">Specifies the contract for a collection of service descriptors.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // Componenets settings
+            // Components settings
             services.AddRazorPages();
             services.AddControllers().AddJsonOptions(i =>
             {

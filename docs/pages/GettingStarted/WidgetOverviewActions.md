@@ -1,7 +1,7 @@
 [Home](../Home.md 'Home') 
 
 # Rhino Widget - Overview - Actions Panel
-10/19/2020 - 25 minutes to read
+10/19/2020 - 15 minutes to read
 
 ## In This Article
 * [Action](#action)

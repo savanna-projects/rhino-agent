@@ -21,6 +21,7 @@ using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Contracts.Interfaces;
 using Rhino.Api.Parser;
+using Rhino.Api.Reporter;
 using Rhino.Connectors.Text;
 
 using System;
@@ -194,6 +195,7 @@ namespace Rhino.Agent.Controllers
                 .GetTestCases(string.Join(Environment.NewLine, testCaseSrc.Where(i => !string.IsNullOrEmpty(i))))
                 .First();
             testCase.TestSuites = testSuites;
+            testCase.Priority = "2";
             testCase.Context["comment"] = Api.Extensions.Utilities.GetActionSignature("created");
 
             // get connector & create test case
@@ -239,6 +241,23 @@ namespace Rhino.Agent.Controllers
 
             // results
             return this.ContentResult(responseBody: drivers);
+        }
+
+        // GET /api/v3/widget/reporters
+        [HttpGet]
+        public IActionResult Reporters()
+        {
+            // setup
+            var reporterTypes = types.Where(i => typeof(RhinoReporter).IsAssignableFrom(i));
+
+            // fetch attributes
+            var reporters = reporterTypes
+                .Where(i => i.GetCustomAttribute<ReporterAttribute>() != null)
+                .Select(i => i.GetCustomAttribute<ReporterAttribute>())
+                .ToList();
+
+            // results
+            return this.ContentResult(responseBody: reporters);
         }
     }
 }

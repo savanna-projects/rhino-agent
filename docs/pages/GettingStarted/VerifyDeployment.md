@@ -1,14 +1,23 @@
-# Verify Rhino Deployment
-Rhino API runs .NET Core 3.1.  
+[Home](../Home.md 'Home')  
 
-> This is an optional process and can be skipped if you already know that Rhino is correctly deployed
+# Verify Rhino Deployment
+05/12/2020 - 25 minutes to read
+
+## In This Article
+* [Supported OS](#supported-os)
+* [Requirements](#requirements)
+* [Import Rhino API Documentation and Validation Tests](#import-rhino-api-documentation-and-validation-tests)
+
+> This is an optional process and can be skipped if you already know that Rhino is correctly deployed.
+> Some of the tests requires a connection to the outside world. If you are running in an isolated environment without connection, these tests will fail but if all other tests have passed, you can ignore these failed tests.
 
 ## Supported OS
-Please read [here](https://github.com/dotnet/core/blob/master/release-notes/3.1/3.1-supported-os.md) for OS support matrix.
+> Rhino API runs on the latest .NET Core version.  
 
-## Requierments
-1. .NET Core 3.1 installed, read [here](https://dotnet.microsoft.com/download/dotnet/current) for more information about how to download and install.
-2. [Development or other SSL certificate installed. This is optional and only required if you are working against HTTPS sites or if you want secured connections.](./Deployment.md)
+Please read [here](https://dotnet.microsoft.com/platform/support/policy) for OS support matrix.
+
+## Requirements
+1. Rhino Server up and running. Please explore the different deployment sections for more information of how to deploy Rhino Server.
 3. Postman installed (latest version), read [here](https://www.postman.com/downloads/) for more information about how to download and install.
 
 ## Import Rhino API Documentation and Validation Tests
@@ -70,5 +79,4 @@ Rhino API use Postman for documentation and verification tests. Each  version co
 At this point, a set of tests will run against Rhino API. If some tests will fail, checking the response under the failed test will explain why and
 suggest how to fix the problem (if any).  
 
-> Please note, some of the tests requires a connection to the outside world. If you are running in an isolated environment without connection, these tests will fail
-> but if all other tests have passed, you can ignore these failed tests.
+[Next Step: Create your First Automation](./CreateYourFirstAutomation.md 'CreateYourFirstAutomation')

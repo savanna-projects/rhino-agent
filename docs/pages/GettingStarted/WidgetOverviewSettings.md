@@ -1,19 +1,26 @@
 [Home](../Home.md 'Home') 
 
 # Rhino Widget - Overview - Settings
-10/19/2020 - 5 minutes to read
+10/19/2020 - 15 minutes to read
 
 ## In This Article
+1. [Get Options Page](#get-options-page)
 1. [Connector](#connector)
 2. [Playback Options](#playback_options)
 3. [Rhino Options](#rhino_options)  
 
-> Not all possible configurations and options are exposed under settings page and many of them are part of the configuration you will be used when running your automation.
+> Not all possible configurations and options are exposed under settings page and many of them are part of the configuration you will be using when running your automation. We will expose all available configurations in future releases.
 
-Under settings page you set the integration to your A.L.M (e.g. Jira, Test Rail, Azure DevOps), the playback options to test your automation before publishing it and Rhino options and credentials. You can open the settings page by clicking on the ```Settings``` button.  
+## Get Options Page
+Under _**Options**_ page you set the integration to your A.L.M (e.g. Jira, Test Rail, Azure DevOps), the playback options to test your automation before publishing it and Rhino options and credentials.  
 
-![image_2_14.png](../../images/image_2_14.png)  
-_image - Settings Button_  
+In order to access the settings page, please do the following actions:
+1. Click on the extension icon in to top right corner of the browser (can be different, depends on browser version)
+2. Find Rhino Widget extension and click on the menu icon
+3. From the menu icon, select _**Options**_
+
+![image_2_15.png](../../images/image_2_15.png)  
+_image - Option Button_  
 
 ## Connector
 |Field         |Description                                                                                                                           |
@@ -37,9 +44,12 @@ _image - Settings Button_
 _image - Playback Options Panel_  
 
 ## Rhino Options
-> Rhino is using Gravity API in order to execute the automation scenarios, therefore you need a Gravity account in order to execute the automation. Gravity is an open source freemium automation engine with free tier without features limitations.  
+> Rhino is using Gravity API in order to execute the automation scenarios, therefore you need a Gravity account to execute the automation. Gravity is an open source freemium automation engine with a free tier without features limitations.  
 
 |Field    |Description                                                                                                                                                       |
 |---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |User Name|A valid Gravity/Rhino user name. If you don't have any, please [register for free Gravity API account](https://g-api.azurewebsites.net/Identity/Account/Register).|
 |Password |A valid Gravity/Rhino password.                                                                                                                                   |
+
+## See Also
+* [Gravity Project](https://github.com/gravity-api)

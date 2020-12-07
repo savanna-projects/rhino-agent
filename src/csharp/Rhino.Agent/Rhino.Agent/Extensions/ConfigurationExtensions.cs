@@ -54,9 +54,6 @@ namespace Rhino.Agent.Extensions
                 .Select(i => i.Value)
                 .ToArray();
 
-            //configuration.ReportConfiguration..ConnectionString =
-            //    appSettings.GetValue<string>("rhino:reportConfiguration:connectionString");
-
             // screenshots
             configuration.ScreenshotsConfiguration.ScreenshotsOut =
                 appSettings.GetValue<string>("rhino:screenshotsConfiguration:screenshotsOut");

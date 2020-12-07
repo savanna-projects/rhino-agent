@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -24,13 +25,29 @@ namespace Rhino.Agent.Domain
         /// <summary>
         /// GET logs from this domain state.
         /// </summary>
-        /// <param name="authentication">Authentication object by which to get logs.</param>
-        /// <param name="configuration">The configuration id by which to GET.</param>
+        /// <param name="logPath">The path under which the logs are written.</param>
+        /// <returns>Status code and logs (if any).</returns>
+        public IEnumerable<string> Get(string logPath)
+        {
+            // exit conditions
+            if (!Directory.Exists(logPath))
+            {
+                return Array.Empty<string>();
+            }
+
+            // get
+            return Directory.GetFiles(logPath).Select(i => Path.GetFileName(i));
+        }
+
+        /// <summary>
+        /// GET logs from this domain state.
+        /// </summary>
+        /// <param name="logPath">The path under which the logs are written.</param>
         /// <param name="log">The log id (current date as yyyyMMdd).</param>
         /// <returns>Status code and logs (if any).</returns>
-        public (HttpStatusCode statusCode, string data) Get(string configuration, string log)
+        public (HttpStatusCode statusCode, string data) Get(string logPath, string log)
         {
-            return DoGet(configuration, log);
+            return DoGet(logPath, log);
         }
 
         /// <summary>
@@ -84,21 +101,21 @@ namespace Rhino.Agent.Domain
         }
 
         [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Repository methods cannot be static")]
-        private (HttpStatusCode statusCode, string data) DoGet(string logsPath, string log)
+        private (HttpStatusCode statusCode, string data) DoGet(string logPath, string log)
         {
             // exit conditions
-            if (!Directory.Exists(logsPath))
+            if (!Directory.Exists(logPath))
             {
                 return (HttpStatusCode.NotFound, string.Empty);
             }
 
             // parse
-            var logsOut = logsPath == "."
+            var logsOut = logPath == "."
                 ? Path.Join($"{Environment.CurrentDirectory}", "Logs")
-                : logsPath;
+                : logPath;
 
             // get
-            var logFile = Path.Join(logsOut, $"{logsOut}RhinoApi-{log}.log");
+            var logFile = Path.Join(logsOut, $"RhinoApi-{log}.log");
             if (!File.Exists(path: logFile))
             {
                 return (HttpStatusCode.NotFound, string.Empty);

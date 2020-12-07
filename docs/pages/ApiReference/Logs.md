@@ -1,6 +1,29 @@
 # API: Models
 Use the following API methods to request details from _**Rhino Logs**_.
 
+## Get Logs Files
+Returns an existing _**Automation Logs**_ files list.
+
+```
+GET /api/v3/logs
+```
+
+#### Response Content
+
+```js
+[
+  "RhinoApu-20201230.log",
+  "RhinoApi-20201231.log",
+  ...
+]
+```
+
+### Response Codes
+|Code|Description                                                         |
+|----|--------------------------------------------------------------------|
+|200 |Success, the _**Automation Logs**_ returned as part of the response.|
+|500 |Fail, the server encountered an unexpected error.                   |
+
 ## Get Log
 Returns an existing _**Automation Log**_.
 
@@ -8,7 +31,7 @@ Returns an existing _**Automation Log**_.
 > If not specified, the default logs directory is ```<current_directory>\Logs```.
 
 ```
-GET /api/logs/:log_id
+GET /api/v3/logs/:log_id
 ```
 
 |Name            |Type  |Description                                                                                |
@@ -61,7 +84,7 @@ Returns an existing _**Automation Log**_ tail, by specific size.
 > If not specified, the default logs directory is ```<current_directory>\Logs```.
 
 ```
-GET /api/logs/:log_id/size/:size
+GET /api/v3/logs/:log_id/size/:size
 ```
 
 |Name            |Type  |Description                                                                                |
@@ -89,7 +112,7 @@ Downloads an existing _**Automation Log**_ as _**zip**_ file.
 > If not specified, the default logs directory is ```<current_directory>\Logs```.
 
 ```
-GET /api/logs/:log_id/download
+GET /api/v3/logs/:log_id/download
 ```
 
 |Name            |Type  |Description                                                                                |
