@@ -4,8 +4,8 @@
  * RESSOURCES
  */
 using System;
+using System.IO;
 using System.Net;
-using System.Net.Mime;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +37,17 @@ namespace Rhino.Agent.Controllers
             // get in-folder
             var inFolder = appSettings.GetValue<string>("rhino:reportConfiguration:logsOut");
             logPath = string.IsNullOrEmpty(inFolder) ? Environment.CurrentDirectory + "/Logs" : inFolder;
+        }
+
+        // GET: api/v3/logs
+        [HttpGet]
+        public IActionResult Get()
+        {
+            // get
+            var responseBody = repository.Get(logPath);
+
+            // response
+            return this.ContentResult(responseBody, HttpStatusCode.OK);
         }
 
         // GET: api/v3/logs/<log>
@@ -73,20 +84,29 @@ namespace Rhino.Agent.Controllers
             var logName = $"RhinoApi-{log}";
             var fullLogName = logName + ".log";
 
-            // get report
-            var (statusCode, stream) = repository.GetAsMemoryStream(logPath, log);
-
             // exit conditions
-            if (statusCode == HttpStatusCode.NotFound)
+            if (!Directory.Exists(logPath))
             {
-                return await this
-                    .ErrorResultAsync($"Log [{fullLogName}] under configuration [{logPath}] was not found.", HttpStatusCode.NotFound)
-                    .ConfigureAwait(false);
+                return NotFound();
             }
 
-            // response
-            var zipContent = stream.Zip(logName);
-            return File(zipContent, MediaTypeNames.Application.Zip, logName + ".zip");
+            // parse
+            var logsOut = logPath == "."
+                ? Path.Join($"{Environment.CurrentDirectory}", "Logs")
+                : logPath;
+
+            // get
+            var logFile = Path.Join(logsOut, $"RhinoApi-{log}.log");
+            if (!System.IO.File.Exists(path: logFile))
+            {
+                return NotFound();
+            }
+
+            // build
+            var bytes = await System.IO.File.ReadAllBytesAsync(logFile).ConfigureAwait(false);
+
+            // get
+            return File(bytes, "application/force-download", fullLogName);
         }
     }
 }
