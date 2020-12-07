@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "d34fe3ca-4b41-4e54-8d8b-9e7f81e3a669",
 		"name": "Rhino API Reference Guide v3",
-		"description": "Learn how to access and use Rhino’s API to integrate automated testing frameworks, submit test results, and automate various other aspects of your applications via simple HTTP requests.\r\n\r\n# Reference\r\n\r\n***\r\n\r\n* Configurations\r\n* Test Cases\r\n* Page Models\r\n* Execution\r\n",
+		"description": "Learn how to access and use Rhino’s API to integrate automated testing frameworks, submit test results, and automate various other aspects of your applications via simple HTTP requests.\r\n\r\n# Reference\r\n\r\n***\r\n\r\n* Configurations\r\n* Page Models\r\n* Test Cases\r\n* Test Runs\r\n* Plugins\r\n* Logs & Analysis\r\n* Debug Automation\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -4504,6 +4504,237 @@
 							]
 						},
 						{
+							"name": "Connect by Configurations - Unattached",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "dbdd15f6-5433-484b-b0a3-8b4a6aff2a3d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Have any actions\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData[0].actions.length).to.be.greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Rhino Automation - Chrome\",\r\n    \"testsRepository\": [\r\n        \"{{collection_id}}\"\r\n    ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"{{rhino_drivers}}\"\r\n        }\r\n    ],\r\n    \"dataSource\": [],\r\n    \"models\": [],\r\n    \"authentication\": {\r\n        \"password\": \"{{rhino_password}}\",\r\n        \"userName\": \"{{rhino_user}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3,\r\n        \"qualityThreshold\": 0,\r\n        \"toleranceThreshold\": 0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": true,\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reporters\": [\r\n            \"reporter_basic\",\r\n            \"reporter_warehouse\"\r\n        ],\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/rhino/connect",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"rhino",
+										"connect"
+									]
+								},
+								"description": "Returns a collection of _**Web Automation**_ objects, after completing the connection pipeline and before executing. These objects can be used for [Debug](./Debug.md 'Debug').\r\n\r\n```\r\nPOST /api/v3/rhino/configurations/connect\r\n```\r\n\r\n### Request Fields\r\nThe request body follows the same format as [Get Configuration](./Configurations.md#get-configuration) response content.\r\n\r\n## Response Content\r\n\r\nThe response body is a collection of objects which follows the same format as [Debug](./Debug.md#request-content) request content.\r\n\r\n### Response Codes\r\n|Code|Description                                                         |\r\n|----|--------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Result**_ is returned as part of the response.|\r\n|500 |Fail, the server encountered an unexpected error.                   |"
+							},
+							"response": [
+								{
+									"name": "Connect",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "[\r\n  {\r\n    \"name\": \"Rhino Automation - Chrome\",\r\n    \"testsRepository\": [\r\n      \"{{collection_id}}\"\r\n    ],\r\n    \"driverParameters\": [\r\n      {\r\n        \"driver\": \"ChromeDriver\",\r\n        \"driverBinaries\": \"{{rhino_drivers}}\"\r\n      }\r\n    ],\r\n    \"dataSource\": [],\r\n    \"models\": [],\r\n    \"authentication\": {\r\n      \"password\": \"{{rhino_password}}\",\r\n      \"userName\": \"{{rhino_user}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n      \"maxParallel\": 1,\r\n      \"failOnException\": false,\r\n      \"optimalThreshold\": 3,\r\n      \"qualityThreshold\": 0,\r\n      \"toleranceThreshold\": 0,\r\n      \"priority\": 0,\r\n      \"severity\": 0,\r\n      \"errorOnExitCode\": 0,\r\n      \"elementSearchingTimeout\": 15000,\r\n      \"pageLoadTimeout\": 60000,\r\n      \"retrunExceptions\": true,\r\n      \"returnPerformancePoints\": true,\r\n      \"returnEnvironment\": true,\r\n      \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n      \"keepOriginal\": false,\r\n      \"returnScreenshots\": true,\r\n      \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n      \"reporters\": [\r\n        \"reporter_basic\",\r\n        \"reporter_warehouse\"\r\n      ],\r\n      \"archive\": false,\r\n      \"localReport\": true,\r\n      \"addGravityData\": true\r\n    }\r\n  }\r\n]",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{endpoint}}/rhino/connect",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"rhino",
+												"connect"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						},
+						{
+							"name": "Connect by Configuration",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b802bb28-de35-4e14-86a2-dbd62d658cf3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Have any actions\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData[0].actions.length).to.be.greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/rhino/connect/{{configuration_id}}",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"rhino",
+										"connect",
+										"{{configuration_id}}"
+									]
+								},
+								"description": "Returns a collection of _**Web Automation**_ objects, after completing the connection pipeline and before executing. These objects can be used for [Debug](./Debug.md 'Debug').\r\n\r\n```\r\nGET /api/v3/rhino/connect/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                             |\r\n|----------------|------|----------------------------------------|\r\n|configuration_id|string|The ID of the _**Rhino Configuration**_.|\r\n\r\n#### Response Content\r\n\r\nThe response body is a collection of objects which follows the same format as [Debug](./Debug.md#request-content) request content.\r\n\r\n### Response Codes\r\n|Code|Description                                                           |\r\n|----|----------------------------------------------------------------------|\r\n|200 |Success, the _**Web Automation**_ is returned as part of the response.|\r\n|400 |Bad Request, _**Rhino Configuration**_ was not provided.              |\r\n|404 |Not Found, the _**Rhino Configuration**_ was not found.               |\r\n|500 |Fail, the server encountered an unexpected error.                     |"
+							},
+							"response": [
+								{
+									"name": "Connect",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{endpoint}}/rhino/connect/{{configuration_id}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"rhino",
+												"connect",
+												"{{configuration_id}}"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						},
+						{
+							"name": "Run by Collection (one configuration)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ccdb4f65-2e32-4f85-b411-467b1ddb8c58",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[test-id] rhino-documentation-001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/rhino/configurations/{{configuration_id}}",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"rhino",
+										"configurations",
+										"{{configuration_id}}"
+									]
+								},
+								"description": "Runs _**Rhino Spec**_ directly from the request body.\r\n\r\n```\r\nPOST /api/v3/rhino/configurations/:configuration_id\r\n```\r\n\r\n|Name            |Type  |Description                             |\r\n|----------------|------|----------------------------------------|\r\n|configuration_id|string|The ID of the _**Rhino Configuration**_.|\r\n\r\n### Request Fields\r\nThe request body follows the same format as _**Get Test Case Collection**_ response content.\r\n\r\n### Request Example\r\nPlease see below for a typical request:\r\n\r\n```\r\n[test-id] rhino-documentation-001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]\r\n\r\n>>>\r\n\r\n[test-id] rhino-documentation-002\r\n...\r\n```\r\n\r\n## Response Content\r\n\r\nThe response body follows the same format as [Run by Configuration](#run-by-configuration) response content.\r\n\r\n### Response Codes\r\n|Code|Description                                                         |\r\n|----|--------------------------------------------------------------------|\r\n|200 |Success, the _**Rhino Result**_ is returned as part of the response.|\r\n|400 |Bad Request, _**Rhino Configuration**_ was not provided.            |\r\n|404 |Not Found, the _**Rhino Configuration**_ was not found.             |\r\n|500 |Fail, the server encountered an unexpected error.                   |"
+							},
+							"response": [
+								{
+									"name": "Run by Collection (one configuration)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "[test-id] rhino-documentation-001\r\n[test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site\r\n\r\n[test-actions]\r\n1. go to url {@address} using any compliant web-browser\r\n2. close all child windows (to make sure only the web site is open and visible)\r\n3. send keys {Carson} into {@search-text-box} text-box\r\n4. click on {@search-button} using {css selector}\r\n5. wait for {3000} milliseconds\r\n6. close browser\r\n\r\n[test-expected-results]\r\n[1] assert {url} match {@address-expected}\r\n[5] assert {count} on {@search-text-box} is greater than {0}\r\n\r\n[test-data-provider]\r\n[\r\n\t{\r\n\t\t\"address\":\"https://gravitymvctestapplication.azurewebsites.net/student\",\r\n\t\t\"address-expected\":\"gravitymvctestapplication.azurewebsites.net\",\r\n\t\t\"search-text-box\":\"//input[@id='SearchString']\",\r\n\t\t\"search-button\":\"#SearchButton\",\r\n\t\t\"students-table\": \"//td[@id]\"\r\n\t}\r\n]",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{endpoint}}/rhino/configurations/{{configuration_id}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"rhino",
+												"configurations",
+												"{{configuration_id}}"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
 							"name": "Run by Collection (all configurations)",
 							"event": [
 								{
@@ -6901,6 +7132,75 @@
 					"name": "Documentation",
 					"item": [
 						{
+							"name": "Get Logs Files",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3f8dda62-3794-4229-a598-e5faf4f9a8e8",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Your test name\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.length).to.be.greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/logs",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"logs"
+									]
+								},
+								"description": "Returns an existing _**Automation Logs**_ files list.\r\n\r\n```\r\nGET /api/v3/logs\r\n```\r\n\r\n#### Response Content\r\n\r\n```js\r\n[\r\n  \"RhinoApu-20201230.log\",\r\n  \"RhinoApi-20201231.log\",\r\n  ...\r\n]\r\n```\r\n\r\n### Response Codes\r\n|Code|Description                                                         |\r\n|----|--------------------------------------------------------------------|\r\n|200 |Success, the _**Automation Logs**_ returned as part of the response.|\r\n|500 |Fail, the server encountered an unexpected error.                   |"
+							},
+							"response": [
+								{
+									"name": "Get Logs",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{endpoint}}/logs/20200913",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"logs",
+												"20200913"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
 							"name": "Get Logs - Download",
 							"request": {
 								"method": "GET",
@@ -7615,42 +7915,42 @@
 	],
 	"variable": [
 		{
-			"id": "28a7eb4c-77c6-4e37-9de6-42a59c272c23",
+			"id": "e4f92e6c-530c-4a7b-a7fd-d3e2e0cc9327",
 			"key": "endpoint",
 			"value": "https://localhost:9001/api/v3"
 		},
 		{
-			"id": "fe9f099f-e855-4b00-b782-9f04a9844a2b",
+			"id": "ed050343-b965-4d3a-96d8-385326be20d8",
 			"key": "rhino_password",
 			"value": ""
 		},
 		{
-			"id": "4f204481-37b9-4368-9409-5a8170363f20",
-			"key": "rhino_drivers",
-			"value": "http://192.168.1.11:4444/wd/hub"
-		},
-		{
-			"id": "f6095f38-265d-43a5-8b77-b60f2d56414d",
+			"id": "983673dc-acb8-42e2-8fcb-e7956389af18",
 			"key": "rhino_user",
 			"value": ""
 		},
 		{
-			"id": "1701f6f3-9af2-4498-b98e-d50eb96f03e3",
+			"id": "d8029e39-99aa-4cd7-96c5-003a7c8d027f",
+			"key": "rhino_drivers",
+			"value": "http://192.168.1.11:4444/wd/hub"
+		},
+		{
+			"id": "ed254a44-4f8a-4e02-af6b-641dfb63eaaa",
 			"key": "models_id",
 			"value": "9645c03a-6ab1-422c-883b-d1d9ae6a3877"
 		},
 		{
-			"id": "e58d708f-b3b0-4511-9082-19331ec3bf04",
+			"id": "d5f68873-60cd-4b87-86c4-28e222dce891",
 			"key": "collection_id",
 			"value": "030230f0-7b84-4d0f-b0f4-c461abd2a379"
 		},
 		{
-			"id": "d1d2357b-52c1-4aed-a12a-e65174249b0b",
+			"id": "4829c24b-516d-4eb4-885f-6e6059c83263",
 			"key": "configuration_id",
 			"value": "cdfc307d-2317-46e5-8112-d8871574b470"
 		},
 		{
-			"id": "3c1a386f-5f36-45ec-bc4b-002a480826f4",
+			"id": "89769b7a-aaf8-42d9-896e-a92c20410174",
 			"key": "session_id",
 			"value": "f7e910fa634880341214ae135b8e582d"
 		}
