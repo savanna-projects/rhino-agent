@@ -10,7 +10,11 @@
 * [Install and Connect Rhino Widget (Chrome/Edge extensions)](./GettingStarted/ConnectWidget.md 'ConnectWidget')
 * [Widget Overview - User Interface and Different Sections](./GettingStarted/WidgetOverview.md 'WidgetOverview')
 * [Create Your First Automation](./GettingStarted/YourFirstAutomation.md 'YourFirstAutomation')
-* [Run Your Automation from a Command Line](./GettingStarted/CommandLine.md 'CommandLine')
+* Save Your Automation as Text File
+* Save Your Automation on Application Lifecycle Manager
+* Run Your Automation from a Command Line
+* Run Your Automation Over HTTP
+* Run Your Automation from CI/CD Task
 
 ## API Reference
 * [Configurations](./ApiReference/Configurations.md 'Configurations')

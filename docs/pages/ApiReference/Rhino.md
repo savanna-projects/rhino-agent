@@ -327,60 +327,61 @@ A collection of _**Rhino Configuration**_. Each item in the request body follows
 ### Request Example
 ```js
 [
-    {
-        "name": "Rhino Automation - Chrome",
-        "testsRepository": [ ],
-        "driverParameters": [
-            {
-                "driver": "ChromeDriver",
-                "driverBinaries": "http://localhost:4444/wd/hub"
-            }
-        ],
-        "dataSource": [ ],
-        "models": [ ],
-        "connector": "connector_text",
-        "gravityEndpoint": "",
-        "authentication": {
-            "password": "<rhino_user>",
-            "userName": "<rhino_password>"
-        },
-        "engineConfiguration": {
-            "maxParallel": 1,
-            "failOnException": false,
-            "optimalThreshold": 3.0,
-            "qualityThreshold": 0.0,
-            "toleranceThreshold": 0.0,
-            "priority": 0,
-            "severity": 0,
-            "errorOnExitCode": 0,
-            "elementSearchingTimeout": 15000,
-            "pageLoadTimeout": 60000,
-            "retrunExceptions": true,
-            "returnPerformancePoints": true,
-            "returnEnvironment": true,
-            "terminateOnAssertFailure": false
-        },
-        "screenshotsConfiguration": {
-            "keepOriginal": false,
-            "returnScreenshots": false,
-            "screenshotsOut": "<path_to_screenshots_folder>",
-            "onExceptionOnly": false
-        },
-        "reportConfiguration": {
-            "reportOut": "<path_to_reports_folder>",
-            "logsOut": "<path_to_logs_folder>",
-            "reporters": null,
-            "connectionString": null,
-            "dataProvider": null,
-            "archive": false,
-            "localReport": true,
-            "addGravityData": true
-        }
+  {
+    "name": "Rhino Automation - Chrome",
+    "testsRepository": [],
+    "driverParameters": [
+      {
+        "driver": "ChromeDriver",
+        "driverBinaries": "http://localhost:4444/wd/hub"
+      }
+    ],
+    "dataSource": [],
+    "models": [],
+    "connector": "connector_text",
+    "gravityEndpoint": "",
+    "authentication": {
+      "password": "<rhino_user>",
+      "userName": "<rhino_password>"
     },
-    {
-        "name": "Rhino Automation - Firefox",
-        "testsRepository": [ ]
+    "engineConfiguration": {
+      "maxParallel": 1,
+      "failOnException": false,
+      "optimalThreshold": 3,
+      "qualityThreshold": 0,
+      "toleranceThreshold": 0,
+      "priority": 0,
+      "severity": 0,
+      "errorOnExitCode": 0,
+      "elementSearchingTimeout": 15000,
+      "pageLoadTimeout": 60000,
+      "retrunExceptions": true,
+      "returnPerformancePoints": true,
+      "returnEnvironment": true,
+      "terminateOnAssertFailure": false
+    },
+    "screenshotsConfiguration": {
+      "keepOriginal": false,
+      "returnScreenshots": false,
+      "screenshotsOut": "<path_to_screenshots_folder>",
+      "onExceptionOnly": false
+    },
+    "reportConfiguration": {
+      "reportOut": "<path_to_reports_folder>",
+      "logsOut": "<path_to_logs_folder>",
+      "reporters": null,
+      "connectionString": null,
+      "dataProvider": null,
+      "archive": false,
+      "localReport": true,
+      "addGravityData": true
+    }
+  },
+  {
+    "name": "Rhino Automation - Firefox",
+    "testsRepository": []
     ...
+  }
 ]
 ```
 
@@ -454,4 +455,47 @@ The response body follows the same format as [Run by Configuration](#run-by-conf
 |200 |Success, the _**Rhino Result**_ is returned as part of the response.|
 |400 |Bad Request, _**Rhino Configuration**_ was not provided.            |
 |404 |Not Found, the _**Rhino Configuration**_ was not found.             |
+|500 |Fail, the server encountered an unexpected error.                   |
+
+## Connect by Configuration
+Returns a collection of _**Web Automation**_ objects, after completing the connection pipeline and before executing. These objects can be used for [Debug](./Debug.md 'Debug').
+
+```
+GET /api/v3/rhino/connect/:configuration_id
+```
+
+|Name            |Type  |Description                             |
+|----------------|------|----------------------------------------|
+|configuration_id|string|The ID of the _**Rhino Configuration**_.|
+
+#### Response Content
+
+The response body is a collection of objects which follows the same format as [Debug](./Debug.md#request-content) request content.
+
+### Response Codes
+|Code|Description                                                           |
+|----|----------------------------------------------------------------------|
+|200 |Success, the _**Web Automation**_ is returned as part of the response.|
+|400 |Bad Request, _**Rhino Configuration**_ was not provided.              |
+|404 |Not Found, the _**Rhino Configuration**_ was not found.               |
+|500 |Fail, the server encountered an unexpected error.                     |
+
+## Connect by Configurations - Unattached
+Returns a collection of _**Web Automation**_ objects, after completing the connection pipeline and before executing. These objects can be used for [Debug](./Debug.md 'Debug').
+
+```
+POST /api/v3/rhino/configurations/connect
+```
+
+### Request Fields
+The request body follows the same format as [Get Configuration](./Configurations.md#get-configuration) response content.
+
+## Response Content
+
+The response body is a collection of objects which follows the same format as [Debug](./Debug.md#request-content) request content.
+
+### Response Codes
+|Code|Description                                                         |
+|----|--------------------------------------------------------------------|
+|200 |Success, the _**Rhino Result**_ is returned as part of the response.|
 |500 |Fail, the server encountered an unexpected error.                   |

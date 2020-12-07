@@ -14,6 +14,7 @@ using Rhino.Agent.Extensions;
 using Rhino.Agent.Models;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Engine;
 using Rhino.Api.Extensions;
 using Rhino.Api.Parser.Contracts;
 
@@ -38,12 +39,12 @@ namespace Rhino.Agent.Controllers
             Environment.NewLine + Environment.NewLine + SpecSection.Separator + Environment.NewLine + Environment.NewLine;
 
         // members: state
+        private readonly IServiceProvider provider;
         private readonly IEnumerable<Type> types;
+        private readonly IConfiguration appSettings;
         private readonly RhinoConfigurationRepository configurationRepository;
         private readonly RhinoModelRepository modelRepository;
         private readonly RhinoTestCaseRepository testCaseRepository;
-        private readonly IConfiguration appSettings;
-        private readonly IServiceProvider provider;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Controllers.RhinoController.
@@ -51,15 +52,65 @@ namespace Rhino.Agent.Controllers
         /// <param name="provider">Services container.</param>
         public RhinoController(IServiceProvider provider)
         {
+            // provider
+            this.provider = provider;
+
+            // state
             types = provider.GetRequiredService<IEnumerable<Type>>();
+            appSettings = provider.GetRequiredService<IConfiguration>();
             configurationRepository = provider.GetRequiredService<RhinoConfigurationRepository>();
             modelRepository = provider.GetRequiredService<RhinoModelRepository>();
             testCaseRepository = provider.GetRequiredService<RhinoTestCaseRepository>();
-            appSettings = provider.GetRequiredService<IConfiguration>();
-            this.provider = provider;
         }
 
         #region *** By Configuration  ***
+        // GET api/v3/rhino/connect/<id>
+        [HttpGet("connect/{configuration}")]
+        public IActionResult Connect(string configuration)
+        {
+            // get configuration
+            var (statusCode, onConfiguration) = GetConfiguration(configuration, allowNoTests: false);
+
+            // failure response
+            if (statusCode.ToInt32() > HttpStatusCode.OK.ToInt32())
+            {
+                return this.ContentResult(responseBody: default, statusCode);
+            }
+
+            // build
+            var automationEngine = new RhinoAutomationEngine(onConfiguration, types);
+            var testCases = onConfiguration.Connect(types).ProviderManager.TestRun.TestCases;
+            var automations = testCases.SelectMany(i => automationEngine.GetWebAutomation(i));
+
+            // get
+            return this.ContentResult(automations);
+        }
+
+        // POST api/v3/rhino/connect
+        [HttpPost("connect")]
+        public IActionResult Connect()
+        {
+            // get configuration
+            var configuration = GetConfiguration();
+
+            // get collection (if any)
+            var collections = configuration.TestsRepository.Select(i => testCaseRepository.Get(Request.GetAuthentication(), i));
+            var tests = collections.SelectMany(i => i.data.RhinoTestCaseDocuments.Select(i => i.RhinoSpec));
+
+            // apply
+            var configurationTests = configuration.TestsRepository.ToList();
+            configurationTests.AddRange(tests);
+            configuration.TestsRepository = configurationTests;
+
+            // build
+            var automationEngine = new RhinoAutomationEngine(configuration, types);
+            var testCases = configuration.Connect(types).ProviderManager.TestRun.TestCases;
+            var automations = testCases.SelectMany(i => automationEngine.GetWebAutomation(i));
+
+            // get
+            return this.ContentResult(automations);
+        }
+
         // GET api/v3/rhino/configurations/<id>
         [HttpGet("configurations/{configuration}")]
         public IActionResult ExecuteByConfiguration(string configuration)
@@ -84,29 +135,12 @@ namespace Rhino.Agent.Controllers
             return DoExecute();
         }
 
-        // TODO: implement recursive conversion JToken to <string, object>
         // POST api/v3/rhino/execute
         [HttpPost("execute")]
         public IActionResult Execute()
         {
             // get configuration
-            var requestBody = Request.ReadAsync().GetAwaiter().GetResult();
-            var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody).ApplySettings(appSettings);
-
-            // get provider capabilities
-            var jsonObject = JObject.Parse(requestBody);
-            var capabilities = jsonObject.SelectToken("capabilities");
-            var options = jsonObject.SelectToken($"capabilities.{configuration.ConnectorConfiguration.Connector}:options");
-
-            var onOptions = options != null
-                ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{options}")
-                : new Dictionary<string, object>();
-
-            configuration.Capabilities = capabilities != null
-                ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{capabilities}")
-                : new Dictionary<string, object>();
-
-            configuration.Capabilities[$"{configuration.ConnectorConfiguration.Connector}:options"] = onOptions;
+            var configuration = GetConfiguration();
 
             // execute
             var responseBody = configuration.Execute(types);
@@ -241,6 +275,33 @@ namespace Rhino.Agent.Controllers
         }
 
         #region *** GET Configuration ***
+        // TODO: implement recursive conversion JToken to <string, object>
+        // get ready to run configuration, by request body
+        private RhinoConfiguration GetConfiguration()
+        {
+            // get configuration
+            var requestBody = Request.ReadAsync().GetAwaiter().GetResult();
+            var configuration = JsonConvert.DeserializeObject<RhinoConfiguration>(requestBody).ApplySettings(appSettings);
+
+            // get provider capabilities
+            var jsonObject = JObject.Parse(requestBody);
+            var capabilities = jsonObject.SelectToken("capabilities");
+            var options = jsonObject.SelectToken($"capabilities.{configuration.ConnectorConfiguration.Connector}:options");
+
+            var onOptions = options != null
+                ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{options}")
+                : new Dictionary<string, object>();
+
+            configuration.Capabilities = capabilities != null
+                ? JsonConvert.DeserializeObject<IDictionary<string, object>>($"{capabilities}")
+                : new Dictionary<string, object>();
+
+            configuration.Capabilities[$"{configuration.ConnectorConfiguration.Connector}:options"] = onOptions;
+
+            // get
+            return configuration;
+        }
+
         // get ready to run configuration, by ID
         private (HttpStatusCode statusCode, RhinoConfiguration configuration) GetConfiguration(string id, bool allowNoTests)
         {

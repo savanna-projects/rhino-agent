@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Agent.Extensions;
 
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace Rhino.Agent.Controllers
@@ -19,10 +18,9 @@ namespace Rhino.Agent.Controllers
     {
         // GET: api/<PingController>
         [HttpGet]
-        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "HTTP method cannot be static.")]
         public IActionResult Get()
         {
-            return this.ContentTextResult("Pong", HttpStatusCode.OK);
+            return this.ContentTextResult($"{Request.Path} - Pong", HttpStatusCode.OK);
         }
     }
 }

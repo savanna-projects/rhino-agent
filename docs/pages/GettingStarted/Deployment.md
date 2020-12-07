@@ -5,7 +5,7 @@
 
 ## In This Article
 * [Supported OS](#supported-os)
-* [Requirements](#requirements)
+* [Prerequisites](#prerequisites)
 * [Configure SSL Certificate](#configure-ssl-certificate)
 * [Run as Process](#run-as-process)  
 
@@ -14,7 +14,7 @@
 
 Please read [here](https://dotnet.microsoft.com/platform/support/policy) for OS support matrix.
 
-## Requirements
+## Prerequisites
 1. Latest .NET Core installed, read [here](https://dotnet.microsoft.com/download/dotnet/current) for more information about how to download and install.
 2. Development or other SSL certificate installed. This is optional and only required if you are working against HTTPS sites or if you want secured connections.
 

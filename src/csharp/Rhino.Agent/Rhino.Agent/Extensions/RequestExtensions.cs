@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -68,7 +69,7 @@ namespace Rhino.Agent.Extensions
         /// <returns>Status code as <see cref="int"/>.</returns>
         public static int ToInt32(this HttpStatusCode statusCode)
         {
-            int.TryParse($"{(int)statusCode}", out int statusCodeOut);
+            _ = int.TryParse($"{(int)statusCode}", out int statusCodeOut);
             return statusCodeOut;
         }
 
@@ -104,6 +105,7 @@ namespace Rhino.Agent.Extensions
             return DoReadAsync(request);
         }
 
+        [SuppressMessage("Usage", "RCS1229:Use async/await when necessary.", Justification = "Does not need async/await")]
         private static Task<string> DoReadAsync(HttpRequest request)
         {
             using var streamReader = new StreamReader(request.Body);

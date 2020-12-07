@@ -98,7 +98,7 @@ namespace Rhino.Agent.Domain
                 : logsPath;
 
             // get
-            var logFile = Path.Join(logsOut, $"{logsOut}RhinoApi-{log}.log");
+            var logFile = Path.Join(logsOut, $"RhinoApi-{log}.log");
             if (!File.Exists(path: logFile))
             {
                 return (HttpStatusCode.NotFound, string.Empty);
