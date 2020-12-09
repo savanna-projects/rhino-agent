@@ -94,7 +94,11 @@ namespace Rhino.Agent.Controllers
             var configuration = GetConfiguration();
 
             // get collection (if any)
-            var collections = configuration.TestsRepository.Select(i => testCaseRepository.Get(Request.GetAuthentication(), i));
+            var collections = configuration
+                .TestsRepository
+                .Select(i => testCaseRepository.Get(Request.GetAuthentication(), i))
+                .Where(i => i.data != null);
+
             var tests = collections.SelectMany(i => i.data.RhinoTestCaseDocuments.Select(i => i.RhinoSpec));
 
             // apply

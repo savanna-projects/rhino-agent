@@ -8,7 +8,7 @@
 * [Create a Free Account](#create-a-free-account)
 
 ## We Love Open Source
-If you have an open source project, you can apply for a free, lifetime (evaluated yearly) Rhino account without any runtime or features limitation. Apply your request to <rhino.api@gmail.com>. Please include in your mail.
+If you have an open source project, you can apply for a free, lifetime (evaluated yearly) Rhino account without any runtime or features limitation. Send your application request to <rhino.api@gmail.com>. Please include in your mail.
 
 1. Your full name.
 2. Your role (e.g. developer, QA automation, etc.).
