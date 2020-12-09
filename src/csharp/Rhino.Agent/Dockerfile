@@ -31,7 +31,8 @@ RUN dpkg -i packages-microsoft-prod.deb
 RUN apt-get update && apt-get install -y \
     curl \
     apt-transport-https \
-    dotnet-sdk-3.1 \
+    dotnet-sdk-5.0 \
+    gss-ntlmssp \
     vim \
     jq     
 
