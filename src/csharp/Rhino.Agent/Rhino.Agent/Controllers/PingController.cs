@@ -20,7 +20,7 @@ namespace Rhino.Agent.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return this.ContentTextResult($"{Request.Path} - Pong", HttpStatusCode.OK);
+            return this.ContentResult(new { Data = $"{Request.Path} - Pong" }, HttpStatusCode.OK);
         }
     }
 }
