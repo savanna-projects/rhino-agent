@@ -318,7 +318,7 @@ The response body follows the same format as [Run by Configuration](#run-by-conf
 Executes a collection of _**Rhino Configuration**_ without saving the configurations under Rhino Server State.
 
 ```
-POST /api/v3/rhino/configurations/execute
+POST /api/v3/rhino/execute
 ```
 
 ### Request Fields
