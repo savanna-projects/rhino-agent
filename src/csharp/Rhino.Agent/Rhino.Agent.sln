@@ -48,7 +48,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{F0581530-31D7-40C5-BD78-4322BD64C4F0}"
 	ProjectSection(SolutionItems) = preProject
 		Dockerfile = Dockerfile
-		DockerfileWindows = DockerfileWindows
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{242F1C4F-1F96-43A7-BBBA-53FD839F2F45}"
