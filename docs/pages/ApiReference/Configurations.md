@@ -80,7 +80,7 @@ Please see below for a typical response:
   "gravityEndpoint": "",
   "authentication": {
     "password": "<rhino_user>",
-    "userName": "<rhino_password>"
+    "userName": "<password>"
   },
   "engineConfiguration": {
     "maxParallel": 1,
@@ -238,7 +238,7 @@ The request body follows the same format as [Get Configuration](#get-configurati
   "gravityEndpoint": "",
   "authentication": {
     "password": "<rhino_user>",
-    "userName": "<rhino_password>"
+    "userName": "<password>"
   },
   "engineConfiguration": {
     "maxParallel": 1,
@@ -311,7 +311,7 @@ The request body follows the same format as [Get Configuration](#get-configurati
   "gravityEndpoint": "",
   "authentication": {
     "password": "<rhino_user>",
-    "userName": "<rhino_password>"
+    "userName": "<password>"
   },
   "engineConfiguration": {
     "maxParallel": 1,

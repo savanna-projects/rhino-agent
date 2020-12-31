@@ -9,14 +9,14 @@
 <div class="card">
     <div class="card-header">
         <h4 class="panel-title">
-            <a class="text-info text-decoration-none" data-toggle="collapse" href="#playback_options">Playback Options</a>
+            <a class="text-info text-decoration-none" data-toggle="collapse" href="#playbackOptions">Playback Options</a>
         </h4>
     </div>
-    <div id="playback_options" class="collapse" data-parent="#settings_content">
+    <div id="playbackOptions" class="collapse" data-parent="#settings_content">
         <div class="card-body">
             <div class="form-group">
                 <label class="col-form-label col-form-label-sm">Execute on Browser</label>
-                <select class="form-control form-control-sm w-50" id="web_driver">
+                <select class="form-control form-control-sm w-50" id="webDriver">
                     <option value="@Driver.Android">Android (Chrome or Native)</option>
                     <option value="@Driver.Edge">Chromium Edge</option>
                     <option value="@Driver.InternetExplorer">Internet Explorer</option>
@@ -28,7 +28,7 @@
             </div>
             <div class="form-group">
                 <label class="col-form-label col-form-label-sm">Selenium Grid Endpoint (leave blank for local driver)</label>
-                <input type="text" class="form-control form-control-sm" id="grid_endpoint" placeholder="http://localhost:4444/wd/hub">
+                <input type="text" class="form-control form-control-sm" id="gridEndpoint" placeholder="http://localhost:4444/wd/hub">
             </div>
             <div class="form-group">
                 <label class="col-form-label col-form-label-sm"

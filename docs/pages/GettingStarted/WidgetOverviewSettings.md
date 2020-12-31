@@ -6,8 +6,8 @@
 ## In This Article
 1. [Get Options Page](#get-options-page)
 1. [Connector](#connector)
-2. [Playback Options](#playback_options)
-3. [Rhino Options](#rhino_options)  
+2. [Playback Options](#playbackOptions)
+3. [Rhino Options](#rhinoOptions)  
 
 > Not all possible configurations and options are exposed under settings page and many of them are part of the configuration you will be using when running your automation. We will expose all available configurations in future releases.
 
