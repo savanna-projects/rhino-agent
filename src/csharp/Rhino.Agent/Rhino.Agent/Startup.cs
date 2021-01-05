@@ -76,7 +76,7 @@ namespace Rhino.Agent
 
             // Swagger settings
             services.AddSwaggerGen(c
-                => c.SwaggerDoc("v3", new OpenApiInfo { Title = "Rhino Api", Version = Version }));
+                => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Rhino Api", Version = "v3" }));
 
             // This lambda determines whether user consent for non-essential cookies is needed for a given request.
             services.Configure<CookiePolicyOptions>(options =>
@@ -128,7 +128,7 @@ namespace Rhino.Agent
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", $"RhinoApi {Version}"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"Rhino Api {Version}"));
             }
             else
             {

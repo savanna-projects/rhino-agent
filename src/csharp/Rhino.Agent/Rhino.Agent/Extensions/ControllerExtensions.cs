@@ -203,7 +203,7 @@ namespace Rhino.Agent.Extensions
             {
                 return new ContentResult
                 {
-                    Content = JsonConvert.SerializeObject(responseBody, Startup.JsonSettings),
+                    Content = JsonConvert.SerializeObject(responseBody, jsonSettings),
                     ContentType = MediaTypeNames.Application.Json,
                     StatusCode = statusCode.ToInt32()
                 };

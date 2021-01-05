@@ -18,9 +18,10 @@
 
 ## API Reference
 * [Configurations](./ApiReference/Configurations.md 'Configurations')
-* [Models](./ApiReference/Models.md 'Models')
-* [Test Cases (Rhino Specs)](./ApiReference/TestCases.md 'TestCases')
-* [Logs](./ApiReference/Logs.md 'Logs')
-* [Rhino](./ApiReference/Rhino.md 'Rhino')
-* [Plugins](./ApiReference/Plugins.md 'Plugins')
 * [Debug](./ApiReference/Debug.md 'Debug')
+* [Environment](./ApiReference/Environment.md 'Environment')
+* [Logs](./ApiReference/Logs.md 'Logs')
+* [Models](./ApiReference/Models.md 'Models')
+* [Plugins](./ApiReference/Plugins.md 'Plugins')
+* [Rhino](./ApiReference/Rhino.md 'Rhino')
+* [Test Cases (Rhino Specs)](./ApiReference/TestCases.md 'TestCases')
