@@ -25,3 +25,9 @@
 * [Plugins](./ApiReference/Plugins.md 'Plugins')
 * [Rhino](./ApiReference/Rhino.md 'Rhino')
 * [Test Cases (Rhino Specs)](./ApiReference/TestCases.md 'TestCases')
+
+## Official Connectors
+* [Gurock, TestRail Connector](https://github.com/savanna-projects/rhino-connectors-gurock)
+* [Atlassian, Jira with XRay (Cloud & Server) Connector](https://github.com/savanna-projects/rhino-connectors-atlassian)
+* [Plain Text Connector](https://github.com/savanna-projects/rhino-connectors-text)
+* [Microsoft, Azure DevOps (>= 2018) Connector](https://github.com/savanna-projects/rhino-connectors-azure)
