@@ -115,14 +115,9 @@ namespace Rhino.Agent.Extensions
                 {
                     var r = a.GetReferencedAssemblies();
                     subReferences.AddRange(r.Select(Assembly.Load));
-                    if (a.FullName.Contains("SimpleHtml"))
-                    {
-                        var c = "break here";
-                    }
                 }
-                catch (Exception e)
+                catch
                 {
-                    var b = "";
                     // ignore failed assemblies
                 }
             }
