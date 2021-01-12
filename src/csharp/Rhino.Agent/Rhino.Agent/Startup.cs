@@ -5,11 +5,15 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.Json;
 
 using Gravity.Abstraction.Logging;
+using Gravity.Extensions;
 using Gravity.Services.Comet;
 
 using LiteDB;
@@ -28,7 +32,6 @@ using Newtonsoft.Json.Serialization;
 
 using Rhino.Agent.Domain;
 using Rhino.Agent.Middleware;
-using Rhino.Api.Extensions;
 using Rhino.Api.Parser.Components;
 
 namespace Rhino.Agent
@@ -42,6 +45,7 @@ namespace Rhino.Agent
         // statics
         public static HttpClient HttpClient => new HttpClient();
         public static LiteDatabase LiteDb => new LiteDatabase("Data.dll");
+        public static IEnumerable<Type> Types => Extensions.Utilities.GetTypes();
         public static JsonSerializerSettings JsonSettings => new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
@@ -100,9 +104,9 @@ namespace Rhino.Agent
 
             services.AddSingleton(typeof(JsonSerializerSettings), JsonSettings);
             services.AddSingleton(typeof(LiteDatabase), LiteDb);
-            services.AddSingleton(typeof(IEnumerable<Type>), Utilities.Types);
+            services.AddSingleton(typeof(IEnumerable<Type>), Types);
             services.AddSingleton(typeof(HttpClient), HttpClient);
-            services.AddSingleton(typeof(Orbit), new Orbit(Utilities.Types));
+            services.AddSingleton(typeof(Orbit), new Orbit(Types));
             services.AddSingleton(typeof(ILogger), GetLogger());
         }
 
