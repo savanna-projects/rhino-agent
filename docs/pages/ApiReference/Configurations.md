@@ -11,20 +11,18 @@ GET /api/v3/configurations
 #### Response Content
 ```js
 {
-  "data": {
-    "configurations": [
-      {
-        "id": "03d1cd94-5e38-43d8-b010-e932d92f9067",
-        "models": [
-          "7adc7914-2bfe-41f0-9808-422bab5c412b"
-        ],
-        "tests": [
-          "8bed8025-3cgf-52g1-0919-533cbc6d523c"
-        ]
-      },
+  "configurations": [
+    {
+      "id": "03d1cd94-5e38-43d8-b010-e932d92f9067",
+      "models": [
+        "7adc7914-2bfe-41f0-9808-422bab5c412b"
+      ],
+      "tests": [
+        "8bed8025-3cgf-52g1-0919-533cbc6d523c"
+      ],
       ...
-    ]
-  }
+    }
+  ]
 }
 ```
 

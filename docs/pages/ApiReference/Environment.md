@@ -45,6 +45,80 @@ foo bar
 |404 |Not found, the _**Rhino Parameter**_ was not found by the specified name.     |
 |500 |Fail, the server encountered an unexpected error.                             |
 
+## Sync Parameters
+Align environment parameters with _**Rhino State Parameters**_.
+
+```
+GET /api/v3/environment/sync
+```
+
+#### Response Content
+```js
+{
+  "firtsName": "foo",
+  "lastName": "bar",
+  ...
+}
+```
+
+### Response Codes
+|Code|Description                                                                |
+|----|---------------------------------------------------------------------------|
+|200 |Success, the _**Rhino Parameters**_ were returned as part of the response. |
+|404 |Not found, the _**Rhino Environment**_ was not found by the specified user.|
+|500 |Fail, the server encountered an unexpected error.                          |
+
+## Get Parameter
+Returns the value of the specified _**Rhino Parameter**_.
+
+```
+GET /api/v3/environment/:parameter_name
+```
+|Name            |Type  |Description                         |
+|----------------|------|------------------------------------|
+|parameter_name|string|The Name of the _**Rhino Parameter**_.|
+
+#### Response Content
+```
+foo bar
+```
+
+### Response Codes
+|Code|Description                                                                   |
+|----|------------------------------------------------------------------------------|
+|200 |Success, the _**Rhino Parameter**_ value was returned as part of the response.|
+|404 |Not found, the _**Rhino Parameter**_ was not found by the specified name.     |
+|500 |Fail, the server encountered an unexpected error.                             |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Add or Replace Parameter
 Updates the value of the specified _**Rhino Parameter**_ if the parameter exists or create a new one if not.
 
