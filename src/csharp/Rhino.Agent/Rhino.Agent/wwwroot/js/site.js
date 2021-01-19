@@ -31,7 +31,7 @@ var E_BODY = document.body;
 var E_CLEAR = "#clear";
 var E_COMPONENTS = "#components";
 var E_CONNECTOR_CAPABILITIES = "#connector_capabilities";
-var E_CONNECTOR_TYPE = "#connector_type";
+var E_connectorType = "#connectorType";
 var E_CONTENT_WRAPPER = "#content_wrapper";
 // -- D ---
 var E_DRIVER_CAPABILITIES = "#driver_capabilities";
@@ -41,7 +41,7 @@ var E_EXPECTED_VALUE = "#expected_value";
 // -- F --
 var E_FOOTER = "#footer";
 // -- G --
-var E_GRID_ENDPOINT = "#grid_endpoint";
+var E_gridEndpoint = "#gridEndpoint";
 // -- H --
 var E_HEADER = "#header";
 var E_HEADER_SCENARIO = "a[href='#scenario']";
@@ -76,22 +76,22 @@ var E_RADIO_PATH = "#radio_path";
 var E_RADIO_PATH_ID = "#radio_path_id";
 var E_RADIO_QUERY_SELECTOR = "#radio_query_selector";
 var E_REGULAR_EXPRESSION = "#regular_expression";
-var E_RHINO_PASSWORD = "#rhino_password";
-var E_RHINO_USER_NAME = "#rhino_user_name";
+var E_password = "#password";
+var E_userName = "#userName";
 // -- S --
 var E_SEND = "#send";
-var E_SERVER_ADDRESS = "#server_address";
+var E_serverAddress = "#serverAddress";
 var E_STEPS_COUNT = "#steps_count";
 // -- T --
 var E_TAG_NAME = "#tag_name";
 var E_TEST_CASE_LITERAL = "#test_case_literal";
 var E_TEST_CASE_TITLE = "#test_case_title";
 var E_TEST_STEPS = "#test_steps";
-var E_TEST_SUITE = "#test_suite";
+var E_testSuite = "#testSuite";
 // -- U --
-var E_USER_NAME = "#user_name";
+var E_userName = "#userName";
 // -- W --
-var E_WEB_DRIVER = "#web_driver";
+var E_webDriver = "#webDriver";
 var E_WIDGET_FRAME = "#widget_frame";
 var E_WIDGET_TOGGLE = "#widget_toggle";
 
@@ -115,6 +115,8 @@ var C_NEW_LINE = "\r\n";
 // -- S --
 var C_STATE_OBJECT_KEY = "state";
 var C_STATE_SETTINGS_OBJECT_KEY = "settings";
+//-- U --
+var C_USER_INTERFACE = "ui";
 
 // REPOSITORY: tags
 // -- A --
@@ -163,6 +165,16 @@ window.addEventListener("message", messageHandler, false);
  * @param {any} e Message event arguments
  */
 function messageHandler(e) {
+    if (e.data.from && e.data.from === "middleware" && e.data.action && e.data.action === "send") {
+        sendTestCase(e.data.data);
+        return;
+    }
+
+    if (e.data.from && e.data.from === "middleware" && e.data.action && e.data.action === "playback") {
+        playback(e.data.data);
+        return;
+    }
+
     if (e.data.action && e.data.action === "toggle") {
         // debug
         console.log(e);
@@ -240,7 +252,7 @@ function operatorsHandler(data) {
  * @param {any} data Data Object fetched from the server
  */
 function connectorsHandler(data) {
-    populateSelect(data, E_CONNECTOR_TYPE, (response) => new Option(response.name, response.value));
+    populateSelect(data, E_connectorType, (response) => new Option(response.name, response.value));
 }
 // #endregion
 
@@ -451,7 +463,7 @@ function clearWidget(includeSteps = false) {
         e.value = C_EMPTY_OPTION;
     });
 
-    $("input[type='text']").not(E_GRID_ENDPOINT).not(E_TEST_CASE_TITLE).each((_, e) => {
+    $("input[type='text']").not(E_gridEndpoint).not(E_TEST_CASE_TITLE).each((_, e) => {
         e.value = C_EMPTY_STRING;
     });
 
@@ -620,46 +632,49 @@ function putHelpRow(rhinoAction, id) {
  * Summary. Playback the current recorded test case against available Selenium Gird
  */
 function actionPlaybackHandler() {
-    // deserialize last state
-    var requestBody = { type: "getSettings" };
-
-    // get
-    chrome.runtime.sendMessage(R_EXTENSION_ID, requestBody, function (stateObj) {
-        console.log("Settings loaded.");
-
-        // load temporary configuration
-        var c = getConfiguration(stateObj);
-
-        // parse test case script
-        var testObj = getTestCaseObject();
-        var testSrc = getTestCaseScript(testObj).join(C_NEW_LINE);
-        c.testsRepository = [testSrc];
-
-        // exit conditions
-        if ($(E_PLAYBACK_PROGRESS).length) {
-            console.log("Another playback is currently on progress, please wait until it finish and try again.");
-            return;
-        }
-
-        // RUN PLAYBACK
-        //-- toggle into test-case-scenario panel (if not already)
-        var headerScenario = $(E_HEADER_SCENARIO);
-        if (headerScenario.attr("aria-expanded") !== "true") {
-            headerScenario.click();
-        }
-
-        //-- show async progress bar while playback is active
-        showPlaybackProgress("Automation is currently running, this can take a while. Please wait...");
-
-        //-- run async operation
-        post(R_PLAYBACK, { config: c }, (testRun) => {
-            console.log(testRun);
-            publishTestRun(testRun);
-        }, () => $(E_PLAYBACK_PROGRESS).remove());
-    });
+    var request = {
+        from: C_USER_INTERFACE,
+        route: "/api/getSettingsProxy",
+        action: 'playback'
+    }
+    window.postMessage(request, "*");
 }
 
-// TODO: clean
+function playback(stateObj) {
+    console.log("Settings loaded.");
+
+    // load temporary configuration
+    var c = getConfiguration(stateObj);
+
+    // parse test case script
+    var testObj = getTestCaseObject();
+    var testSrc = getTestCaseScript(testObj).join(C_NEW_LINE);
+    c.testsRepository = [testSrc];
+
+    // exit conditions
+    if ($(E_PLAYBACK_PROGRESS).length) {
+        console.log("Another playback is currently on progress, please wait until it finish and try again.");
+        return;
+    }
+
+    // RUN PLAYBACK
+    //-- toggle into test-case-scenario panel (if not already)
+    var headerScenario = $(E_HEADER_SCENARIO);
+    if (headerScenario.attr("aria-expanded") !== "true") {
+        headerScenario.click();
+    }
+
+    //-- show async progress bar while playback is active
+    showPlaybackProgress("Automation is currently running, this can take a while. Please wait...");
+
+    //-- run async operation
+    post(R_PLAYBACK, { config: c }, (testRun) => {
+        console.log(testRun);
+        publishTestRun(testRun);
+        putLiteral();
+    }, () => $(E_PLAYBACK_PROGRESS).remove());
+}
+
 function showPlaybackProgress(message) {
     var html = `
         <div id="playback_progress" class="alert alert-dismissible alert-info bring-to-front fixed-bottom">
@@ -704,45 +719,46 @@ function publishTestRun(testRun) {
 
 // #region *** WIDGET: send to ALM   ***
 function sendHandler() {
-    // deserialize last state
-    var requestBody = { type: "getSettings" };
+    var request = {
+        from: C_USER_INTERFACE,
+        route: "/api/getSettingsProxy",
+        action: 'send'
+    }
+    window.postMessage(request, "*");
+}
 
-    // get
-    chrome.runtime.sendMessage(R_EXTENSION_ID, requestBody, function (stateObj) {
-        console.log("Settings loaded.");
+function sendTestCase(stateObj) {
+    // exit conditions
+    var connectorType = stateObj.connectorOptions.connector;
+    if (stateObj === null || connectorType === C_EMPTY_OPTION || connectorType === "connector_text") {
+        putLiteral();
+        sendAsString();
+        return;
+    }
 
-        // exit conditions
-        var connector_type = stateObj.connector_options.connector_type;
-        if (stateObj === null || connector_type === C_EMPTY_OPTION || connector_type === "connector_text") {
-            sendAsString();
-            putLiteral();
-            return;
-        }
+    // get objects for test creation
+    var config = getConfiguration(stateObj);
+    config.connectorConfiguration = {
+        collection: stateObj.connectorOptions.collection,
+        project: stateObj.connectorOptions.project,
+        userName: stateObj.connectorOptions.userName,
+        password: stateObj.connectorOptions.password,
+        connector: stateObj.connectorOptions.connector,
+        asOsUser: stateObj.connectorOptions.asOsUser
+    };
 
-        // get objects for test creation
-        var config = getConfiguration(stateObj);
-        config.connectorConfiguration = {
-            collection: stateObj.connector_options.server_address,
-            project: stateObj.connector_options.project,
-            userName: stateObj.connector_options.user_name,
-            password: stateObj.connector_options.password,
-            connector: stateObj.connector_options.connector_type,
-            asOsUser: stateObj.connector_options.as_os_user
-        };
+    // parse test case script
+    var testObj = getTestCaseObject();
+    var testSrc = JSON.stringify(getTestCaseScript(testObj));
+    var requestBody = { config: config, test: testSrc, suite: stateObj.connectorOptions.testSuite };
 
-        // parse test case script
-        var testObj = getTestCaseObject();
-        var testSrc = JSON.stringify(getTestCaseScript(testObj));
-        var requestBody = { config: config, test: testSrc, suite: stateObj.connector_options.test_suite };
+    //-- show async progress bar while playback is active
+    showPlaybackProgress("Creating test on target provider, Please wait...");
 
-        //-- show async progress bar while playback is active
-        showPlaybackProgress("Creating test on target provider, Please wait...");
-
-        //-- run async operation
-        post(R_SEND, requestBody, (data) => {
-            console.log(data);
-        }, () => $(E_PLAYBACK_PROGRESS).remove());
-    });
+    //-- run async operation
+    post(R_SEND, requestBody, (data) => {
+        console.log(data);
+    }, () => $(E_PLAYBACK_PROGRESS).remove());
 }
 
 function sendAsString() {
@@ -784,23 +800,23 @@ function loadSettings() {
 
 function loadAllSettings(stateObj) {
     // connector options
-    $(E_CONNECTOR_TYPE).val(stateObj.connector_options.connector_type);
-    $(E_SERVER_ADDRESS).val(stateObj.connector_options.server_address);
-    $(E_PROJECT).val(stateObj.connector_options.project);
-    $(E_TEST_SUITE).val(stateObj.connector_options.test_suite);
-    $(E_USER_NAME).val(stateObj.connector_options.user_name);
-    $(E_PASSEORD).val(stateObj.connector_options.password);
-    $(E_CONNECTOR_CAPABILITIES).val(stateObj.connector_options.capabilities);
+    $(E_connectorType).val(stateObj.connectorOptions.connectorType);
+    $(E_serverAddress).val(stateObj.connectorOptions.serverAddress);
+    $(E_PROJECT).val(stateObj.connectorOptions.project);
+    $(E_testSuite).val(stateObj.connectorOptions.testSuite);
+    $(E_userName).val(stateObj.connectorOptions.userName);
+    $(E_PASSEORD).val(stateObj.connectorOptions.password);
+    $(E_CONNECTOR_CAPABILITIES).val(stateObj.connectorOptions.capabilities);
 
     // playback options
-    $(E_WEB_DRIVER).val(stateObj.playback_options.web_driver);
-    $(E_GRID_ENDPOINT).val(stateObj.playback_options.grid_endpoint);
-    $(E_DRIVER_CAPABILITIES).val(stateObj.playback_options.capabilities);
-    $(E_DRIVER_OPTIONS).val(stateObj.playback_options.options);
+    $(E_webDriver).val(stateObj.playbackOptions.webDriver);
+    $(E_gridEndpoint).val(stateObj.playbackOptions.gridEndpoint);
+    $(E_DRIVER_CAPABILITIES).val(stateObj.playbackOptions.capabilities);
+    $(E_DRIVER_OPTIONS).val(stateObj.playbackOptions.options);
 
     // rhino options
-    $(E_RHINO_USER_NAME).val(stateObj.rhino_options.rhino_user_name);
-    $(E_RHINO_PASSWORD).val(stateObj.rhino_options.rhino_password);
+    $(E_userName).val(stateObj.rhinoOptions.userName);
+    $(E_password).val(stateObj.rhinoOptions.password);
 }
 
 function loadTestScenario(stateObj) {
@@ -829,9 +845,9 @@ function saveState() {
  */
 function saveSettings() {
     var stateObj = {
-        playback_options: getPlaybackOptionsState(),
-        connector_options: getConnectorOptions(),
-        rhino_options: getRhinoOptions()
+        playbackOptions: getPlaybackOptionsState(),
+        connectorOptions: getConnectorOptions(),
+        rhinoOptions: getRhinoOptions()
     };
 
     // save to local storage
@@ -844,8 +860,8 @@ function saveSettings() {
 
 function getPlaybackOptionsState() {
     return {
-        web_driver: $(E_WEB_DRIVER + " option").length > 0 ? $(E_WEB_DRIVER + " option:selected").val() : C_EMPTY_OPTION,
-        grid_endpoint: $(E_GRID_ENDPOINT).val(),
+        webDriver: $(E_webDriver + " option").length > 0 ? $(E_webDriver + " option:selected").val() : C_EMPTY_OPTION,
+        gridEndpoint: $(E_gridEndpoint).val(),
         capabilities: $(E_DRIVER_CAPABILITIES).val(),
         options: $(E_DRIVER_OPTIONS).val()
     };
@@ -861,17 +877,17 @@ function getTestScenarioState() {
 
 function getConnectorOptions() {
     // shortcuts
-    var con_tp = $(E_CONNECTOR_TYPE + " option").length > 0
-        ? $(E_CONNECTOR_TYPE + " option:selected").val()
+    var con_tp = $(E_connectorType + " option").length > 0
+        ? $(E_connectorType + " option:selected").val()
         : C_EMPTY_OPTION;
 
     // setup state object
     return {
-        connector_type: con_tp,
-        server_address: $(E_SERVER_ADDRESS).val(),
+        connectorType: con_tp,
+        serverAddress: $(E_serverAddress).val(),
         project: $(E_PROJECT).val(),
-        test_suite: $(E_TEST_SUITE).val(),
-        user_name: $(E_USER_NAME).val(),
+        testSuite: $(E_testSuite).val(),
+        userName: $(E_userName).val(),
         password: $(E_PASSEORD).val(),
         capabilities: $(E_CONNECTOR_CAPABILITIES).val()
     };
@@ -879,8 +895,8 @@ function getConnectorOptions() {
 
 function getRhinoOptions() {
     return {
-        rhino_user_name: $(E_RHINO_USER_NAME).val(),
-        rhino_password: $(E_RHINO_PASSWORD).val()
+        userName: $(E_userName).val(),
+        password: $(E_password).val()
     };
 }
 // #endregion
@@ -1081,28 +1097,25 @@ function getConfiguration(settings) {
     }
 
     // normalize
-    settings.playback_options.capabilities = settings.playback_options.capabilities === ""
+    settings.playbackOptions.capabilities = settings.playbackOptions.capabilities === ""
         ? '{}'
-        : settings.playback_options.capabilities
+        : settings.playbackOptions.capabilities
 
-    settings.playback_options.options = settings.playback_options.capabilities === ""
+    settings.playbackOptions.options = settings.playbackOptions.capabilities === ""
         ? '{}'
-        : settings.playback_options.options
+        : settings.playbackOptions.options
 
     // setup conditions
-    var driver_parameters = !settings.playback_options.grid_endpoint.startsWith("http")
-        ? [{
-            driver: settings.playback_options.web_driver,
-            driverBinaries: settings.playback_options.grid_endpoint,
-        }]
-        : [{
-            driver: settings.playback_options.web_driver,
-            driverBinaries: settings.playback_options.grid_endpoint,
-        }];
+    var driver_parameters = [
+        {
+            driver: settings.playbackOptions.webDriver,
+            driverBinaries: settings.playbackOptions.gridEndpoint
+        }
+    ];
 
     // capabilities
     for (var i = 0; i < driver_parameters.length; i++) {
-        driver_parameters[i].capabilities = JSON.parse(settings.playback_options.capabilities);
+        driver_parameters[i].capabilities = JSON.parse(settings.playbackOptions.capabilities);
         var stateObj = getObjectFromStorage(C_STATE_OBJECT_KEY);
         if (stateObj !== null && typeof stateObj !== 'undefined') {
             driver_parameters[i].capabilities.name = stateObj.test_case_scenario.test_case_title;
@@ -1111,7 +1124,7 @@ function getConfiguration(settings) {
         driver_parameters[i].capabilities.project = "Rhino Actions Recorder";
 
         // options
-        driver_parameters[i].options = JSON.parse(settings.playback_options.options);
+        driver_parameters[i].options = JSON.parse(settings.playbackOptions.options);
     }
 
     return {
@@ -1119,11 +1132,11 @@ function getConfiguration(settings) {
             errorOnExitCode: 10
         },
         authentication: {
-            userName: settings.rhino_options.rhino_user_name,
-            password: settings.rhino_options.rhino_password
+            userName: settings.rhinoOptions.userName,
+            password: settings.rhinoOptions.password
         },
         driverParameters: driver_parameters,
-        unattached: true,
+        //unattached: true,
         name: C_CONFIGURATION_NAME
     };
 }

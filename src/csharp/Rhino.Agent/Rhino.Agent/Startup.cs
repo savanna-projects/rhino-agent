@@ -28,7 +28,6 @@ using Newtonsoft.Json.Serialization;
 
 using Rhino.Agent.Domain;
 using Rhino.Agent.Middleware;
-using Rhino.Api.Extensions;
 using Rhino.Api.Parser.Components;
 
 namespace Rhino.Agent
@@ -42,6 +41,7 @@ namespace Rhino.Agent
         // statics
         public static HttpClient HttpClient => new HttpClient();
         public static LiteDatabase LiteDb => new LiteDatabase("Data.dll");
+        public static IEnumerable<Type> Types => Extensions.Utilities.GetTypes();
         public static JsonSerializerSettings JsonSettings => new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
@@ -76,7 +76,7 @@ namespace Rhino.Agent
 
             // Swagger settings
             services.AddSwaggerGen(c
-                => c.SwaggerDoc("v3", new OpenApiInfo { Title = "Rhino Api", Version = Version }));
+                => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Rhino Api", Version = "v3" }));
 
             // This lambda determines whether user consent for non-essential cookies is needed for a given request.
             services.Configure<CookiePolicyOptions>(options =>
@@ -97,12 +97,13 @@ namespace Rhino.Agent
             services.AddScoped<RhinoLogsRepository, RhinoLogsRepository>();
             services.AddScoped<RhinoPluginRepository, RhinoPluginRepository>();
             services.AddScoped<RhinoKbRepository, RhinoKbRepository>();
+            services.AddScoped<RhinoEnvironmentRepository, RhinoEnvironmentRepository>();
 
             services.AddSingleton(typeof(JsonSerializerSettings), JsonSettings);
             services.AddSingleton(typeof(LiteDatabase), LiteDb);
-            services.AddSingleton(typeof(IEnumerable<Type>), Utilities.Types);
+            services.AddSingleton(typeof(IEnumerable<Type>), Types);
             services.AddSingleton(typeof(HttpClient), HttpClient);
-            services.AddSingleton(typeof(Orbit), new Orbit(Utilities.Types));
+            services.AddSingleton(typeof(Orbit), new Orbit(Types));
             services.AddSingleton(typeof(ILogger), GetLogger());
         }
 
@@ -128,7 +129,7 @@ namespace Rhino.Agent
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", $"RhinoApi {Version}"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"Rhino Api {Version}"));
             }
             else
             {

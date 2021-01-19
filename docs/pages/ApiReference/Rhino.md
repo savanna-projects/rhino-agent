@@ -342,7 +342,7 @@ A collection of _**Rhino Configuration**_. Each item in the request body follows
     "gravityEndpoint": "",
     "authentication": {
       "password": "<rhino_user>",
-      "userName": "<rhino_password>"
+      "userName": "<password>"
     },
     "engineConfiguration": {
       "maxParallel": 1,

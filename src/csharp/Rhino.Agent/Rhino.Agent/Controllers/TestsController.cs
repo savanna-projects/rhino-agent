@@ -192,29 +192,6 @@ namespace Rhino.Agent.Controllers
         #endregion
 
         #region *** PATCH  ***
-        // PATCH api/v3/tests/<id>/configurations/<configuration>
-        [HttpPatch("{id}/configurations/{configuration}")]
-        public async Task<IActionResult> PatchConfiguration(string id, string configuration)
-        {
-            // patch
-            var (statusCode, _) = rhinoTest.Patch(Request.GetAuthentication(), id, configuration);
-
-            // exit conditions
-            if (statusCode == HttpStatusCode.BadRequest)
-            {
-                return await this.ErrorResultAsync("You must provide configuration ID in the request route.").ConfigureAwait(false);
-            }
-            if (statusCode == HttpStatusCode.NotFound)
-            {
-                return await this
-                    .ErrorResultAsync($"Collection [{id}] or Configuration [{configuration}] were not found.", HttpStatusCode.NotFound)
-                    .ConfigureAwait(false);
-            }
-
-            // response
-            return this.ContentResult(responseBody: default, statusCode);
-        }
-
         // PATCH api/v3/tests/<guid>
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchTestCases(string id)
@@ -259,6 +236,29 @@ namespace Rhino.Agent.Controllers
 
             // response
             return Redirect($"/api/v3/tests/{id}");
+        }
+
+        // PATCH api/v3/tests/<id>/configurations/<configuration>
+        [HttpPatch("{id}/configurations/{configuration}")]
+        public async Task<IActionResult> PatchConfiguration(string id, string configuration)
+        {
+            // patch
+            var (statusCode, _) = rhinoTest.Patch(Request.GetAuthentication(), id, configuration);
+
+            // exit conditions
+            if (statusCode == HttpStatusCode.BadRequest)
+            {
+                return await this.ErrorResultAsync("You must provide configuration ID in the request route.").ConfigureAwait(false);
+            }
+            if (statusCode == HttpStatusCode.NotFound)
+            {
+                return await this
+                    .ErrorResultAsync($"Collection [{id}] or Configuration [{configuration}] were not found.", HttpStatusCode.NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // response
+            return this.ContentResult(responseBody: default, statusCode);
         }
         #endregion
 

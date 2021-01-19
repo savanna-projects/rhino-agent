@@ -18,9 +18,16 @@
 
 ## API Reference
 * [Configurations](./ApiReference/Configurations.md 'Configurations')
-* [Models](./ApiReference/Models.md 'Models')
-* [Test Cases (Rhino Specs)](./ApiReference/TestCases.md 'TestCases')
-* [Logs](./ApiReference/Logs.md 'Logs')
-* [Rhino](./ApiReference/Rhino.md 'Rhino')
-* [Plugins](./ApiReference/Plugins.md 'Plugins')
 * [Debug](./ApiReference/Debug.md 'Debug')
+* [Environment](./ApiReference/Environment.md 'Environment')
+* [Logs](./ApiReference/Logs.md 'Logs')
+* [Models](./ApiReference/Models.md 'Models')
+* [Plugins](./ApiReference/Plugins.md 'Plugins')
+* [Rhino](./ApiReference/Rhino.md 'Rhino')
+* [Test Cases (Rhino Specs)](./ApiReference/TestCases.md 'TestCases')
+
+## Official Connectors
+* [Gurock, TestRail Connector](https://github.com/savanna-projects/rhino-connectors-gurock)
+* [Atlassian, Jira with XRay (Cloud & Server) Connector](https://github.com/savanna-projects/rhino-connectors-atlassian)
+* [Plain Text Connector](https://github.com/savanna-projects/rhino-connectors-text)
+* [Microsoft, Azure DevOps (>= 2018) Connector](https://github.com/savanna-projects/rhino-connectors-azure)

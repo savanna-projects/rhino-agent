@@ -11,23 +11,21 @@ GET /api/v3/tests
 #### Response Content
 ```js
 {
-  "data": {
-    "collection": [
-      {
-        "id": "1ed4ea1c-9959-40d7-b40e-717b8fc1cfb4",
-        "configurations": [
-          "03d1cd94-5e38-43d8-b010-e932d92f9067",
-          "8bed8025-3cgf-52g1-0919-533cbc6d523c"
-        ],
-        "tests": 3
-      },
-      {
-        "id": "ba6b3da7-1979-48ea-9b00-e30682f5f111",
-        "configurations": [],
-        "tests": 3
-      }
-    ]
-  }
+  "collection": [
+    {
+      "id": "1ed4ea1c-9959-40d7-b40e-717b8fc1cfb4",
+      "configurations": [
+        "03d1cd94-5e38-43d8-b010-e932d92f9067",
+        "8bed8025-3cgf-52g1-0919-533cbc6d523c"
+      ],
+      "tests": 3
+    },
+    {
+      "id": "ba6b3da7-1979-48ea-9b00-e30682f5f111",
+      "configurations": [],
+      "tests": 3
+    }
+  ]
 }
 ```
 
@@ -181,7 +179,7 @@ New _**Rhino Test Case Collection**_ using the same response format as [Get Test
 #### Response Sample
 ```js
 {
-  "data": {
+  {
     "id": "73e21d1b-770b-4347-805a-eae4f622a146"
   }
 }
@@ -208,12 +206,10 @@ GET /api/v3/tests/:collection_id/configurations
 #### Response Content
 ```js
 {
-  "data": {
-    "configurations": [
-      "03d1cd94-5e38-43d8-b010-e932d92f9067",
-      "8bed8025-3cgf-52g1-0919-533cbc6d523c"
-    ]
-  }
+  "configurations": [
+    "03d1cd94-5e38-43d8-b010-e932d92f9067",
+    "8bed8025-3cgf-52g1-0919-533cbc6d523c"
+  ]
 }
 ```
 

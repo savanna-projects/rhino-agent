@@ -19,7 +19,7 @@ Under the folder you have deployed Rhino API, open the file ```appSettings.json`
 
 ### Report Configuration
 > A list of all available reporters on your server can be fetch by sending the following GET request:
-> _**https://{server_address}:9001/api/v3/widget/reporters**_.  
+> _**https://{serverAddress}:9001/api/v3/widget/reporters**_.  
 
 This settings section is responsible for configuring the folders and locations in which Rhino will create reports and logs.  
 
