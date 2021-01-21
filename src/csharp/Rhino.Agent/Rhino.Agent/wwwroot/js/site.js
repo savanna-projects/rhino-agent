@@ -60,7 +60,7 @@ var E_MAIN_CONTAINER = "#main_container";
 // -- O --
 var E_OPERATORS = "#operators";
 // -- P --
-var E_PASSEORD = "#password";
+var E_PASSWORD = "#password";
 var E_PATH = "#path";
 var E_PATH_ID = "#path_id";
 var E_PLAYBACK_PROGRESS = "#playback_progress";
@@ -76,11 +76,9 @@ var E_RADIO_PATH = "#radio_path";
 var E_RADIO_PATH_ID = "#radio_path_id";
 var E_RADIO_QUERY_SELECTOR = "#radio_query_selector";
 var E_REGULAR_EXPRESSION = "#regular_expression";
-var E_password = "#password";
-var E_userName = "#userName";
 // -- S --
 var E_SEND = "#send";
-var E_serverAddress = "#serverAddress";
+var E_SERVER_ADDRESS = "#serverAddress";
 var E_STEPS_COUNT = "#steps_count";
 // -- T --
 var E_TAG_NAME = "#tag_name";
@@ -89,7 +87,7 @@ var E_TEST_CASE_TITLE = "#test_case_title";
 var E_TEST_STEPS = "#test_steps";
 var E_testSuite = "#testSuite";
 // -- U --
-var E_userName = "#userName";
+var E_USER_NAME = "#userName";
 // -- W --
 var E_webDriver = "#webDriver";
 var E_WIDGET_FRAME = "#widget_frame";
@@ -801,11 +799,11 @@ function loadSettings() {
 function loadAllSettings(stateObj) {
     // connector options
     $(E_connectorType).val(stateObj.connectorOptions.connectorType);
-    $(E_serverAddress).val(stateObj.connectorOptions.serverAddress);
+    $(E_SERVER_ADDRESS).val(stateObj.connectorOptions.serverAddress);
     $(E_PROJECT).val(stateObj.connectorOptions.project);
     $(E_testSuite).val(stateObj.connectorOptions.testSuite);
-    $(E_userName).val(stateObj.connectorOptions.userName);
-    $(E_PASSEORD).val(stateObj.connectorOptions.password);
+    $(E_USER_NAME).val(stateObj.connectorOptions.userName);
+    $(E_PASSWORD).val(stateObj.connectorOptions.password);
     $(E_CONNECTOR_CAPABILITIES).val(stateObj.connectorOptions.capabilities);
 
     // playback options
@@ -815,8 +813,8 @@ function loadAllSettings(stateObj) {
     $(E_DRIVER_OPTIONS).val(stateObj.playbackOptions.options);
 
     // rhino options
-    $(E_userName).val(stateObj.rhinoOptions.userName);
-    $(E_password).val(stateObj.rhinoOptions.password);
+    $(E_USER_NAME).val(stateObj.rhinoOptions.userName);
+    $(E_PASSWORD).val(stateObj.rhinoOptions.password);
 }
 
 function loadTestScenario(stateObj) {
@@ -884,19 +882,19 @@ function getConnectorOptions() {
     // setup state object
     return {
         connectorType: con_tp,
-        serverAddress: $(E_serverAddress).val(),
+        serverAddress: $(E_SERVER_ADDRESS).val(),
         project: $(E_PROJECT).val(),
         testSuite: $(E_testSuite).val(),
-        userName: $(E_userName).val(),
-        password: $(E_PASSEORD).val(),
+        userName: $(E_USER_NAME).val(),
+        password: $(E_PASSWORD).val(),
         capabilities: $(E_CONNECTOR_CAPABILITIES).val()
     };
 }
 
 function getRhinoOptions() {
     return {
-        userName: $(E_userName).val(),
-        password: $(E_password).val()
+        userName: $(E_USER_NAME).val(),
+        password: $(E_PASSWORD).val()
     };
 }
 // #endregion
