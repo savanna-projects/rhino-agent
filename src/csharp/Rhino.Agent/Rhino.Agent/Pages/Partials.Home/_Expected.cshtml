@@ -10,7 +10,7 @@
                 <label class="col-form-label col-form-label-sm">Available Components</label>
                 <select class="form-control form-control-sm w-50  text-info" id="components">
                     <option value="-1"></option>
-                    <option title="Takes the current page url as the actual result, ignoring any element selected." 
+                    <option title="Takes the current page url as the actual result, ignoring any element selected."
                             value="url">
                         Page address
                     </option>
@@ -49,32 +49,42 @@
                     <option title="Asserts the element [exists] status. The actual result is true if the element does not exist or false if exists."
                             value="exists-false">
                         Element does not exist
-                    </option>                    
+                    </option>
                     <option title="Asserts the element [stale] status. The actual result is true if the element is stale or false if not."
                             value="stale-true">
                         Element is stale
-                    </option>                    
+                    </option>
                     <option title="Asserts the element [stale] status. The actual result is true if the element is not stale or false if stale."
                             value="stale-false">
                         Element is not stale
-                    </option>                    
-                    <option title="Asserts the element [visibility] status. The actual result is true if the element is visible or false not." 
+                    </option>
+                    <option title="Asserts the element [visibility] status. The actual result is true if the element is visible or false not."
                             value="visible-true">
                         Element is visible
-                    </option>                    
+                    </option>
                     <option title="Asserts the element [visibility] status. The actual result is true if the element is not visible or false if visible."
                             value="visible-false">
                         Element is not visible
                     </option>
-                    
-                    <option title="Asserts the element [selected] status. The actual result is true if the element is selected or false not." 
+
+                    <option title="Asserts the element [selected] status. The actual result is true if the element is selected or false not."
                             value="selected-true">
                         Element is selected
                     </option>
-                    
+
                     <option title="Asserts the element [selected] status. The actual result is true if the element is not selected or false selected."
                             value="selected-false">
                         Element is selected
+                    </option>
+
+                    <option title="Assert values in the response body of GetRequest and PostRequest actions. The element to act on is JPath token."
+                            value="response_body">
+                        Response Body
+                    </option>
+
+                    <option title="Assert the response status code (e.g. 200, 404, etc.)."
+                            value="status_code">
+                        Response Status Code
                     </option>
                 </select>
             </div>

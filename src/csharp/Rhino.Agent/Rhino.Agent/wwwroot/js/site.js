@@ -912,6 +912,23 @@ function getRhinoOptions() {
  */
 function getRhinoActions(actionLiteralModel, isUi = false) {
     var rhinoActions = [];
+
+    // TODO: handle non-standard actions
+    if (isNullOrEmpty(actionLiteralModel.item2.action.examples)) {
+        var rhinoAction = {
+            actionPlugin: actionLiteralModel.item2.key,
+            actionLiteral: actionLiteralModel.item2.literal,
+            verb: actionLiteralModel.item2.verb,
+            actionRule: C_EMPTY_STRING,
+            description: C_EMPTY_STRING,
+            id: 0
+        };
+
+        rhinoAction.html = getRhinoActionHtml(rhinoAction, isUi);
+        rhinoActions.push(rhinoAction);
+        return rhinoActions;
+    }
+
     $(actionLiteralModel.item2.action.examples).each((i, e) => {
         rhinoAction = {
             actionPlugin: actionLiteralModel.item2.key,
@@ -1002,6 +1019,10 @@ function getArgumentHtml(rhinoAction, isUi) {
     // get argument value
     var argument = isUi ? $(E_ARGUMENT).val() : rhinoAction.actionRule.argument;
 
+    if (isNullOrEmpty(argument)) {
+        return C_EMPTY_STRING;
+    }
+
     if (argument.startsWith("{{")) {
         return " " + getArgumentSpan(argument);
     }
@@ -1012,6 +1033,10 @@ function getArgumentHtml(rhinoAction, isUi) {
 }
 
 function getElementToActOnHtml(rhinoAction) {
+    if (isNullOrEmpty(rhinoAction.actionRule.elementToActOn)) {
+        return C_EMPTY_STRING;
+    }
+
     if (rhinoAction.actionRule.elementToActOn.startsWith("{{")) {
         return " " + getVerbSpan(rhinoAction.verb) + " " + getArgumentSpan(rhinoAction.actionRule.elementToActOn)
     }
@@ -1386,6 +1411,23 @@ function count(array) {
         console.error(e);
         return -1;
     }
+}
+
+/**
+ * Indicates whether the specified object is null or an empty string ("").
+ * 
+ * @param {any} obj object to evaluate.
+ *
+ * @returns {boolean}  true if the value parameter is null or an empty string (""); otherwise, false.
+ */
+function isNullOrEmpty(obj) {
+    // setup conditions
+    var isDefined = typeof (obj) !== 'undefined';
+    var isNotNull = isDefined && obj !== null;
+    var isNotEmpty = Array.isArray(obj) ? obj.length > 0 : obj !== '';
+
+    // get
+    return !isDefined || !isNotNull || !isNotEmpty;
 }
 
 // EXTENSIONS
