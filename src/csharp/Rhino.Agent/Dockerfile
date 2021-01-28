@@ -1,11 +1,11 @@
 # Setup: Base
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-focal AS base
 WORKDIR /app
 EXPOSE 9000
 EXPOSE 9001
 
 # Build
-FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
 WORKDIR /src
 COPY ["Rhino.Agent/Rhino.Agent.csproj", "Rhino.Agent/"]
 RUN dotnet restore "Rhino.Agent/Rhino.Agent.csproj"
