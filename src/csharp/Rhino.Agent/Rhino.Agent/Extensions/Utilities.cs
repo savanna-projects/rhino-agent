@@ -136,7 +136,7 @@ namespace Rhino.Agent.Extensions
                     // ignore exceptions
                 }
             }
-            return types.DistinctBy(i => i.FullName);
+            return types.DistinctBy(i => i.FullName).ToList();
         }
 
         private static IEnumerable<Assembly> GetReferencedAssemblies()
