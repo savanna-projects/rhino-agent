@@ -8,7 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5F276F3
 		..\..\..\build\azure_pipelines.yaml = ..\..\..\build\azure_pipelines.yaml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{3712E923-66B8-4982-9BE2-045E1B95C598}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{3712E923-66B8-4982-9BE2-045E1B95C598}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\docs\pages\Home.md = ..\..\..\docs\pages\Home.md
 		..\..\..\README.md = ..\..\..\README.md

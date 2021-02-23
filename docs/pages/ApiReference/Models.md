@@ -153,6 +153,7 @@ The request body follows the same format as [Get Model](#get-model) response con
 |Code|Description                                                                                      |
 |----|-------------------------------------------------------------------------------------------------|
 |201 |Success, the _**Models Collection**_ created and identifier was returned as part of the response.|
+|204 |No Content, the _**Models Collection**_ or a collection with the same name already exists.       |
 |400 |Bad Request, the request is missing a mandatory field(s) or bad formatted.                       |
 |500 |Fail, the server encountered an unexpected error.                                                |
 
