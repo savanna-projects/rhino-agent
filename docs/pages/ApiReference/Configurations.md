@@ -1,5 +1,28 @@
+[Home](../Home.md 'Home')  
+
 # API: Configurations
-Use the following API methods to request details about _**Rhino Configurations**_ and to create or modify them.
+02/16/2021 - 75 minutes to read
+
+## In This Article
+* [Get Configurations](#get-configurations)
+* [Get Configuration](#get-configuration)
+* [Create Configuration](#create-configuration)
+* [Update Configuration](#update-configuration)
+* [Delete Configuration](#delete-configuration)
+* [Delete Configurations](#delete-configurations)
+
+_**Rhino Configuration**_ is the base manifest which defines the automation run. Each configuration invoke will return a test run results based on the information provided in the manifest. The configuration contains (among others) information about:  
+
+1. Which tests to run.
+2. Which drivers to use.
+3. Which data sets to use (for data driven testing).
+4. Which [Rhino Page Models](./Models.md) to use.
+5. Which connector to use and how to use it (e.g. credentials, capabilities, etc.).
+6. The automation engine behavior (e.g. timeouts, exception handling, parallel options, etc.).
+7. Screenshots taking behavior (e.g. archive images, output location, etc.).
+8. Reporting behavior (e.g. reporters, output folder, archive, etc.).  
+
+Use the following API methods to request details about _**Rhino Configurations**_ and to create or modify them.  
 
 ## Get Configurations
 Returns a list of available _**Rhino Configurations**_.
@@ -140,7 +163,7 @@ The following system fields are always included in the response:
 |capabilities                                          |object|A set of key/value for passing explicit settings and parameters to your automation provider connector or other plugins implementations.|
 |[authentication](#authentication)                     |string|User name and password for authentication on Rhino Service.                                            |
 |[engineConfiguration](#engine-configuration)          |object|Configure the automation engine behavior.                                                              |
-|[screenshotsConfiguration](#screenshots-configuration)|object|Configure the screenshot behavior.                                                                     |
+|[screenshotsConfiguration](#screenshots-configuration)|object|Configure the screenshots behavior.                                                                    |
 |[reportConfiguration](#report-configuration)          |object|Configure the reporting behavior.                                                                      |
 |[connectorConfiguration](#connector-configuration)    |object|Configure the behavior against 3rd party automation provider such as Jira, Test Rail or Azure DevOps.  |
 

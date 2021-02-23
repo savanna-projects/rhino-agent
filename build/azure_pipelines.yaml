@@ -48,15 +48,8 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
     modifyOutputPath: false
 
-- task: PublishBuildArtifacts@1
-  displayName: Publish Artifact to Container
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-
 - task: PowerShell@2
-  displayName: 'Parse Build Version for GitHub Tag'
+  displayName: 'Parse Build Version'
   inputs:
     targetType: 'inline'
     script: |
@@ -65,6 +58,25 @@ steps:
       $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
       # set value
       Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+- task: PowerShell@2
+  displayName: 'Set Version File'
+  inputs:
+    targetType: 'inline'
+    script: |
+      Set-Content -Path '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' -Value '$(buildVersion)'
+      # setup
+      [regex]$pattern = '(\d+.?)+'
+      $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
+      # set value
+      Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact to Container
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
 
 - task: GitHubRelease@1
   displayName: 'Create GitHub Tag'

@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Hosting;
 
 using Newtonsoft.Json.Linq;
 
-using Rhino.Agent.Components;
 using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
@@ -28,7 +27,6 @@ namespace Rhino.Agent
     {
         // constants
         private const string Configuration = "configuration";
-        private const string KB = "kb";
         private const string Generate = "generate";
         private const string License = "license";
         private const string Delete = "delete";
@@ -65,7 +63,6 @@ namespace Rhino.Agent
 
             // pipeline
             DeleteRuns(connector);
-            GenerateKb(types);
             ExportTestCases(connector);
             var outcome = connector.Connect().Execute();
             ProcessOutcome(outcome);
@@ -138,30 +135,6 @@ namespace Rhino.Agent
         #endregion
 
         #region *** pipeline: process ***
-        private static void GenerateKb(IEnumerable<Type> types)
-        {
-            // constants: logging
-            const string M = "knowledge base files, created under [{0}]";
-
-            // exit conditions
-            if (!arguments.ContainsKey(KB))
-            {
-                return;
-            }
-
-            // generate KB directory
-            var exists = Directory.Exists($"{arguments[KB]}");
-            var path = exists ? $"{arguments[KB]}" : Environment.CurrentDirectory;
-
-            // generate KB files
-            new KnowledgeBaseManager(new Gravity.Services.Comet.Orbit(types)).GenerateKnowledgeBase(path);
-            var message = string.Format(M, arguments[KB]);
-            Console.WriteLine(message);
-
-            // exit application with success code
-            Environment.Exit(0);
-        }
-
         private static void ExportTestCases(IConnector connector)
         {
             // constants: logging

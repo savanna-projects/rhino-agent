@@ -1,0 +1,190 @@
+﻿/*
+ * CHANGE LOG - keep only last 5 threads
+ * 
+ * RESSOURCES
+ */
+using Gravity.Services.DataContracts;
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+using Rhino.Controllers.Domain.Interfaces;
+using Rhino.Controllers.Extensions;
+using Rhino.Controllers.Models;
+
+using Swashbuckle.AspNetCore.Annotations;
+
+using System.Collections.Generic;
+using System.Net.Mime;
+using System.Threading.Tasks;
+
+namespace Rhino.Controllers.Controllers
+{
+    [ApiVersion("3.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]
+    public class EnvironmentController : ControllerBase
+    {
+        // members: state
+        private readonly IEnvironmentRepository environmentRepository;
+
+        // members: private properties
+        private Authentication Authentication => Request.GetAuthentication();
+
+        /// <summary>
+        /// Creates a new instance of <see cref="ControllerBase"/>.
+        /// </summary>
+        /// <param name="environmentRepository">An IEnvironmentRepository implementation to use with the Controller.</param>
+        public EnvironmentController(IEnvironmentRepository environmentRepository)
+        {
+            this.environmentRepository = environmentRepository;
+        }
+
+        #region *** Get    ***
+        // GET: api/v3/environment
+        [HttpGet]
+        [SwaggerOperation(
+            Summary = "Get-EnvironmentParameter -All",
+            Description = "Returns a list of available _**Rhino Parameters**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IDictionary<string, object>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult Get()
+        {
+            // get response
+            var parameters = environmentRepository.SetAuthentication(Authentication).Get();
+
+            // return
+            return Ok(new Dictionary<string, object>(parameters));
+        }
+
+        // GET: api/v3/environment/:name
+        [HttpGet("{name}")]
+        [SwaggerOperation(
+            Summary = "Get-EnvironmentParameters -Name {parameterKey}",
+            Description = "Returns the value of the specified _**Rhino Parameter**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IDictionary<string, object>))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> Get([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
+        {
+            // get response
+            environmentRepository.SetAuthentication(Authentication);
+            var (statusCode, entity) = environmentRepository.GetByName(name);
+
+            // exit conditions
+            if (statusCode == StatusCodes.Status404NotFound)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-EnvironmentParameter -Name {name} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // return
+            return Ok(new Dictionary<string, object>
+            {
+                [entity.Key] = entity.Value
+            });
+        }
+
+        // GET: api/v3/environment/sync
+        [HttpGet, Route("sync")]
+        [SwaggerOperation(
+            Summary = "Sync-EnvironmentParameter",
+            Description = "Sync environment parameters with _**Rhino State Parameters**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IDictionary<string, object>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult Sync()
+        {
+            // setup
+            environmentRepository.SetAuthentication(Authentication);
+            var entities = environmentRepository.Sync().Entities;
+
+            // get
+            return Ok(entities);
+        }
+        #endregion
+
+        #region *** Put    ***
+        // PUT: api/v3/environment
+        [HttpPut("{name}")]
+        [SwaggerOperation(
+            Summary = "Update-EnvironmentParameter -Name {parameterKey}",
+            Description = "Updates the value of the specified _**Rhino Parameter**_ if the parameter exists or create a new one if not.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status201Created, SwaggerDocument.StatusCode.Status201Created, Type = typeof(IDictionary<string, object>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<IDictionary<string, object>>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<IDictionary<string, object>>))]
+        public async Task<IActionResult> Update([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
+        {
+            // setup
+            var value = await Request.ReadAsync().ConfigureAwait(false);
+
+            // exit conditions
+            if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(name))
+            {
+                Request.SetBody(new Dictionary<string, object>
+                {
+                    [string.IsNullOrEmpty(name) ? "" : name] = value
+                });
+                return await this
+                    .ErrorResultAsync<IDictionary<string, object>>($"Create-EnvironmentParameter -Key {name} = (BadRequest, NoValue | NoKey)")
+                    .ConfigureAwait(false);
+            }
+
+            // build
+            environmentRepository
+                .SetAuthentication(Authentication)
+                .Add(new KeyValuePair<string, object>(name, value));
+
+            var responseBody = new Dictionary<string, object>
+            {
+                [name] = value
+            };
+
+            // get
+            return Created($"/api/v3/environment/{name}", responseBody);
+        }
+        #endregion
+
+        #region *** Delete ***
+        // DELETE: api/v3/environment/:name
+        [HttpDelete("{name}")]
+        [SwaggerOperation(
+            Summary = "Delete-EnvironmentParameter -Name {parameterKey}",
+            Description = "Deletes _**Rhino Parameter**_ if the parameter exists.")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> Delete([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
+        {
+            // get credentials
+            environmentRepository.SetAuthentication(Authentication).Delete(name);
+            var statusCode = environmentRepository.DeleteByName(name);
+
+            // results
+            return statusCode == StatusCodes.Status404NotFound
+                ? await this.ErrorResultAsync<string>($"Delete-EnvironmentParameter -Name {name} = NotFound").ConfigureAwait(false)
+                : NoContent();
+        }
+
+        // DELETE: api/v3/environment
+        [HttpDelete]
+        [SwaggerOperation(
+            Summary = "Delete-EnvironmentParameter -All",
+            Description = "Deletes _**Rhino Parameter**_ if the parameter exists.")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult Delete()
+        {
+            // delete
+            environmentRepository.SetAuthentication(Authentication).Delete();
+
+            // get
+            return NoContent();
+        }
+        #endregion
+    }
+}

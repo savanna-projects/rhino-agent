@@ -1,4 +1,23 @@
+[Home](../Home.md 'Home')  
+
 # API: Environment
+02/16/2021 - 35 minutes to read
+
+## In This Article
+* [Get Parameters](#get-parameters)
+* [Get Parameter](#get-parameter)
+* [Sync Parameters](#sync-parameters)
+* [Add or Replace Parameter](#add-or-replace-parameter)
+* [Delete Parameter](#delete-parameter)
+* [Delete Parameters](#delete-parameters)
+
+_**Rhino Environment**_ is a collection of key/value pairs which functions in the same way as [traditional environment variable](https://en.wikipedia.org/wiki/Environment_variable) works. Using the environment it will be possible to pass information between tests and between steps of a tests, for example, saving an id or other information which was generated early in the test and use it later on for inputs or assertions.  
+
+> _**Information**_
+>  
+> 1. It is possible to get the saved parameter using the macro ```{{$getparam --name:paramter_name}}```.
+> 2. It is possible to save parameter during a test using ```RegisterParameter``` action.
+
 Use the following API methods to request details about _**Rhino Parameters**_ and how to create or modify them.
 
 ## Get Parameters
@@ -67,56 +86,6 @@ GET /api/v3/environment/sync
 |200 |Success, the _**Rhino Parameters**_ were returned as part of the response. |
 |404 |Not found, the _**Rhino Environment**_ was not found by the specified user.|
 |500 |Fail, the server encountered an unexpected error.                          |
-
-## Get Parameter
-Returns the value of the specified _**Rhino Parameter**_.
-
-```
-GET /api/v3/environment/:parameter_name
-```
-|Name            |Type  |Description                         |
-|----------------|------|------------------------------------|
-|parameter_name|string|The Name of the _**Rhino Parameter**_.|
-
-#### Response Content
-```
-foo bar
-```
-
-### Response Codes
-|Code|Description                                                                   |
-|----|------------------------------------------------------------------------------|
-|200 |Success, the _**Rhino Parameter**_ value was returned as part of the response.|
-|404 |Not found, the _**Rhino Parameter**_ was not found by the specified name.     |
-|500 |Fail, the server encountered an unexpected error.                             |
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## Add or Replace Parameter

@@ -1,19 +1,50 @@
-# API: Rhino
-Use the following API methods run automation specs and get _**Rhino Test Run**_ object.
+﻿[Home](../Home.md 'Home')  
 
-## Run by Configuration
-Runs an existing configuration and returns _**Rhino Test Run**_ object.
+# API - Rhino
+02/16/2021 - 75 minutes to read
+
+## In This Article
+* [Invoke Configuration](#invoke-configuration)
+* [Invoke Configuration by ID](#invoke-configuration-by-id)
+* [Invoke Collection by Configuration ID](#invoke-collection-by-configuration-id)
+* [Invoke Collection by Collection ID and Configuration ID](#invoke-collection-by-collection-id-and-configuration-id)
+* [Invoke Collection by Collection ID](#invoke-collection-by-collection-id)
+
+Use the following API methods to invoke (run) operations like [configurations](./Configurations.md) or [tests collections](./TestCases) against Rhino API.
+
+## Invoke Configuration
+Invokes (run) a _**Rhino Configuration**_.
 
 ```
-GET /api/v3/rhino/configurations/:configuration_id
+POST /rhino/configurations/invoke
 ```
 
-|Name            |Type  |Description                             |
-|----------------|------|----------------------------------------|
-|configuration_id|string|The ID of the _**Rhino Configuration**_.|
+### Request Fields
+The request body follows the same format as [Get Configuration](./Configurations.md#get-configuration) response content.
 
-#### Response Content
-
+### Request Example
+```js
+{
+  "engineConfiguration": {
+    "errorOnExitCode": 10
+  },
+  "authentication": {
+    "userName": "rhino_user",
+    "password": "rhino_password"
+  },
+  "driverParameters": [
+    {
+      "driver": "ChromeDriver",
+      "driverBinaries": "http://localhost:4444/wd.hub"
+    }
+  ],
+  "name": "Execute Tests by Raw Text",
+  "testsRepository": [
+    "[test-id] Text-000\r\n[test-scenario]\r\nOpen a Web Site\r\n[test-actions]\r\n1. go to url {https://gravitymvctestapplication.azurewebsites.net/}\r\n3. wait {3000}\r\n6. close browser"
+  ]
+}
+```
+### Response Content
 ```js
 {
   "key": "unattached-2020.08.19.06.36.43.698",
@@ -25,8 +56,8 @@ GET /api/v3/rhino/configurations/:configuration_id
   "runTime": "00:00:52.7898415",
   "testCases": [
     {
-      "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-#001-0-0",
-      "key": "rhino-documentation-#001",
+      "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-001-0-0",
+      "key": "rhino-documentation-001",
       "testSuite": "",
       "testRunKey": "unattached-2020.08.19.06.36.43.698",
       "scenario": "search students on https://gravitymvctestapplication.azurewebsites.net/student web-site",
@@ -34,7 +65,7 @@ GET /api/v3/rhino/configurations/:configuration_id
       "actual": true,
       "steps": [
         {
-          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-#001-0-0-0",
+          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-001-0-0-0",
           "testCase": "",
           "action": "1. go to url {https://gravitymvctestapplication.azurewebsites.net/student} using any compliant web-browser",
           "command": "GoToUrl",
@@ -45,7 +76,7 @@ GET /api/v3/rhino/configurations/:configuration_id
           "runTime": "00:00:14.2072016"
         },
         {
-          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-#001-0-0-1",
+          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-001-0-0-1",
           "testCase": "",
           "action": "2. close all child windows (to make sure only the web site is open and visible)",
           "command": "CloseAllChildWindows",
@@ -56,7 +87,7 @@ GET /api/v3/rhino/configurations/:configuration_id
           "runTime": "00:00:00.0119308"
         },
         {
-          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-#001-0-0-2",
+          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-001-0-0-2",
           "testCase": "",
           "action": "3. send keys {Carson} into {//input[@id='SearchString']}",
           "command": "SendKeys",
@@ -67,7 +98,7 @@ GET /api/v3/rhino/configurations/:configuration_id
           "runTime": "00:00:00.1368129"
         },
         {
-          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-#001-0-0-3",
+          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-001-0-0-3",
           "testCase": "",
           "action": "4. click on {#SearchButton} using {css selector}",
           "command": "Click",
@@ -78,7 +109,7 @@ GET /api/v3/rhino/configurations/:configuration_id
           "runTime": "00:00:00.2752300"
         },
         {
-          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-#001-0-0-4",
+          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-001-0-0-4",
           "testCase": "",
           "action": "5. wait for {3000} milliseconds",
           "command": "Wait",
@@ -89,7 +120,7 @@ GET /api/v3/rhino/configurations/:configuration_id
           "runTime": "00:00:03.0361094"
         },
         {
-          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-#001-0-0-5",
+          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-001-0-0-5",
           "testCase": "",
           "action": "6. register parameter {first_name} take {Jhon}",
           "command": "RegisterParameter",
@@ -100,7 +131,7 @@ GET /api/v3/rhino/configurations/:configuration_id
           "runTime": "00:00:15.0670764"
         },
         {
-          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-#001-0-0-6",
+          "identifier": "unattached-2020.08.19.06.36.43.698-rhino-documentation-001-0-0-6",
           "testCase": "",
           "action": "7. close browser",
           "command": "CloseBrowser",
@@ -154,7 +185,7 @@ GET /api/v3/rhino/configurations/:configuration_id
   "qualityRank": 100.0,
   "link": null,
   "performancePoints": {
-    "rhino-documentation-#001_0": 0.87612194
+    "rhino-documentation-001_0": 0.87612194
   },
   "priorityPoints": {
     "": 0
@@ -186,7 +217,7 @@ The following system fields are always included in the response:
 |reasonPhrase            |string   |The reason of why this _**Rhino Test Run**_ failed.                                           |
 |title                   |string   |The title of this _**Rhino Test Run**_.                                                       |
 |start                   |date+time|The start time of this _**Rhino Test Run**_.                                                  |
-|end                     |date+time|The end time of this _**Rhino Test Run**_.                                                    |
+|end                     |date+time|The start time of this _**Rhino Test Run**_.                                                  |
 |runTime                 |time     |The run time (total) of this _**Rhino Test Run**_.                                            |
 |[testCases](#test-cases)|array    |A collection of _**Rhino Test Case**_ executed under this  _**Rhino Test Run**_.              |
 |totalSteps              |number   |The total steps number of this _**Rhino Test Case**_.                                         |
@@ -240,171 +271,64 @@ The following system fields are always included in the response:
 |[environment](#environment)|object   |The automation environment data state (parameters current value) from Rhino Server State.                                      |
 
 #### Steps
-|Name        |Type     |Description                                                                                |
-|------------|---------|-------------------------------------------------------------------------------------------|
-|identifier  |string   |The unique identifier of this _**Rhino Test Step*_.                                        |
-|testCase    |string   |The parent test case identifier.                                                           |
-|action      |string   |The test action (i.e. go to URL {https://www.foo.io}).                                     |
-|command     |string   |The command used for this action (plugin command).                                         |
-|expected    |string   |The expected result of this _**Rhino Test Step*_.                                          |
-|actual      |boolean  |The actual result of this _**Rhino Test Case**_. ```true``` for pass, ```false``` for fail.|
-|reasonPhrase|string   |The reason of why this _**Rhino Test Case**_ failed.                                       |
-|link        |string   |The link pointing to this _**Rhino Test Step**_ if you are using any ALM connector.        |
-|runTime     |time     |The run time (total) of this _**Rhino Test Step**_.                                        |
+|Name        |Type   |Description                                                                                |
+|------------|-------|-------------------------------------------------------------------------------------------|
+|identifier  |string |The unique identifier of this _**Rhino Test Step*_.                                        |
+|testCase    |string |The parent test case identifier.                                                           |
+|action      |string |The test action (i.e. go to URL {https://www.foo.io}).                                     |
+|command     |string |The command used for this action (plugin command).                                         |
+|expected    |string |The expected result of this _**Rhino Test Step*_.                                          |
+|actual      |boolean|The actual result of this _**Rhino Test Case**_. ```true``` for pass, ```false``` for fail.|
+|reasonPhrase|string |The reason of why this _**Rhino Test Case**_ failed.                                       |
+|link        |string |The link pointing to this _**Rhino Test Step**_ if you are using any ALM connector.        |
+|runTime     |time   |The run time (total) of this _**Rhino Test Step**_.                                        |
 
 #### Environment
 |Name             |Type  |Description                                                                                                                  |
 |-----------------|------|-----------------------------------------------------------------------------------------------------------------------------|
 |applicationParams|object|The application parameters - Gravity Environment parameters, available for all runs. Will only reset when restart the server.|
-|applicationParams|object|The session parameters - Gravity Environment parameters, available for a single runs.  Will reset when run is completed.     |
-|macorParams      |object|The macro parameters - Gravity Macro parameters, available for a single runs.  Will reset when run is completed.             |
+|sessionParams    |object|The session parameters - Gravity Environment parameters, available for a single run.  Will reset when run is completed.      |
+|macorParams      |object|The macro parameters - Gravity Macro parameters, available for a single run.  Will reset when run is completed.              |
 
 ### Response Codes
-|Code|Description                                                         |
-|----|--------------------------------------------------------------------|
-|200 |Success, the _**Rhino Result**_ is returned as part of the response.|
-|400 |Bad Request, _**Rhino Configuration**_ was not provided.            |
-|404 |Not Found, the _**Rhino Configuration**_ was not found.             |
-|500 |Fail, the server encountered an unexpected error.                   |
+|Code|Description                                                                |
+|----|---------------------------------------------------------------------------|
+|200 |Success, the _**Rhino Test Run**_ is returned as part of the response.     |
+|400 |Bad Request, _**Rhino Configuration**_ was not provided or badly formatted.|
+|500 |Fail, the server encountered an unexpected error.                          |
 
-## Run by Collection, All Configuration
-Runs an existing _**Rhino Test Case**_ collection and returns _**Rhino Test Run**_ object. The execution will be done on all configurations attached to this collection.
+## Invoke Configuration by ID
+Invokes (run) a _**Rhino Configuration**_.
 
 ```
-GET /api/v3/rhino/collections/:collection_id
+GET /rhino/configurations/invoke/:id
 ```
 
-|Name         |Type  |Description                          |
-|-------------|------|-------------------------------------|
-|collection_id|string|The ID of the _**Rhino Collection**_.|
+|Name|Type  |Description                                       |
+|----|------|--------------------------------------------------|
+|id  |string|The ID of the _**Rhino Configuration**_ to invoke.|
 
-## Response Content
-
-The response body follows the same format as [Run by Configuration](#run-by-configuration) response content.
+### Response Content
+The response body follows the same format as [Invoke Configuration](#invoke-configuration) response content.
 
 ### Response Codes
-|Code|Description                                                         |
-|----|--------------------------------------------------------------------|
-|200 |Success, the _**Rhino Result**_ is returned as part of the response.|
-|400 |Bad Request, _**Rhino Collection**_ was not provided.               |
-|404 |Not Found, the _**Rhino Collection**_ was not found.                |
-|500 |Fail, the server encountered an unexpected error.                   |
+|Code|Description                                                                |
+|----|---------------------------------------------------------------------------|
+|200 |Success, the _**Rhino Test Run**_ is returned as part of the response.     |
+|400 |Bad Request, _**Rhino Configuration**_ was not provided or badly formatted.|
+|404 |Not Found, _**Rhino Configuration**_ was not found by the provided id.     |
+|500 |Fail, the server encountered an unexpected error.                          |
 
-## Run by Collection, One Configuration
-Runs an existing _**Rhino Test Case**_ collection and returns _**Rhino Test Run**_ object.
-
-```
-GET /api/v3/rhino/collections/:collection_id/configurations/:configuration_id
-```
-
-|Name            |Type  |Description                             |
-|----------------|------|----------------------------------------|
-|collection_id   |string|The ID of the _**Rhino Collection**_.   |
-|configuration_id|string|The ID of the _**Rhino Configuration**_.|
-
-## Response Content
-
-The response body follows the same format as [Run by Configuration](#run-by-configuration) response content.
-
-### Response Codes
-|Code|Description                                                                         |
-|----|------------------------------------------------------------------------------------|
-|200 |Success, the _**Rhino Result**_ is returned as part of the response.                |
-|400 |Bad Request, _**Rhino Collection**_ or  _**Rhino Configuration**_ were not provided.|
-|404 |Not Found, the _**Rhino Collection**_ or  _**Rhino Configuration**_ were not found. |
-|500 |Fail, the server encountered an unexpected error.                                   |
-
-## Run by Configurations - Unattached
-Executes a collection of _**Rhino Configuration**_ without saving the configurations under Rhino Server State.
+## Invoke Collection by Configuration ID
+Invokes (run) _**Rhino Spec**_ directly from the request body.
 
 ```
-POST /api/v3/rhino/execute
+POST /rhino/configurations/:configuration_id/collections/invoke
 ```
 
-### Request Fields
-A collection of _**Rhino Configuration**_. Each item in the request body follows the same format as _**Get Configuration**_ response content.
-
-### Request Example
-```js
-[
-  {
-    "name": "Rhino Automation - Chrome",
-    "testsRepository": [],
-    "driverParameters": [
-      {
-        "driver": "ChromeDriver",
-        "driverBinaries": "http://localhost:4444/wd/hub"
-      }
-    ],
-    "dataSource": [],
-    "models": [],
-    "connector": "connector_text",
-    "gravityEndpoint": "",
-    "authentication": {
-      "password": "<rhino_user>",
-      "userName": "<password>"
-    },
-    "engineConfiguration": {
-      "maxParallel": 1,
-      "failOnException": false,
-      "optimalThreshold": 3,
-      "qualityThreshold": 0,
-      "toleranceThreshold": 0,
-      "priority": 0,
-      "severity": 0,
-      "errorOnExitCode": 0,
-      "elementSearchingTimeout": 15000,
-      "pageLoadTimeout": 60000,
-      "retrunExceptions": true,
-      "returnPerformancePoints": true,
-      "returnEnvironment": true,
-      "terminateOnAssertFailure": false
-    },
-    "screenshotsConfiguration": {
-      "keepOriginal": false,
-      "returnScreenshots": false,
-      "screenshotsOut": "<path_to_screenshots_folder>",
-      "onExceptionOnly": false
-    },
-    "reportConfiguration": {
-      "reportOut": "<path_to_reports_folder>",
-      "logsOut": "<path_to_logs_folder>",
-      "reporters": null,
-      "connectionString": null,
-      "dataProvider": null,
-      "archive": false,
-      "localReport": true,
-      "addGravityData": true
-    }
-  },
-  {
-    "name": "Rhino Automation - Firefox",
-    "testsRepository": []
-    ...
-  }
-]
-```
-
-## Response Content
-
-The response body follows the same format as [Run by Configuration](#run-by-configuration) response content.
-
-### Response Codes
-|Code|Description                                                         |
-|----|--------------------------------------------------------------------|
-|200 |Success, the _**Rhino Result**_ is returned as part of the response.|
-|500 |Fail, the server encountered an unexpected error.                   |
-
-## Run by Collection - One Configuration
-Runs _**Rhino Spec**_ directly from the request body.
-
-```
-POST /api/v3/rhino/configurations/:configuration_id
-```
-
-|Name            |Type  |Description                             |
-|----------------|------|----------------------------------------|
-|configuration_id|string|The ID of the _**Rhino Configuration**_.|
+|Name            |Type  |Description                                                                     |
+|----------------|------|--------------------------------------------------------------------------------|
+|configuration_id|string|The ID of the _**Rhino Configuration**_ to use when invoke the _**Rhino Spec**_.|
 
 ### Request Fields
 The request body follows the same format as _**Get Test Case Collection**_ response content.
@@ -413,7 +337,7 @@ The request body follows the same format as _**Get Test Case Collection**_ respo
 Please see below for a typical request:
 
 ```
-[test-id] rhino-documentation-#001
+[test-id] rhino-documentation-001
 [test-scenario] search students on https://gravitymvctestapplication.azurewebsites.net/student web-site
 
 [test-actions]
@@ -441,11 +365,11 @@ Please see below for a typical request:
 
 >>>
 
-[test-id] rhino-documentation-#002
+[test-id] rhino-documentation-002
 ...
 ```
 
-## Response Content
+### Response Content
 
 The response body follows the same format as [Run by Configuration](#run-by-configuration) response content.
 
@@ -457,45 +381,49 @@ The response body follows the same format as [Run by Configuration](#run-by-conf
 |404 |Not Found, the _**Rhino Configuration**_ was not found.             |
 |500 |Fail, the server encountered an unexpected error.                   |
 
-## Connect by Configuration
-Returns a collection of _**Web Automation**_ objects, after completing the connection pipeline and before executing. These objects can be used for [Debug](./Debug.md 'Debug').
+## Invoke Collection by Collection ID and Configuration ID
+Invokes (run) _**Rhino Spec**_ directly from pre-existing collection & pre-existing configuration.
 
 ```
-GET /api/v3/rhino/connect/:configuration_id
+POST /rhino/configurations/:configuration_id/collections/invoke/:collection_id
 ```
 
-|Name            |Type  |Description                             |
-|----------------|------|----------------------------------------|
-|configuration_id|string|The ID of the _**Rhino Configuration**_.|
+|Name            |Type  |Description                                                                     |
+|----------------|------|--------------------------------------------------------------------------------|
+|collection_id   |string|The ID of the _**Rhino Collection**_ to use.                                    |
+|configuration_id|string|The ID of the _**Rhino Configuration**_ to use when invoke the _**Rhino Spec**_.|
 
-#### Response Content
+### Response Content
 
-The response body is a collection of objects which follows the same format as [Debug](./Debug.md#request-content) request content.
+The response body follows the same format as [Run by Configuration](#run-by-configuration) response content.
 
 ### Response Codes
-|Code|Description                                                           |
-|----|----------------------------------------------------------------------|
-|200 |Success, the _**Web Automation**_ is returned as part of the response.|
-|400 |Bad Request, _**Rhino Configuration**_ was not provided.              |
-|404 |Not Found, the _**Rhino Configuration**_ was not found.               |
-|500 |Fail, the server encountered an unexpected error.                     |
+|Code|Description                                                                        |
+|----|-----------------------------------------------------------------------------------|
+|200 |Success, the _**Rhino Result**_ is returned as part of the response.               |
+|400 |Bad Request, _**Rhino Configuration**_ or _**Rhino Collection**_ were not provided.|
+|404 |Not Found, the _**Rhino Configuration**_  or _**Rhino Collection**_ were not found.|
+|500 |Fail, the server encountered an unexpected error.                                  |
 
-## Connect by Configurations - Unattached
-Returns a collection of _**Web Automation**_ objects, after completing the connection pipeline and before executing. These objects can be used for [Debug](./Debug.md 'Debug').
+## Invoke Collection by Collection ID
+Invokes (run) _**Rhino Spec**_ directly from pre-existing collection for all configuration assigned to the selected collection.
 
 ```
-POST /api/v3/rhino/configurations/connect
+POST /rhino/collections/invoke/:id
 ```
 
-### Request Fields
-The request body follows the same format as [Get Configuration](./Configurations.md#get-configuration) response content.
+|Name|Type  |Description                                    |
+|----|------|-----------------------------------------------|
+|id  |string|The ID of the _**Rhino Collection**_ to invoke.|
 
-## Response Content
+### Response Content
 
-The response body is a collection of objects which follows the same format as [Debug](./Debug.md#request-content) request content.
+The response body follows the same format as [Run by Configuration](#run-by-configuration) response content.
 
 ### Response Codes
 |Code|Description                                                         |
 |----|--------------------------------------------------------------------|
 |200 |Success, the _**Rhino Result**_ is returned as part of the response.|
+|400 |Bad Request, the **Rhino Collection**_ were not provided.           |
+|404 |Not Found, the _**Rhino Collection**_ were not found.               |
 |500 |Fail, the server encountered an unexpected error.                   |
