@@ -1,3 +1,8 @@
+/*
+ * CHANGE LOG - keep only last 5 threads
+ * 
+ * RESSOURCES
+ */
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +25,7 @@ using Rhino.Api.Contracts.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Net;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Rhino.Agent
 {
@@ -39,6 +45,10 @@ namespace Rhino.Agent
 
         public static void Main(string[] args)
         {
+            // setup
+            Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "Data"));
+
+            // run
             if (args.Length == 0)
             {
                 CreateWebHostBuilder(args).Build().Run();
@@ -72,17 +82,19 @@ namespace Rhino.Agent
         // creates web service host container
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) => WebHost
             .CreateDefaultBuilder(args)
-            .ConfigureKestrel(options =>
-            {
-                const int httpsPort = 9001;
-                const int httpPort = 9000;
-                const string certPassword = "30908f87-8539-477a-86e7-a4c13d4583c4";
-                const string certPath = "SSL/Rhino.Agent.pfx";
-
-                options.Listen(IPAddress.Any, httpsPort, listenOptions => listenOptions.UseHttps(certPath, certPassword));
-                options.Listen(IPAddress.Any, httpPort);
-            })
+            .ConfigureKestrel(SetOptions)
             .UseStartup<Startup>();
+
+        private static void SetOptions(KestrelServerOptions options)
+        {
+            const int httpsPort = 9001;
+            const int httpPort = 9000;
+            const string certPassword = "30908f87-8539-477a-86e7-a4c13d4583c4";
+            var certPath = Path.Combine("Certificates", "Rhino.Agent.pfx");
+
+            options.Listen(IPAddress.Any, httpsPort, listenOptions => listenOptions.UseHttps(certPath, certPassword));
+            options.Listen(IPAddress.Any, httpPort);
+        }
         #endregion
 
         #region *** pipeline: setup   ***

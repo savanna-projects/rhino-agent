@@ -38,4 +38,13 @@
 		</Content>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="Certificates\Rhino.Agent.crt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Certificates\Rhino.Agent.pfx">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>
