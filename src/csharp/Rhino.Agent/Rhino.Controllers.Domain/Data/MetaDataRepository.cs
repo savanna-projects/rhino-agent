@@ -171,7 +171,7 @@ namespace Rhino.Controllers.Domain.Data
             return methods.Select(i => i.Name).Distinct().Select(i => new LocatorModel
             {
                 Key = i,
-                Literal = Rhino.Api.Extensions.StringExtensions.ToSpaceCase( i.ToLower()),
+                Literal = Api.Extensions.StringExtensions.ToSpaceCase( i.ToLower()),
                 Entity = new { Examples = Array.Empty<(string Description, string Example)>() },
                 Verb = "using"
             });
@@ -253,6 +253,7 @@ namespace Rhino.Controllers.Domain.Data
         private IEnumerable<(string Source, ActionAttribute Action)> DoGetActions()
         {
             // setup
+            var gravityPlugins = types.GetActionAttributes();
             var pluginSpecs = plugins.SetAuthentication(Authentication).Get();
             var pluginObjcs = new RhinoPluginFactory().GetRhinoPlugins(pluginSpecs.ToArray());
 
@@ -261,7 +262,11 @@ namespace Rhino.Controllers.Domain.Data
             logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Plugin} = Ok, {attributes.Count()}");
 
             // all actions
-            var actions = client.Actions().Select(i => (ActionModel.ActionSource.Code, client.Actions(i))).Concat(attributes);
+            // collect all potential types
+            var actions = gravityPlugins
+                .Select(i => (ActionModel.ActionSource.Code, (ActionAttribute)gravityPlugins.FirstOrDefault(a => a.Name == i.Name)))
+                .Concat(attributes);
+            actions = actions?.Any() == false ? Array.Empty<(string, ActionAttribute)>() : actions;
             logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Code} = Ok, {actions.Count()}");
 
             // get

@@ -12,7 +12,6 @@ using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Extensions;
 using Rhino.Controllers.Domain.Interfaces;
-using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 
 using System;
@@ -21,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Domain.Automation
@@ -84,7 +82,7 @@ namespace Rhino.Controllers.Domain.Automation
             var (statusCode, entity) = BuildConfiguration(configuration);
 
             // failed
-            if(statusCode!= StatusCodes.Status200OK)
+            if (statusCode != StatusCodes.Status200OK)
             {
                 return (statusCode, default);
             }
@@ -166,7 +164,7 @@ namespace Rhino.Controllers.Domain.Automation
                 logger?.Warn($"Invoke-Collection -Id {collection} = (NotFound, Collection)");
                 return new (int StatusCode, RhinoTestRun TestRun)[] { (statusCode, default) };
             }
-            if(entity.Configurations.Count == 0)
+            if (entity.Configurations.Count == 0)
             {
                 logger?.Warn($"Invoke-Collection -Id {collection} = (NotFound, Configurations)");
                 return new (int StatusCode, RhinoTestRun TestRun)[] { (statusCode, default) };
@@ -514,7 +512,7 @@ namespace Rhino.Controllers.Domain.Automation
             var dataModels = modelsRespository
                 .SetAuthentication(Authentication)
                 .Get()
-                .Where(i => i.Configurations.Contains($"{configuration.Id}"))
+                .Where(i => i.Configurations.Contains($"{configuration.Id}") || i.Configurations?.Any() == false)
                 .Select(i => $"{i.Id}");
 
             var models = userModels.Concat(dataModels).Distinct();

@@ -21,10 +21,13 @@
 * [Debug](./ApiReference/Debug.md 'Debug')
 * [Environment](./ApiReference/Environment.md 'Environment')
 * [Logs](./ApiReference/Logs.md 'Logs')
+* [Meta Data](./ApiReference/Meta.md 'Meta')
 * [Models](./ApiReference/Models.md 'Models')
 * [Plugins](./ApiReference/Plugins.md 'Plugins')
 * [Rhino](./ApiReference/Rhino.md 'Rhino')
-* [Test Cases (Rhino Specs)](./ApiReference/TestCases.md 'TestCases')
+* [Rhino Async](./ApiReference/RhinoAsync.md 'RhinoAsync')
+* [Test Cases (Rhino Specs)](./ApiReference/Tests.md 'Tests')
+* [Utilities](./ApiReference/Utilities.md 'Utilities')
 
 ## Official Connectors
 * [Gurock, TestRail Connector](https://github.com/savanna-projects/rhino-connectors-gurock)

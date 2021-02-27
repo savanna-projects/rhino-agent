@@ -5,6 +5,7 @@
 		<UserSecretsId>560fcd40-f4c0-4803-88d0-390796909059</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileFile>../Dockerfile</DockerfileFile>
+    <SelfContained>True</SelfContained>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -27,6 +28,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Rhino.Controllers.Automation\Rhino.Controllers.csproj" />
+	  <ProjectReference Include="..\Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -36,15 +38,6 @@
 		<Content Update="ApiDocumentation\Rhino API Reference Guide v3.postman_collection.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Certificates\Rhino.Agent.crt">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Certificates\Rhino.Agent.pfx">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 
 </Project>

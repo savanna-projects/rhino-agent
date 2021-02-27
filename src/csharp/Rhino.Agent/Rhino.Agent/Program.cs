@@ -45,6 +45,9 @@ namespace Rhino.Agent
 
         public static void Main(string[] args)
         {
+            // graphics
+            Controllers.Extensions.Utilities.RenderLogo();
+
             // setup
             Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "Data"));
 

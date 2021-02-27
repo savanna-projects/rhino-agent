@@ -20,10 +20,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiReference", "ApiReferenc
 		..\..\..\docs\pages\ApiReference\Debug.md = ..\..\..\docs\pages\ApiReference\Debug.md
 		..\..\..\docs\pages\ApiReference\Environment.md = ..\..\..\docs\pages\ApiReference\Environment.md
 		..\..\..\docs\pages\ApiReference\Logs.md = ..\..\..\docs\pages\ApiReference\Logs.md
+		..\..\..\docs\pages\ApiReference\Meta.md = ..\..\..\docs\pages\ApiReference\Meta.md
 		..\..\..\docs\pages\ApiReference\Models.md = ..\..\..\docs\pages\ApiReference\Models.md
 		..\..\..\docs\pages\ApiReference\Plugins.md = ..\..\..\docs\pages\ApiReference\Plugins.md
 		..\..\..\docs\pages\ApiReference\Rhino.md = ..\..\..\docs\pages\ApiReference\Rhino.md
-		..\..\..\docs\pages\ApiReference\TestCases.md = ..\..\..\docs\pages\ApiReference\TestCases.md
+		..\..\..\docs\pages\ApiReference\RhinoAsync.md = ..\..\..\docs\pages\ApiReference\RhinoAsync.md
+		..\..\..\docs\pages\ApiReference\Tests.md = ..\..\..\docs\pages\ApiReference\Tests.md
+		..\..\..\docs\pages\ApiReference\Utilities.md = ..\..\..\docs\pages\ApiReference\Utilities.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "GettingsStarted", "{93EE5C18-B0DA-4D71-B345-FC7B44BC3D79}"

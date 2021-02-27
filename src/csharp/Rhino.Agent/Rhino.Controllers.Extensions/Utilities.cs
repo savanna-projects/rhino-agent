@@ -3,7 +3,10 @@
  * 
  * RESSOURCES
  */
-using Gravity.Extensions;
+using Gravity.Abstraction.Logging;
+using Gravity.Services.Comet.Engine.Attributes;
+
+using Rhino.Api.Contracts.AutomationProvider;
 
 using System;
 using System.Collections.Generic;
@@ -19,127 +22,179 @@ namespace Rhino.Controllers.Extensions
     /// </summary>
     public static class Utilities
     {
+        // members: state
+        private static readonly ILogger logger = new TraceLogger("RhinoApi", nameof(Utilities));
+        private static readonly IList<Assembly> assemblies = new List<Assembly>();
+
+        #region *** Assemblies ***        
         /// <summary>
         /// gets a collection of all assemblies where the executing assembly is currently located
         /// </summary>
         /// <returns>assemblies collection</returns>
-        public static IEnumerable<Type> GetTypes()
+        public static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> GetTypes()
         {
-            // get all referenced assemblies
-            var referenced = GetReferencedAssemblies();
-            var attached = GetAttachedAssemblies(referenced);
+            // reset
+            assemblies.Clear();
 
-            // build assemblies list
-            var assemblies = new List<Assembly>();
-            assemblies.AddRange(referenced);
-            assemblies.AddRange(attached);
-
-            // load all sub-references
-            var subReferences = new List<Assembly>();
-            foreach (var a in assemblies)
+            // setup
+            var mainLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var rootLocations = new[]
             {
-                try
-                {
-                    var r = a.GetReferencedAssemblies();
-                    subReferences.AddRange(r.Select(Assembly.Load));
-                }
-                catch
-                {
-                    // ignore failed assemblies
-                }
-            }
-            assemblies.AddRange(subReferences);
-
-            // load all assemblies excluding the executing assembly
-            var types = new List<Type>();
-            foreach (var a in assemblies)
+                mainLocation
+            };
+            var pluginsLocation = new[]
             {
-                try
-                {
-                    types.AddRange(a.GetTypes());
-                }
-                catch (Exception e) when (e != null)
-                {
-                    // ignore exceptions
-                }
-            }
-            return types.DistinctBy(i => i.FullName);
-        }
+                Path.Combine(mainLocation, RhinoPluginEntry.PluginsGravityFolder),
+                Path.Combine(mainLocation, "PluginsReporters"),
+                Path.Combine(mainLocation, RhinoPluginEntry.PluginsConnectorsFolder)
+            };
+            var locations = pluginsLocation
+                .Where(i => Directory.Exists(i))
+                .SelectMany(i => Directory.GetDirectories(i))
+                .Concat(rootLocations);
 
-        private static IEnumerable<Assembly> GetReferencedAssemblies()
-        {
-            // shortcuts
-            var executing = Assembly.GetExecutingAssembly();
-            var calling = Assembly.GetCallingAssembly();
-            var entry = Assembly.GetEntryAssembly();
+            // build files
+            var files = locations
+                .Where(i => Directory.Exists(i))
+                .SelectMany(i => Directory.GetFiles(i))
+                .Where(i => i.EndsWith(".DLL") || i.EndsWith(".dll"));
 
-            // initialize results collection
-            var assemblies = new List<Assembly> { executing, calling, entry }.Where(r => r != null).ToList();
-            var referenced = new List<AssemblyName>
+            // build
+            foreach (var assemblyFile in files)
             {
-                executing.GetName(),
-                calling.GetName(),
-                entry?.GetName()
+                GetAssemblies(assemblyFile);
             }
-            .Where(r => r != null).ToList();
 
-            // cache all assemblies references
-            referenced.TryAddRange(executing?.GetReferencedAssemblies());
-            referenced.TryAddRange(calling?.GetReferencedAssemblies());
-            referenced.TryAddRange(entry?.GetReferencedAssemblies());
-
-            // load assemblies            
-            assemblies.AddRange(referenced.Select(Assembly.Load));
-            return assemblies;
+            // get
+            return assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null).ToArray();
         }
 
         [SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "A special case when need to load by file path.")]
-        private static IEnumerable<Assembly> GetAttachedAssemblies(IEnumerable<Assembly> referenced)
+        private static void GetAssemblies(string assemblyFile)
         {
-            // short-cuts
-            var working = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var current = Environment.CurrentDirectory;
+            // load main assembly
+            Assembly assembly = null;
+            try
+            {
+                assembly = Assembly.Load(AssemblyName.GetAssemblyName(assemblyFile));
+                assembly.GetTypes();
+            }
+            catch (FileNotFoundException)
+            {
+                assembly = Assembly.LoadFile(assemblyFile);
+                try
+                {
+                    assembly.GetTypes();
+                }
+                catch (Exception e)
+                {
+                    logger?.Warn(e.Message);
+                    return;
+                }
+            }
+            catch (Exception e) when (e != null)
+            {
+                logger?.Warn(e.Message);
+                return;
+            }
 
-            // get all referenced names
-            var referencedNames = referenced.Select(r => Path.Combine(working, $"{r.GetName().Name}.dll"));
-
-            // load assemblies
-            var w = Directory.GetFiles(working).Where(f => f.EndsWith(".dll") && !referencedNames.Contains(f));
-            var c = Directory.GetFiles(current).Where(f => f.EndsWith(".dll") && !referencedNames.Contains(f));
-
-            // build names
-            var attachedAssembliesNames = new List<string>();
-            attachedAssembliesNames.TryAddRange(w);
-            attachedAssembliesNames.TryAddRange(c);
-
-            // build results
-            var loadedAssemblies = new List<Assembly>();
-            foreach (var a in attachedAssembliesNames)
+            // build
+            assemblies.Add(assembly);
+            foreach (var item in assembly.GetReferencedAssemblies())
             {
                 try
                 {
-                    var name = AssemblyName.GetAssemblyName(a);
-                    var range = Assembly.Load(name);
-                    loadedAssemblies.Add(range);
-                }
-                catch (Exception e) when (e is FileNotFoundException && !e.Message.Contains("cannot access the file"))
-                {
-                    try
+                    var names = assemblies.Select(i => i.FullName).Any(i => i == item.FullName);
+                    if (names)
                     {
-                        var range = Assembly.LoadFile(path: a);
-                        loadedAssemblies.Add(range);
+                        continue;
                     }
-                    catch
-                    {
-                        // ignore exceptions
-                    }
+                    var referenced = Assembly.Load(item);
+                    GetAssemblies(referenced.Location);
                 }
                 catch (Exception e) when (e != null)
                 {
-                    // ignore exceptions
+                    logger?.Warn(e.Message, e);
                 }
             }
-            return loadedAssemblies;
         }
+
+        private static (Assembly Assembly, IEnumerable<Type> Types) GetPair(Assembly assembly)
+        {
+            try
+            {
+                // setup
+                var types = assembly.GetTypes();
+
+                // get
+                return (assembly, types);
+            }
+            catch (Exception e) when (e != null)
+            {
+                logger?.Warn(e.Message, e);
+            }
+            return (null, null);
+        }
+        #endregion
+
+        #region *** Graphics   ***
+        /// <summary>
+        /// Renders RhinoAPI logo in the console.
+        /// </summary>
+        public static void RenderLogo()
+        {
+            DoRenderLogo(1, 1, ConsoleColor.Black, ConsoleColor.White, Rhino());
+            DoRenderLogo(1, 55, ConsoleColor.Black, ConsoleColor.Red, Api());
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+
+        private static void DoRenderLogo(
+            int startRow,
+            int startColumn,
+            ConsoleColor background,
+            ConsoleColor foreground,
+            IEnumerable<string> lines)
+        {
+            // setup
+            Console.CursorTop = startRow;
+            Console.BackgroundColor = background;
+            Console.ForegroundColor = foreground;
+
+            // render
+            for (int i = 0; i < lines.Count(); i++)
+            {
+                Console.CursorTop = startRow + i;
+                Console.CursorLeft = startColumn;
+                Console.WriteLine(lines.ElementAt(i));
+            }
+        }
+
+        private static IEnumerable<string> Rhino() => new List<string>
+        {
+            "88888888ba   88           88                          ",
+            "88      \"8b  88           \"\"                          ",
+            "88      ,8P  88                                       ",
+            "88aaaaaa8P'  88,dPPYba,   88  8b,dPPYba,    ,adPPYba, ",
+            "88\"\"\"\"88'    88P'    \"8a  88  88P'   `\"8a  a8\"     \"8a",
+            "88    `8b    88       88  88  88       88  8b       d8",
+            "88     `8b   88       88  88  88       88  \"8a,   ,a8\"",
+            "88      `8b  88       88  88  88       88   `\"YbbdP\"' ",
+        };
+
+        private static IEnumerable<string> Api() => new List<string>
+        {
+            "        db         88888888ba   88",
+            "       d88b        88      \"8b  88",
+            "      d8'`8b       88      ,8P  88",
+            "     d8'  `8b      88aaaaaa8P'  88",
+            "    d8YaaaaY8b     88\"\"\"\"\"\"'    88",
+            "   d8\"\"\"\"\"\"\"\"8b    88           88",
+            "  d8'        `8b   88           88",
+            " d8'          `8b  88           88",
+        };
+        #endregion
     }
 }

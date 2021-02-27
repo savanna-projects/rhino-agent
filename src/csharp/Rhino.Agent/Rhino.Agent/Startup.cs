@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 using Gravity.Abstraction.Logging;
@@ -40,7 +41,7 @@ namespace Rhino.Agent
         private const string CorsPolicy = "CorsPolicy";
 
         // members statics
-        private readonly IEnumerable<Type> types = Rhino.Controllers.Extensions.Utilities.GetTypes();
+        private static readonly IEnumerable<Type> types = Utilities.GetTypes().SelectMany(i => i.Types);
         private readonly ILiteDatabase liteDatabase;
 
         // members: state
