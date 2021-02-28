@@ -7,6 +7,7 @@ using Gravity.Abstraction.Logging;
 using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
@@ -43,6 +44,7 @@ namespace Rhino.Controllers.Domain.Automation
         private readonly IRepository<RhinoModelCollection> modelsRespository;
         private readonly ITestsRepository testsRepository;
         private readonly ILogger logger;
+        private readonly IConfiguration appSettings;
 
         /// <summary>
         /// Creates a new instance of StaticDataRepository.
@@ -56,13 +58,15 @@ namespace Rhino.Controllers.Domain.Automation
             IRepository<RhinoConfiguration> configurationsRepository,
             IRepository<RhinoModelCollection> modelsRespository,
             ITestsRepository testsRepository,
-            ILogger logger)
+            ILogger logger,
+            IConfiguration appSettings)
         {
             this.types = types;
             this.configurationsRepository = configurationsRepository;
             this.modelsRespository = modelsRespository;
             this.testsRepository = testsRepository;
             this.logger = logger.CreateChildLogger(nameof(RhinoRepository));
+            this.appSettings = appSettings;
         }
 
         /// <summary>
@@ -469,6 +473,7 @@ namespace Rhino.Controllers.Domain.Automation
             // build
             SetModels(configuration);
             SetTestsRepository(configuration);
+            SetSettings(configuration);
 
             // invoke
             try
@@ -557,6 +562,32 @@ namespace Rhino.Controllers.Domain.Automation
                 .SelectMany(i => i.RhinoTestCaseModels)
                 .Select(i => i.RhinoSpec)
                 .Concat(configuration.TestsRepository.Where(i => !Regex.IsMatch(i, IdPattern)));
+        }
+
+        private void SetSettings(RhinoConfiguration configuration)
+        {
+            // constants
+            const string ReportsOut = "Rhino:ReportConfiguration:ReportsOut";
+            const string LogsOut = "Rhino:ReportConfiguration:LogsOut";
+            const string Archive = "Rhino:ReportConfiguration:Archive";
+            const string Reporters = "Rhino:ReportConfiguration:Reporters";
+            const string ScreenshotsOut = "Rhino:ScreenshotsConfiguration:ScreenshotsOut";
+            const string KeepOriginal = "Rhino:ScreenshotsConfiguration:KeepOriginal";
+
+            // reporting
+            configuration.ReportConfiguration.ReportOut = appSettings.GetValue(ReportsOut, defaultValue: ".");
+            configuration.ReportConfiguration.LogsOut = appSettings.GetValue(LogsOut, defaultValue: ".");
+            configuration.ReportConfiguration.Archive = appSettings.GetValue(Archive, defaultValue: false);
+            configuration.ReportConfiguration.Reporters = appSettings
+                .GetSection(Reporters)
+                .GetChildren()
+                .Select(i => i.Value)
+                .Where(i => !string.IsNullOrEmpty(i))
+                .ToArray();
+
+            // screenshots
+            configuration.ScreenshotsConfiguration.ScreenshotsOut = appSettings.GetValue(ScreenshotsOut, defaultValue: ".");
+            configuration.ScreenshotsConfiguration.KeepOriginal = appSettings.GetValue(KeepOriginal, defaultValue: false);
         }
     }
 }
