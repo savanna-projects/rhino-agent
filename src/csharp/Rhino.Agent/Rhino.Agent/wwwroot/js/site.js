@@ -645,12 +645,12 @@ function playback(stateObj) {
     console.log("Settings loaded.");
 
     // load temporary configuration
-    var c = getConfiguration(stateObj);
+    var config = getConfiguration(stateObj);
 
     // parse test case script
     var testObj = getTestCaseObject();
     var testSrc = getTestCaseScript(testObj).join(C_NEW_LINE);
-    c.testsRepository = [testSrc];
+    config.testsRepository = [testSrc];
 
     // exit conditions
     if ($(E_PLAYBACK_PROGRESS).length) {
@@ -669,7 +669,7 @@ function playback(stateObj) {
     showPlaybackProgress("Automation is currently running, this can take a while. Please wait...");
 
     //-- run async operation
-    post(R_PLAYBACK, { config: c }, (testRun) => {
+    post(R_PLAYBACK, config, (testRun) => {
         console.log(testRun);
         publishTestRun(testRun);
         putLiteral();
@@ -739,7 +739,7 @@ function sendTestCase(stateObj) {
 
     // parse test case script
     var testObj = getTestCaseObject();
-    var spec = getTestCaseScript(testObj).join("\n");
+    var spec = getTestCaseScript(testObj).join(C_NEW_LINE);
     var requestBody = {
         connector: stateObj.connectorOptions,
         entity: {
