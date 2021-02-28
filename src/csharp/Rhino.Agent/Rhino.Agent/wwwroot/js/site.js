@@ -1,17 +1,20 @@
 ﻿// #region *** WIDGET: repository    ***
+// API Prefix
+var API = "/api/v3";
+//
 // REPOSITORY: routing
 // -- A --
-var R_ACTION = "/api/v3/widget/help?action=";
-var R_ACTIONS = "/api/v3/widget/actions";
-var R_CONNECTORS = "/api/v3/widget/connectors";
+var R_ACTION = API + "/meta/plugins/";
+var R_ACTIONS = API + "/meta/plugins";
+var R_CONNECTORS = API+ "/meta/connectors";
 // -- E --
 var R_EXTENSION_ID = "giekjanbmlmabfagaddfkpcijefpgkdf";
 // -- O --
-var R_OPERATORS = "/api/v3/widget/operators";
+var R_OPERATORS = API + "/meta/operators";
 // -- P --
-var R_PLAYBACK = "/api/v3/widget/playback";
+var R_PLAYBACK = API + "/rhino/configurations/invoke";
 // -- S --
-var R_SEND = "/api/v3/widget/send";
+var R_SEND = API + "/integration/create";
 
 // REPOSITORY: elements
 // -- A --
@@ -227,8 +230,8 @@ function actionsHandler(data) {
 
     // actions
     for (var i = 0; i < data.length; i++) {
-        var css = data[i].item1 === "code" ? "text-info" : "text-danger";
-        var option = '<option class="' + css + '" value="' + data[i].item2.key + '">' + data[i].item2.literal + "</option>";
+        var css = data[i].source === "code" ? "text-info" : "text-danger";
+        var option = '<option class="' + css + '" value="' + data[i].key + '">' + data[i].literal + "</option>";
         $(E_ACTIONS).append(option);
     }
 }
@@ -734,21 +737,18 @@ function sendTestCase(stateObj) {
         return;
     }
 
-    // get objects for test creation
-    var config = getConfiguration(stateObj);
-    config.connectorConfiguration = {
-        collection: stateObj.connectorOptions.collection,
-        project: stateObj.connectorOptions.project,
-        userName: stateObj.connectorOptions.userName,
-        password: stateObj.connectorOptions.password,
-        connector: stateObj.connectorOptions.connector,
-        asOsUser: stateObj.connectorOptions.asOsUser
-    };
-
     // parse test case script
     var testObj = getTestCaseObject();
-    var testSrc = JSON.stringify(getTestCaseScript(testObj));
-    var requestBody = { config: config, test: testSrc, suite: stateObj.connectorOptions.testSuite };
+    var spec = getTestCaseScript(testObj).join("\n");
+    var requestBody = {
+        connector: stateObj.connectorOptions,
+        entity: {
+            testSuites: [
+                stateObj.connectorOptions.testSuite
+            ],
+            spec: spec
+        }
+    };
 
     //-- show async progress bar while playback is active
     showPlaybackProgress("Creating test on target provider, Please wait...");
@@ -1252,7 +1252,7 @@ function populateSelect(data, selector, populate) {
 
     // iterate
     $.each(data, (_key, value) => {
-        select.append(populate(value));
+        select.append(populate(value.literal));
     });
 
     // setup

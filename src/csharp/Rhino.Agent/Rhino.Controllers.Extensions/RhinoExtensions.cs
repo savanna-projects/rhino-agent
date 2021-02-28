@@ -9,11 +9,14 @@ using Gravity.Services.DataContracts;
 
 using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.AutomationProvider;
+using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Contracts.Interfaces;
 using Rhino.Controllers.Models;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Rhino.Controllers.Extensions
@@ -101,6 +104,52 @@ namespace Rhino.Controllers.Extensions
             Summary = string.Empty
         };
 
+        #region *** Connector ***
+        /// <summary>
+        /// Gets a connector.
+        /// </summary>
+        /// <param name="configuration">RhinoConfiguration by which to factor RhinoConnector</param>
+        /// <returns>RhinoConnector implementation.</returns>
+        public static Type GetConnector(this RhinoConfiguration configuration)
+        {
+            return DoGetConnector(configuration, Utilities.GetTypes().SelectMany(i => i.Types));
+        }
+
+        /// <summary>
+        /// Gets a connector.
+        /// </summary>
+        /// <param name="configuration">RhinoConfiguration by which to factor RhinoConnector</param>
+        /// <param name="types">A collection of <see cref="Type>"/> in which to search for RhinoConnector.</param>
+        /// <returns>RhinoConnector implementation.</returns>
+        public static Type GetConnector(this RhinoConfiguration configuration, IEnumerable<Type> types)
+        {
+            return DoGetConnector(configuration, types);
+        }
+
+        private static Type DoGetConnector(RhinoConfiguration configuration, IEnumerable<Type> types)
+        {
+            // constants
+            const StringComparison C = StringComparison.OrdinalIgnoreCase;
+
+            // types loading pipeline
+            var byContract = types.Where(t => typeof(IConnector).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+            var byAttribute = byContract.Where(t => t.GetCustomAttribute<ConnectorAttribute>() != null);
+
+            // get connector type by it's name
+            var type = byAttribute
+                .FirstOrDefault(t => t.GetCustomAttribute<ConnectorAttribute>().Value.Equals(configuration.ConnectorConfiguration.Connector, C));
+
+            if (type == default)
+            {
+                return default;
+            }
+
+            // activate new connector instance
+            return type;
+        }
+        #endregion
+
+        #region *** Models    ***
         /// <summary>
         /// Converts a ActionAttribute object into ActionModel object.
         /// </summary>
@@ -233,5 +282,6 @@ namespace Rhino.Controllers.Extensions
         {
             return VerbMap.FirstOrDefault(i => i.Value.Contains(action)).Key ?? "on";
         }
+        #endregion
     }
 }

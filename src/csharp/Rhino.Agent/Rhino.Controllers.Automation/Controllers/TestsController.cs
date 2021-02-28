@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.Configuration;
-using Rhino.Api.Extensions;
 using Rhino.Api.Parser.Contracts;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;

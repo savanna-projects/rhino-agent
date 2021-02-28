@@ -26,6 +26,7 @@ using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Controllers;
 using Rhino.Controllers.Domain.Automation;
 using Rhino.Controllers.Domain.Data;
+using Rhino.Controllers.Domain.Integration;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
@@ -121,6 +122,7 @@ namespace Rhino.Agent
             services.AddTransient<IPluginsRepository, PluginsRepository>();
             services.AddTransient<IRepository<RhinoConfiguration>, ConfigurationsRepository>();
             services.AddTransient<IRepository<RhinoModelCollection>, ModelsRepository>();
+            services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IRhinoAsyncRepository, RhinoRepository>();
             services.AddTransient<IRhinoRepository, RhinoRepository>();
             services.AddTransient<IMetaDataRepository, MetaDataRepository>();
