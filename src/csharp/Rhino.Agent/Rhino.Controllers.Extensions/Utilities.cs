@@ -4,7 +4,6 @@
  * RESSOURCES
  */
 using Gravity.Abstraction.Logging;
-using Gravity.Services.Comet.Engine.Attributes;
 
 using Rhino.Api.Contracts.AutomationProvider;
 
@@ -26,7 +25,7 @@ namespace Rhino.Controllers.Extensions
         private static readonly ILogger logger = new TraceLogger("RhinoApi", nameof(Utilities));
         private static readonly IList<Assembly> assemblies = new List<Assembly>();
 
-        #region *** Assemblies ***        
+        #region *** Assemblies ***
         /// <summary>
         /// gets a collection of all assemblies where the executing assembly is currently located
         /// </summary>
