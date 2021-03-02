@@ -583,9 +583,9 @@ function putHelp(actionLiteralModel) {
         : getRhinoActions(actionLiteralModel);
 
     // setup metadata
-    $(E_HELP_ACTION).text(actionLiteralModel.item2.literal);
-    $(E_HELP_BADGE).text(actionLiteralModel.item2.key);
-    $(E_HELP_DESCRIPTION).text(actionLiteralModel.item2.action.description);
+    $(E_HELP_ACTION).text(actionLiteralModel.literal);
+    $(E_HELP_BADGE).text(actionLiteralModel.key);
+    $(E_HELP_DESCRIPTION).text(actionLiteralModel.entity.Description);
 
     // populate new action
     for (var i = 0; i < actions.length; i++) {
@@ -912,11 +912,11 @@ function getRhinoActions(actionLiteralModel, isUi = false) {
     var rhinoActions = [];
 
     // TODO: handle non-standard actions
-    if (isNullOrEmpty(actionLiteralModel.item2.action.examples)) {
+    if (isNullOrEmpty(actionLiteralModel.entity.Examples)) {
         var rhinoAction = {
-            actionPlugin: actionLiteralModel.item2.key,
-            actionLiteral: actionLiteralModel.item2.literal,
-            verb: actionLiteralModel.item2.verb,
+            actionPlugin: actionLiteralModel.key,
+            actionLiteral: actionLiteralModel.literal,
+            verb: actionLiteralModel.verb,
             actionRule: C_EMPTY_STRING,
             description: C_EMPTY_STRING,
             id: 0
@@ -927,11 +927,11 @@ function getRhinoActions(actionLiteralModel, isUi = false) {
         return rhinoActions;
     }
 
-    $(actionLiteralModel.item2.action.examples).each((i, e) => {
+    $(actionLiteralModel.entity.Examples).each((i, e) => {
         rhinoAction = {
-            actionPlugin: actionLiteralModel.item2.key,
-            actionLiteral: actionLiteralModel.item2.literal,
-            verb: actionLiteralModel.item2.verb,
+            actionPlugin: actionLiteralModel.key,
+            actionLiteral: actionLiteralModel.literal,
+            verb: actionLiteralModel.verb,
             actionRule: e.actionExample,
             description: e.description,
             id: i
