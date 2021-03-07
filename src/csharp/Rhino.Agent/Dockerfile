@@ -6,22 +6,6 @@ EXPOSE 9001
 
 # Build
 FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
-WORKDIR /src
-COPY ["Rhino.Agent/Rhino.Agent.csproj", "Rhino.Agent/"]
-RUN dotnet restore "Rhino.Agent/Rhino.Agent.csproj"
-COPY . .
-WORKDIR "/src/Rhino.Agent"
-RUN dotnet build "Rhino.Agent.csproj" -c Release -o /app/build
-
-# Publish
-FROM build AS publish
-RUN dotnet publish "Rhino.Agent.csproj" -c Release -o /app/publish
-
-# Setup: Final
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Rhino.Agent.dll"]
 
 # Install Utilities
 RUN apt-get update && \
@@ -34,7 +18,28 @@ RUN apt-get update && apt-get install -y \
     dotnet-sdk-5.0 \
     gss-ntlmssp \
     vim \
-    jq     
+    jq
+
+WORKDIR /src
+COPY ["Rhino.Agent/Rhino.Agent.csproj", "Rhino.Agent/"]
+COPY ["Rhino.Controllers/Rhino.Controllers.csproj", "Rhino.Controllers/"]
+COPY ["Rhino.Controllers.Domain/Rhino.Controllers.Domain.csproj", "Rhino.Controllers.Domain/"]
+COPY ["Rhino.Controllers.Extensions/Rhino.Controllers.Extensions.csproj", "Rhino.Controllers.Extensions/"]
+COPY ["Rhino.Controllers.Models/Rhino.Controllers.Models.csproj", "Rhino.Controllers.Models/"]
+RUN dotnet restore --disable-parallel "Rhino.Agent/Rhino.Agent.csproj"
+COPY . .
+WORKDIR "/src/Rhino.Agent"
+RUN dotnet build "Rhino.Agent.csproj" -c Release -o /app/build
+
+# Publish
+FROM build AS publish
+RUN dotnet publish "Rhino.Agent.csproj" -c Release -o /app/publish
+
+# Setup: Final
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Rhino.Agent.dll"] 
 
 # Environment
 ENV ASPNETCORE_URLS=http://+:9000;https://+:9001

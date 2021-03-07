@@ -26,7 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Rhino.Controllers.Automation\Rhino.Controllers.csproj" />
+	  <ProjectReference Include="..\Rhino.Controllers\Rhino.Controllers.csproj" />
 	  <ProjectReference Include="..\Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj" />
 	</ItemGroup>
 
