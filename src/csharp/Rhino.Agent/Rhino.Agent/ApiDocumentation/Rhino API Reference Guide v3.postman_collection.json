@@ -26,11 +26,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set('endpoint', 'https://localhost:9001/api/v3');\r",
-									"pm.collectionVariables.set('rhino_password', 'Aa123456!');\r",
-									"pm.collectionVariables.set('rhino_user', 'automation@rhino.api');\r",
-									"//pm.collectionVariables.set('rhino_drivers', 'http://localhost:4444/wd/hub');\r",
-									"pm.collectionVariables.set('rhino_drivers', \"D:\\\\\\\\automation_env\\\\\\\\web_drivers\");"
+									"pm.collectionVariables.set('endpoint', '');\r",
+									"pm.collectionVariables.set('rhino_password', '');\r",
+									"pm.collectionVariables.set('rhino_user', '');\r",
+									"pm.collectionVariables.set('rhino_drivers', '');"
 								],
 								"type": "text/javascript"
 							}
@@ -13368,7 +13367,7 @@
 		},
 		{
 			"key": "configuration_id",
-			"value": "3236979d-8459-4c90-9437-b29bb234d0ef"
+			"value": "f3e8b59b-3879-4404-997a-001edc72609a"
 		},
 		{
 			"key": "session_id",

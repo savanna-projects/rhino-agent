@@ -14,15 +14,15 @@
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Rhino.Connectors.Azure" Version="2021.3.2.1" />
 		<PackageReference Include="Rhino.Connectors.Azure.WebApi" Version="16.162.29627.1" />
-		<PackageReference Include="Rhino.Connectors.Gurock" Version="2021.3.2.2" />
-		<PackageReference Include="Rhino.Connectors.Text" Version="2021.3.2.2" />
-		<PackageReference Include="Rhino.Connectors.Xray" Version="2021.3.2.1" />
-		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.3.2.1" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="88.0.4324.9600" />
+		<PackageReference Include="Rhino.Connectors.Gurock" Version="2021.3.6.1" />
+		<PackageReference Include="Rhino.Connectors.Text" Version="2021.3.6.1" />
+		<PackageReference Include="Rhino.Connectors.Xray" Version="2021.3.7.1" />
+    <PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.3.7.1" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="89.0.4389.2300" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.3" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
