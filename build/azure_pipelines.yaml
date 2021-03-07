@@ -44,7 +44,7 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    projects: '**/*.csproj'
+    projects: '**/Rhino.Agent.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
     modifyOutputPath: false
 
