@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
+using System.Linq;
 using System.Text.Json;
 
 using Gravity.Abstraction.Logging;
@@ -19,40 +19,60 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-
-using Rhino.Agent.Domain;
-using Rhino.Agent.Middleware;
-using Rhino.Api.Parser.Components;
+using Rhino.Api.Contracts.Configuration;
+using Rhino.Controllers.Controllers;
+using Rhino.Controllers.Domain.Automation;
+using Rhino.Controllers.Domain.Data;
+using Rhino.Controllers.Domain.Integration;
+using Rhino.Controllers.Domain.Interfaces;
+using Rhino.Controllers.Domain.Middleware;
+using Rhino.Controllers.Extensions;
+using Rhino.Controllers.Models;
 
 namespace Rhino.Agent
 {
     public class Startup
     {
-        // constants
+        // constants        
+        public const string DbEncrypKey = "Rhino:StateManager:Key";
+        public const string DbEncrypKeyDefault = "30908f87-8539-477a-86e7-a4c13d4583c4";
         private const string CorsPolicy = "CorsPolicy";
-        private const string Version = "v3";
 
-        // statics
-        public static HttpClient HttpClient => new HttpClient();
-        public static LiteDatabase LiteDb => new LiteDatabase("Data.dll");
-        public static IEnumerable<Type> Types => Extensions.Utilities.GetTypes();
-        public static JsonSerializerSettings JsonSettings => new JsonSerializerSettings
-        {
-            Formatting = Formatting.Indented,
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        };
+        // members statics
+        private static readonly IEnumerable<Type> types = Utilities.GetTypes().SelectMany(i => i.Types);
+        private readonly ILiteDatabase liteDatabase;
+
+        // members: state
+        private readonly ILogger logger;
+        public readonly string dataConnection =
+            "Filename=" + Path.Combine(Environment.CurrentDirectory, "Data", "Data.dll") + ";" +
+            "Password=$(password);" +
+            "Connection=shared;" +
+            "Upgrade=true";
 
         /// <summary>
-        /// Creates a new instance of this Startup component
+        /// Creates a new instance of Startup component
         /// </summary>
         /// <param name="configuration">Represents a set of key/value application configuration properties.</param>
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        public Startup(IConfiguration configuration)
+        {
+            // setup: configuration
+            Configuration = configuration;
+
+            // setup: logger
+            logger = ControllerUtilities.GetLogger(configuration)?.CreateChildLogger(nameof(Startup));
+            logger?.Debug("Create-Logger = Ok");
+
+            // setup: state manager
+            var encrypKey = configuration.GetValue<string>(DbEncrypKey);
+            dataConnection = string.IsNullOrEmpty(encrypKey)
+                ? dataConnection.Replace("$(password)", DbEncrypKeyDefault)
+                : dataConnection.Replace("$(password)", encrypKey);
+            liteDatabase = new LiteDatabase(dataConnection);
+        }
 
         /// <summary>
         /// Gets this configuration as a set of key/value application configuration properties.
@@ -67,54 +87,52 @@ namespace Rhino.Agent
         {
             // Components settings
             services.AddRazorPages();
+            services.AddMvc().AddApplicationPart(typeof(RhinoController).Assembly).AddControllersAsServices();
             services.AddControllers().AddJsonOptions(i =>
             {
                 i.JsonSerializerOptions.WriteIndented = true;
                 i.JsonSerializerOptions.IgnoreNullValues = true;
                 i.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
-
-            // Swagger settings
-            services.AddSwaggerGen(c
-                => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Rhino Api", Version = "v3" }));
-
-            // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v3", new OpenApiInfo { Title = "Rhino Controllers", Version = "v3" });
+                c.EnableAnnotations();
+            });
+            services.AddApiVersioning(c =>
+            {
+                c.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(3, 0);
+                c.AssumeDefaultVersionWhenUnspecified = true;
+                c.ErrorResponses = new GenericErrorModel<IDictionary<string, object>>();
+                c.ReportApiVersions = true;
+            });
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = _ => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
-            // This lambda determines the cross origin (CORS) behavior
-            services.AddCors(o => o.AddPolicy(CorsPolicy, builder
-                => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+            services.AddCors(o => o.AddPolicy(CorsPolicy, builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
             // This lambda determines the DI container mapping
-            services.AddScoped<PluginParser, PluginParser>();
-            services.AddScoped<RhinoTestCaseRepository, RhinoTestCaseRepository>();
-            services.AddScoped<RhinoModelRepository, RhinoModelRepository>();
-            services.AddScoped<RhinoConfigurationRepository, RhinoConfigurationRepository>();
-            services.AddScoped<RhinoLogsRepository, RhinoLogsRepository>();
-            services.AddScoped<RhinoPluginRepository, RhinoPluginRepository>();
-            services.AddScoped<RhinoKbRepository, RhinoKbRepository>();
-            services.AddScoped<RhinoEnvironmentRepository, RhinoEnvironmentRepository>();
+            services.AddTransient(typeof(ILogger), (_) => ControllerUtilities.GetLogger(Configuration));
+            services.AddTransient(typeof(Orbit), (_) => new Orbit(types));
 
-            services.AddSingleton(typeof(JsonSerializerSettings), JsonSettings);
-            services.AddSingleton(typeof(LiteDatabase), LiteDb);
-            services.AddSingleton(typeof(IEnumerable<Type>), Types);
-            services.AddSingleton(typeof(HttpClient), HttpClient);
-            services.AddSingleton(typeof(Orbit), new Orbit(Types));
-            services.AddSingleton(typeof(ILogger), GetLogger());
-        }
+            services.AddTransient<IEnvironmentRepository, EnvironmentRepository>();
+            services.AddTransient<ILogsRepository, LogsRepository>();
+            services.AddTransient<IPluginsRepository, PluginsRepository>();
+            services.AddTransient<IRepository<RhinoConfiguration>, ConfigurationsRepository>();
+            services.AddTransient<IRepository<RhinoModelCollection>, ModelsRepository>();
+            services.AddTransient<IApplicationRepository, ApplicationRepository>();
+            services.AddTransient<IRhinoAsyncRepository, RhinoRepository>();
+            services.AddTransient<IRhinoRepository, RhinoRepository>();
+            services.AddTransient<IMetaDataRepository, MetaDataRepository>();
+            services.AddTransient<ITestsRepository, TestsRepository>();
 
-        private ILogger GetLogger()
-        {
-            // get in folder
-            var inFolder = Configuration.GetValue<string>("rhino:reportConfiguration:logsOut");
-            inFolder = string.IsNullOrEmpty(inFolder) ? Environment.CurrentDirectory + "/Logs" : inFolder;
+            services.AddSingleton(typeof(ILiteDatabase), (_) => liteDatabase);
+            services.AddSingleton(types);
 
-            // setup logger
-            return new TraceLogger(applicationName: "RhinoApi", loggerName: string.Empty, inFolder);
+            // log
+            logger?.Debug("Create-ServiceConfiguration = Ok");
         }
 
         /// <summary>
@@ -128,40 +146,26 @@ namespace Rhino.Agent
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"Rhino Api {Version}"));
             }
             else
             {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
             app.UseStaticFiles();
-            app.ConfigureExceptionHandler(GetLogger().CreateChildLogger("ExceptionHandler"));
+            app.ConfigureExceptionHandler(logger?.CreateChildLogger("ExceptionHandler"));
             app.UseCookiePolicy();
             app.UseCors(CorsPolicy);
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", "Rhino Controllers v3"));
             app.UseRouting();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapRazorPages());
             app.UseEndpoints(endpoints => endpoints.MapControllers());
 
-            SetOutputsFolder(app);
-        }
-
-        private void SetOutputsFolder(IApplicationBuilder app)
-        {
-            // get outputs path
-            var path = Extensions.Utilities.GetStaticReportsFolder(configuration: Configuration);
-
-            // force
-            Directory.CreateDirectory(path);
-
-            // setup
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(path),
-                RequestPath = "/reports",
-                ServeUnknownFileTypes = true
-            });
+            // log
+            logger?.Debug("Create-ServiceApplicationSettings = Ok");
         }
     }
 }

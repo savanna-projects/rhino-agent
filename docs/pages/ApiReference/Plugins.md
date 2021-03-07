@@ -1,4 +1,38 @@
-# API: Configurations
+[Home](../Home.md 'Home')  
+
+# API: Plugins
+02/16/2021 - 55 minutes to read
+
+## In This Article
+* [Get Plugin](#get-plugin)
+* [Get Plugins](#get-plugins)
+* [Create or Update Plugins](#create-or-update-plugins)
+* [Delete Plugin](#delete-plugin)
+* [Delete Plugins](#delete-plugins)
+
+_**Rhino Plugin**_ is basically a reusable test case which can be called as an action in another test (e.g. works in the same way as shared steps). For example, a common scenario for creating a plugin is ```Login```. In most cases login is consist of 3 actions:
+
+1. Type in user name.
+2. Type in password.
+3. click on the login button.  
+
+These 3 actions will repeat themselves in every test, because every test needs a new login. It is possible to wrap these action into a plugin and call them as single action as such:
+
+```
+login {{$ --user_name:myUserName --password:my_password}}
+```  
+
+Using the plugin will remove the necessity to recreate 3 identical steps for each test and will remove the maintenance time if these steps needs to be updated - you will have to update only the plugin and it will affect all the tests that use it.
+
+> _**Information**_
+>  
+> 1. It is possible to give the plugin any name you like, which later will be used to call the plugin inside a test.
+> 2. It is possible to add as many parameters as you like to expose your plugin functionality.
+> 3. It is possible to include assertions in the plugin.
+> 4. It is possible to add more than one plugin in a single request.
+> 5. Plugin syntax is almost identical to the syntax of a test case.
+> 6. Once created, you will be able to access your plugins on all Rhino integrations including connectors and the recorder.
+
 Use the following API methods to request details about _**Rhino Plugins**_ and to create or modify them.
 
 ## Get Plugin

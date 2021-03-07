@@ -1,4 +1,44 @@
+[Home](../Home.md 'Home')  
+
 # API: Models
+02/17/2021 - 55 minutes to read
+
+## In This Article
+* [Get Models](#get-models)
+* [Get Model](#get-model)
+* [Create Model](#create-model)
+* [Create Model with Configuration](#create-model-with-configuration)
+* [Get Associated Configurations](#get-associated-configurations)
+* [Add Models to Collection](#add-models-to-collection)
+* [Associate Model to Configuration](#associate-model-to-configuration)
+* [Delete Model](#delete-model)
+* [Delete Models](#delete-models)
+
+_**Rhino Model**_ is a collection of entires which map a certain value into an expressive name (alias) for reuse of that specific value. For example, lets say that I have an element on my web page which is repeatable in all pages and I am using it in more than one test. In that case I can create a model which holds the locator information of that element, and call that model using the expressive name.  
+
+For example
+```
+MY MODEL
+
+name:    file menu
+value:   //li[@id='file_menu']
+type:    xpath
+comment: An element that exists on all pages and is used by many tests.
+
+Once the model is created I can refer it in my tests by calling the model entry name as such:
+
+click on {file menu}
+verify that {text} of {file menu} match {file}
+...
+```
+
+> _**Information**_
+>  
+> 1. It is possible to use models to refer macros such as {{$date -format:yyyyMMddHHmmss}} or other textual combinations.
+> 2. The comment filed is an optional filed and was deigned to add more information to the model.
+> 3. It is possible to add context (a collection of key/value) to a model for further information about the model.
+> 4. Models which are not associated to a collection or configuration will be applied to all tests (global models).
+
 Use the following API methods to request details about _**Rhino Models**_ and to create or modify them.
 
 ## Get Models
@@ -48,8 +88,8 @@ The example response includes 2 models, with 1 entries each and 2 configurations
 |200 |Success, the _**Rhino Models**_ were returned as part of the response.|
 |500 |Fail, the server encountered an unexpected error.                     |
 
-## Get Models Collection
-Returns an existing _**Rhino Model**_ collection.
+## Get Model
+Returns an existing _**Rhino Model**_.
 
 ```
 GET /api/v3/models/:collection_id
@@ -153,7 +193,57 @@ The request body follows the same format as [Get Model](#get-model) response con
 |Code|Description                                                                                      |
 |----|-------------------------------------------------------------------------------------------------|
 |201 |Success, the _**Models Collection**_ created and identifier was returned as part of the response.|
+|204 |No Content, the _**Models Collection**_ or a collection with the same name already exists.       |
 |400 |Bad Request, the request is missing a mandatory field(s) or bad formatted.                       |
+|500 |Fail, the server encountered an unexpected error.                                                |
+
+## Create Model with Configuration
+Creates a new _**Rhino Model**_.
+
+```
+POST /api/v3/models/configuration_id
+```
+
+|Name            |Type  |Description                             |
+|----------------|------|----------------------------------------|
+|configuration_id|string|The ID of the _**Rhino Configuration**_.|
+
+### Request Fields
+The request body follows the same format as [Get Model](#get-model) response content.
+
+### Request Example
+```js
+[
+  {
+    "name": "Students Input Models",
+    "entries": [
+      {
+        "name": "search students text-box",
+        "value": "#SearchString",
+        "type": "css selector",
+        "comment": "Search students text-box on the top center panel under students page."
+      },
+      {
+        "name": "search students button",
+        "value": "//input[@id='SearchButton']",
+        "type": "xpath",
+        "comment": "Search students button on the top center panel under students page."
+      }
+    ],
+    "context": {
+      "pageUrl": "https://gravitymvctestapplication.azurewebsites.net/student"
+    }
+  }
+]
+```
+
+### Response Codes
+|Code|Description                                                                                      |
+|----|-------------------------------------------------------------------------------------------------|
+|201 |Success, the _**Models Collection**_ created and identifier was returned as part of the response.|
+|204 |No Content, the _**Models Collection**_ or a collection with the same name already exists.       |
+|400 |Bad Request, the request is missing a mandatory field(s) or bad formatted.                       |
+|404 |Not Found, the _**Configuration**_ was not found.                                                |
 |500 |Fail, the server encountered an unexpected error.                                                |
 
 ## Get Associated Configurations
@@ -240,27 +330,28 @@ The request body follows the same format as [Get Model](#get-model) response con
 |404 |Not Found, the _**Collection**_ was not found.                     |
 |500 |Fail, the server encountered an unexpected error.                  |
 
-## Associate Configuration to Collection
-Add additional _**Rhino Configuration**_ into an existing collection.
+## Associate Model to Configuration
+Add additional _**Rhino Models**_ into an existing configuration. If the model name is already exists on another model,
+it will be ignored.
 
 ```
-PATCH /api/v3/models/:collection_id/configurations/:configuration_id
+PATCH /api/v3/models/:model_id/configurations/:configuration_id
 ```
 
-|Name            |Type  |Description                                |
-|----------------|------|-------------------------------------------|
-|collection_id   |string|The ID of the _**Rhino Model**_ collection.|
-|configuration_id|string|The ID of the _**Rhino Configuration**_.   |
+|Name            |Type  |Description                             |
+|----------------|------|----------------------------------------|
+|model_id        |string|The ID of the _**Rhino Model**_.        |
+|configuration_id|string|The ID of the _**Rhino Configuration**_.|
 
 ### Response Codes
-|Code|Description                                                           |
-|----|----------------------------------------------------------------------|
-|200 |Success, the _**Collection**_ was returned as part of the response.   |
-|404 |Not Found, the _**Collection**_ or _**Configuration**_ were not found.|
-|500 |Fail, the server encountered an unexpected error.                     |
+|Code|Description                                                      |
+|----|-----------------------------------------------------------------|
+|200 |Success, the _**Model**_ was returned as part of the response.   |
+|404 |Not Found, the _**Model**_ or _**Configuration**_ were not found.|
+|500 |Fail, the server encountered an unexpected error.                |
 
-## Delete Model Collection
-Deletes an existing _**Rhino Model**_ collection.
+## Delete Model
+Deletes an existing _**Rhino Model**_.
 
 ```
 DELETE /api/v3/models/:collection_id
@@ -279,8 +370,8 @@ DELETE /api/v3/models/:collection_id
 |404 |Not Found, the _**Model**_ was not found.        |
 |500 |Fail, the server encountered an unexpected error.|
 
-## Delete Model Collections
-Deletes all existing _**Rhino Model**_ collections.
+## Delete Models
+Deletes all existing _**Rhino Models**_.
 
 ```
 DELETE /api/v3/models

@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Gravity.Extensions" Version="2020.10.18.1" />
+    <PackageReference Include="Gravity.Services.Comet" Version="2021.2.26.2" />
+    <PackageReference Include="Gravity.Services.DataContracts" Version="2021.2.26.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Rhino.Api.Contracts" Version="2021.3.5.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rhino.Controllers.Models\Rhino.Controllers.Models.csproj" />
+  </ItemGroup>
+
+</Project>

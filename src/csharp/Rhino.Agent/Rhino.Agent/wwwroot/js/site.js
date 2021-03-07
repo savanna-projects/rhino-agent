@@ -1,17 +1,20 @@
 ﻿// #region *** WIDGET: repository    ***
+// API Prefix
+var API = "/api/v3";
+//
 // REPOSITORY: routing
 // -- A --
-var R_ACTION = "/api/v3/widget/help?action=";
-var R_ACTIONS = "/api/v3/widget/actions";
-var R_CONNECTORS = "/api/v3/widget/connectors";
+var R_ACTION = API + "/meta/plugins/";
+var R_ACTIONS = API + "/meta/plugins";
+var R_CONNECTORS = API+ "/meta/connectors";
 // -- E --
 var R_EXTENSION_ID = "giekjanbmlmabfagaddfkpcijefpgkdf";
 // -- O --
-var R_OPERATORS = "/api/v3/widget/operators";
+var R_OPERATORS = API + "/meta/operators";
 // -- P --
-var R_PLAYBACK = "/api/v3/widget/playback";
+var R_PLAYBACK = API + "/rhino/configurations/invoke";
 // -- S --
-var R_SEND = "/api/v3/widget/send";
+var R_SEND = API + "/integration/create";
 
 // REPOSITORY: elements
 // -- A --
@@ -227,8 +230,8 @@ function actionsHandler(data) {
 
     // actions
     for (var i = 0; i < data.length; i++) {
-        var css = data[i].item1 === "code" ? "text-info" : "text-danger";
-        var option = '<option class="' + css + '" value="' + data[i].item2.key + '">' + data[i].item2.literal + "</option>";
+        var css = data[i].source === "code" ? "text-info" : "text-danger";
+        var option = '<option class="' + css + '" value="' + data[i].key + '">' + data[i].literal + "</option>";
         $(E_ACTIONS).append(option);
     }
 }
@@ -580,9 +583,9 @@ function putHelp(actionLiteralModel) {
         : getRhinoActions(actionLiteralModel);
 
     // setup metadata
-    $(E_HELP_ACTION).text(actionLiteralModel.item2.literal);
-    $(E_HELP_BADGE).text(actionLiteralModel.item2.key);
-    $(E_HELP_DESCRIPTION).text(actionLiteralModel.item2.action.description);
+    $(E_HELP_ACTION).text(actionLiteralModel.literal);
+    $(E_HELP_BADGE).text(actionLiteralModel.key);
+    $(E_HELP_DESCRIPTION).text(actionLiteralModel.entity.Description);
 
     // populate new action
     for (var i = 0; i < actions.length; i++) {
@@ -642,12 +645,12 @@ function playback(stateObj) {
     console.log("Settings loaded.");
 
     // load temporary configuration
-    var c = getConfiguration(stateObj);
+    var config = getConfiguration(stateObj);
 
     // parse test case script
     var testObj = getTestCaseObject();
     var testSrc = getTestCaseScript(testObj).join(C_NEW_LINE);
-    c.testsRepository = [testSrc];
+    config.testsRepository = [testSrc];
 
     // exit conditions
     if ($(E_PLAYBACK_PROGRESS).length) {
@@ -666,7 +669,7 @@ function playback(stateObj) {
     showPlaybackProgress("Automation is currently running, this can take a while. Please wait...");
 
     //-- run async operation
-    post(R_PLAYBACK, { config: c }, (testRun) => {
+    post(R_PLAYBACK, config, (testRun) => {
         console.log(testRun);
         publishTestRun(testRun);
         putLiteral();
@@ -734,21 +737,18 @@ function sendTestCase(stateObj) {
         return;
     }
 
-    // get objects for test creation
-    var config = getConfiguration(stateObj);
-    config.connectorConfiguration = {
-        collection: stateObj.connectorOptions.collection,
-        project: stateObj.connectorOptions.project,
-        userName: stateObj.connectorOptions.userName,
-        password: stateObj.connectorOptions.password,
-        connector: stateObj.connectorOptions.connector,
-        asOsUser: stateObj.connectorOptions.asOsUser
-    };
-
     // parse test case script
     var testObj = getTestCaseObject();
-    var testSrc = JSON.stringify(getTestCaseScript(testObj));
-    var requestBody = { config: config, test: testSrc, suite: stateObj.connectorOptions.testSuite };
+    var spec = getTestCaseScript(testObj).join(C_NEW_LINE);
+    var requestBody = {
+        connector: stateObj.connectorOptions,
+        entity: {
+            testSuites: [
+                stateObj.connectorOptions.testSuite
+            ],
+            spec: spec
+        }
+    };
 
     //-- show async progress bar while playback is active
     showPlaybackProgress("Creating test on target provider, Please wait...");
@@ -912,11 +912,11 @@ function getRhinoActions(actionLiteralModel, isUi = false) {
     var rhinoActions = [];
 
     // TODO: handle non-standard actions
-    if (isNullOrEmpty(actionLiteralModel.item2.action.examples)) {
+    if (isNullOrEmpty(actionLiteralModel.entity.Examples)) {
         var rhinoAction = {
-            actionPlugin: actionLiteralModel.item2.key,
-            actionLiteral: actionLiteralModel.item2.literal,
-            verb: actionLiteralModel.item2.verb,
+            actionPlugin: actionLiteralModel.key,
+            actionLiteral: actionLiteralModel.literal,
+            verb: actionLiteralModel.verb,
             actionRule: C_EMPTY_STRING,
             description: C_EMPTY_STRING,
             id: 0
@@ -927,11 +927,11 @@ function getRhinoActions(actionLiteralModel, isUi = false) {
         return rhinoActions;
     }
 
-    $(actionLiteralModel.item2.action.examples).each((i, e) => {
+    $(actionLiteralModel.entity.Examples).each((i, e) => {
         rhinoAction = {
-            actionPlugin: actionLiteralModel.item2.key,
-            actionLiteral: actionLiteralModel.item2.literal,
-            verb: actionLiteralModel.item2.verb,
+            actionPlugin: actionLiteralModel.key,
+            actionLiteral: actionLiteralModel.literal,
+            verb: actionLiteralModel.verb,
             actionRule: e.actionExample,
             description: e.description,
             id: i
@@ -1252,7 +1252,7 @@ function populateSelect(data, selector, populate) {
 
     // iterate
     $.each(data, (_key, value) => {
-        select.append(populate(value));
+        select.append(populate(value.literal));
     });
 
     // setup

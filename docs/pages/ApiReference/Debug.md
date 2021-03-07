@@ -1,9 +1,20 @@
+[Home](../Home.md 'Home')  
+
 # API: Debug
+02/16/2021 - 75 minutes to read
+
+## In This Article
+* [Invoke Gravity API Request](#invoke-gravity-api-request)
+
+[Gravity](https://github.com/gravity-api?tab=repositories) is the automation engine behind _**Rhino API**_. It is possible to execute automation requests directly against Gravity for further capabilities and control over the automation flow, such as executing actions one by one or repeatedly executing the same actions while getting a result for each action at a time, allowing you to practically debug and refine your automation scenarios.  
+
+> _**Information**_
+>  
+> When Rhino executing a test case, it will save the Gravity request under the reports folder. You can use this request for debugging the actions.  
+
 Use the following API methods to simulate a debugging process of your automation and gets underline exceptions and extractions.
 
-> Note, the API used for these requests is the underline [Gravity API](https://github.com/gravity-api?tab=repositories).
-
-## Execute Gravity API Request
+## Invoke Gravity API Request
 Returns an _**Orbit Response**_ object.
 
 ```

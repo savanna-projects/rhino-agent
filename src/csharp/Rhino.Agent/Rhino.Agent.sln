@@ -8,7 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5F276F3
 		..\..\..\build\azure_pipelines.yaml = ..\..\..\build\azure_pipelines.yaml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{3712E923-66B8-4982-9BE2-045E1B95C598}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{3712E923-66B8-4982-9BE2-045E1B95C598}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\docs\pages\Home.md = ..\..\..\docs\pages\Home.md
 		..\..\..\README.md = ..\..\..\README.md
@@ -20,10 +20,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiReference", "ApiReferenc
 		..\..\..\docs\pages\ApiReference\Debug.md = ..\..\..\docs\pages\ApiReference\Debug.md
 		..\..\..\docs\pages\ApiReference\Environment.md = ..\..\..\docs\pages\ApiReference\Environment.md
 		..\..\..\docs\pages\ApiReference\Logs.md = ..\..\..\docs\pages\ApiReference\Logs.md
+		..\..\..\docs\pages\ApiReference\Meta.md = ..\..\..\docs\pages\ApiReference\Meta.md
 		..\..\..\docs\pages\ApiReference\Models.md = ..\..\..\docs\pages\ApiReference\Models.md
 		..\..\..\docs\pages\ApiReference\Plugins.md = ..\..\..\docs\pages\ApiReference\Plugins.md
 		..\..\..\docs\pages\ApiReference\Rhino.md = ..\..\..\docs\pages\ApiReference\Rhino.md
-		..\..\..\docs\pages\ApiReference\TestCases.md = ..\..\..\docs\pages\ApiReference\TestCases.md
+		..\..\..\docs\pages\ApiReference\RhinoAsync.md = ..\..\..\docs\pages\ApiReference\RhinoAsync.md
+		..\..\..\docs\pages\ApiReference\Tests.md = ..\..\..\docs\pages\ApiReference\Tests.md
+		..\..\..\docs\pages\ApiReference\Utilities.md = ..\..\..\docs\pages\ApiReference\Utilities.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "GettingsStarted", "{93EE5C18-B0DA-4D71-B345-FC7B44BC3D79}"
@@ -58,6 +61,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{242F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Agent", "Rhino.Agent\Rhino.Agent.csproj", "{A82F3446-6153-43C3-BE3D-006A54E3803A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers", "Rhino.Controllers.Automation\Rhino.Controllers.csproj", "{6DC68289-26F0-45C0-825B-21D6103FBC97}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Domain", "Rhino.Controllers.Domain\Rhino.Controllers.Domain.csproj", "{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Extensions", "Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj", "{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Models", "Rhino.Controllers.Models\Rhino.Controllers.Models.csproj", "{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +79,22 @@ Global
 		{A82F3446-6153-43C3-BE3D-006A54E3803A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A82F3446-6153-43C3-BE3D-006A54E3803A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A82F3446-6153-43C3-BE3D-006A54E3803A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DC68289-26F0-45C0-825B-21D6103FBC97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DC68289-26F0-45C0-825B-21D6103FBC97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DC68289-26F0-45C0-825B-21D6103FBC97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DC68289-26F0-45C0-825B-21D6103FBC97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
