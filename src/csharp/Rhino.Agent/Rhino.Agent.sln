@@ -61,7 +61,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{242F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Agent", "Rhino.Agent\Rhino.Agent.csproj", "{A82F3446-6153-43C3-BE3D-006A54E3803A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers", "Rhino.Controllers.Automation\Rhino.Controllers.csproj", "{6DC68289-26F0-45C0-825B-21D6103FBC97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers", "Rhino.Controllers\Rhino.Controllers.csproj", "{6DC68289-26F0-45C0-825B-21D6103FBC97}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Domain", "Rhino.Controllers.Domain\Rhino.Controllers.Domain.csproj", "{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}"
 EndProject

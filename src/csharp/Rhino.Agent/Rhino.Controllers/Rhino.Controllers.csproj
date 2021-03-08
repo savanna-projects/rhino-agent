@@ -11,7 +11,7 @@
     <PackageReference Include="Rhino.Api.Contracts" Version="2021.3.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.3" NoWarn="NU1605" />
-    <PackageReference Include="Rhino.Connectors.Azure" Version="2021.3.2.1" />
+    <PackageReference Include="Rhino.Connectors.Azure" Version="2021.3.8.1" />
     <PackageReference Include="Rhino.Connectors.Gurock" Version="2021.3.6.1" />
     <PackageReference Include="Rhino.Connectors.Text" Version="2021.3.6.1" />
     <PackageReference Include="Rhino.Connectors.Xray" Version="2021.3.7.1" />
