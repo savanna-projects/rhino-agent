@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
@@ -164,8 +165,28 @@ namespace Rhino.Agent
             app.UseEndpoints(endpoints => endpoints.MapRazorPages());
             app.UseEndpoints(endpoints => endpoints.MapControllers());
 
+            // static files
+            SetOutputsFolder(app);
+
             // log
             logger?.Debug("Create-ServiceApplicationSettings = Ok");
+        }
+
+        private void SetOutputsFolder(IApplicationBuilder app)
+        {
+            // get outputs path
+            var path = ControllerUtilities.GetStaticReportsFolder(configuration: Configuration);
+
+            // force
+            Directory.CreateDirectory(path);
+
+            // setup
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(path),
+                RequestPath = "/reports",
+                ServeUnknownFileTypes = true
+            });
         }
     }
 }
