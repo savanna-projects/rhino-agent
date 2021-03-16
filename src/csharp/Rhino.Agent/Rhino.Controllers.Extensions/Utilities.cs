@@ -25,12 +25,22 @@ namespace Rhino.Controllers.Extensions
         private static readonly ILogger logger = new TraceLogger("RhinoApi", nameof(Utilities));
         private static readonly IList<Assembly> assemblies = new List<Assembly>();
 
+        /// <summary>
+        /// Gets a distinct collection of <see cref="Type"/> loaded into the AppDomain.
+        /// </summary>
+        public static IEnumerable<Type> Types => GetTypes().SelectMany(i => i.Types).Distinct();
+
         #region *** Assemblies ***
         /// <summary>
         /// gets a collection of all assemblies where the executing assembly is currently located
         /// </summary>
         /// <returns>assemblies collection</returns>
         public static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> GetTypes()
+        {
+            return DoGetTypes();
+        }
+
+        private static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> DoGetTypes()
         {
             // reset
             assemblies.Clear();
@@ -65,7 +75,7 @@ namespace Rhino.Controllers.Extensions
             }
 
             // get
-            return assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null).ToArray();
+            return assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null);
         }
 
         [SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "A special case when need to load by file path.")]

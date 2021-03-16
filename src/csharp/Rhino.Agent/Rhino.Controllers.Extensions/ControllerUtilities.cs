@@ -174,7 +174,7 @@ namespace Rhino.Controllers.Extensions
             IgnoreNullValues = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true
-        };        
+        };
 
         // Utilities
         private static string GetLogsDefaultFolder() => Path.Join(Environment.CurrentDirectory, "Logs");

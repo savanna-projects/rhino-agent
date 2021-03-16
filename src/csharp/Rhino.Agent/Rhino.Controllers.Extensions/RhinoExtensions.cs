@@ -112,7 +112,7 @@ namespace Rhino.Controllers.Extensions
         /// <returns>RhinoConnector implementation.</returns>
         public static Type GetConnector(this RhinoConfiguration configuration)
         {
-            return DoGetConnector(configuration, Utilities.GetTypes().SelectMany(i => i.Types));
+            return DoGetConnector(configuration, Utilities.Types);
         }
 
         /// <summary>
