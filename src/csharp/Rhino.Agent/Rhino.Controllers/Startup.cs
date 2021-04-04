@@ -26,7 +26,6 @@ using Rhino.Controllers.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 
 namespace Rhino.Controllers
@@ -38,7 +37,7 @@ namespace Rhino.Controllers
         public const string DbEncrypKeyDefault = "30908f87-8539-477a-86e7-a4c13d4583c4";
 
         // members statics
-        private readonly IEnumerable<Type> types = Utilities.GetTypes().SelectMany(i => i.Types);
+        private readonly IEnumerable<Type> types = Utilities.Types;
         private readonly ILiteDatabase liteDatabase;
 
         // members: state

@@ -205,12 +205,12 @@ namespace Rhino.Controllers.Domain.Automation
                 try
                 {
                     var responseBody = configuration.Execute(types);
-                    logger?.Debug($"invoke-Configuration = {responseBody.Key}");
+                    logger?.Debug($"Invoke-Configuration = {responseBody.Key}");
                     results.Add((StatusCodes.Status200OK, responseBody));
                 }
                 catch (Exception e) when (e != null)
                 {
-                    logger?.Debug($"invoke-Configuration = (InternalServerError, ({e.GetBaseException().Message})");
+                    logger?.Debug($"Invoke-Configuration = (InternalServerError, {e.GetBaseException().Message})");
                     results.Add((StatusCodes.Status500InternalServerError, default));
                 }
             });
@@ -554,14 +554,22 @@ namespace Rhino.Controllers.Domain.Automation
                 return;
             }
 
+            // cache
+            var origRepository = configuration.TestsRepository.Clone();
+
             // build
-            configuration.TestsRepository = testsRepository
+            var stateRepository = testsRepository
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => tests.Contains($"{i.Id}"))
                 .SelectMany(i => i.RhinoTestCaseModels)
                 .Select(i => i.RhinoSpec)
                 .Concat(configuration.TestsRepository.Where(i => !Regex.IsMatch(i, IdPattern)));
+
+            // get
+            configuration.TestsRepository = configuration.ConnectorConfiguration.Connector != Connector.Text && !stateRepository.Any()
+                ? origRepository
+                : stateRepository;
         }
 
         private void SetSettings(RhinoConfiguration configuration)

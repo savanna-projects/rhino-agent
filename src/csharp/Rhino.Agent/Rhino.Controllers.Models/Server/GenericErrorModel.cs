@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Mime;
 using System.Runtime.Serialization;
 using System.Text.Json;
