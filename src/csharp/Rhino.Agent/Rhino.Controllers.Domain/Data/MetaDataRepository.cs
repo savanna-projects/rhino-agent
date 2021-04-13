@@ -171,7 +171,7 @@ namespace Rhino.Controllers.Domain.Data
             return methods.Select(i => i.Name).Distinct().Select(i => new LocatorModel
             {
                 Key = i,
-                Literal = Api.Extensions.StringExtensions.ToSpaceCase( i.ToLower()),
+                Literal = Api.Extensions.StringExtensions.ToSpaceCase(i).ToLower(),
                 Entity = new { Examples = Array.Empty<(string Description, string Example)>() },
                 Verb = "using"
             });
