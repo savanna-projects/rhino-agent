@@ -8,21 +8,20 @@ EXPOSE 9001
 FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
 
 # Install Utilities
-RUN apt-get update && \
-    apt-get install -y wget
-RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-RUN dpkg -i packages-microsoft-prod.deb
-RUN apt-get update && apt-get upgrade && apt-get install -y \
-    curl \
-    apt-transport-https \
-    dotnet-sdk-5.0 \
-    gss-ntlmssp \
-    vim \
-    jq \
-    sudo \
-    openssh-server sudo -y
-RUN useradd -m -N -s /bin/bash -u 1000 -p 'rhino' rhino && \
-    usermod -aG sudo rhino
+# RUN apt-get update && apt-get upgrade && apt-get install -y wget
+# RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+# RUN dpkg -i packages-microsoft-prod.deb
+# RUN apt-get update && apt-get upgrade && apt-get install -y \
+#    curl \
+#    apt-transport-https \
+#    dotnet-sdk-5.0 \
+#    gss-ntlmssp \
+#    vim \
+#    jq \
+#    sudo \
+#    openssh-server sudo -y
+# RUN useradd -m -N -s /bin/bash -u 1000 -p 'rhino' rhino && \
+#     usermod -aG sudo rhino
 # USER rhino
 
 WORKDIR /src
