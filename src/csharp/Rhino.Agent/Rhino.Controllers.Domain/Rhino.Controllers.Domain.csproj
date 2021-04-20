@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gravity.Services.Comet" Version="2021.4.13.1" />
-    <PackageReference Include="Gravity.Services.DataContracts" Version="2021.4.13.1" />
+    <PackageReference Include="Gravity.Services.Comet" Version="2021.4.20.1" />
+    <PackageReference Include="Gravity.Services.DataContracts" Version="2021.4.20.1" />
     <PackageReference Include="LiteDB" Version="5.0.10" />
     <PackageReference Include="Rhino.Api.Parser" Version="2021.3.21.3" />    
   </ItemGroup>

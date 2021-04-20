@@ -3,6 +3,7 @@
  * 
  * RESSOURCES
  */
+using Gravity.Extensions;
 using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Http;
@@ -53,6 +54,70 @@ namespace Rhino.Controllers.Controllers
         }
 
         #region *** Get    ***
+        // GET: api/v3/meta/plugins/references
+        [HttpGet, Route("plugins/references")]
+        [SwaggerOperation(
+            Summary = "Get-Plugin -All -Names",
+            Description = "Returns a list of available _**Plugins**_ (both _**Rhino**_ and _**Code**_).")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ActionModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetPluginsReferences()
+        {
+            // get response
+            var entities = dataRepository
+                .SetAuthentication(Authentication)
+                .Plugins()
+                .Where(i => !ExcludeActions.Contains(i.Key))
+                .Select(i => new
+                {
+                    i.Key,
+                    Literal = i.Key.PascalToSpaceCase(),
+                    i.Source,
+                    Description = i.Entity.GetType().GetProperty("Description").GetValue(i.Entity),
+                    Aliases = Array.Empty<string>()
+                });
+
+            // return
+            return Ok(entities);
+        }
+
+        // GET: api/v3/meta/plugins/references/:key
+        [HttpGet, Route("plugins/references/{key}")]
+        [SwaggerOperation(
+            Summary = "Get-Plugin -key {pluginKey}",
+            Description = "Returns a single available _**Plugin**_ (both _**Rhino**_ and _**Code**_).")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(ActionModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetPluginsReferences([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
+        {
+            // get response
+            var entity = dataRepository
+                .SetAuthentication(Authentication)
+                .Plugins()
+                .FirstOrDefault(i => !ExcludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
+
+            // not found
+            if (entity == default)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-Plugin -Key {key} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // return
+            return Ok(new
+            {
+                entity.Key,
+                Literal = entity.Key.PascalToSpaceCase(),
+                entity.Source,
+                Description = entity.Entity.GetType().GetProperty("Description").GetValue(entity.Entity),
+                Aliases = Array.Empty<string>()
+            });
+        }
+
         // GET: api/v3/meta/plugins
         [HttpGet, Route("plugins")]
         [SwaggerOperation(

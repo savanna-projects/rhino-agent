@@ -166,7 +166,7 @@ namespace Rhino.Controllers.Extensions
                     Key = attribute.Name,
                     Literal = attribute.Name.ToSpaceCase().ToLower(),
                     Verb = GetVerb(attribute.Name),
-                    Entity = attribute.ToSerializable(),
+                    Entity = attribute,
                     Source = source
                 };
             }
@@ -192,7 +192,7 @@ namespace Rhino.Controllers.Extensions
                     Key = attribute.Name,
                     Literal = attribute.Name.ToPascalCase().ToSpaceCase().ToLower(),
                     Verb = GetVerb(attribute.Name),
-                    Entity = attribute.ToSerializable()
+                    Entity = attribute
                 };
             }
             catch (Exception e) when (e != null)
@@ -217,7 +217,7 @@ namespace Rhino.Controllers.Extensions
                     Key = attribute.Value,
                     Literal = attribute.Value.ToPascalCase().ToSpaceCase().ToLower(),
                     Verb = string.Empty,
-                    Entity = attribute.ToSerializable()
+                    Entity = attribute
                 };
             }
             catch (Exception e) when (e != null)
@@ -242,7 +242,7 @@ namespace Rhino.Controllers.Extensions
                     Key = attribute.Name,
                     Literal = attribute.Name.ToSpaceCase().ToLower(),
                     Verb = string.Empty,
-                    Entity = attribute.ToSerializable()
+                    Entity = attribute
                 };
             }
             catch (Exception e) when (e != null)
@@ -267,7 +267,7 @@ namespace Rhino.Controllers.Extensions
                     Key = attribute.Name,
                     Literal = attribute.Name.ToPascalCase().ToSpaceCase().ToLower(),
                     Verb = string.Empty,
-                    Entity = attribute.ToSerializable()
+                    Entity = attribute
                 };
             }
             catch (Exception e) when (e != null)
