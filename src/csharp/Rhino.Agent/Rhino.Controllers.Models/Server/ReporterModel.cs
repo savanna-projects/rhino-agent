@@ -3,15 +3,16 @@
  * 
  * RESSOURCES
  */
+using Rhino.Api.Contracts.Attributes;
+
 using System.Runtime.Serialization;
 
 namespace Rhino.Controllers.Models
 {
-    // TODO: change genetic type to ActionAttribute when TypeId is fixed
     /// <summary>
     /// Contract for api/:version/:meta reporter(s).
     /// </summary>
     [DataContract]
-    public class ReporterModel : BaseModel<object>
+    public class ReporterModel : BaseModel<ReporterAttribute>
     { }
 }

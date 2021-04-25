@@ -7,11 +7,10 @@ using Rhino.Api.Contracts.Attributes;
 
 namespace Rhino.Controllers.Models
 {
-    // TODO: change genetic type to ConnectorAttribute when TypeId is fixed
     /// <summary>
     /// Contract for api/:version/:meta connector(s).
     /// </summary>
-    public class ConnectorModel : BaseModel<object>
+    public class ConnectorModel : BaseModel<ConnectorAttribute>
     {
         // TODO: implement object to MD to allow dynamic documentation generator and remove documentation redundancy.
         /// <summary>

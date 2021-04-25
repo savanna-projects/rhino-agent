@@ -198,6 +198,11 @@ namespace Rhino.Controllers.Domain.Automation
             maxParallel = maxParallel < 1 ? Environment.ProcessorCount : maxParallel;
             var options = new ParallelOptions { MaxDegreeOfParallelism = maxParallel };
             var results = new ConcurrentBag<(int StatusCode, RhinoTestRun Results)>();
+            var c = configurations.ToList()[0];
+            var s = JsonSerializer.Serialize(c, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
 
             // invoke
             Parallel.ForEach(configurations, options, configuration =>
@@ -534,7 +539,7 @@ namespace Rhino.Controllers.Domain.Automation
                 .Get()
                 .Where(i => models.Contains($"{i.Id}"))
                 .SelectMany(i => i.Models)
-                .Select(i => JsonSerializer.Serialize(i, Api.Extensions.Utilities.JsonSettings));
+                .Select(i => JsonSerializer.Serialize(i, Utilities.JsonSettings));
 
             // update
             configuration.Models = configuration.Models.Where(i => !Regex.IsMatch(i, IdPattern)).Concat(modelEntities);
@@ -593,7 +598,7 @@ namespace Rhino.Controllers.Domain.Automation
                 .Where(i => !string.IsNullOrEmpty(i))
                 .ToArray();
 
-            // screenshots
+            // screen-shots
             configuration.ScreenshotsConfiguration.ScreenshotsOut = appSettings.GetValue(ScreenshotsOut, defaultValue: ".");
             configuration.ScreenshotsConfiguration.KeepOriginal = appSettings.GetValue(KeepOriginal, defaultValue: false);
         }

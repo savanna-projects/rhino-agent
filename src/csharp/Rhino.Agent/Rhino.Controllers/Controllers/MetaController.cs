@@ -489,6 +489,52 @@ namespace Rhino.Controllers.Controllers
             return Ok(entity);
         }
 
+        // GET: api/v3/meta/properties
+        [HttpGet, Route("properties")]
+        [SwaggerOperation(
+            Summary = "Get-Property -All",
+            Description = "Returns a list of available _**Properties**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<PropertyModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetProperties()
+        {
+            // get response
+            var entities = dataRepository.SetAuthentication(Authentication).Properties();
+
+            // return
+            return Ok(entities);
+        }
+
+        // GET: api/v3/meta/properties/:key
+        [HttpGet, Route("properties/{key}")]
+        [SwaggerOperation(
+            Summary = "Get-Property -key {propertyKey}",
+            Description = "Returns a single available _**Property**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(PropertyModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetProperties([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
+        {
+            // get response
+            var entity = dataRepository
+                .SetAuthentication(Authentication)
+                .Properties()
+                .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
+
+            // not found
+            if (entity == default)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-Property -Key {key} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // return
+            return Ok(entity);
+        }
+
         // GET: api/v3/meta/version
         [HttpGet, Route("version")]
         [SwaggerOperation(

@@ -248,6 +248,38 @@ namespace Rhino.Controllers.Domain.Data
             return await ControllerUtilities.ForceReadFileAsync(path: FileName).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Gets a list of all available properties.
+        /// </summary>
+        /// <returns>A list all available properties.</returns>
+        public IEnumerable<PropertyModel> Properties()
+        {
+            // constants
+            const string Exclude = "Must not include spaces, escape or special characters - excluding dash and underscore.";
+
+            // build
+            var properties = new Dictionary<string, string>
+            {
+                ["test-id"] = "A _*unique*_ identifier of the test case. " + Exclude,
+                ["test-scenario"] = "A statement describing the functionality to be tested. " + Exclude,
+                ["test-priority"] = "The level of _*business importance*_ assigned to an item, e.g., defect." + Exclude,
+                ["test-severity"] = "The degree of _*impact*_ that a defect has on the development or operation of a component or system." + Exclude,
+                ["test-tolerance"] = "The % of the test tolerance. A Special attribute to decide, based on configuration if the test will be marked as passed or with warning. Default 0% tolerance. Must be a number with or without the % sign.",
+                ["test-actions"] = "A collection of atomic pieces of logic which execute a single test case.",
+                ["test-expected-results"] = "An ideal result that the tester should get after a test action is performed.",
+                ["test-data-provider"] = "_*Data*_ created or selected to satisfy the execution preconditions and inputs to execute one or more _*test cases*_."
+            };
+
+            // get
+            return properties.Select(i => new PropertyModel
+            {
+                Key = i.Key,
+                Literal = "[" + i.Key.ToLower() + "]",
+                Entity = new { Name = i.Key, Description = i.Value },
+                Verb = string.Empty
+            });
+        }
+
         // UTILITIES
         // execute GetActions routine
         private IEnumerable<(string Source, ActionAttribute Action)> DoGetActions()
