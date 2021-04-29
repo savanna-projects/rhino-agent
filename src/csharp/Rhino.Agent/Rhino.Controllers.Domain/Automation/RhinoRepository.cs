@@ -198,11 +198,6 @@ namespace Rhino.Controllers.Domain.Automation
             maxParallel = maxParallel < 1 ? Environment.ProcessorCount : maxParallel;
             var options = new ParallelOptions { MaxDegreeOfParallelism = maxParallel };
             var results = new ConcurrentBag<(int StatusCode, RhinoTestRun Results)>();
-            var c = configurations.ToList()[0];
-            var s = JsonSerializer.Serialize(c, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
 
             // invoke
             Parallel.ForEach(configurations, options, configuration =>

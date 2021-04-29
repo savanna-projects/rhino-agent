@@ -169,7 +169,7 @@ namespace Rhino.Controllers.Extensions
         /// <summary>
         /// Gets the default JsonSerializerSettings (prettify and camelCase)
         /// </summary>
-        public static JsonSerializerOptions JsonSettings => new JsonSerializerOptions
+        public static JsonSerializerOptions JsonSettings => new()
         {
             IgnoreNullValues = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

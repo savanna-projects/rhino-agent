@@ -172,7 +172,12 @@ namespace Rhino.Controllers.Domain.Data
             {
                 Key = i,
                 Literal = Api.Extensions.StringExtensions.ToSpaceCase(i).ToLower(),
-                Entity = new { Examples = Array.Empty<(string Description, string Example)>() },
+                Entity = new
+                {
+                    Name = Api.Extensions.StringExtensions.ToSpaceCase(i).ToLower(),
+                    Description = "",
+                    Examples = Array.Empty<(string Description, string Example)>()
+                },
                 Verb = "using"
             });
         }

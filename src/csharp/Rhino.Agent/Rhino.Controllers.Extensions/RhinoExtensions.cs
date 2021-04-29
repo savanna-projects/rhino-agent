@@ -95,7 +95,7 @@ namespace Rhino.Controllers.Extensions
             return onExamples;
         }
 
-        private static ActionAttribute GetDefauleActionAttribute() => new ActionAttribute
+        private static ActionAttribute GetDefauleActionAttribute() => new()
         {
             CliArguments = new Dictionary<string, string>(),
             Description = string.Empty,

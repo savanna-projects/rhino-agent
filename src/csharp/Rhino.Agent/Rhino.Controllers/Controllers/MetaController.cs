@@ -535,6 +535,30 @@ namespace Rhino.Controllers.Controllers
             return Ok(entity);
         }
 
+        // GET: api/v3/meta/attributes
+        [HttpGet, Route("attributes")]
+        [SwaggerOperation(
+            Summary = "Get-Attribute -All",
+            Description = "Returns a list of available _**Element special attributes**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<AttributeModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetAttributes()
+        {
+            var model = new AttributeModel
+            {
+                Key = "html",
+                Literal = "html",
+                Verb = "from",
+                Entity = new
+                {
+                    Name = "html",
+                    Description = "Gets the outer HTML of the element."
+                }
+            };
+            return Ok(new[] { model });
+        }
+
         // GET: api/v3/meta/version
         [HttpGet, Route("version")]
         [SwaggerOperation(

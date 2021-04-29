@@ -125,7 +125,7 @@ namespace Rhino.Controllers.Controllers
             return Ok(modelCollection.Configurations);
         }
 
-        private ModelCollectionResponseModel GetCollection(RhinoModelCollection collection) => new ModelCollectionResponseModel
+        private ModelCollectionResponseModel GetCollection(RhinoModelCollection collection) => new()
         {
             Id = $"{collection.Id}",
             Configurations = collection.Configurations,

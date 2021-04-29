@@ -22,8 +22,8 @@ namespace Rhino.Controllers.Extensions
         public static byte[] Zip(this MemoryStream stream, string fileName)
         {
             // setup
-            using MemoryStream zipStream = new MemoryStream();
-            using ZipArchive zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true);
+            using var zipStream = new MemoryStream();
+            using var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true);
 
             // create zip entry
             var zipEntry = zipArchive.CreateEntry(fileName + ".zip");
