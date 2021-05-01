@@ -177,6 +177,7 @@ namespace Rhino.Controllers.Extensions
             return default;
         }
 
+        // TODO: implement description
         /// <summary>
         /// Converts a AssertMethodAttribute object into AssertModel object.
         /// </summary>
@@ -192,7 +193,11 @@ namespace Rhino.Controllers.Extensions
                     Key = attribute.Name,
                     Literal = attribute.Name.ToPascalCase().ToSpaceCase().ToLower(),
                     Verb = GetVerb(attribute.Name),
-                    Entity = attribute
+                    Entity = new
+                    {
+                        attribute.Name,
+                        Description = "Coming soon."
+                    }
                 };
             }
             catch (Exception e) when (e != null)

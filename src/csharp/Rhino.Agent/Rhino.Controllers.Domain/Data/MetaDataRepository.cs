@@ -257,7 +257,7 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a list of all available properties.
         /// </summary>
         /// <returns>A list all available properties.</returns>
-        public IEnumerable<PropertyModel> Properties()
+        public IEnumerable<PropertyModel> Annotations()
         {
             // constants
             const string Exclude = "Must not include spaces, escape or special characters - excluding dash and underscore.";

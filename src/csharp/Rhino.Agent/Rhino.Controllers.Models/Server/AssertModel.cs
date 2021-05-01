@@ -13,7 +13,7 @@ namespace Rhino.Controllers.Models
     /// Contract for api/:version/:meta assertion(s).
     /// </summary>
     [DataContract]
-    public class AssertModel : BaseModel<AssertMethodAttribute>
+    public class AssertModel : BaseModel<object>
     {
         // TODO: implement object to MD to allow dynamic documentation generator and remove documentation redundancy.
         /// <summary>

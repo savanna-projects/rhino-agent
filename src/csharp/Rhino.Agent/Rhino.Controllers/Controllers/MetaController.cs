@@ -489,38 +489,38 @@ namespace Rhino.Controllers.Controllers
             return Ok(entity);
         }
 
-        // GET: api/v3/meta/properties
-        [HttpGet, Route("properties")]
+        // GET: api/v3/meta/annotations
+        [HttpGet, Route("annotations")]
         [SwaggerOperation(
-            Summary = "Get-Property -All",
-            Description = "Returns a list of available _**Properties**_.")]
+            Summary = "Get-Annotation -All",
+            Description = "Returns a list of available _**Annotations**_.")]
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<PropertyModel>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
-        public IActionResult GetProperties()
+        public IActionResult GetAnnotations()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).Properties();
+            var entities = dataRepository.SetAuthentication(Authentication).Annotations();
 
             // return
             return Ok(entities);
         }
 
-        // GET: api/v3/meta/properties/:key
-        [HttpGet, Route("properties/{key}")]
+        // GET: api/v3/meta/annotations/:key
+        [HttpGet, Route("annotations/{key}")]
         [SwaggerOperation(
-            Summary = "Get-Property -key {propertyKey}",
-            Description = "Returns a single available _**Property**_.")]
+            Summary = "Get-Annotation -key {propertyKey}",
+            Description = "Returns a single available _**Annotation**_.")]
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(PropertyModel))]
         [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
-        public async Task<IActionResult> GetProperties([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
+        public async Task<IActionResult> GetAnnotations([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Properties()
+                .Annotations()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found

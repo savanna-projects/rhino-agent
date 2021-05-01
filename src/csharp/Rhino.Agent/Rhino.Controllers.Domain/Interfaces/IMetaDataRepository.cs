@@ -21,6 +21,6 @@ namespace Rhino.Controllers.Domain.Interfaces
         IEnumerable<OperatorModel> Operators();
         IEnumerable<ReporterModel> Reporters();
         Task<string> GetVersionAsync();
-        IEnumerable<PropertyModel> Properties();
+        IEnumerable<PropertyModel> Annotations();
     }
 }
