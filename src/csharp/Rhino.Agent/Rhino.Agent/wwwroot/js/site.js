@@ -585,7 +585,7 @@ function putHelp(actionLiteralModel) {
     // setup metadata
     $(E_HELP_ACTION).text(actionLiteralModel.literal);
     $(E_HELP_BADGE).text(actionLiteralModel.key);
-    $(E_HELP_DESCRIPTION).text(actionLiteralModel.entity.Description);
+    $(E_HELP_DESCRIPTION).text(actionLiteralModel.entity.description);
 
     // populate new action
     for (var i = 0; i < actions.length; i++) {
@@ -912,7 +912,7 @@ function getRhinoActions(actionLiteralModel, isUi = false) {
     var rhinoActions = [];
 
     // TODO: handle non-standard actions
-    if (isNullOrEmpty(actionLiteralModel.entity.Examples)) {
+    if (isNullOrEmpty(actionLiteralModel.entity.examples)) {
         var rhinoAction = {
             actionPlugin: actionLiteralModel.key,
             actionLiteral: actionLiteralModel.literal,
@@ -927,7 +927,7 @@ function getRhinoActions(actionLiteralModel, isUi = false) {
         return rhinoActions;
     }
 
-    $(actionLiteralModel.entity.Examples).each((i, e) => {
+    $(actionLiteralModel.entity.examples).each((i, e) => {
         rhinoAction = {
             actionPlugin: actionLiteralModel.key,
             actionLiteral: actionLiteralModel.literal,

@@ -18,6 +18,8 @@
 * [Get Macro](#get-macro)
 * [Get Operators](#get-operators)
 * [Get Operator](#get-operator)
+* [Get Properties](#get-operators)
+* [Get Property](#get-operator)
 * [Get Reporters](#get-reporters)
 * [Get Reporter](#get-reporter)
 * [Get Version](#get-version)
@@ -533,6 +535,64 @@ The following system fields are always included in the response:
 |404 |Not Found, the _**Operator**_ was not found by the provided key. |
 |500 |Fail, the server encountered an unexpected error.                |
 
+## Get Properties
+Returns a list of available _**Properties**.
+
+```
+GET /api/v3/meta/properties
+```
+
+### Response Content
+The response body is an array of object following the same format as [Get Property](#get-property) response content.
+
+### Response Codes
+|Code|Description                                                         |
+|----|--------------------------------------------------------------------|
+|200 |Success, the _**Properties**_ were returned as part of the response.|
+|500 |Fail, the server encountered an unexpected error.                   |
+
+## Get Property
+Returns a single available _**Property**_.
+
+```
+GET /api/v3/meta/properties/:key
+```
+
+|Name|Type  |Description                                                                    |
+|----|------|-------------------------------------------------------------------------------|
+|key |string|The key of the _**Property**_ to find by. **Note**: the name is case sensitive.|
+
+### Response Content
+Please see below for a typical response:
+
+```js
+{
+  "key": "test-actions",
+  "literal": "[test-actions]",
+  "verb": "",
+  "entity": {
+    "description": "A collection of atomic pieces of logic which execute a single test case.",
+    "name": "test-actions"
+  }
+}
+```
+
+The following system fields are always included in the response:  
+
+|Name    |Type  |Description                                                                                           |
+|--------|------|------------------------------------------------------------------------------------------------------|
+|key     |string|The unique identifier of the property.                                                                |
+|literal |string|The literal representation of the property as used by Rhino's language.                               |
+|verb    |string|The verb used to identify the property target as used by Rhino's language.                            |
+|entity  |object|The underline PropertyAttribute as loaded into the domain by Rhino Engine and as implemented in Rhino.|
+
+### Response Codes
+|Code|Description                                                      |
+|----|-----------------------------------------------------------------|
+|200 |Success, the _**Property**_ was returned as part of the response.|
+|404 |Not Found, the _**Property**_ was not found by the provided key. |
+|500 |Fail, the server encountered an unexpected error.                |
+
 ## Get Reporters
 Returns a list of available _**Reporters**.
 
@@ -569,8 +629,8 @@ Please see below for a typical response:
   "literal": "reporter basic",
   "verb": "",
   "entity": {
-    "Description": "The default Rhino HTML Reporter. A rich HTML Report with all test results and quality matrix.",
-    "Name": "reporter_basic"
+    "description": "The default Rhino HTML Reporter. A rich HTML Report with all test results and quality matrix.",
+    "name": "reporter_basic"
   }
 }
 ```

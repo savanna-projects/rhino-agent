@@ -17,7 +17,7 @@ namespace Rhino.Controllers.Models
     public class RhinoEntityModel
     {
         // members: state
-        private readonly static JsonSerializerOptions jsonSettings = new JsonSerializerOptions
+        private readonly static JsonSerializerOptions jsonSettings = new()
         {
             IgnoreNullValues = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

@@ -3,16 +3,17 @@
  * 
  * RESSOURCES
  */
+using Gravity.Services.Comet.Engine.Attributes;
+
 using System.Runtime.Serialization;
 
 namespace Rhino.Controllers.Models
 {
-    // TODO: change genetic type to ActionAttribute when TypeId is fixed
     /// <summary>
     /// Contract for api/:version/meta action(s).
     /// </summary>
     [DataContract]
-    public class ActionModel : BaseModel<object>
+    public class ActionModel : BaseModel<ActionAttribute>
     {
         /// <summary>
         /// List of available sources for ActionModel.

@@ -89,7 +89,7 @@ namespace Rhino.Controllers.Controllers
             return Ok(configuration);
         }
 
-        private ConfigurationResponseModel GetConfigurationResponse(RhinoConfiguration onConfiguration) => new ConfigurationResponseModel
+        private ConfigurationResponseModel GetConfigurationResponse(RhinoConfiguration onConfiguration) => new()
         {
             Id = $"{onConfiguration.Id}",
             Elements = onConfiguration.Models,

@@ -3,16 +3,17 @@
  * 
  * RESSOURCES
  */
+using Gravity.Services.Comet.Engine.Attributes;
+
 using System.Runtime.Serialization;
 
 namespace Rhino.Controllers.Models
 {
-    // TODO: change genetic type to ActionAttribute when TypeId is fixed
     /// <summary>
     /// Contract for api/:version/:meta macro(s).
     /// </summary>
     [DataContract]
-    public class MacroModel : BaseModel<object>
+    public class MacroModel : BaseModel<MacroAttribute>
     {
         // TODO: implement object to MD to allow dynamic documentation generator and remove documentation redundancy.
         /// <summary>

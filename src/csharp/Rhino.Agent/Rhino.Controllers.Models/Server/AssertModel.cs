@@ -3,11 +3,12 @@
  * 
  * RESSOURCES
  */
+using Gravity.Services.Comet.Engine.Attributes;
+
 using System.Runtime.Serialization;
 
 namespace Rhino.Controllers.Models
 {
-    // TODO: change genetic type to AssertMethodAttribute when TypeId is fixed
     /// <summary>
     /// Contract for api/:version/:meta assertion(s).
     /// </summary>

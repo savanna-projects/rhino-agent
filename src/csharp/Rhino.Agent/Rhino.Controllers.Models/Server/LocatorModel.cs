@@ -3,11 +3,13 @@
  * 
  * RESSOURCES
  */
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Rhino.Controllers.Models
 {
+    /// <summary>
+    /// Contract for api/:version/meta locator(s).
+    /// </summary>
     [DataContract]
     public class LocatorModel : BaseModel<object>
     {
