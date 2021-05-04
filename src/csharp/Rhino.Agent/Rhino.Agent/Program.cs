@@ -37,6 +37,7 @@ namespace Rhino.Agent
         private const string License = "license";
         private const string Delete = "delete";
         private const string Connect = "connect";
+        private const string Certificate = "cert";
 
         // members: state
         private static IDictionary<string, string> arguments;
@@ -51,16 +52,18 @@ namespace Rhino.Agent
             // setup
             Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "Data"));
 
+            // parse CLI arguments & apply license if available
+            var cli = "{{$ " + string.Join(" ", args) + "}}";
+            arguments = new CliFactory(cli).Parse();
+
             // run
-            if (args.Length == 0)
+            if (!arguments.ContainsKey(Configuration))
             {
                 CreateWebHostBuilder(args).Build().Run();
                 return;
             }
 
-            // parse CLI arguments & apply license if available
-            var cli = "{{$ " + string.Join(" ", args) + "}}";
-            arguments = new CliFactory(cli).Parse();
+            // apply license if available
             ApplyLicense();
 
             // get all available types
@@ -90,10 +93,19 @@ namespace Rhino.Agent
 
         private static void SetOptions(KestrelServerOptions options)
         {
+            // constants
             const int httpsPort = 9001;
             const int httpPort = 9000;
-            const string certPassword = "30908f87-8539-477a-86e7-a4c13d4583c4";
-            var certPath = Path.Combine("Certificates", "Rhino.Agent.pfx");
+
+            // setup
+            var cert = arguments.ContainsKey(Certificate)
+                ? arguments[Certificate].Split("::")
+                : Array.Empty<string>();
+            var isCert = cert.Length == 2;
+
+            // build
+            var certPassword = isCert ? cert[1] : "30908f87-8539-477a-86e7-a4c13d4583c4";
+            var certPath = Path.Combine("Certificates", isCert ? cert[0] : "Rhino.Agent.pfx");
 
             options.Listen(IPAddress.Any, httpsPort, listenOptions => listenOptions.UseHttps(certPath, certPassword));
             options.Listen(IPAddress.Any, httpPort);
