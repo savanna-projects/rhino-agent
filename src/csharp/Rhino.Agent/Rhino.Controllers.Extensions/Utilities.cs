@@ -152,12 +152,19 @@ namespace Rhino.Controllers.Extensions
         /// </summary>
         public static void RenderLogo()
         {
-            DoRenderLogo(1, 1, ConsoleColor.Black, ConsoleColor.White, Rhino());
-            DoRenderLogo(1, 55, ConsoleColor.Black, ConsoleColor.Red, Api());
+            try
+            {
+                DoRenderLogo(1, 1, ConsoleColor.Black, ConsoleColor.White, Rhino());
+                DoRenderLogo(1, 55, ConsoleColor.Black, ConsoleColor.Red, Api());
 
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine();
-            Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+            catch (Exception e) when (e != null)
+            {
+                // ignore errors
+            }
         }
 
         private static void DoRenderLogo(
