@@ -26,10 +26,11 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set('endpoint', '');\r",
+									"pm.collectionVariables.set('endpoint', 'https://localhost:9001/api/v3');\r",
 									"pm.collectionVariables.set('rhino_password', '');\r",
 									"pm.collectionVariables.set('rhino_user', '');\r",
-									"pm.collectionVariables.set('rhino_drivers', '');"
+									"pm.collectionVariables.set('rhino_drivers', \"D:\\\\\\\\automation_env\\\\\\\\web_drivers\");\r",
+									"//pm.collectionVariables.set('rhino_drivers', \"http://localhost:4444/wd/hub);"
 								],
 								"type": "text/javascript"
 							}
@@ -6190,7 +6191,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Execute Tests by Raw Text\",\r\n    \"testsRepository\": [\r\n        \"[test-id] Text-000\\r\\n[test-scenario]\\r\\nOpen a Web Site\\r\\n[test-actions]\\r\\n1. go to url {https://gravitymvctestapplication.azurewebsites.net/}\\r\\n2. wait {100}\\r\\n3. close browser\"\r\n    ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"{{rhino_drivers}}\"\r\n        }\r\n    ],\r\n    \"dataSource\": [],\r\n    \"models\": [],\r\n    \"authentication\": {\r\n        \"password\": \"{{rhino_password}}\",\r\n        \"userName\": \"{{rhino_user}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3,\r\n        \"qualityThreshold\": 0,\r\n        \"toleranceThreshold\": 0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": true,\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reporters\": [\r\n            \"reporter_basic\",\r\n            \"reporter_simple_html\"\r\n        ],\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}",
+									"raw": "{\r\n    \"name\": \"Execute Tests by Raw Text\",\r\n    \"testsRepository\": [\r\n        \"[test-id] Text-000\\r\\n[test-scenario]\\r\\nOpen a Web Site\\r\\n[test-actions]\\r\\n1. go to url {https://gravitymvctestapplication.azurewebsites.net/}\\r\\n2. wait {1000}\\r\\n3. close browser\"\r\n    ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"{{rhino_drivers}}\"\r\n        }\r\n    ],\r\n    \"dataSource\": [],\r\n    \"models\": [],\r\n    \"authentication\": {\r\n        \"password\": \"{{rhino_password}}\",\r\n        \"userName\": \"{{rhino_user}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3,\r\n        \"qualityThreshold\": 0,\r\n        \"toleranceThreshold\": 0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": true,\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reporters\": [\r\n            \"reporter_basic\"\r\n        ],\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -11094,6 +11095,71 @@
 								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
 							},
 							"response": []
+						},
+						{
+							"name": "Get Annotations",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/annotations",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"annotations"
+									]
+								},
+								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporters"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Annotation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/annotations/test-id",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"annotations",
+										"test-id"
+									]
+								},
+								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
+							},
+							"response": []
 						}
 					],
 					"description": "This guide explains how to access and use _**Meta**_ controller to get static data from Rhino server.",
@@ -12032,6 +12098,120 @@
 									"path": [
 										"meta",
 										"reporters",
+										"not_an_entity"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #22: Get Properties",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Entities count is greater than 0\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.length).greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/properties",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"properties"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #23: Get Property",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Entity key equal 'test-id'\", function () {\r",
+											"    var jsonData = pm.response.json().key;\r",
+											"    pm.expect(jsonData).equal('test-id');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/properties/test-id",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"properties",
+										"test-id"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #24: Get Property - Not  Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Message contains 'NotFound'\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"Get-Property -Key not_an_entity = NotFound\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Key equal 'not_an_entity'\", function () {\r",
+											"    var jsonData = pm.response.json().routeData.key;\r",
+											"    pm.expect(jsonData).contains('not_an_entity');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/properties/not_an_entity",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"properties",
 										"not_an_entity"
 									]
 								}
@@ -13354,72 +13534,6 @@
 					""
 				]
 			}
-		}
-	],
-	"variable": [
-		{
-			"key": "models_id",
-			"value": "3e1f2c7e-18df-4ee4-9a38-92e04be27e56"
-		},
-		{
-			"key": "collection_id",
-			"value": "1f10d09f-5848-4188-a62c-f25047bbd04d"
-		},
-		{
-			"key": "configuration_id",
-			"value": "f3e8b59b-3879-4404-997a-001edc72609a"
-		},
-		{
-			"key": "session_id",
-			"value": "8cd8815d9ee04dfe51837bcd7ae2b80f"
-		},
-		{
-			"key": "log_id",
-			"value": "20210228"
-		},
-		{
-			"key": "models_collection_id",
-			"value": "68e3c6e6-2c41-49ab-9128-025b840e7010"
-		},
-		{
-			"key": "invoke_id",
-			"value": "4364f45e-bf16-44d4-abc4-ce90a64c16b4"
-		},
-		{
-			"key": "callback_request",
-			"value": "-1"
-		},
-		{
-			"key": "async_timeout",
-			"value": "60000"
-		},
-		{
-			"key": "async_timeout_now",
-			"value": 10000
-		},
-		{
-			"key": "async_pooling",
-			"value": "1000"
-		},
-		{
-			"key": "status_query",
-			"value": "?id=64692f65-089e-4637-83f1-101888340106&id=56725c6c-08b7-45fa-b037-55f4627d66f4&id=d2ff8258-220a-431b-b88d-ba2c30c0bfb3&id=3fc0cb88-8fcf-46f9-805b-14a10c76a20b&id=cc6203a2-b9e7-432d-a407-e62c0865b40c&id=f687d5b0-eda2-4642-8e59-1717ba6bc4b4&id=0fddec46-816c-44ef-832b-13a51e80da70&id=eba7e80f-9af9-42d7-96d1-c09209b3c850&id=a777ff7b-251e-45a5-8bde-6e30669fde80&id=93f8a4e4-76da-440f-b55a-4f9cafa95c5c&id=bde206ce-0eb3-4606-8336-ef29b20d7ebd&id=7864416d-6682-427c-b720-67f429595ae0&id=5ce23efe-8bd8-4fb1-b3b1-5511c81083c2"
-		},
-		{
-			"key": "endpoint",
-			"value": "https://localhost:9001/api/v3"
-		},
-		{
-			"key": "rhino_password",
-			"value": "Aa123456!"
-		},
-		{
-			"key": "rhino_user",
-			"value": "automation@rhino.api"
-		},
-		{
-			"key": "rhino_drivers",
-			"value": "D:\\\\automation_env\\\\web_drivers"
 		}
 	]
 }
