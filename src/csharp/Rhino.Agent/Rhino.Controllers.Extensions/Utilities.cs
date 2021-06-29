@@ -13,6 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Rhino.Controllers.Extensions
 {
@@ -34,19 +35,31 @@ namespace Rhino.Controllers.Extensions
         /// <summary>
         /// gets a collection of all assemblies where the executing assembly is currently located
         /// </summary>
-        /// <returns>assemblies collection</returns>
+        /// <returns>A collection of <see cref="Assembly"/>.</returns>
         public static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> GetTypes()
         {
-            return DoGetTypes();
+            return DoGetTypes(string.Empty);
         }
 
-        private static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> DoGetTypes()
+        /// <summary>
+        /// gets a collection of all assemblies where the executing assembly is currently located
+        /// </summary>
+        /// <param name="root">The root folder from which to load the assemblies.</param>
+        /// <returns>A collection of <see cref="Assembly"/>.</returns>
+        public static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> GetTypes(string root)
+        {
+            return DoGetTypes(root);
+        }
+
+        private static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> DoGetTypes(string root)
         {
             // reset
             assemblies.Clear();
 
             // setup
-            var mainLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var mainLocation = string.IsNullOrEmpty(root)
+                ? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                : root;
             var rootLocations = new[]
             {
                 mainLocation
@@ -66,7 +79,7 @@ namespace Rhino.Controllers.Extensions
             var files = locations
                 .Where(i => Directory.Exists(i))
                 .SelectMany(i => Directory.GetFiles(i))
-                .Where(i => i.EndsWith(".DLL") || i.EndsWith(".dll"));
+                .Where(i => Regex.IsMatch(i, @"(?i)\.dll$"));
 
             // build
             foreach (var assemblyFile in files)
@@ -78,7 +91,6 @@ namespace Rhino.Controllers.Extensions
             return assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null);
         }
 
-        [SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "A special case when need to load by file path.")]
         private static void GetAssemblies(string assemblyFile)
         {
             // load main assembly

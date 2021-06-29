@@ -188,8 +188,9 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>List of all available macros.</returns>
         public IEnumerable<MacroModel> Macros()
         {
-            return client.Macros().Select(i => client.Macros(i)).Select(i => i.ToModel());
+            return types.GetMacroAttributes().Select(i => ((MacroAttribute)i).ToModel());
         }
+
 
         // TODO: implement GetExamples factory for getting examples for the different operators.
         /// <summary>
