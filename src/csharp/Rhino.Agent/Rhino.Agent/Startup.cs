@@ -85,7 +85,7 @@ namespace Rhino.Agent
         /// <param name="services">Specifies the contract for a collection of service descriptors.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // Components settings
+            // Components Settings
             services.AddRazorPages();
             services.AddMvc().AddApplicationPart(typeof(RhinoController).Assembly).AddControllersAsServices();
             services.AddControllers().AddJsonOptions(i =>

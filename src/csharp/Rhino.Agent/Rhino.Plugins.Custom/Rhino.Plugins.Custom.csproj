@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Manifest\SampleAction.json" />
+    <EmbeddedResource Include="Manifest\SampleMacro.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Gravity.Services.Comet" Version="2021.5.31.1" />
+  </ItemGroup>
+
+</Project>
