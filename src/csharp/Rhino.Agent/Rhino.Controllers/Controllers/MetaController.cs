@@ -9,6 +9,7 @@ using Gravity.Services.DataContracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -67,7 +68,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entities = dataRepository
                 .SetAuthentication(Authentication)
-                .Plugins()
+                .GetPlugins()
                 .Where(i => !ExcludeActions.Contains(i.Key))
                 .Select(i => new
                 {
@@ -96,7 +97,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Plugins()
+                .GetPlugins()
                 .FirstOrDefault(i => !ExcludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -131,7 +132,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entities = dataRepository
                 .SetAuthentication(Authentication)
-                .Plugins()
+                .GetPlugins()
                 .Where(i => !ExcludeActions.Contains(i.Key));
 
             // return
@@ -152,7 +153,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Plugins()
+                .GetPlugins()
                 .FirstOrDefault(i => !ExcludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -178,7 +179,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetAssertions()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).Assertions();
+            var entities = dataRepository.SetAuthentication(Authentication).GetAssertions();
 
             // return
             return Ok(entities);
@@ -198,7 +199,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Assertions()
+                .GetAssertions()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -224,7 +225,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetConnectors()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).Connectors();
+            var entities = dataRepository.SetAuthentication(Authentication).GetConnectors();
 
             // return
             return Ok(entities);
@@ -244,7 +245,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Connectors()
+                .GetConnectors()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -270,7 +271,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetDrivers()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).Drivers();
+            var entities = dataRepository.SetAuthentication(Authentication).GetDrivers();
 
             // return
             return Ok(entities);
@@ -290,7 +291,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Drivers()
+                .GetDrivers()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -316,7 +317,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetLocators()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).Locators();
+            var entities = dataRepository.SetAuthentication(Authentication).GetLocators();
 
             // return
             return Ok(entities);
@@ -336,7 +337,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Locators()
+                .GetLocators()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -362,7 +363,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetMacros()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).Macros();
+            var entities = dataRepository.SetAuthentication(Authentication).GetMacros();
 
             // return
             return Ok(entities);
@@ -382,7 +383,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Macros()
+                .GetMacros()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -408,7 +409,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetOperators()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).Operators();
+            var entities = dataRepository.SetAuthentication(Authentication).GetOperators();
 
             // return
             return Ok(entities);
@@ -428,7 +429,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Operators()
+                .GetOperators()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -454,7 +455,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetReporters()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).Reporters();
+            var entities = dataRepository.SetAuthentication(Authentication).GetReporters();
 
             // return
             return Ok(entities);
@@ -474,7 +475,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Reporters()
+                .GetReporters()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -500,7 +501,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetAnnotations()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).Annotations();
+            var entities = dataRepository.SetAuthentication(Authentication).GetAnnotations();
 
             // return
             return Ok(entities);
@@ -520,7 +521,7 @@ namespace Rhino.Controllers.Controllers
             // get response
             var entity = dataRepository
                 .SetAuthentication(Authentication)
-                .Annotations()
+                .GetAnnotations()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
@@ -574,6 +575,53 @@ namespace Rhino.Controllers.Controllers
 
             // return
             return Ok(version);
+        }
+
+        // GET: api/v3/meta/models
+        [HttpGet, Route("models")]
+        [SwaggerOperation(
+            Summary = "Get-Models -All",
+            Description = "Returns a list of available _**Rhino Page Models**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<RhinoModelCollection>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetModels()
+        {
+            // setup
+            var entities = dataRepository.SetAuthentication(Authentication).GetModels();
+
+            // return
+            return Ok(entities);
+        }
+
+        // GET: api/v3/meta/models/:name
+        [HttpGet, Route("models/{name}")]
+        [SwaggerOperation(
+            Summary = "Get-Models -Name {the name of the model}",
+            Description = "Returns a single available _**Rhino Page Model**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(RhinoPageModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetModels([SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
+        {
+            // setup
+            var entity = dataRepository
+                .SetAuthentication(Authentication)
+                .GetModels()
+                .SelectMany(i => i.Models)
+                .FirstOrDefault(i => i.Name.Equals(name, StringComparison.Ordinal));
+
+            // not found
+            if (entity == default)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-Model -Name {name} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // get
+            return Ok(entity);
         }
         #endregion
     }
