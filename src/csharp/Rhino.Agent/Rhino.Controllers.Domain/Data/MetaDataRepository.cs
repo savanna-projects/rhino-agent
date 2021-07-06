@@ -13,7 +13,7 @@ using Gravity.Services.DataContracts;
 using OpenQA.Selenium;
 
 using Rhino.Api.Contracts.Attributes;
-using Rhino.Api.Contracts.Interfaces;
+using Rhino.Api.Interfaces;
 using Rhino.Api.Parser;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;

@@ -24,7 +24,7 @@ using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Extensions;
-using Rhino.Api.Contracts.Interfaces;
+using Rhino.Api.Interfaces;
 
 using System.Net;
 

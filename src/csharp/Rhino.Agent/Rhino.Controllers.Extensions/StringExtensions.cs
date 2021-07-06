@@ -22,6 +22,16 @@ namespace Rhino.Controllers.Extensions
     {
         #region *** Case Converts ***
         /// <summary>
+        /// Normalize line breaks into Environment.NewLine format.
+        /// </summary>
+        /// <param name="str">The <see cref="string"/> to mormalize.</param>
+        /// <returns>Normalized <see cref="string"/>.</returns>
+        public static string NormalizeLineBreaks(this string str)
+        {
+            return Regex.Replace(input: str, pattern: @"(\\r\\n|\\n|\\r)", replacement: Environment.NewLine);
+        }
+
+        /// <summary>
         /// Converts a camelCase or PascalCase <see cref="string"/> to a snake_case <see cref="string"/>.
         /// </summary>
         /// <param name="str">The <see cref="string"/> to convert.</param>

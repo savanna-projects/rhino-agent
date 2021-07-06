@@ -31,7 +31,7 @@ namespace Rhino.Controllers.Controllers
         // members: constants
         private const string CountHeader = "Rhino-Total-Specs";
         private static readonly string doubleLine = Environment.NewLine + Environment.NewLine;
-        private static readonly string separator = doubleLine + SpecSection.Separator + doubleLine;
+        private static readonly string separator = doubleLine + Spec.Separator + doubleLine;
 
         // members: state
         private readonly IPluginsRepository pluginsRepository;
@@ -127,8 +127,8 @@ namespace Rhino.Controllers.Controllers
         {
             // setup
             var pluginSpecs = (await Request.ReadAsync().ConfigureAwait(false))
-                .Split(SpecSection.Separator)
-                .Select(i => i.Trim());
+                .Split(Spec.Separator)
+                .Select(i => i.Trim().NormalizeLineBreaks());
 
             // create plugins
             pluginsRepository.SetAuthentication(Authentication);

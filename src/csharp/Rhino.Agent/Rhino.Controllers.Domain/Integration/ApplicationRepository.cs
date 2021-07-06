@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
-using Rhino.Api.Contracts.Interfaces;
+using Rhino.Api.Interfaces;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 
