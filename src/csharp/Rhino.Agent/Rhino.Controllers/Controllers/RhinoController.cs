@@ -111,7 +111,7 @@ namespace Rhino.Controllers.Controllers
         {
             // setup
             var collection = (await Request.ReadAsync().ConfigureAwait(false))
-                .Split(SpecSection.Separator)
+                .Split(Spec.Separator)
                 .Select(i => i.Trim())
                 .Where(i => !string.IsNullOrEmpty(i));
             var configuration = configurationsRepository.SetAuthentication(Authentication).Get(id);

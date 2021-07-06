@@ -38,7 +38,7 @@ namespace Rhino.Controllers.Controllers
     {
         // members: constants
         private readonly string Seperator =
-            Environment.NewLine + Environment.NewLine + SpecSection.Separator + Environment.NewLine + Environment.NewLine;
+            Environment.NewLine + Environment.NewLine + Spec.Separator + Environment.NewLine + Environment.NewLine;
         private const string CountHeader = "Rhino-Total-Specs";
 
         // members: state
@@ -78,7 +78,7 @@ namespace Rhino.Controllers.Controllers
 
             // parse test case & configuration
             var configuration = model.Connector;
-            var spec = model.Entity.Spec.Split(SpecSection.Separator).Select(i => i.Trim()).ToArray();
+            var spec = model.Entity.Spec.Split(Spec.Separator).Select(i => i.Trim()).ToArray();
             var testSuites = model.Entity.TestSuites;
 
             // text connector

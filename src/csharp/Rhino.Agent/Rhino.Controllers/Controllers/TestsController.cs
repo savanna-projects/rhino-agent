@@ -32,7 +32,7 @@ namespace Rhino.Controllers.Controllers
     {
         // members: constants
         private readonly string Seperator =
-            Environment.NewLine + Environment.NewLine + SpecSection.Separator + Environment.NewLine + Environment.NewLine;
+            Environment.NewLine + Environment.NewLine + Spec.Separator + Environment.NewLine + Environment.NewLine;
         private const string CountHeader = "Rhino-Total-Specs";
 
         // members: state
@@ -253,7 +253,7 @@ namespace Rhino.Controllers.Controllers
         {
             // read test case from request body
             var requestBody = await Request.ReadAsync().ConfigureAwait(false);
-            var specs = requestBody.Split(SpecSection.Separator).Select(i => i.Trim());
+            var specs = requestBody.Split(Spec.Separator).Select(i => i.Trim());
 
             // get collection
             var (statusCode, collection) = testsRepository.SetAuthentication(Authentication).Get(id);
