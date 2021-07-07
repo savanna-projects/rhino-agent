@@ -36,6 +36,7 @@ namespace Rhino.Controllers.Domain.Data
         // members: state
         private readonly Orbit client;
         private readonly IPluginsRepository plugins;
+        private readonly IRepository<RhinoModelCollection> models;
         private readonly IEnumerable<Type> types;
         private readonly ILogger logger;
 
@@ -49,11 +50,14 @@ namespace Rhino.Controllers.Domain.Data
         public MetaDataRepository(
             Orbit client,
             IPluginsRepository plugins,
+            IRepository<RhinoModelCollection> models,
             IEnumerable<Type> types,
             ILogger logger)
         {
             this.client = client;
             this.plugins = plugins;
+            this.models = models;
+            Logger = logger;
             this.types = types;
             this.logger = logger?.CreateChildLogger(nameof(MetaDataRepository));
         }
@@ -64,10 +68,15 @@ namespace Rhino.Controllers.Domain.Data
         public Authentication Authentication { get; private set; }
 
         /// <summary>
+        /// Gets or sets the logger implementation used by the repository.
+        /// </summary>
+        public ILogger Logger { get; }
+
+        /// <summary>
         /// Gets a list of non conditional actions with their literals default verbs
         /// </summary>
         /// <returns>List of non conditional actions</returns>
-        public IEnumerable<ActionModel> Plugins()
+        public IEnumerable<ActionModel> GetPlugins()
         {
             // setup
             var actions = new List<ActionModel>();
@@ -91,7 +100,7 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a collection of available assertions (based on AssertMethodAttribute).
         /// </summary>
         /// <returns>A collection of AssertMethodAttribute.</returns>
-        public IEnumerable<AssertModel> Assertions()
+        public IEnumerable<AssertModel> GetAssertions()
         {
             // constants
             const BindingFlags Flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
@@ -110,7 +119,7 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a list of all available connectors.
         /// </summary>
         /// <returns>A list all available connectors.</returns>
-        public IEnumerable<ConnectorModel> Connectors()
+        public IEnumerable<ConnectorModel> GetConnectors()
         {
             // setup
             var onTypes = types.Where(t => typeof(IConnector).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
@@ -127,7 +136,7 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a list of all available drivers.
         /// </summary>
         /// <returns>A list all available drivers.</returns>
-        public IEnumerable<DriverModel> Drivers()
+        public IEnumerable<DriverModel> GetDrivers()
         {
             // constants
             const BindingFlags Binding = BindingFlags.Instance | BindingFlags.NonPublic;
@@ -156,7 +165,7 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a list of all available locators.
         /// </summary>
         /// <returns>A list all available locators.</returns>
-        public IEnumerable<LocatorModel> Locators()
+        public IEnumerable<LocatorModel> GetLocators()
         {
             // get relevant by method
             var methods = types.SelectMany(t => t.GetMethods()).Where(m => m.IsStatic && m.ReturnType == typeof(By));
@@ -186,18 +195,17 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a list of all available macros.
         /// </summary>
         /// <returns>List of all available macros.</returns>
-        public IEnumerable<MacroModel> Macros()
+        public IEnumerable<MacroModel> GetMacros()
         {
             return types.GetMacroAttributes().Select(i => ((MacroAttribute)i).ToModel());
         }
-
 
         // TODO: implement GetExamples factory for getting examples for the different operators.
         /// <summary>
         /// Gets a list of all available operators.
         /// </summary>
         /// <returns>A list of all available operators.</returns>
-        public IEnumerable<OperatorModel> Operators()
+        public IEnumerable<OperatorModel> GetOperators()
         {
             return new RhinoTestCaseFactory(client).OperatorsMap.Select(i => new OperatorModel
             {
@@ -211,7 +219,7 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a list of all available reporters.
         /// </summary>
         /// <returns>A list all available reporters.</returns>
-        public IEnumerable<ReporterModel> Reporters()
+        public IEnumerable<ReporterModel> GetReporters()
         {
             return types
                 .Where(i => i.GetCustomAttribute<ReporterAttribute>() != null)
@@ -258,7 +266,7 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a list of all available properties.
         /// </summary>
         /// <returns>A list all available properties.</returns>
-        public IEnumerable<PropertyModel> Annotations()
+        public IEnumerable<PropertyModel> GetAnnotations()
         {
             // constants
             const string Exclude = "Must not include spaces, escape or special characters - excluding dash and underscore.";
@@ -284,6 +292,19 @@ namespace Rhino.Controllers.Domain.Data
                 Entity = new { Name = i.Key, Description = i.Value },
                 Verb = string.Empty
             });
+        }
+
+        /// <summary>
+        /// Gets a collection of all available RhinoModelCollection which are not
+        /// connected to a specific configuration.
+        /// </summary>
+        /// <returns>A collection of RhinoModelCollection</returns>
+        public IEnumerable<RhinoModelCollection> GetModels()
+        {
+            return models
+                .SetAuthentication(Authentication)
+                .Get()
+                .Where(i => i.Configurations?.Any() == false);
         }
 
         // UTILITIES
