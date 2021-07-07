@@ -69,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Extension
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Models", "Rhino.Controllers.Models\Rhino.Controllers.Models.csproj", "{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhino.Plugins.Custom", "Rhino.Plugins.Custom\Rhino.Plugins.Custom.csproj", "{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Plugins.Custom", "Rhino.Plugins.Custom\Rhino.Plugins.Custom.csproj", "{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
