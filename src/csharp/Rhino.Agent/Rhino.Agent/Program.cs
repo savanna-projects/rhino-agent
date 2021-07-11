@@ -120,12 +120,9 @@ namespace Rhino.Agent
         {
             OnArgumentsError(Configuration);
 
-            // generate configuration token
-            var json = File.ReadAllText(arguments[Configuration]);
-            var token = JsonDocument.Parse(json);
-
             // generate configuration
-            var configuration =  token.ToObject<RhinoConfiguration>();
+            var json = File.ReadAllText(arguments[Configuration]);
+            var configuration = JsonSerializer.Deserialize<RhinoConfiguration>(json, jsonOptions);
 
             // finalize
             configuration.Name = Path.GetFileNameWithoutExtension(arguments[Configuration]);
