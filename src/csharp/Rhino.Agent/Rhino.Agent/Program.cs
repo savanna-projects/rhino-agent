@@ -16,10 +16,6 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
-
 using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
@@ -27,6 +23,7 @@ using Rhino.Api.Extensions;
 using Rhino.Api.Interfaces;
 
 using System.Net;
+using System.Text.Json;
 
 namespace Rhino.Agent
 {
@@ -44,6 +41,11 @@ namespace Rhino.Agent
         private static IDictionary<string, string> arguments;
         private static int errorCode;
         private static ILogger logger;
+        private static readonly JsonSerializerOptions jsonOptions = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        };
 
         public static void Main(string[] args)
         {
@@ -120,10 +122,10 @@ namespace Rhino.Agent
 
             // generate configuration token
             var json = File.ReadAllText(arguments[Configuration]);
-            var token = JToken.Parse(json);
+            var token = JsonDocument.Parse(json);
 
             // generate configuration
-            var configuration = token.ToObject<RhinoConfiguration>();
+            var configuration =  token.ToObject<RhinoConfiguration>();
 
             // finalize
             configuration.Name = Path.GetFileNameWithoutExtension(arguments[Configuration]);
@@ -189,8 +191,7 @@ namespace Rhino.Agent
         private static void ProcessOutcome(RhinoTestRun outcome)
         {
             // output
-            var jsonSettings = Gravity.Extensions.Utilities.GetJsonSettings<CamelCaseNamingStrategy>(Formatting.Indented);
-            Console.WriteLine(JsonConvert.SerializeObject(outcome, jsonSettings));
+            Console.WriteLine(JsonSerializer.Serialize(outcome, jsonOptions));
 
             // constants: logging
             const string M =
