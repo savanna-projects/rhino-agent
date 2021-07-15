@@ -7,16 +7,16 @@
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="5.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.7" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.7" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.8" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.8" NoWarn="NU1605" />
     <PackageReference Include="Rhino.Connectors.Azure" Version="2021.7.9.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.4" />
     <PackageReference Include="Rhino.Api" Version="2021.7.9.1" />
-    <PackageReference Include="Rhino.Connectors.Gurock" Version="2021.7.12.4" />
+    <PackageReference Include="Rhino.Connectors.Gurock" Version="2021.7.15.2" />
     <PackageReference Include="Rhino.Connectors.Text" Version="2021.7.9.1" />
-    <PackageReference Include="Rhino.Connectors.Xray" Version="2021.7.12.1" />
-    <PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.7.12.1" />
+    <PackageReference Include="Rhino.Connectors.Xray" Version="2021.7.15.1" />
+    <PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.7.15.1" />
   </ItemGroup>
 
   <ItemGroup>
