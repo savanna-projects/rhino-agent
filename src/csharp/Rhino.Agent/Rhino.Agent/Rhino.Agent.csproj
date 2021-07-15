@@ -14,13 +14,13 @@
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
 		<PackageReference Include="Rhino.Connectors.Azure" Version="2021.7.9.3" />
 		<PackageReference Include="Rhino.Connectors.Azure.WebApi" Version="16.162.29627.1" />
-		<PackageReference Include="Rhino.Connectors.Gurock" Version="2021.7.12.4" />
+		<PackageReference Include="Rhino.Connectors.Gurock" Version="2021.7.15.2" />
 		<PackageReference Include="Rhino.Connectors.Text" Version="2021.7.9.1" />
-		<PackageReference Include="Rhino.Connectors.Xray" Version="2021.7.12.1" />
-    <PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.7.12.1" />
+		<PackageReference Include="Rhino.Connectors.Xray" Version="2021.7.15.1" />
+    <PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.7.15.1" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="91.0.4472.10100" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.7" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.7" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.8" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.8" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
 	</ItemGroup>
 
