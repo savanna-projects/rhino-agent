@@ -18,6 +18,7 @@ using Rhino.Api.Parser;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using System;
 using System.Collections.Generic;
@@ -272,16 +273,19 @@ namespace Rhino.Controllers.Domain.Data
             const string Exclude = "Must not include spaces, escape or special characters - excluding dash and underscore.";
 
             // build
-            var properties = new Dictionary<string, string>
+            var properties = new Dictionary<string, (string Description, int Priority)>
             {
-                ["test-id"] = "A _*unique*_ identifier of the test case. " + Exclude,
-                ["test-scenario"] = "A statement describing the functionality to be tested. " + Exclude,
-                ["test-priority"] = "The level of _*business importance*_ assigned to an item, e.g., defect." + Exclude,
-                ["test-severity"] = "The degree of _*impact*_ that a defect has on the development or operation of a component or system." + Exclude,
-                ["test-tolerance"] = "The % of the test tolerance. A Special attribute to decide, based on configuration if the test will be marked as passed or with warning. Default 0% tolerance. Must be a number with or without the % sign.",
-                ["test-actions"] = "A collection of atomic pieces of logic which execute a single test case.",
-                ["test-expected-results"] = "An ideal result that the tester should get after a test action is performed.",
-                ["test-data-provider"] = "_*Data*_ created or selected to satisfy the execution preconditions and inputs to execute one or more _*test cases*_."
+                ["test-id"] = ("A _*unique*_ identifier of the test case. " + Exclude, 0),
+                ["test-scenario"] = ("A statement describing the functionality to be tested. " + Exclude, 1),
+                ["test-categories"] = ("A comma separated list of categories to which this test belongs to." + Exclude, 2),
+                ["test-priority"] = ("The level of _*business importance*_ assigned to an item, e.g., defect." + Exclude, 3),
+                ["test-severity"] = ("The degree of _*impact*_ that a defect has on the development or operation of a component or system." + Exclude, 4),
+                ["test-tolerance"] = ("The % of the test tolerance. A Special attribute to decide, based on configuration if the test will be marked as passed or with warning. Default 0% tolerance. Must be a number with or without the % sign.", 5),
+                ["test-actions"] = ("A collection of atomic pieces of logic which execute a single test case.", 6),
+                ["test-data-provider"] = ("_*Data*_ created or selected to satisfy the execution preconditions and inputs to execute one or more _*test cases*_.", 7),
+                ["test-expected-results"] = ("An ideal result that the tester should get after a test action is performed.", 8),
+                ["test-parameters"] = ("A list of parameters the use can provide and are exposed by the plugin.", 9),
+                ["test-examples"] = ("Mandatory! One or more examples of how to implement the Plugin in a test.", 10),
             };
 
             // get
@@ -289,7 +293,7 @@ namespace Rhino.Controllers.Domain.Data
             {
                 Key = i.Key,
                 Literal = "[" + i.Key.ToLower() + "]",
-                Entity = new { Name = i.Key, Description = i.Value },
+                Entity = new { Name = i.Key, i.Value.Description, i.Value.Priority },
                 Verb = string.Empty
             });
         }
@@ -305,6 +309,27 @@ namespace Rhino.Controllers.Domain.Data
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => i.Configurations?.Any() == false);
+        }
+
+        /// <summary>
+        /// Gets a collection of all available RhinoVerbs.
+        /// </summary>
+        /// <returns>A collection of all available RhinoVerbs</returns>
+        public IEnumerable<RhinoVerbModel> GetVerbs()
+        {
+            return new[]
+            {
+                new RhinoVerbModel{ Key = "on", Literal = "on", Entity = new { Scope = "onElement" } },
+                new RhinoVerbModel{ Key = "into", Literal = "into", Entity = new { Scope = "onElement" } },
+                new RhinoVerbModel{ Key = "take", Literal = "take", Entity = new { Scope = "onElement" } },
+                new RhinoVerbModel{ Key = "of", Literal = "of", Entity = new { Scope = "onElement" } },
+                new RhinoVerbModel{ Key = "from", Literal = "from", Entity = new { Scope = "onAttribute" } },
+                new RhinoVerbModel{ Key = "using", Literal = "using", Entity = new { Scope = "regularExpression" } },
+                new RhinoVerbModel{ Key = "by", Literal = "by", Entity = new { Scope = "regularExpression" } },
+                new RhinoVerbModel{ Key = "filter", Literal = "filter", Entity = new { Scope = "regularExpression" } },
+                new RhinoVerbModel{ Key = "mask", Literal = "mask", Entity = new { Scope = "regularExpression" } },
+                new RhinoVerbModel{ Key = "pattern", Literal = "pattern", Entity = new { Scope = "regularExpression" } }
+            };
         }
 
         // UTILITIES

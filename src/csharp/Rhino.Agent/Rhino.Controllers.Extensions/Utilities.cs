@@ -167,7 +167,7 @@ namespace Rhino.Controllers.Extensions
             try
             {
                 DoRenderLogo(1, 1, ConsoleColor.Black, ConsoleColor.White, Rhino());
-                DoRenderLogo(1, 55, ConsoleColor.Black, ConsoleColor.Red, Api());
+                DoRenderLogo(1, 49, ConsoleColor.Black, ConsoleColor.Red, Api());
 
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.WriteLine();
@@ -202,26 +202,28 @@ namespace Rhino.Controllers.Extensions
 
         private static IEnumerable<string> Rhino() => new List<string>
         {
-            "88888888ba   88           88                          ",
-            "88      \"8b  88           \"\"                          ",
-            "88      ,8P  88                                       ",
-            "88aaaaaa8P'  88,dPPYba,   88  8b,dPPYba,    ,adPPYba, ",
-            "88\"\"\"\"88'    88P'    \"8a  88  88P'   `\"8a  a8\"     \"8a",
-            "88    `8b    88       88  88  88       88  8b       d8",
-            "88     `8b   88       88  88  88       88  \"8a,   ,a8\"",
-            "88      `8b  88       88  88  88       88   `\"YbbdP\"' ",
+            "        ▀▀██          ▄▄                        ",
+            "          ██          ▀▀                        ",
+            "          ██                                    ",
+            "▀██ ▄████ ██▄▄▀▀██▄  ▀██  ▀██▄▄▀▀██   ▄▄█▀▀▀█▄▄ ",
+            " ██▀    ▀ ██     ██   ██   ██     ██ ▄█▀     ▀█▄",
+            " ██       ██     ██   ██   ██     ██ ██       ██",
+            " ██       ██     ██   ██   ██     ██ ██       ██",
+            " ██       ██     ██   ██   ██     ██  ██▄   ▄██ ",
+            "▀▀▀▀     ▀▀▀▀   ▀▀▀▀ ▀▀▀▀ ▀▀▀▀   ▀▀▀▀   ▀▀▀▀▀   "
         };
 
         private static IEnumerable<string> Api() => new List<string>
         {
-            "        db         88888888ba   88",
-            "       d88b        88      \"8b  88",
-            "      d8'`8b       88      ,8P  88",
-            "     d8'  `8b      88aaaaaa8P'  88",
-            "    d8YaaaaY8b     88\"\"\"\"\"\"'    88",
-            "   d8\"\"\"\"\"\"\"\"8b    88           88",
-            "  d8'        `8b   88           88",
-            " d8'          `8b  88           88",
+            "       ▄▄       ▄▄▄▄▄▄▄▄▄   ▄▄▄▄",
+            "      ▄██▄       ██     ▀█▄  ██ ",
+            "     ▄█ ██       ██      ██  ██ ",
+            "     █   ██      ██      █▀  ██ ",
+            "    █▀   ▀█▄     ██    █▀▀   ██ ",
+            "   ██▄▄▄▄▄██     ██▀▀▀▀▀     ██ ",
+            "  ▄█      ▀██    ██          ██ ",
+            " ▄██       ██▄   ██          ██ ",
+            "▀▀▀▀▀     ▀▀▀▀▀ ▀▀▀▀▀       ▀▀▀▀"
         };
         #endregion
     }
