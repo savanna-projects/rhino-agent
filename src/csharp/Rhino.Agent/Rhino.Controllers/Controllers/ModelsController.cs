@@ -257,7 +257,13 @@ namespace Rhino.Controllers.Controllers
             modelsRepository.Update(id, modelCollection);
 
             // get
-            return Redirect($"/api/v3/models/{id}");
+            var (StatusCode, Entity) = modelsRepository.Get(id);
+            return new ContentResult
+            {
+                StatusCode = StatusCode,
+                ContentType = MediaTypeNames.Application.Json,
+                Content = Entity.ToJson()
+            };
         }
 
         // PATCH api/v3/models/:id/configurations/:configuration
@@ -310,7 +316,13 @@ namespace Rhino.Controllers.Controllers
             modelsRepository.Update(id, modelCollection);
 
             // get
-            return Redirect($"/api/v3/models/{id}");
+            var (StatusCode, Entity) = modelsRepository.Get(id);
+            return new ContentResult
+            {
+                StatusCode = StatusCode,
+                ContentType = MediaTypeNames.Application.Json,
+                Content = Entity.ToJson()
+            };
         }
         #endregion
 

@@ -26,6 +26,7 @@ namespace Rhino.Controllers
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) => WebHost
             .CreateDefaultBuilder(args)
+            .UseUrls()
             .ConfigureKestrel(SetOptions)
             .UseStartup<Startup>();
 

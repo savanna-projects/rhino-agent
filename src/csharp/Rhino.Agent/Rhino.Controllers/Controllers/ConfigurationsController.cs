@@ -163,7 +163,13 @@ namespace Rhino.Controllers.Controllers
             }
 
             // response
-            return Redirect($"/api/v3/configurations/{id}");
+            var (StatusCode, Entity) = configurationsRepository.Get(id);
+            return new ContentResult
+            {
+                StatusCode = StatusCode,
+                ContentType = MediaTypeNames.Application.Json,
+                Content = Entity.ToJson()
+            };
         }
         #endregion
 
