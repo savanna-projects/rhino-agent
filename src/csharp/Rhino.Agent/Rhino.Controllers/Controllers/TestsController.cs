@@ -94,28 +94,9 @@ namespace Rhino.Controllers.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(string))]
         [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
-        public async Task<IActionResult> Get([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
+        public Task<IActionResult> Get([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
-            // setup
-            var (statusCode, entity) = testsRepository.SetAuthentication(Authentication).Get(id);
-
-            // not found
-            if (statusCode == StatusCodes.Status404NotFound)
-            {
-                return await this
-                    .ErrorResultAsync<string>($"Get-TestCollection -Id {id} = NotFound", StatusCodes.Status404NotFound)
-                    .ConfigureAwait(false);
-            }
-
-            // setup
-            var specs = entity.RhinoTestCaseModels.Select(i => i.RhinoSpec);
-            var responseBody = string.Join(Seperator, specs);
-
-            // add count header
-            Response.Headers.Add(CountHeader, $"{specs.Count()}");
-
-            // get
-            return Ok(responseBody);
+            return InvokeGet(id);
         }
 
         // GET api/v3/tests/:id/configurations
@@ -287,7 +268,7 @@ namespace Rhino.Controllers.Controllers
             testsRepository.SetAuthentication(Authentication).Update($"{collection.Id}", collection);
 
             // get
-            return Redirect($"/api/v3/tests/{id}");
+            return await InvokeGet(id);
         }
 
         // PATCH api/v3/tests/:id/configurations/:configuration
@@ -295,7 +276,7 @@ namespace Rhino.Controllers.Controllers
         [SwaggerOperation(
             Summary = "Add-TestCollection -Id {00000000-0000-0000-0000-000000000000} -Configuration {00000000-0000-0000-0000-000000000000}",
             Description = "Add additional _**Rhino Configuration**_ into an existing collection.")]
-        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(string))]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<string>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<string>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
@@ -331,7 +312,13 @@ namespace Rhino.Controllers.Controllers
             }
 
             // get
-            return Redirect($"/api/v3/tests/{id}/configurations");
+            var entity = testsRepository.SetAuthentication(Authentication).Get(id);
+            return new ContentResult
+            {
+                Content = entity.Entity.Configurations.ToJson(),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = entity.StatusCode
+            };
         }
         #endregion
 
@@ -371,5 +358,30 @@ namespace Rhino.Controllers.Controllers
             return NoContent();
         }
         #endregion
+
+        // Utilities
+        private async Task<IActionResult> InvokeGet(string id)
+        {
+            // setup
+            var (statusCode, entity) = testsRepository.SetAuthentication(Authentication).Get(id);
+
+            // not found
+            if (statusCode == StatusCodes.Status404NotFound)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-TestCollection -Id {id} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // setup
+            var specs = entity.RhinoTestCaseModels.Select(i => i.RhinoSpec);
+            var responseBody = string.Join(Seperator, specs);
+
+            // add count header
+            Response.Headers.Add(CountHeader, $"{specs.Count()}");
+
+            // get
+            return Ok(responseBody);
+        }
     }
 }

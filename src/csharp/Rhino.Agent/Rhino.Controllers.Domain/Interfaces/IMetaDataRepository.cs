@@ -4,6 +4,7 @@
  * RESSOURCES
  */
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,5 +24,6 @@ namespace Rhino.Controllers.Domain.Interfaces
         Task<string> GetVersionAsync();
         IEnumerable<PropertyModel> GetAnnotations();
         IEnumerable<RhinoModelCollection> GetModels();
+        IEnumerable<RhinoVerbModel> GetVerbs();
     }
 }

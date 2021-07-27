@@ -91,6 +91,7 @@ namespace Rhino.Agent
         // creates web service host container
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) => WebHost
             .CreateDefaultBuilder(args)
+            .UseUrls()
             .ConfigureKestrel(SetOptions)
             .UseStartup<Startup>();
 

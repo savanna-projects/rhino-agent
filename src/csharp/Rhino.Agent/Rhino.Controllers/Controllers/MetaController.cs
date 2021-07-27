@@ -13,6 +13,7 @@ using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -622,6 +623,34 @@ namespace Rhino.Controllers.Controllers
 
             // get
             return Ok(entity);
+        }
+
+        // GET: api/v3/meta/verbs
+        [HttpGet, Route("verbs")]
+        [SwaggerOperation(
+            Summary = "Get-Verbs -Name All",
+            Description = "Returns a collection of all available _**Rhino Verbs**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<RhinoVerbModel>))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetVerbs([SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
+        {
+            // setup
+            var entities = dataRepository
+                .SetAuthentication(Authentication)
+                .GetVerbs();
+
+            // not found
+            if (entities?.Any() == false)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-Verbs -Name All = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // get
+            return Ok(entities);
         }
         #endregion
     }
