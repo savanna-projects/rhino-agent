@@ -30,6 +30,7 @@ using Rhino.Controllers.Domain.Integration;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
+using Rhino.Controllers.Formatters;
 using Rhino.Controllers.Models;
 
 namespace Rhino.Agent
@@ -37,7 +38,7 @@ namespace Rhino.Agent
     public class Startup
     {
         // constants        
-        public const string DbEncrypKey = "Rhino:StateManager:Key";
+        public const string DbEncrypKey = "Rhino:StateManager:DataEncryptionKey";
         public const string DbEncrypKeyDefault = "30908f87-8539-477a-86e7-a4c13d4583c4";
         private const string CorsPolicy = "CorsPolicy";
 
@@ -88,7 +89,10 @@ namespace Rhino.Agent
             // Components Settings
             services.AddRazorPages();
             services.AddMvc().AddApplicationPart(typeof(RhinoController).Assembly).AddControllersAsServices();
-            services.AddControllers().AddJsonOptions(i =>
+            services.AddControllers(i =>
+            {
+                i.InputFormatters.Add(new TextPlainInputFormatter());
+            }).AddJsonOptions(i =>
             {
                 i.JsonSerializerOptions.WriteIndented = true;
                 i.JsonSerializerOptions.IgnoreNullValues = true;

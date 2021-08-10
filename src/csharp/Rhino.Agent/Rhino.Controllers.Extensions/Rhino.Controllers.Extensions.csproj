@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gravity.Extensions" Version="2020.10.18.1" />
+    <PackageReference Include="Gravity.Extensions" Version="2021.7.30.1" />
     <PackageReference Include="Gravity.Services.Comet" Version="2021.7.27.1" />
     <PackageReference Include="Gravity.Services.DataContracts" Version="2021.7.27.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />

@@ -10,14 +10,19 @@ using Gravity.Services.DataContracts;
 using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Interfaces;
 using Rhino.Controllers.Models;
 
 using System;
+using System.Data;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Rhino.Api.Interfaces;
+
+
+
 
 namespace Rhino.Controllers.Extensions
 {
@@ -104,7 +109,7 @@ namespace Rhino.Controllers.Extensions
             Summary = string.Empty
         };
 
-        #region *** Connector ***
+        #region *** Connector  ***
         /// <summary>
         /// Gets a connector.
         /// </summary>
@@ -149,7 +154,7 @@ namespace Rhino.Controllers.Extensions
         }
         #endregion
 
-        #region *** Models    ***
+        #region *** Models     ***
         /// <summary>
         /// Converts a ActionAttribute object into ActionModel object.
         /// </summary>
@@ -286,6 +291,46 @@ namespace Rhino.Controllers.Extensions
         private static string GetVerb(string action)
         {
             return VerbMap.FirstOrDefault(i => i.Value.Contains(action)).Key ?? "on";
+        }
+        #endregion
+
+        #region *** Page Model ***
+        /// <summary>
+        /// Gets a RhinoPageModel object built from markdown table.
+        /// </summary>
+        /// <param name="pageModel">The PageModel to build by.</param>
+        /// <param name="name">The PageModel name.</param>
+        /// <param name="markdown">The markdown table.</param>
+        /// <returns>RhinoPageModel object.</returns>
+        public static RhinoPageModel GetFromMarkdown(this RhinoPageModel pageModel, string name, string markdown)
+        {
+            // parse
+            var table = new DataTable().FromMarkDown(markdown);
+
+            // setup
+            pageModel.Name = name;
+
+            // bad request
+            if (table == default || table.Rows?.Count == 0)
+            {
+                return pageModel;
+            }
+
+            // build
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            var entries = table
+                .ToDictionary()
+                .Select(i => JsonSerializer.Deserialize<RhinoPageModelEntry>(JsonSerializer.Serialize(i), options));
+
+            // get
+            return new RhinoPageModel
+            {
+                Name = pageModel.Name,
+                Entries = entries
+            };
         }
         #endregion
     }

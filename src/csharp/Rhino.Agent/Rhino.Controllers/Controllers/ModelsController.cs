@@ -3,6 +3,7 @@
  * 
  * RESSOURCES
  */
+using Gravity.Extensions;
 using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
@@ -167,7 +169,88 @@ namespace Rhino.Controllers.Controllers
             return InvokeCreate(configuration, pageModels);
         }
 
-        private async Task<IActionResult> InvokeCreate(string configuration, [FromBody] IEnumerable<RhinoPageModel> pageModels)
+        // POST api/v3/models/md
+        [HttpPost, Route("md")]
+        [SwaggerOperation(
+            Summary = "Create-RhinoModelCollection -Type Markdown",
+            Description = "Creates a new _**Rhino Model**_.")]
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(RhinoModelCollection))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(string))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public Task<IActionResult> Create([FromBody, SwaggerRequestBody(SwaggerDocument.Parameter.Entity)] string pageModels)
+        {
+            // build
+            var _pageModels = CleanSpec(pageModels)
+                .Split(">>>")
+                .Select(i => FormatPageModel(i))
+                .Select(i => new RhinoPageModel().GetFromMarkdown(i.Name, i.Markdown));
+
+            // get
+            return InvokeCreate(configuration: string.Empty, _pageModels);
+        }
+
+        // POST api/v3/models/md/:configuration
+        [HttpPost("md/{configuration}")]
+        [SwaggerOperation(
+            Summary = "Create-RhinoModelCollection -Type Markdown -Configuration {00000000-0000-0000-0000-000000000000}",
+            Description = "Creates a new _**Rhino Model**_ and attach it to the provided configuration.")]
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(RhinoModelCollection))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<IEnumerable<RhinoPageModel>>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<IEnumerable<RhinoPageModel>>))]
+        public Task<IActionResult> Create(
+            [SwaggerParameter(SwaggerDocument.Parameter.Id)] string configuration,
+            [FromBody, SwaggerRequestBody(SwaggerDocument.Parameter.Entity)] string pageModels)
+        {
+            // build
+            var _pageModels = CleanSpec(pageModels)
+                .Split(">>>")
+                .Select(i => FormatPageModel(i))
+                .Select(i => new RhinoPageModel().GetFromMarkdown(i.Name, i.Markdown));
+
+            // get
+            return InvokeCreate(configuration: configuration, _pageModels);
+        }
+
+
+        // TODO: remove when available from Rhino.Api
+        private static string CleanSpec(string spec)
+        {
+            // get spec lines
+            var lines = spec.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+            // clear comments & empty lines
+            lines = lines
+                .Select(i => Regex.Replace(i, @"(\s+)?/\*\*.*", string.Empty))
+                .Where(i => !string.IsNullOrEmpty(i))
+                .ToArray();
+
+            // results
+            return string.Join(Environment.NewLine, lines);
+        }
+
+        private static (string Name, string Markdown) FormatPageModel(string pageModel)
+        {
+            // setup
+            var lines = pageModel.Trim().SplitByLines().ToArray();
+            var name = lines.Length > 0 ? Regex.Match(lines[0], @"(?<=\[test-models\]).*").Value.Trim() : string.Empty;
+            var markdownLines = lines.Skip(1).Where(i => !string.IsNullOrEmpty(i.Trim())).ToArray();
+
+            // bad request
+            if (string.IsNullOrEmpty(name) || markdownLines.Length < 3)
+            {
+                return (string.Empty, string.Empty);
+            }
+
+            // get
+            return (name, string.Join('\n', markdownLines));
+        }
+
+        private async Task<IActionResult> InvokeCreate(string configuration, IEnumerable<RhinoPageModel> pageModels)
         {
             // bad request
             var badRequest = $"Create-RhinoModelCollection -Configuration {configuration} = (BadRequest, $(Reason))";
@@ -262,7 +345,7 @@ namespace Rhino.Controllers.Controllers
             {
                 StatusCode = StatusCode,
                 ContentType = MediaTypeNames.Application.Json,
-                Content = Entity.ToJson()
+                Content = Extensions.ObjectExtensions.ToJson(Entity)
             };
         }
 
@@ -321,7 +404,7 @@ namespace Rhino.Controllers.Controllers
             {
                 StatusCode = StatusCode,
                 ContentType = MediaTypeNames.Application.Json,
-                Content = Entity.ToJson()
+                Content = Extensions.ObjectExtensions.ToJson(Entity)
             };
         }
         #endregion

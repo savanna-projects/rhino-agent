@@ -625,6 +625,23 @@ namespace Rhino.Controllers.Controllers
             return Ok(entity);
         }
 
+        // GET: api/v3/meta/models/types
+        [HttpGet, Route("models/types")]
+        [SwaggerOperation(
+            Summary = "Get-ModelTypes",
+            Description = "Returns a collection of all available _**Rhino Model Types**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<RhinoModelTypeModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetModelTypes()
+        {
+            // setup
+            var entity = dataRepository.SetAuthentication(Authentication).GetModelTypes();
+
+            // get
+            return Ok(entity);
+        }
+
         // GET: api/v3/meta/verbs
         [HttpGet, Route("verbs")]
         [SwaggerOperation(

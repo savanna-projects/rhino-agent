@@ -21,6 +21,7 @@ using Rhino.Controllers.Domain.Data;
 using Rhino.Controllers.Domain.Integration;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
+using Rhino.Controllers.Formatters;
 using Rhino.Controllers.Models;
 
 using System;
@@ -81,7 +82,10 @@ namespace Rhino.Controllers
         public void ConfigureServices(IServiceCollection services)
         {
             // Components settings
-            services.AddControllers().AddJsonOptions(i =>
+            services.AddControllers(i =>
+            {
+                i.InputFormatters.Add(new TextPlainInputFormatter());
+            }).AddJsonOptions(i =>
             {
                 i.JsonSerializerOptions.WriteIndented = true;
                 i.JsonSerializerOptions.IgnoreNullValues = true;
