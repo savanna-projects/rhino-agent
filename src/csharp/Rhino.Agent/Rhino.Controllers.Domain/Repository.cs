@@ -9,6 +9,7 @@ using Gravity.Services.DataContracts;
 
 using LiteDB;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 using Newtonsoft.Json;
@@ -147,6 +148,21 @@ namespace Rhino.Controllers.Domain
         /// <param name="entity">The update payload.</param>
         /// <returns><see cref="int"/> code of the operation and the updated entity.</returns>
         public abstract (int StatusCode, T Entity) Update(string id, T entity);
+
+        /// <summary>
+        /// Update an entity.
+        /// </summary>
+        /// <param name="id">The id of the entity to update.</param>
+        /// <param name="fields">The update payload.</param>
+        /// <returns><see cref="int"/> code of the operation and the updated entity.</returns>
+        public virtual (int StatusCode, T Entity) Update(string id, IDictionary<string, object> fields)
+        {
+            // log
+            logger?.Debug($"Update-Entity -Partial -Type {typeof(T).Name} = NotImplemented");
+            
+            // get
+            return (StatusCodes.Status501NotImplemented, default);
+        }
         #endregion
     }
 }

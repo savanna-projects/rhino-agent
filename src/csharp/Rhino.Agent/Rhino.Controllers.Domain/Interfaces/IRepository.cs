@@ -3,8 +3,6 @@
  * 
  * RESSOURCES
  */
-using Gravity.Services.DataContracts;
-
 using LiteDB;
 
 namespace Rhino.Controllers.Domain.Interfaces

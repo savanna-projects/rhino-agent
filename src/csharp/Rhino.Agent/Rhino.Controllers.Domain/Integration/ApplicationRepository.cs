@@ -141,6 +141,17 @@ namespace Rhino.Controllers.Domain.Integration
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Puts a new RhinoTestCase into the target application.
+        /// </summary>
+        /// <param name="id">The id of RhinoTestCase to put.</param>
+        /// <param name="fields">The RhinoTestCase to update.</param>
+        /// <returns><see cref="int"/> and the updated object (if any).</returns>
+        public (int StatusCode, RhinoTestCase Entity) Update(string id, IDictionary<string, object> fields)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }
