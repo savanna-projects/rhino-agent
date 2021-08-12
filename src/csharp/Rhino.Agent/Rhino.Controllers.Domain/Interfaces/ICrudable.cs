@@ -15,5 +15,6 @@ namespace Rhino.Controllers.Domain.Interfaces
         IEnumerable<T> Get();
         (int StatusCode, T Entity) Get(string id);
         (int StatusCode, T Entity) Update(string id, T entity);
+        (int StatusCode, T Entity) Update(string id, IDictionary<string, object> fields);
     }
 }

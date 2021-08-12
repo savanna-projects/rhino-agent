@@ -173,6 +173,56 @@ namespace Rhino.Controllers.Controllers
         }
         #endregion
 
+        #region *** Patch  ***
+        // PATCH: api/v3/configuration/:id
+        [HttpPatch("{id}")]
+        [SwaggerOperation(
+            Summary = "Update-Configuration -Id {00000000-0000-0000-0000-000000000000} -Fields {obj}",
+            Description = "Updates an existing _**Rhino Configuration**_.")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(RhinoConfiguration))]
+        [SwaggerResponse(StatusCodes.Status204NoContent, SwaggerDocument.StatusCode.Status204NoContent, Type = typeof(RhinoConfiguration))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> Update(
+            [FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string id,
+            [FromBody, SwaggerRequestBody(SwaggerDocument.Parameter.Entity)] IDictionary<string, object> fields)
+        {
+            // exit conditions
+            if (!fields.Any())
+            {
+                return NoContent();
+            }
+
+            // get results
+            var (statusCode, _) = configurationsRepository.SetAuthentication(Authentication).Update(id, fields);
+
+            // exit conditions
+            if (statusCode == StatusCodes.Status404NotFound)
+            {
+                return await this
+                    .ErrorResultAsync<RhinoConfiguration>($"Update-Configuration -Id {id} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+            if (statusCode == StatusCodes.Status501NotImplemented)
+            {
+                return await this
+                    .ErrorResultAsync<RhinoConfiguration>($"Update-Configuration -Id {id} = NotImplemented", StatusCodes.Status501NotImplemented)
+                    .ConfigureAwait(false);
+            }
+
+            // response
+            var (StatusCode, Entity) = configurationsRepository.Get(id);
+            return new ContentResult
+            {
+                StatusCode = StatusCode,
+                ContentType = MediaTypeNames.Application.Json,
+                Content = Entity.ToJson()
+            };
+        }
+        #endregion
+
         #region *** Delete ***
         // DELETE: api/v3/configuration/:id
         [HttpDelete("{id}")]

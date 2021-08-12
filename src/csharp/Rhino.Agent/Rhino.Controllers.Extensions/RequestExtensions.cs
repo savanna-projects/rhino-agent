@@ -9,13 +9,11 @@ using Gravity.Services.DataContracts;
 using Microsoft.AspNetCore.Http;
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Extensions
@@ -123,7 +121,6 @@ namespace Rhino.Controllers.Extensions
             return DoReadAsync(request);
         }
 
-        [SuppressMessage("Usage", "RCS1229:Use async/await when necessary.", Justification = "Does not need async/await")]
         private static Task<string> DoReadAsync(HttpRequest request)
         {
             using var streamReader = new StreamReader(request.Body);

@@ -94,21 +94,31 @@ namespace Rhino.Controllers.Domain.Automation
         // gets a list of existing models after excluding existing ones exclude - models will not be overwritten
         private IList<RhinoPageModel> GetModels(RhinoModelCollection entity, ILiteCollection<RhinoEntityModel> collection)
         {
-            // build - excluded
-            var exludedNames = collection
-                .FindAll()
-                .Select(i => i.GetEntity<RhinoModelCollection>())
-                .SelectMany(i => i.Models)
-                .Select(i => i.Name)
-                .ToList();
-            logger?.Debug($"Get-Models -Exists True = ${exludedNames.Count}");
+            try
+            {
+                // build - excluded
+                var exludedNames = collection
+                    .FindAll()
+                    .Select(i => i.GetEntity<RhinoModelCollection>())
+                    .SelectMany(i => i.Models)
+                    .Select(i => i.Name)
+                    .ToList();
+                logger?.Debug($"Get-Models -Exists True = ${exludedNames.Count}");
 
-            // build - included
-            var models = entity.Models.Where(i => !exludedNames.Contains(i.Name)).ToList();
-            logger?.Debug($"Get-Models -Exists False = ${models.Count}");
+                // build - included
+                var models = entity.Models.Where(i => !exludedNames.Contains(i.Name)).ToList();
+                logger?.Debug($"Get-Models -Exists False = ${models.Count}");
 
-            // get
-            return models;
+                // get
+                return models;
+            }
+            catch (Exception e)
+            {
+                var baseException = e.GetBaseException();
+                var message = $"Get-Models = (InternalServerError, {baseException.Message})";
+
+                throw (Exception)Activator.CreateInstance(baseException.GetType(), new object[] { message });
+            }
         }
 
         // add models collection to a configuration (cascade)

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Domain.Extensions;
+using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
 
 using System;
@@ -141,7 +142,7 @@ namespace Rhino.Controllers.Domain.Automation
 
         #region *** Update ***
         /// <summary>
-        /// Puts a new RhinoConfiguration into the domain collection.
+        /// Put a RhinoConfiguration from the domain collection.
         /// </summary>
         /// <param name="id">The id of RhinoConfiguration to put.</param>
         /// <param name="entity">The RhinoConfiguration to update.</param>

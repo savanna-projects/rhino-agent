@@ -83,7 +83,7 @@ namespace Rhino.Controllers.Domain.Data
             var actions = new List<ActionModel>();
 
             // build
-            foreach (var (source, entity) in DoGetActions())
+            foreach (var (source, entity) in InvokeGetActions())
             {
                 var action = entity.ToModel(source);
                 if (action != default)
@@ -166,30 +166,9 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a list of all available locators.
         /// </summary>
         /// <returns>A list all available locators.</returns>
-        public IEnumerable<LocatorModel> GetLocators()
+        public IEnumerable<BaseModel<object>> GetLocators()
         {
-            // get relevant by method
-            var methods = types.SelectMany(t => t.GetMethods()).Where(m => m.IsStatic && m.ReturnType == typeof(By));
-
-            // exit conditions
-            if (!methods.Any())
-            {
-                return Array.Empty<LocatorModel>();
-            }
-
-            // invoke method
-            return methods.Select(i => i.Name).Distinct().Select(i => new LocatorModel
-            {
-                Key = i,
-                Literal = Api.Extensions.StringExtensions.ToSpaceCase(i).ToLower(),
-                Entity = new
-                {
-                    Name = Api.Extensions.StringExtensions.ToSpaceCase(i).ToLower(),
-                    Description = "",
-                    Examples = Array.Empty<(string Description, string Example)>()
-                },
-                Verb = "using"
-            });
+            return InvokeGetLocators();
         }
 
         /// <summary>
@@ -286,6 +265,7 @@ namespace Rhino.Controllers.Domain.Data
                 ["test-expected-results"] = ("An ideal result that the tester should get after a test action is performed.", 8),
                 ["test-parameters"] = ("A list of parameters the use can provide and are exposed by the plugin.", 9),
                 ["test-examples"] = ("Mandatory! One or more examples of how to implement the Plugin in a test.", 10),
+                ["test-models"] = ("A collection of elements and static data mapping which can be accessed by a reference for optimal reuse.", 11)
             };
 
             // get
@@ -332,9 +312,46 @@ namespace Rhino.Controllers.Domain.Data
             };
         }
 
+        /// <summary>
+        /// Gets a collection of all available model types.
+        /// </summary>
+        /// <returns>A collection of model types.</returns>
+        public IEnumerable<BaseModel<object>> GetModelTypes()
+        {
+            // build
+            var models = new RhinoModelTypeModel[]
+            {
+                new RhinoModelTypeModel
+                {
+                    Key = "Json",
+                    Literal = "json",
+                    Entity = new
+                    {
+                        Name = "json",
+                        Description = "Save a serialized JSON object as a model.",
+                        Examples = Array.Empty<(string Description, string Example)>()
+                    },
+                },
+                new RhinoModelTypeModel
+                {
+                    Key = "Static",
+                    Literal = "static",
+                    Entity = new
+                    {
+                        Name = "static",
+                        Description = "Save a static string as a model (use for static data models).",
+                        Examples = Array.Empty<(string Description, string Example)>()
+                    },
+                }
+            };
+
+            // get
+            return models.Concat(InvokeGetLocators());
+        }
+
         // UTILITIES
         // execute GetActions routine
-        private IEnumerable<(string Source, ActionAttribute Action)> DoGetActions()
+        private IEnumerable<(string Source, ActionAttribute Action)> InvokeGetActions()
         {
             // setup
             var gravityPlugins = types.GetActionAttributes();
@@ -355,6 +372,34 @@ namespace Rhino.Controllers.Domain.Data
 
             // get
             return actions;
+        }
+
+        private IEnumerable<BaseModel<object>> InvokeGetLocators()
+        {
+            // get relevant by method
+            var methods = types
+                .SelectMany(t => t.GetMethods())
+                .Where(m => m.IsStatic && m.ReturnType == typeof(By));
+
+            // exit conditions
+            if (!methods.Any())
+            {
+                return Array.Empty<LocatorModel>();
+            }
+
+            // invoke method
+            return methods.Select(i => i.Name).Distinct().Select(i => new LocatorModel
+            {
+                Key = i,
+                Literal = Api.Extensions.StringExtensions.ToSpaceCase(i).ToLower(),
+                Entity = new
+                {
+                    Name = Api.Extensions.StringExtensions.ToSpaceCase(i).ToLower(),
+                    Description = "Coming soon.",
+                    Examples = Array.Empty<(string Description, string Example)>()
+                },
+                Verb = "using"
+            });
         }
     }
 }

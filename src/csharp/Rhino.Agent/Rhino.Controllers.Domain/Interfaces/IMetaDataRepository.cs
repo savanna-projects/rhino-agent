@@ -17,13 +17,14 @@ namespace Rhino.Controllers.Domain.Interfaces
         IEnumerable<AssertModel> GetAssertions();
         IEnumerable<ConnectorModel> GetConnectors();
         IEnumerable<DriverModel> GetDrivers();
-        IEnumerable<LocatorModel> GetLocators();
+        IEnumerable<BaseModel<object>> GetLocators();
         IEnumerable<MacroModel> GetMacros();
         IEnumerable<OperatorModel> GetOperators();
         IEnumerable<ReporterModel> GetReporters();
         Task<string> GetVersionAsync();
         IEnumerable<PropertyModel> GetAnnotations();
         IEnumerable<RhinoModelCollection> GetModels();
+        IEnumerable<BaseModel<object>> GetModelTypes();
         IEnumerable<RhinoVerbModel> GetVerbs();
     }
 }
