@@ -17,8 +17,8 @@
 		<PackageReference Include="Rhino.Connectors.Azure.WebApi" Version="16.162.29627.1" />
 		<PackageReference Include="Rhino.Connectors.Gurock" Version="2021.7.15.2" />
 		<PackageReference Include="Rhino.Connectors.Text" Version="2021.7.9.1" />
-		<PackageReference Include="Rhino.Connectors.Xray" Version="2021.7.15.1" />
-    <PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.7.15.1" />
+		<PackageReference Include="Rhino.Connectors.Xray" Version="2021.8.20.2" />
+    <PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.8.20.2" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="92.0.4515.10700" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.9" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.9" NoWarn="NU1605" />
