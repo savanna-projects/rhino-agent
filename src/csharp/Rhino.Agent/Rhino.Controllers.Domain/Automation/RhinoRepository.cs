@@ -567,7 +567,7 @@ namespace Rhino.Controllers.Domain.Automation
                 .Concat(configuration.TestsRepository.Where(i => !Regex.IsMatch(i, IdPattern)));
 
             // get
-            configuration.TestsRepository = configuration.ConnectorConfiguration.Connector != Connector.Text && !stateRepository.Any()
+            configuration.TestsRepository = configuration.ConnectorConfiguration.Connector != RhinoConnectors.Text && !stateRepository.Any()
                 ? origRepository
                 : stateRepository;
         }

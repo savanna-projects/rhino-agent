@@ -9,7 +9,6 @@ using Rhino.Api.Contracts.AutomationProvider;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,7 +28,7 @@ namespace Rhino.Controllers.Extensions
         /// <summary>
         /// Gets a distinct collection of <see cref="Type"/> loaded into the AppDomain.
         /// </summary>
-        public static IEnumerable<Type> Types => GetTypes().SelectMany(i => i.Types).Distinct();
+        public static IList<Type> Types => DoGetTypes(string.Empty).SelectMany(i => i.Types).Distinct().ToList();
 
         #region *** Assemblies ***
         /// <summary>

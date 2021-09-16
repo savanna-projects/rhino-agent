@@ -651,7 +651,7 @@ namespace Rhino.Controllers.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<RhinoVerbModel>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
-        public async Task<IActionResult> GetVerbs([SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
+        public async Task<IActionResult> GetVerbs()
         {
             // setup
             var entities = dataRepository
@@ -668,6 +668,52 @@ namespace Rhino.Controllers.Controllers
 
             // get
             return Ok(entities);
+        }
+
+        // GET: api/v3/meta/events
+        [HttpGet, Route("events")]
+        [SwaggerOperation(
+            Summary = "Get-ServiceEvent -All",
+            Description = "Returns a list of available _**Service Events**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ServiceEventModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetServiceEvents()
+        {
+            // get response
+            var entities = dataRepository.SetAuthentication(Authentication).GetServiceEvents();
+
+            // return
+            return Ok(entities);
+        }
+
+        // GET: api/v3/meta/events/:key
+        [HttpGet, Route("events/{key}")]
+        [SwaggerOperation(
+            Summary = "Get-ServiceEvent -key {eventKey}",
+            Description = "Returns a single available _**Service Event**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(ServiceEventModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetServiceEvents([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
+        {
+            // get response
+            var entity = dataRepository
+                .SetAuthentication(Authentication)
+                .GetServiceEvents()
+                .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
+
+            // not found
+            if (entity == default)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-ServiceEvent -Key {key} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // return
+            return Ok(entity);
         }
         #endregion
     }
