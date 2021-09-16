@@ -83,7 +83,7 @@ namespace Rhino.Agent
             // pipeline
             DeleteRuns(connector);
             ExportTestCases(connector);
-            var outcome = connector.Connect().Execute();
+            var outcome = connector.Connect().Invoke();
             ProcessOutcome(outcome);
         }
 

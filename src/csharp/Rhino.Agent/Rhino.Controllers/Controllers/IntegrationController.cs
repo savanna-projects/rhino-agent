@@ -82,14 +82,14 @@ namespace Rhino.Controllers.Controllers
             var testSuites = model.Entity.TestSuites;
 
             // text connector
-            if (configuration.Connector.Equals(Connector.Text))
+            if (configuration.Connector.Equals(RhinoConnectors.Text))
             {
                 Response.Headers.Add(CountHeader, $"{spec.Length}");
                 return Created(string.Join(Seperator, spec), StatusCodes.Status200OK);
             }
 
             // convert into bridge object
-            var testCases = new RhinoTestCaseFactory(client).GetTestCases(spec).ToArray();
+            var testCases = new RhinoTestCaseFactory().GetTestCases(spec).ToArray();
 
             // build
             for (int i = 0; i < testCases.Length; i++)

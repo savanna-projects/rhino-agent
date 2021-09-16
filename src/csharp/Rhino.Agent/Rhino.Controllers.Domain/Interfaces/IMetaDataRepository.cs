@@ -13,18 +13,19 @@ namespace Rhino.Controllers.Domain.Interfaces
 {
     public interface IMetaDataRepository : IHasAuthentication<IMetaDataRepository>
     {
-        IEnumerable<ActionModel> GetPlugins();
+        IEnumerable<PropertyModel> GetAnnotations();
         IEnumerable<AssertModel> GetAssertions();
         IEnumerable<ConnectorModel> GetConnectors();
         IEnumerable<DriverModel> GetDrivers();
         IEnumerable<BaseModel<object>> GetLocators();
         IEnumerable<MacroModel> GetMacros();
-        IEnumerable<OperatorModel> GetOperators();
-        IEnumerable<ReporterModel> GetReporters();
-        Task<string> GetVersionAsync();
-        IEnumerable<PropertyModel> GetAnnotations();
         IEnumerable<RhinoModelCollection> GetModels();
         IEnumerable<BaseModel<object>> GetModelTypes();
+        IEnumerable<OperatorModel> GetOperators();
+        IEnumerable<ActionModel> GetPlugins();
+        IEnumerable<ReporterModel> GetReporters();
+        IEnumerable<ServiceEventModel> GetServiceEvents();
         IEnumerable<RhinoVerbModel> GetVerbs();
+        Task<string> GetVersionAsync();
     }
 }

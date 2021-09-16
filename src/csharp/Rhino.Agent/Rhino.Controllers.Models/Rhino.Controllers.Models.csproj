@@ -6,10 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Gravity.Services.Comet" Version="2021.9.14.1" />
+    <PackageReference Include="Gravity.Services.DataContracts" Version="2021.9.14.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-    <PackageReference Include="Rhino.Api.Contracts" Version="2021.8.12.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.5" />
+    <PackageReference Include="Rhino.Api.Contracts" Version="2021.9.15.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.1" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
 

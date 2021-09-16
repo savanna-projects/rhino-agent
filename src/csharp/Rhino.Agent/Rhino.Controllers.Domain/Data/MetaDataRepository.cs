@@ -187,7 +187,7 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>A list of all available operators.</returns>
         public IEnumerable<OperatorModel> GetOperators()
         {
-            return new RhinoTestCaseFactory(client).OperatorsMap.Select(i => new OperatorModel
+            return new RhinoTestCaseFactory().OperatorsMap.Select(i => new OperatorModel
             {
                 Key = i.Key,
                 Literal = i.Value.ToLower(),
@@ -205,6 +205,33 @@ namespace Rhino.Controllers.Domain.Data
                 .Where(i => i.GetCustomAttribute<ReporterAttribute>() != null)
                 .Select(i => i.GetCustomAttribute<ReporterAttribute>().ToModel())
                 .OrderBy(i => i.Key);
+        }
+
+        /// <summary>
+        /// Gets a list of all available reporters.
+        /// </summary>
+        /// <returns>A list all available reporters.</returns>
+        public IEnumerable<ServiceEventModel> GetServiceEvents()
+        {
+            // constants
+            const BindingFlags Flags = BindingFlags.Public | BindingFlags.Static;
+
+            // local
+            static ServiceEventModel GetModel((string Event, ServiceEventAttribute Attribute) input) => new()
+            {
+                Entity = input.Attribute,
+                Key = input.Event,
+                Literal = input.Event.ToSpaceCase()
+            };
+
+            // build
+            var fileds = types.SelectMany(i => i.GetFields(Flags));
+            var serviceEventFields = fileds.Where(i => i.GetCustomAttribute<ServiceEventAttribute>() != null);
+            var serviceEvents = serviceEventFields
+                .Select(i => ($"{i.GetValue(null)}", i.GetCustomAttribute<ServiceEventAttribute>()));
+
+            // get
+            return serviceEvents.Select(i => GetModel(input: i));
         }
 
         /// <summary>
@@ -304,8 +331,8 @@ namespace Rhino.Controllers.Domain.Data
                 new RhinoVerbModel{ Key = "take", Literal = "take", Entity = new { Scope = "onElement" } },
                 new RhinoVerbModel{ Key = "of", Literal = "of", Entity = new { Scope = "onElement" } },
                 new RhinoVerbModel{ Key = "from", Literal = "from", Entity = new { Scope = "onAttribute" } },
-                new RhinoVerbModel{ Key = "using", Literal = "using", Entity = new { Scope = "regularExpression" } },
-                new RhinoVerbModel{ Key = "by", Literal = "by", Entity = new { Scope = "regularExpression" } },
+                new RhinoVerbModel{ Key = "using", Literal = "using", Entity = new { Scope = "locatorType" } },
+                new RhinoVerbModel{ Key = "by", Literal = "by", Entity = new { Scope = "locatorType" } },
                 new RhinoVerbModel{ Key = "filter", Literal = "filter", Entity = new { Scope = "regularExpression" } },
                 new RhinoVerbModel{ Key = "mask", Literal = "mask", Entity = new { Scope = "regularExpression" } },
                 new RhinoVerbModel{ Key = "pattern", Literal = "pattern", Entity = new { Scope = "regularExpression" } }

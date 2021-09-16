@@ -29,8 +29,8 @@
 									"pm.collectionVariables.set('endpoint', 'https://localhost:9001/api/v3');\r",
 									"pm.collectionVariables.set('rhino_password', '');\r",
 									"pm.collectionVariables.set('rhino_user', '');\r",
-									"pm.collectionVariables.set('rhino_drivers', \"D:\\\\\\\\automation_env\\\\\\\\web_drivers\");\r",
-									"//pm.collectionVariables.set('rhino_drivers', \"http://localhost:4444/wd/hub);"
+									"pm.collectionVariables.set('rhino_drivers', \".\");\r",
+									"//pm.collectionVariables.set('rhino_drivers', 'http://localhost:4444/wd/hub');"
 								],
 								"type": "text/javascript"
 							}
@@ -2929,6 +2929,51 @@
 							"response": []
 						},
 						{
+							"name": "Create Model Collection with Configuration Markdown",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {    \r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"pm.collectionVariables.set('collection_id', jsonData.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "/** Sepcifications:\n/** 1. empty values are not allowd\n/** 2. when value in unknown use -1 as a placeholder\n/**\n[test-models] Students Input Models - From Markdown\n|name                         |value                      |type         |comment                  |\n|-----------------------------|---------------------------|-------------|-------------------------|\n|(md) search students text-box|#SearchString              |css selector |Search students text-box.|\n|(md) search students button  |//input[@id='SearchButton']|xpath        |Search students button.  |",
+									"options": {
+										"raw": {
+											"language": "text"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/models/md/{{configuration_id}}",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"models",
+										"md",
+										"{{configuration_id}}"
+									]
+								},
+								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Models.md#create-model-with-configuration"
+							},
+							"response": []
+						},
+						{
 							"name": "Create Model",
 							"event": [
 								{
@@ -2965,6 +3010,50 @@
 									]
 								},
 								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Models.md#create-model"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Model Markdown",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {    \r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"pm.collectionVariables.set('collection_id', jsonData.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "/** Sepcifications:\n/** 1. empty values are not allowd\n/** 2. when value in unknown use -1 as a placeholder\n/**\n[test-models] Students Input Models - From Markdown - 2\n|name                             |value                      |type         |comment                  |\n|---------------------------------|---------------------------|-------------|-------------------------|\n|(md) search students text-box - 2|#SearchString              |css selector |Search students text-box.|\n|(md) search students button - 2  |//input[@id='SearchButton']|xpath        |Search students button.  |",
+									"options": {
+										"raw": {
+											"language": "text"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/models/md",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"models",
+										"md"
+									]
+								},
+								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Models.md#create-model-with-configuration"
 							},
 							"response": []
 						},
@@ -3087,7 +3176,7 @@
 									"raw": "",
 									"options": {
 										"raw": {
-											"language": "text"
+											"language": "json"
 										}
 									}
 								},
@@ -4157,6 +4246,92 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Flow Action #26: Create Models Markdown - Positive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"pm.collectionVariables.set('collection_id', jsonData.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "/** Sepcifications:\r\n/** 1. empty values are not allowd\r\n/** 2. when value in unknown use -1 as a placeholder\r\n/**\r\n[test-models] Students Input Models - From Markdown - 2\r\n|name                             |value                      |type         |comment                  |\r\n|---------------------------------|---------------------------|-------------|-------------------------|\r\n|(md) search students text-box - 2|#SearchString              |css selector |Search students text-box.|\r\n|(md) search students button - 2  |//input[@id='SearchButton']|xpath        |Search students button.  |",
+									"options": {
+										"raw": {
+											"language": "text"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/models/md",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"models",
+										"md"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #27: Create Models with Configuration Markdown - Positive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"pm.collectionVariables.set('collection_id', jsonData.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "/** Sepcifications:\r\n/** 1. empty values are not allowd\r\n/** 2. when value in unknown use -1 as a placeholder\r\n/**\r\n[test-models] Students Input Models - From Markdown\r\n|name                         |value                      |type         |comment                  |\r\n|-----------------------------|---------------------------|-------------|-------------------------|\r\n|(md) search students text-box|#SearchString              |css selector |Search students text-box.|\r\n|(md) search students button  |//input[@id='SearchButton']|xpath        |Search students button.  |",
+									"options": {
+										"raw": {
+											"language": "text"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/models/md",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"models",
+										"md"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -4432,7 +4607,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {(?i)student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                         |\r\n|----------|----------------------------------------------------|\r\n|department|Department name. Will be used for searching courses.|\r\n|total     |Total courses. Will be used asserting results.      |\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {(?i)student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:first_name --last_name:last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
+									"raw": "[test-id]        CircularSearch\r\n[test-scenario]  Performs a circular students search by calling itself (Students Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {first_name} into {#SearchString} using {css selector}\r\n2. click on {//input[@id='SearchButton']}\r\n3. circular search student {{$ --first_name:foo --last_name:bar}}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {(?i)student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {first_name}\r\n[2] verify that {text} of {//td[contains(@id,'student_last_name_')]} match {last_name}\r\n\r\n[test-examples]\r\n|Example                                                        |Description                                                   |\r\n|---------------------------------------------------------------|--------------------------------------------------------------|\r\n|circular search {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchCourses\r\n[test-scenario]  Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                         |\r\n|----------|----------------------------------------------------|\r\n|department|Department name. Will be used for searching courses.|\r\n|total     |Total courses. Will be used asserting results.      |\r\n\r\n[test-actions]\r\n1. click on {Courses} using {link text}\r\n2. select from combo box {department} take {SelectedDepartment} using id\r\n3. click on {//input[@value='Filter']}\r\n\r\n[test-expected-results]\r\n[3] verify that {count} on {//tbody/tr} equal {total}\r\n\r\n[test-examples]\r\n|Example                                              |Description                                                                                   |\r\n|-----------------------------------------------------|----------------------------------------------------------------------------------------------|\r\n|search courses {{$ --department:Economics --total:2}}|Performs courses search by department name and validated number of courses in that department.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudent\r\n[test-scenario]  Verify student last name when searching by first name (Students Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. send keys {@first_name} into {#SearchString} using {css selector}\r\n2. click on {#SearchButton} using {css selector}\r\n\r\n[test-expected-results]\r\n[2] verify that {url} match {(?i)student}\r\n[2] verify that {attribute} of {#SearchString} using {css selector} from {value} match {@first_name}\r\n[2] verify that {text} of {//TD[contains(@id,'student_last_name_')]} match {@last_name}\r\n\r\n[test-examples]\r\n|Example                                                       |Description                                                   |\r\n|--------------------------------------------------------------|--------------------------------------------------------------|\r\n|search student {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name.|\r\n\r\n>>>\r\n\r\n[test-id]        SearchStudentAndCourses\r\n[test-scenario]  Verify student last name when searching by first name (Students Page) & Verify courses number when searching courses by department (Courses Page).\r\n\r\n[test-parameters]\r\n|Parameter |Description                                            |\r\n|----------|-------------------------------------------------------|\r\n|first_name|Student first name. Will be used for searching student.|\r\n|last_name |Student last name. Will be used asserting results.     |\r\n\r\n[test-actions]\r\n1. search student {{$ --first_name:@first_name --last_name:@last_name}\r\n2. search courses {{$ --department:Economics --total:2}}\r\n\r\n[test-examples]\r\n|Example                                                                   |Description                                                                                                                                                  |\r\n|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\r\n|search student and courses {{$ --first_name:Carson --last_name:Alexander}}|Performs student search by first name and validated last name. Performs courses search by department name and validated number of courses in that department.|"
 								},
 								"url": {
 									"raw": "{{endpoint}}/plugins",
@@ -6191,7 +6366,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Execute Tests by Raw Text\",\r\n    \"testsRepository\": [\r\n        \"[test-id] Text-000\\r\\n[test-scenario]\\r\\nOpen a Web Site\\r\\n[test-actions]\\r\\n1. go to url {https://gravitymvctestapplication.azurewebsites.net/}\\r\\n2. wait {1000}\\r\\n3. close browser\"\r\n    ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"{{rhino_drivers}}\"\r\n        }\r\n    ],\r\n    \"dataSource\": [],\r\n    \"models\": [],\r\n    \"authentication\": {\r\n        \"password\": \"{{rhino_password}}\",\r\n        \"userName\": \"{{rhino_user}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3,\r\n        \"qualityThreshold\": 0,\r\n        \"toleranceThreshold\": 0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": true,\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reporters\": [\r\n            \"reporter_basic\"\r\n        ],\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}",
+									"raw": "{\r\n    \"name\": \"Execute Tests by Raw Text\",\r\n    \"testsRepository\": [\r\n        \"[test-id] Text-000\\r\\n[test-scenario]\\r\\nOpen a Web Site\\r\\n[test-actions]\\r\\n1. go to url {https://gravitymvctestapplication.azurewebsites.net/}\\r\\n2. wait {1000}\\r\\n register parameter {{$ --name:p --scope:session}} take {//a}  \\r\\n3. close browser\"\r\n    ],\r\n    \"driverParameters\": [\r\n        {\r\n            \"driver\": \"ChromeDriver\",\r\n            \"driverBinaries\": \"{{rhino_drivers}}\"\r\n        }\r\n    ],\r\n    \"dataSource\": [],\r\n    \"models\": [],\r\n    \"authentication\": {\r\n        \"password\": \"{{rhino_password}}\",\r\n        \"userName\": \"{{rhino_user}}\"\r\n    },\r\n    \"engineConfiguration\": {\r\n        \"maxParallel\": 1,\r\n        \"failOnException\": false,\r\n        \"optimalThreshold\": 3,\r\n        \"qualityThreshold\": 0,\r\n        \"toleranceThreshold\": 0,\r\n        \"priority\": 0,\r\n        \"severity\": 0,\r\n        \"errorOnExitCode\": 0,\r\n        \"elementSearchingTimeout\": 15000,\r\n        \"pageLoadTimeout\": 60000,\r\n        \"retrunExceptions\": true,\r\n        \"returnPerformancePoints\": true,\r\n        \"returnEnvironment\": true,\r\n        \"terminateOnAssertFailure\": false\r\n    },\r\n    \"screenshotsConfiguration\": {\r\n        \"keepOriginal\": false,\r\n        \"returnScreenshots\": true,\r\n        \"onExceptionOnly\": false\r\n    },\r\n    \"reportConfiguration\": {\r\n        \"reporters\": [\r\n            \"reporter_basic\"\r\n        ],\r\n        \"archive\": false,\r\n        \"localReport\": true,\r\n        \"addGravityData\": true\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -10757,14 +10932,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/meta/connectors/connector_text",
+									"raw": "{{endpoint}}/meta/connectors/ConnectorText",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
 										"meta",
 										"connectors",
-										"connector_text"
+										"ConnectorText"
 									]
 								},
 								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-connector"
@@ -11082,14 +11257,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/meta/reporters/reporter_basic",
+									"raw": "{{endpoint}}/meta/reporters/ReporterBasic",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
 										"meta",
 										"reporters",
-										"reporter_basic"
+										"ReporterBasic"
 									]
 								},
 								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
@@ -11155,6 +11330,176 @@
 										"meta",
 										"annotations",
 										"test-id"
+									]
+								},
+								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Models",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/models",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"models"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Model Types",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/models",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"models"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Model",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/models/Students Input Models",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"models",
+										"Students Input Models"
+									]
+								},
+								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Verbs",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/verbs",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"verbs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Attributes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/attributes",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"attributes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Service Event",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/events/OnGetTestCases",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"events",
+										"OnGetTestCases"
+									]
+								},
+								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Service Events",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/events",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"events"
 									]
 								},
 								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
@@ -11469,7 +11814,7 @@
 											"\r",
 											"pm.test(\"Entity key equal 'connector_azure'\", function () {\r",
 											"    var jsonData = pm.response.json().key;\r",
-											"    pm.expect(jsonData).equal('connector_azure');\r",
+											"    pm.expect(jsonData).equal('ConnectorAzure');\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -11480,14 +11825,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/meta/connectors/connector_azure",
+									"raw": "{{endpoint}}/meta/connectors/ConnectorAzure",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
 										"meta",
 										"connectors",
-										"connector_azure"
+										"ConnectorAzure"
 									]
 								}
 							},
@@ -12037,9 +12382,9 @@
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
 											"\r",
-											"pm.test(\"Entity key equal 'reporter_basic'\", function () {\r",
+											"pm.test(\"Entity key equal 'ReporterBasic'\", function () {\r",
 											"    var jsonData = pm.response.json().key;\r",
-											"    pm.expect(jsonData).equal('reporter_basic');\r",
+											"    pm.expect(jsonData).equal('ReporterBasic');\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -12050,14 +12395,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/meta/reporters/reporter_basic",
+									"raw": "{{endpoint}}/meta/reporters/ReporterBasic",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
 										"meta",
 										"reporters",
-										"reporter_basic"
+										"ReporterBasic"
 									]
 								}
 							},
@@ -12128,13 +12473,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/meta/properties",
+									"raw": "{{endpoint}}/meta/models",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
 										"meta",
-										"properties"
+										"models"
 									]
 								}
 							},
@@ -12164,13 +12509,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/meta/properties/test-id",
+									"raw": "{{endpoint}}/meta/annotations/test-id",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
 										"meta",
-										"properties",
+										"annotations",
 										"test-id"
 									]
 								}
@@ -12205,16 +12550,308 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/meta/properties/not_an_entity",
+									"raw": "{{endpoint}}/meta/annotations/not_an_entity",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
 										"meta",
-										"properties",
+										"annotations",
 										"not_an_entity"
 									]
 								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #25: Get Models",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Entities count is greater than 0\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.length).greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/models",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"models"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #26: Get Model",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Entity name equal 'Students Input Models'\", function () {\r",
+											"    var jsonData = pm.response.json().name;\r",
+											"    pm.expect(jsonData).equal('Students Input Models');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/models/Students Input Models",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"models",
+										"Students Input Models"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #27: Get Model - Not  Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Message contains 'NotFound'\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"Get-Model -Name not_an_entity = NotFound\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Name equal 'not_an_entity'\", function () {\r",
+											"    var jsonData = pm.response.json().routeData.name;\r",
+											"    pm.expect(jsonData).contains('not_an_entity');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/models/not_an_entity",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"models",
+										"not_an_entity"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #28: Get Model - Not  Found - Case Sensitive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Message contains 'NotFound'\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"Get-Model -Name students input models - 2 = NotFound\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Name equal 'students input models - 2'\", function () {\r",
+											"    var jsonData = pm.response.json().routeData.name;\r",
+											"    pm.expect(jsonData).contains('students input models - 2');\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/models/students input models - 2",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"models",
+										"students input models - 2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #29: Get Verbs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Entities count is greater than 0\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.length).greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/verbs",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"verbs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #30: Get Attributes",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Entities count is greater than 0\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.length).greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/attributes",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"attributes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #31: Get Service Event",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/events/OnGetTestCases",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"events",
+										"OnGetTestCases"
+									]
+								},
+								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #32: Get Service Events",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/events",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"events"
+									]
+								},
+								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
 							},
 							"response": []
 						}
@@ -12387,12 +13024,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{endpoint}}/tests",
+									"raw": "{{endpoint}}/tests/{{configuration_id}}",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
-										"tests"
+										"tests",
+										"{{configuration_id}}"
 									]
 								},
 								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Tests.md#create-tests-collection"
@@ -13534,6 +14172,60 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "endpoint",
+			"value": ""
+		},
+		{
+			"key": "rhino_password",
+			"value": ""
+		},
+		{
+			"key": "rhino_user",
+			"value": ""
+		},
+		{
+			"key": "rhino_drivers",
+			"value": ""
+		},
+		{
+			"key": "collection_id",
+			"value": ""
+		},
+		{
+			"key": "async_timeout_now",
+			"value": ""
+		},
+		{
+			"key": "invoke_id",
+			"value": ""
+		},
+		{
+			"key": "callback_request",
+			"value": ""
+		},
+		{
+			"key": "configuration_id",
+			"value": ""
+		},
+		{
+			"key": "session_id",
+			"value": ""
+		},
+		{
+			"key": "log_id",
+			"value": ""
+		},
+		{
+			"key": "models_collection_id",
+			"value": ""
+		},
+		{
+			"key": "status_query",
+			"value": ""
 		}
 	]
 }
