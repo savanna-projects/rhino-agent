@@ -346,7 +346,7 @@ namespace Rhino.Controllers.Domain.Data
         public IEnumerable<BaseModel<object>> GetModelTypes()
         {
             // build
-            var models = new RhinoModelTypeModel[]
+            var _models = new RhinoModelTypeModel[]
             {
                 new RhinoModelTypeModel
                 {
@@ -373,7 +373,7 @@ namespace Rhino.Controllers.Domain.Data
             };
 
             // get
-            return models.Concat(InvokeGetLocators());
+            return _models.Concat(InvokeGetLocators());
         }
 
         // UTILITIES

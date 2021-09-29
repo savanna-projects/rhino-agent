@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Domain.Extensions;
-using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
 
 using System;
