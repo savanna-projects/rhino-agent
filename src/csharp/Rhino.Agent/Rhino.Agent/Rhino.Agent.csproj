@@ -9,8 +9,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Gravity.Abstraction" Version="2021.1.25.2" />
-		<PackageReference Include="Gravity.Services.Comet" Version="2021.9.22.1" />
-		<PackageReference Include="Gravity.Services.DataContracts" Version="2021.9.22.1" />
+		<PackageReference Include="Gravity.Services.Comet" Version="2021.10.7.1" />
+		<PackageReference Include="Gravity.Services.DataContracts" Version="2021.10.7.1" />
 		<PackageReference Include="LiteDB" Version="5.0.11" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
