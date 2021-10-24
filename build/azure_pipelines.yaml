@@ -65,6 +65,7 @@ steps:
     targetType: 'inline'
     script: |
       Set-Content -Path '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' -Value '$(buildVersion)'
+      Compress-Archive -update '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
       # setup
       [regex]$pattern = '(\d+.?)+'
       $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
