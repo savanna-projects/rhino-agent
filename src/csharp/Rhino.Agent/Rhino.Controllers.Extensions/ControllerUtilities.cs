@@ -147,23 +147,9 @@ namespace Rhino.Controllers.Extensions
         /// </summary>
         /// <param name="path">The file to open for reading.</param>
         /// <returns>A string containing all the text in the file.</returns>
-        public static async Task<string> ForceReadFileAsync(string path)
+        public static Task<string> ForceReadFileAsync(string path)
         {
-            // force open
-            var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
-            // build
-            var reader = new StreamReader(stream);
-
-            // read
-            var log = await reader.ReadToEndAsync().ConfigureAwait(false);
-
-            // cleanup
-            reader.Dispose();
-            await stream.DisposeAsync().ConfigureAwait(false);
-
-            // get
-            return log;
+            return InvokeForceReadFileAsync(path);
         }
 
         /// <summary>
@@ -176,7 +162,120 @@ namespace Rhino.Controllers.Extensions
             WriteIndented = true
         };
 
+        /// <summary>
+        /// Gets the version the Rhino Server instance (if available).
+        /// </summary>
+        /// <returns>Rhino Server version.</returns>
+        public static Task<string> GetVersionAsync()
+        {
+            return InvokeGetVersionAsync();
+        }
+
+        #region *** Graphics   ***
+        /// <summary>
+        /// Renders RhinoAPI logo in the console.
+        /// </summary>
+        public static void RenderLogo()
+        {
+            try
+            {
+                DoRenderLogo(1, 1, Console.BackgroundColor, Console.ForegroundColor, Rhino());
+                DoRenderLogo(1, 33, Console.BackgroundColor, ConsoleColor.Red, Api());
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine(new string(' ', 26) + "Powerd by Gravity Engine");
+                Console.WriteLine(new string(' ', 26) + "Version 0.0.0.0");
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("https://github.com/savanna-projects/rhino-agent");
+                Console.WriteLine("https://github.com/gravity-api");
+                Console.WriteLine();
+            }
+            catch (Exception e) when (e != null)
+            {
+                // ignore errors
+            }
+        }
+
+        private static void DoRenderLogo(
+            int startRow,
+            int startColumn,
+            ConsoleColor background,
+            ConsoleColor foreground,
+            IEnumerable<string> lines)
+        {
+            // setup
+            Console.CursorTop = startRow;
+            Console.BackgroundColor = background;
+            Console.ForegroundColor = foreground;
+
+            // render
+            for (int i = 0; i < lines.Count(); i++)
+            {
+                Console.CursorTop = startRow + i;
+                Console.CursorLeft = startColumn;
+                Console.WriteLine(lines.ElementAt(i));
+            }
+        }
+
+        private static IEnumerable<string> Rhino() => new List<string>
+        {
+            "▄▄▄▄▄▄ ██     █▄              ",
+            "██  ██ ██▄▄▄  ▄▄ ▄▄▄▄▄   ▄▄▄▄ ",
+            "█████▀ ██ ▀██ ██ ██▀▀██ ██ ▀██",
+            "██  ██ ██  ██ ██ ██  ██ ██ ▄██",
+            "▀▀  ▀▀ ▀▀  ▀▀ ▀▀ ▀▀  ▀▀  ▀▀▀▀ ",
+        };
+
+        private static IEnumerable<string> Api() => new List<string>
+        {
+            "  ███   ██▀██▄ ██",
+            " ██ ██  ██ ▄█▀ ██",
+            "▄█████▄ ██▀▀▀  ██",
+            "██   ██ ██     ██",
+            "▀▀   ▀▀ ▀▀     ▀▀",
+        };
+        #endregion
+
         // Utilities
         private static string GetLogsDefaultFolder() => Path.Join(Environment.CurrentDirectory, "Logs");
+
+        public static async Task<string> InvokeGetVersionAsync()
+        {
+            // constants
+            const string FileName = "version.txt";
+            const string Default = "0.0.0.0";
+
+            // not found
+            if (!File.Exists(FileName))
+            {
+                return Default;
+            }
+
+            // extract
+            var version = (await InvokeForceReadFileAsync(path: FileName)).Trim();
+
+            // get
+            return string.IsNullOrEmpty(version) ? Default : version;
+        }
+
+        private static async Task<string> InvokeForceReadFileAsync(string path)
+        {
+            // force open
+            var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+            // build
+            var reader = new StreamReader(stream);
+
+            // read
+            var file = await reader.ReadToEndAsync().ConfigureAwait(false);
+
+            // cleanup
+            reader.Dispose();
+            await stream.DisposeAsync().ConfigureAwait(false);
+
+            // get
+            return file;
+        }
     }
 }
