@@ -24,6 +24,7 @@ using Rhino.Api.Interfaces;
 
 using System.Net;
 using System.Text.Json;
+using System.Collections;
 
 namespace Rhino.Agent
 {
@@ -50,7 +51,7 @@ namespace Rhino.Agent
         public static void Main(string[] args)
         {
             // graphics
-            Controllers.Extensions.Utilities.RenderLogo();
+            Controllers.Extensions.ControllerUtilities.RenderLogo();
 
             // setup
             Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "Data"));

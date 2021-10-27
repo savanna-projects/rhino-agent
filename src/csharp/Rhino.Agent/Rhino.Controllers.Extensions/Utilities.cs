@@ -9,10 +9,12 @@ using Rhino.Api.Contracts.AutomationProvider;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Extensions
 {
@@ -90,6 +92,7 @@ namespace Rhino.Controllers.Extensions
             return assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null);
         }
 
+        [SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "Must be loaded from file")]
         private static void GetAssemblies(string assemblyFile)
         {
             // load main assembly
@@ -155,75 +158,6 @@ namespace Rhino.Controllers.Extensions
             }
             return (null, null);
         }
-        #endregion
-
-        #region *** Graphics   ***
-        /// <summary>
-        /// Renders RhinoAPI logo in the console.
-        /// </summary>
-        public static void RenderLogo()
-        {
-            try
-            {
-                DoRenderLogo(1, 1, ConsoleColor.Black, ConsoleColor.White, Rhino());
-                DoRenderLogo(1, 49, ConsoleColor.Black, ConsoleColor.Red, Api());
-
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine();
-                Console.WriteLine();
-            }
-            catch (Exception e) when (e != null)
-            {
-                // ignore errors
-            }
-        }
-
-        private static void DoRenderLogo(
-            int startRow,
-            int startColumn,
-            ConsoleColor background,
-            ConsoleColor foreground,
-            IEnumerable<string> lines)
-        {
-            // setup
-            Console.CursorTop = startRow;
-            Console.BackgroundColor = background;
-            Console.ForegroundColor = foreground;
-
-            // render
-            for (int i = 0; i < lines.Count(); i++)
-            {
-                Console.CursorTop = startRow + i;
-                Console.CursorLeft = startColumn;
-                Console.WriteLine(lines.ElementAt(i));
-            }
-        }
-
-        private static IEnumerable<string> Rhino() => new List<string>
-        {
-            "        ▀▀██          ▄▄                        ",
-            "          ██          ▀▀                        ",
-            "          ██                                    ",
-            "▀██ ▄████ ██▄▄▀▀██▄  ▀██  ▀██▄▄▀▀██   ▄▄█▀▀▀█▄▄ ",
-            " ██▀    ▀ ██     ██   ██   ██     ██ ▄█▀     ▀█▄",
-            " ██       ██     ██   ██   ██     ██ ██       ██",
-            " ██       ██     ██   ██   ██     ██ ██       ██",
-            " ██       ██     ██   ██   ██     ██  ██▄   ▄██ ",
-            "▀▀▀▀     ▀▀▀▀   ▀▀▀▀ ▀▀▀▀ ▀▀▀▀   ▀▀▀▀   ▀▀▀▀▀   "
-        };
-
-        private static IEnumerable<string> Api() => new List<string>
-        {
-            "       ▄▄       ▄▄▄▄▄▄▄▄▄   ▄▄▄▄",
-            "      ▄██▄       ██     ▀█▄  ██ ",
-            "     ▄█ ██       ██      ██  ██ ",
-            "     █   ██      ██      █▀  ██ ",
-            "    █▀   ▀█▄     ██    █▀▀   ██ ",
-            "   ██▄▄▄▄▄██     ██▀▀▀▀▀     ██ ",
-            "  ▄█      ▀██    ██          ██ ",
-            " ▄██       ██▄   ██          ██ ",
-            "▀▀▀▀▀     ▀▀▀▀▀ ▀▀▀▀▀       ▀▀▀▀"
-        };
         #endregion
     }
 }
