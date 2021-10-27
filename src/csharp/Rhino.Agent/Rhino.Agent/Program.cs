@@ -24,6 +24,7 @@ using Rhino.Api.Interfaces;
 
 using System.Net;
 using System.Text.Json;
+using System.Collections;
 
 namespace Rhino.Agent
 {

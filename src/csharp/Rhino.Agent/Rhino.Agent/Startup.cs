@@ -23,6 +23,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Converters;
 using Rhino.Controllers.Controllers;
 using Rhino.Controllers.Domain.Automation;
 using Rhino.Controllers.Domain.Data;
@@ -97,6 +98,8 @@ namespace Rhino.Agent
                 i.JsonSerializerOptions.WriteIndented = true;
                 i.JsonSerializerOptions.IgnoreNullValues = true;
                 i.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                i.JsonSerializerOptions.Converters.Add(new TypeConverter());
+                i.JsonSerializerOptions.Converters.Add(new ExceptionConverter());
             });
             services.AddSwaggerGen(c =>
             {
