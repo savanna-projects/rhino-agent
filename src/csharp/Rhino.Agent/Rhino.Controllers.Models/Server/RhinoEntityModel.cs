@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Rhino.Controllers.Models
 {
@@ -19,7 +20,7 @@ namespace Rhino.Controllers.Models
         // members: state
         private readonly static JsonSerializerOptions jsonSettings = new()
         {
-            IgnoreNullValues = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true,
             ReadCommentHandling = JsonCommentHandling.Skip

@@ -3,7 +3,6 @@
  * 
  * RESSOURCES
  */
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Controllers.Models;

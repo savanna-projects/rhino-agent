@@ -35,16 +35,16 @@ namespace Rhino.Controllers.Domain.Automation
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
         // members: cache
-        private readonly static IDictionary<string, AsyncStatusModel<RhinoConfiguration>> status
+        private readonly static IDictionary<string, AsyncStatusModel<RhinoConfiguration>> s_status
             = new ConcurrentDictionary<string, AsyncStatusModel<RhinoConfiguration>>();
 
         // members: state
-        private readonly IEnumerable<Type> types;
-        private readonly IRepository<RhinoConfiguration> configurationsRepository;
-        private readonly IRepository<RhinoModelCollection> modelsRespository;
-        private readonly ITestsRepository testsRepository;
-        private readonly ILogger logger;
-        private readonly IConfiguration appSettings;
+        private readonly IEnumerable<Type> _types;
+        private readonly IRepository<RhinoConfiguration> _configurationsRepository;
+        private readonly IRepository<RhinoModelCollection> _modelsRespository;
+        private readonly ITestsRepository _testsRepository;
+        private readonly ILogger _logger;
+        private readonly IConfiguration _appSettings;
 
         /// <summary>
         /// Creates a new instance of StaticDataRepository.
@@ -61,12 +61,12 @@ namespace Rhino.Controllers.Domain.Automation
             ILogger logger,
             IConfiguration appSettings)
         {
-            this.types = types;
-            this.configurationsRepository = configurationsRepository;
-            this.modelsRespository = modelsRespository;
-            this.testsRepository = testsRepository;
-            this.logger = logger.CreateChildLogger(nameof(RhinoRepository));
-            this.appSettings = appSettings;
+            _types = types;
+            _configurationsRepository = configurationsRepository;
+            _modelsRespository = modelsRespository;
+            _testsRepository = testsRepository;
+            _logger = logger.CreateChildLogger(nameof(RhinoRepository));
+            _appSettings = appSettings;
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Rhino.Controllers.Domain.Automation
         public (int StatusCode, RhinoTestRun TestRun) InvokeConfiguration(string configuration)
         {
             // setup
-            var (statusCode, entity) = configurationsRepository
+            var (statusCode, entity) = _configurationsRepository
                 .SetAuthentication(Authentication)
                 .Get(configuration);
 
@@ -160,23 +160,23 @@ namespace Rhino.Controllers.Domain.Automation
         public IEnumerable<(int StatusCode, RhinoTestRun TestRun)> InvokeCollection(string collection, bool isParallel, int maxParallel)
         {
             // setup
-            var (statusCode, entity) = testsRepository.SetAuthentication(Authentication).Get(collection);
+            var (statusCode, entity) = _testsRepository.SetAuthentication(Authentication).Get(collection);
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound)
             {
-                logger?.Warn($"Invoke-Collection -Id {collection} = (NotFound, Collection)");
+                _logger?.Warn($"Invoke-Collection -Id {collection} = (NotFound, Collection)");
                 return new (int StatusCode, RhinoTestRun TestRun)[] { (statusCode, default) };
             }
             if (entity.Configurations.Count == 0)
             {
-                logger?.Warn($"Invoke-Collection -Id {collection} = (NotFound, Configurations)");
+                _logger?.Warn($"Invoke-Collection -Id {collection} = (NotFound, Configurations)");
                 return new (int StatusCode, RhinoTestRun TestRun)[] { (statusCode, default) };
             }
 
             // build
             var sourceConfigurations = entity.Configurations.Select(i => i.ToUpper()).ToArray();
-            var configurations = configurationsRepository
+            var configurations = _configurationsRepository
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => sourceConfigurations.Contains($"{i.Id}".ToUpper()))
@@ -204,13 +204,13 @@ namespace Rhino.Controllers.Domain.Automation
             {
                 try
                 {
-                    var responseBody = configuration.Execute(types);
-                    logger?.Debug($"Invoke-Configuration = {responseBody.Key}");
+                    var responseBody = configuration.Execute(_types);
+                    _logger?.Debug($"Invoke-Configuration = {responseBody.Key}");
                     results.Add((StatusCodes.Status200OK, responseBody));
                 }
                 catch (Exception e) when (e != null)
                 {
-                    logger?.Debug($"Invoke-Configuration = (InternalServerError, {e.GetBaseException().Message})");
+                    _logger?.Debug($"Invoke-Configuration = (InternalServerError, {e.GetBaseException().Message})");
                     results.Add((StatusCodes.Status500InternalServerError, default));
                 }
             });
@@ -234,7 +234,7 @@ namespace Rhino.Controllers.Domain.Automation
             // error
             if (statusCode != StatusCodes.Status200OK)
             {
-                return new AsyncInvokeModel { Id = default, StatusCode = statusCode, StatusEndpoint = default };
+                return new AsyncInvokeModel { Id = Guid.Empty, StatusCode = statusCode, StatusEndpoint = default };
             }
 
             // build
@@ -255,12 +255,12 @@ namespace Rhino.Controllers.Domain.Automation
         public AsyncInvokeModel StartConfiguration(string configuration)
         {
             // setup
-            var (statusCode, entity) = configurationsRepository.SetAuthentication(Authentication).Get(configuration);
+            var (statusCode, entity) = _configurationsRepository.SetAuthentication(Authentication).Get(configuration);
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound)
             {
-                return new AsyncInvokeModel { Id = default, StatusCode = StatusCodes.Status404NotFound, StatusEndpoint = default };
+                return new AsyncInvokeModel { Id = Guid.Empty, StatusCode = StatusCodes.Status404NotFound, StatusEndpoint = default };
             }
 
             // build
@@ -270,7 +270,7 @@ namespace Rhino.Controllers.Domain.Automation
             // error
             if (statusCode != StatusCodes.Status200OK)
             {
-                return new AsyncInvokeModel { Id = default, StatusCode = statusCode, StatusEndpoint = default };
+                return new AsyncInvokeModel { Id = Guid.Empty, StatusCode = statusCode, StatusEndpoint = default };
             }
 
             // build
@@ -297,29 +297,29 @@ namespace Rhino.Controllers.Domain.Automation
             maxParallel = maxParallel < 1 ? Environment.ProcessorCount : maxParallel;
 
             var options = new ParallelOptions { MaxDegreeOfParallelism = maxParallel };
-            var (statusCode, entity) = testsRepository.SetAuthentication(Authentication).Get(collection);
+            var (statusCode, entity) = _testsRepository.SetAuthentication(Authentication).Get(collection);
 
             // not found
             var notFound = new AsyncInvokeModel
             {
-                Id = default,
+                Id = Guid.Empty,
                 StatusCode = StatusCodes.Status404NotFound,
                 StatusEndpoint = default
             };
             if (statusCode == StatusCodes.Status404NotFound)
             {
-                logger?.Warn($"Start-Collection -Id {collection} = (NotFound, Collection)");
+                _logger?.Warn($"Start-Collection -Id {collection} = (NotFound, Collection)");
                 return new[] { notFound };
             }
             if (entity.Configurations.Count == 0)
             {
-                logger?.Warn($"Start-Collection -Id {collection} = (NotFound, Configurations)");
+                _logger?.Warn($"Start-Collection -Id {collection} = (NotFound, Configurations)");
                 return new[] { notFound };
             }
 
             // build
             var sourceConfigurations = entity.Configurations.Select(i => i.ToUpper()).ToArray();
-            var configurations = configurationsRepository
+            var configurations = _configurationsRepository
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => sourceConfigurations.Contains($"{i.Id}".ToUpper()))
@@ -342,7 +342,7 @@ namespace Rhino.Controllers.Domain.Automation
             var endpoint = $"/api/v3/rhino/async/status/{id}";
 
             // register
-            status[$"{id}"] = new AsyncStatusModel<RhinoConfiguration>
+            s_status[$"{id}"] = new AsyncStatusModel<RhinoConfiguration>
             {
                 EntityOut = default,
                 Progress = default,
@@ -353,10 +353,10 @@ namespace Rhino.Controllers.Domain.Automation
             // delegate
             var action = new Task(() =>
             {
-                status[$"{id}"].Status = AsyncStatus.Running;
+                s_status[$"{id}"].Status = AsyncStatus.Running;
                 var (StatusCode, TestRun) = DoInvoke(new[] { configuration }).First();
 
-                status[$"{id}"] = new AsyncStatusModel<RhinoConfiguration>
+                s_status[$"{id}"] = new AsyncStatusModel<RhinoConfiguration>
                 {
                     EntityOut = TestRun,
                     Progress = 100,
@@ -409,7 +409,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns>A collection of AsyncStatusModel object (if any).</returns>
         public IEnumerable<AsyncStatusModel<RhinoConfiguration>> GetStatus()
         {
-            return status.Select(i => i.Value);
+            return s_status.Select(i => i.Value);
         }
 
         /// <summary>
@@ -419,8 +419,8 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns>Status code and AsyncStatusModel object (if any).</returns>
         public (int StatusCode, AsyncStatusModel<RhinoConfiguration> Status) GetStatus(Guid id)
         {
-            return status.ContainsKey($"{id}")
-                ? (StatusCodes.Status200OK, status[$"{id}"])
+            return s_status.ContainsKey($"{id}")
+                ? (StatusCodes.Status200OK, s_status[$"{id}"])
                 : (StatusCodes.Status404NotFound, default);
         }
         #endregion
@@ -434,7 +434,7 @@ namespace Rhino.Controllers.Domain.Automation
         public int Delete(string id)
         {
             // delete
-            status.Remove(id);
+            s_status.Remove(id);
 
             // get
             return StatusCodes.Status204NoContent;
@@ -447,7 +447,7 @@ namespace Rhino.Controllers.Domain.Automation
         public int Delete()
         {
             // delete
-            status.Clear();
+            s_status.Clear();
 
             // get
             return StatusCodes.Status204NoContent;
@@ -478,12 +478,12 @@ namespace Rhino.Controllers.Domain.Automation
             // invoke
             try
             {
-                logger?.Debug("Create-Configuration = Ok");
+                _logger?.Debug("Create-Configuration = Ok");
                 return (StatusCodes.Status200OK, configuration);
             }
             catch (Exception e) when (e != null)
             {
-                logger?.Debug($"Create-Configuration = (InternalServerError, ({e.GetBaseException().Message})");
+                _logger?.Debug($"Create-Configuration = (InternalServerError, ({e.GetBaseException().Message})");
                 return (StatusCodes.Status500InternalServerError, configuration);
             }
         }
@@ -493,12 +493,12 @@ namespace Rhino.Controllers.Domain.Automation
             // bad request            
             if (!configuration.TestsRepository.Any())
             {
-                logger?.Debug("Invoke-Configuration = (BadRequest, NoTests)");
+                _logger?.Debug("Invoke-Configuration = (BadRequest, NoTests)");
                 return StatusCodes.Status400BadRequest;
             }
             if (!configuration.DriverParameters.Any())
             {
-                logger?.Debug("Invoke-Configuration = (BadRequest, NoDrivers)");
+                _logger?.Debug("Invoke-Configuration = (BadRequest, NoDrivers)");
                 return StatusCodes.Status400BadRequest;
             }
 
@@ -514,7 +514,7 @@ namespace Rhino.Controllers.Domain.Automation
                 .Select(i => Regex.Match(i, IdPattern).Value)
                 .Where(i => !string.IsNullOrEmpty(i));
 
-            var dataModels = modelsRespository
+            var dataModels = _modelsRespository
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => i.Configurations.Contains($"{configuration.Id}") || i.Configurations?.Any() == false)
@@ -529,7 +529,7 @@ namespace Rhino.Controllers.Domain.Automation
             }
 
             // build
-            var modelEntities = modelsRespository
+            var modelEntities = _modelsRespository
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => models.Contains($"{i.Id}"))
@@ -558,7 +558,7 @@ namespace Rhino.Controllers.Domain.Automation
             var origRepository = configuration.TestsRepository.Clone();
 
             // build
-            var stateRepository = testsRepository
+            var stateRepository = _testsRepository
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => tests.Contains($"{i.Id}"))
@@ -583,10 +583,10 @@ namespace Rhino.Controllers.Domain.Automation
             const string KeepOriginal = "Rhino:ScreenshotsConfiguration:KeepOriginal";
 
             // reporting
-            configuration.ReportConfiguration.ReportOut = appSettings.GetValue(ReportsOut, defaultValue: ".");
-            configuration.ReportConfiguration.LogsOut = appSettings.GetValue(LogsOut, defaultValue: ".");
-            configuration.ReportConfiguration.Archive = appSettings.GetValue(Archive, defaultValue: false);
-            configuration.ReportConfiguration.Reporters = appSettings
+            configuration.ReportConfiguration.ReportOut = _appSettings.GetValue(ReportsOut, defaultValue: ".");
+            configuration.ReportConfiguration.LogsOut = _appSettings.GetValue(LogsOut, defaultValue: ".");
+            configuration.ReportConfiguration.Archive = _appSettings.GetValue(Archive, defaultValue: false);
+            configuration.ReportConfiguration.Reporters = _appSettings
                 .GetSection(Reporters)
                 .GetChildren()
                 .Select(i => i.Value)
@@ -594,8 +594,8 @@ namespace Rhino.Controllers.Domain.Automation
                 .ToArray();
 
             // screen-shots
-            configuration.ScreenshotsConfiguration.ScreenshotsOut = appSettings.GetValue(ScreenshotsOut, defaultValue: ".");
-            configuration.ScreenshotsConfiguration.KeepOriginal = appSettings.GetValue(KeepOriginal, defaultValue: false);
+            configuration.ScreenshotsConfiguration.ScreenshotsOut = _appSettings.GetValue(ScreenshotsOut, defaultValue: ".");
+            configuration.ScreenshotsConfiguration.KeepOriginal = _appSettings.GetValue(KeepOriginal, defaultValue: false);
         }
     }
 }

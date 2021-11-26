@@ -3,18 +3,11 @@
  * 
  * RESSOURCES
  */
-using Gravity.Abstraction.Logging;
-
 using Rhino.Api.Contracts.AutomationProvider;
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Extensions
 {
@@ -24,13 +17,15 @@ namespace Rhino.Controllers.Extensions
     public static class Utilities
     {
         // members: state
-        private static readonly ILogger logger = new TraceLogger("RhinoApi", nameof(Utilities));
-        private static readonly IList<Assembly> assemblies = new List<Assembly>();
+        private static readonly IList<Assembly> s_assemblies = new List<Assembly>();
 
         /// <summary>
         /// Gets a distinct collection of <see cref="Type"/> loaded into the AppDomain.
         /// </summary>
-        public static IList<Type> Types => DoGetTypes(string.Empty).SelectMany(i => i.Types).Distinct().ToList();
+        public static IList<Type> Types => DoGetTypes(string.Empty)
+            .SelectMany(i => i.Types ?? Array.Empty<Type>())
+            .Distinct()
+            .ToList();
 
         #region *** Assemblies ***
         /// <summary>
@@ -55,12 +50,13 @@ namespace Rhino.Controllers.Extensions
         private static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> DoGetTypes(string root)
         {
             // reset
-            assemblies.Clear();
+            s_assemblies.Clear();
 
             // setup
             var mainLocation = string.IsNullOrEmpty(root)
                 ? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
                 : root;
+            mainLocation ??= Environment.CurrentDirectory;
             var rootLocations = new[]
             {
                 mainLocation
@@ -89,7 +85,7 @@ namespace Rhino.Controllers.Extensions
             }
 
             // get
-            return assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null);
+            return s_assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null);
         }
 
         [SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "Must be loaded from file")]
@@ -111,23 +107,23 @@ namespace Rhino.Controllers.Extensions
                 }
                 catch (Exception e)
                 {
-                    logger?.Warn(e.Message);
+                    Console.WriteLine(e.GetBaseException().Message);
                     return;
                 }
             }
             catch (Exception e) when (e != null)
             {
-                logger?.Warn(e.Message);
+                Console.WriteLine(e.GetBaseException().Message);
                 return;
             }
 
             // build
-            assemblies.Add(assembly);
+            s_assemblies.Add(assembly);
             foreach (var item in assembly.GetReferencedAssemblies())
             {
                 try
                 {
-                    var names = assemblies.Select(i => i.FullName).Any(i => i == item.FullName);
+                    var names = s_assemblies.Select(i => i.FullName).Any(i => i == item.FullName);
                     if (names)
                     {
                         continue;
@@ -137,7 +133,7 @@ namespace Rhino.Controllers.Extensions
                 }
                 catch (Exception e) when (e != null)
                 {
-                    logger?.Warn(e.Message, e);
+                    Console.WriteLine(e.GetBaseException().Message);
                 }
             }
         }
@@ -154,7 +150,7 @@ namespace Rhino.Controllers.Extensions
             }
             catch (Exception e) when (e != null)
             {
-                logger?.Warn(e.Message, e);
+                Console.WriteLine(e.GetBaseException().Message);
             }
             return (null, null);
         }

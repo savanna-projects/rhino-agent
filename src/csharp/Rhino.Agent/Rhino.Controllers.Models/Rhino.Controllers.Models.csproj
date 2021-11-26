@@ -1,18 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Rhino.Controllers.Models</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<RootNamespace>Rhino.Controllers.Models</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>Latest</LangVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Gravity.Services.Comet" Version="2021.10.25.1" />
-    <PackageReference Include="Gravity.Services.DataContracts" Version="2021.10.25.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-    <PackageReference Include="Rhino.Api.Contracts" Version="2021.10.29.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Gravity.Services.Comet" Version="2021.10.25.1" />
+		<PackageReference Include="Gravity.Services.DataContracts" Version="2021.10.25.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+		<PackageReference Include="Rhino.Api.Contracts" Version="2021.10.29.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
+		<PackageReference Include="System.Text.Json" Version="6.0.0" />
+	</ItemGroup>
 
 </Project>

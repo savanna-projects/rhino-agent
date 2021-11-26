@@ -7,9 +7,6 @@
  * TODO: implement error handling
  * TODO: implement all CRUD actions
  */
-using Gravity.Services.Comet;
-
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.AutomationProvider;
@@ -23,11 +20,7 @@ using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mime;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {
@@ -42,18 +35,15 @@ namespace Rhino.Controllers.Controllers
         private const string CountHeader = "Rhino-Total-Specs";
 
         // members: state
-        private readonly IApplicationRepository applicationRepository;
-        private readonly Orbit client;
+        private readonly IDomain _domain;
 
         /// <summary>
         /// Creates a new instance of <see cref="ControllerBase"/>.
         /// </summary>
-        /// <param name="applicationRepository">An IApplicationRepository implementation to use with the Controller.</param>
-        /// <param name="client">An Orbit implementation to use with the Controller.</param>
-        public IntegrationController(IApplicationRepository applicationRepository, Orbit client)
+        /// <param name="domain">An IDomain implementation to use with the Controller.</param>
+        public IntegrationController(IDomain domain)
         {
-            this.applicationRepository = applicationRepository;
-            this.client = client;
+            _domain = domain;
         }
 
         [HttpPost("create")]
@@ -98,10 +88,10 @@ namespace Rhino.Controllers.Controllers
                 testCases[i].Priority = "2";
                 testCases[i].Context["comment"] = Api.Extensions.Utilities.GetActionSignature("created");
             }
-            applicationRepository.SetConnector(configuration);
+            _domain.Application.SetConnector(configuration);
 
             // create
-            var responseBody = testCases.Select(i => applicationRepository.Add(i));
+            var responseBody = testCases.Select(i => _domain.Application.Add(i));
 
             // return results
             return Created("", responseBody);

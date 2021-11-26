@@ -31,8 +31,8 @@ namespace Rhino.Controllers.Domain.Automation
         private const string Name = "models";
 
         // members: state
-        private readonly ILogger logger;
-        private readonly IRepository<RhinoConfiguration> configurationRepository;
+        private readonly ILogger _logger;
+        private readonly IRepository<RhinoConfiguration> _configurationRepository;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Domain.Repository.
@@ -47,8 +47,8 @@ namespace Rhino.Controllers.Domain.Automation
             IConfiguration configuration,
             IRepository<RhinoConfiguration> configurationRepository) : base(logger, liteDb, configuration)
         {
-            this.logger = logger?.CreateChildLogger(nameof(ModelsRepository));
-            this.configurationRepository = configurationRepository;
+            _logger = logger?.CreateChildLogger(nameof(ModelsRepository));
+            _configurationRepository = configurationRepository;
         }
 
         #region *** Add    ***
@@ -85,7 +85,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // sync
             collection.UpdateEntityModel(entityModel.Id, entity);
-            logger?.Debug($"Update-RhinoModelCollection -Id {entity.Id} = Ok");
+            _logger?.Debug($"Update-RhinoModelCollection -Id {entity.Id} = Ok");
 
             // results
             return $"{entity.Id}";
@@ -103,11 +103,11 @@ namespace Rhino.Controllers.Domain.Automation
                     .SelectMany(i => i.Models)
                     .Select(i => i.Name)
                     .ToList();
-                logger?.Debug($"Get-Models -Exists True = ${exludedNames.Count}");
+                _logger?.Debug($"Get-Models -Exists True = ${exludedNames.Count}");
 
                 // build - included
                 var models = entity.Models.Where(i => !exludedNames.Contains(i.Name)).ToList();
-                logger?.Debug($"Get-Models -Exists False = ${models.Count}");
+                _logger?.Debug($"Get-Models -Exists False = ${models.Count}");
 
                 // get
                 return models;
@@ -117,7 +117,16 @@ namespace Rhino.Controllers.Domain.Automation
                 var baseException = e.GetBaseException();
                 var message = $"Get-Models = (InternalServerError, {baseException.Message})";
 
-                throw (Exception)Activator.CreateInstance(baseException.GetType(), new object[] { message });
+                if(baseException == null)
+                {
+                    throw;
+                }
+
+                if (Activator.CreateInstance(baseException.GetType(), new object[] { message }) is not Exception exception)
+                {
+                    throw baseException;
+                }
+                throw exception;
             }
         }
 
@@ -125,7 +134,7 @@ namespace Rhino.Controllers.Domain.Automation
         private void CascadeAdd(RhinoModelCollection entity)
         {
             // load
-            foreach (var configuration in configurationRepository.Get().ToList())
+            foreach (var configuration in _configurationRepository.Get().ToList())
             {
                 // setup
                 var models = configuration.Models.ToList();
@@ -141,8 +150,8 @@ namespace Rhino.Controllers.Domain.Automation
                 configuration.Models = models;
 
                 // update
-                configurationRepository.Update($"{configuration.Id}", configuration);
-                logger?.Debug($"Update-RhinoPageModes -Configuration {configuration} -Model {entity.Id} = Ok");
+                _configurationRepository.Update($"{configuration.Id}", configuration);
+                _logger?.Debug($"Update-RhinoPageModes -Configuration {configuration} -Model {entity.Id} = Ok");
             }
         }
         #endregion
@@ -188,14 +197,14 @@ namespace Rhino.Controllers.Domain.Automation
 
             // get collection > models
             var entityModelCollection = LiteDb.GetCollection<RhinoEntityModel>(name);
-            var configurations = configurationRepository.Get().Select(i => $"{i.Id}").ToList();
+            var configurations = _configurationRepository.Get().Select(i => $"{i.Id}").ToList();
             var (statusCode, models) = entityModelCollection.Get<RhinoModelCollection>(id);
             var modelsCollection = models.FirstOrDefault();
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound || modelsCollection == default)
             {
-                logger?.Debug($"Delete-Model -Id {id} = NotFound");
+                _logger?.Debug($"Delete-Model -Id {id} = NotFound");
                 return statusCode;
             }
 
@@ -207,7 +216,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // delete
             entityModelCollection.Delete(models.FirstOrDefault()?.Id);
-            logger?.Debug($"Delete-Model -Id {id} = Ok");
+            _logger?.Debug($"Delete-Model -Id {id} = Ok");
 
             // get
             return StatusCodes.Status204NoContent;
@@ -217,7 +226,7 @@ namespace Rhino.Controllers.Domain.Automation
         private void CascadeDelete(string configuration, RhinoModelCollection modelsCollection)
         {
             // get collection
-            var (statusCode, configurationEntity) = configurationRepository.Get(id: configuration);
+            var (statusCode, configurationEntity) = _configurationRepository.Get(id: configuration);
 
             // exit conditions
             if (statusCode == StatusCodes.Status404NotFound)
@@ -239,7 +248,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // update
             configurationEntity.Models = configurationModels;
-            configurationRepository.Update(id: configuration, configurationEntity);
+            _configurationRepository.Update(id: configuration, configurationEntity);
         }
         #endregion
 
@@ -302,12 +311,12 @@ namespace Rhino.Controllers.Domain.Automation
             // not found
             if (statusCode == StatusCodes.Status404NotFound || !configurations.Any())
             {
-                logger?.Debug($"Update-PageModelsCollection -Id {id} = (NotFound, PageModelsCollection)");
+                _logger?.Debug($"Update-PageModelsCollection -Id {id} = (NotFound, PageModelsCollection)");
                 return (statusCode, entity);
             }
 
             // build
-            entity.Id = configurations.FirstOrDefault()?.Id ?? default;
+            entity.Id = configurations.FirstOrDefault()?.Id ?? Guid.Empty;
 
             // update
             collection.UpdateEntityModel(entity.Id, entity);
@@ -334,12 +343,12 @@ namespace Rhino.Controllers.Domain.Automation
             var name = SetCollectionName(Name).CollectionName;
             var collection = LiteDb.GetCollection<RhinoEntityModel>(name);
             var model = collection.Get<RhinoModelCollection>(id).Entities.FirstOrDefault();
-            var (statusCode, _) = configurationRepository.Get(configuration);
+            var (statusCode, _) = _configurationRepository.Get(configuration);
 
             // not found conditions
             if (model == default || statusCode == StatusCodes.Status404NotFound)
             {
-                logger?.Debug("Update-RhinoPageModelsCollection " +
+                _logger?.Debug("Update-RhinoPageModelsCollection " +
                     $"-Id {id} " +
                     $"-Configuration {configuration} = (NotFound, RhinoPageModel || RhinoPageModes)");
                 return (StatusCodes.Status404NotFound, default);
@@ -367,7 +376,7 @@ namespace Rhino.Controllers.Domain.Automation
             // bad request
             if (string.IsNullOrEmpty(id))
             {
-                logger?.Debug($"Update-RhinoModelCollection -Id {id} = (BadRequest, NoCollecction)");
+                _logger?.Debug($"Update-RhinoModelCollection -Id {id} = (BadRequest, NoCollecction)");
                 return (StatusCodes.Status400BadRequest, default);
             }
 
@@ -379,13 +388,13 @@ namespace Rhino.Controllers.Domain.Automation
             // not found
             if (statusCode == StatusCodes.Status404NotFound || !modelCollections.Any())
             {
-                logger?.Debug($"Update-RhinoModelCollection -Id {id} = NotFound");
+                _logger?.Debug($"Update-RhinoModelCollection -Id {id} = NotFound");
                 return (StatusCodes.Status404NotFound, default);
             }
 
             // setup
             var modelCollection = modelCollections.FirstOrDefault();
-            modelCollection.Models.Add(entity);
+            modelCollection?.Models.Add(entity);
 
             // apply
             collection.UpdateEntityModel(Guid.Parse(id), entity: modelCollection);

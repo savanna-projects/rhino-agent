@@ -30,8 +30,8 @@ namespace Rhino.Controllers.Domain.Automation
         private const string Name = "tests";
 
         // members: state
-        private readonly ILogger logger;
-        private readonly IRepository<RhinoConfiguration> configurationRepository;
+        private readonly ILogger _logger;
+        private readonly IRepository<RhinoConfiguration> _configurationRepository;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Domain.Repository.
@@ -46,8 +46,8 @@ namespace Rhino.Controllers.Domain.Automation
             IConfiguration configuration,
             IRepository<RhinoConfiguration> configurationRepository) : base(logger, liteDb, configuration)
         {
-            this.logger = logger.CreateChildLogger(nameof(TestsRepository));
-            this.configurationRepository = configurationRepository;
+            _logger = logger.CreateChildLogger(nameof(TestsRepository));
+            _configurationRepository = configurationRepository;
         }
 
         #region *** Add    ***
@@ -69,7 +69,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // sync
             collection.UpdateEntityModel(entityModel.Id, entity);
-            logger?.Debug($"Update-RhinoConfiguration -Id {entity.Id} = Ok");
+            _logger?.Debug($"Update-RhinoConfiguration -Id {entity.Id} = Ok");
 
             // cascade
             CascadeAdd(entity, entity.Configurations);
@@ -80,7 +80,7 @@ namespace Rhino.Controllers.Domain.Automation
 
         private void CascadeAdd(RhinoTestCollection entity, IEnumerable<string> configurations)
         {
-            foreach (var configuration in configurationRepository.Get().Where(i => configurations.Contains($"{i.Id}")))
+            foreach (var configuration in _configurationRepository.Get().Where(i => configurations.Contains($"{i.Id}")))
             {
                 // add
                 var testsRepository = configuration.TestsRepository.ToList();
@@ -90,7 +90,7 @@ namespace Rhino.Controllers.Domain.Automation
                 configuration.TestsRepository = testsRepository;
 
                 // update
-                configurationRepository.Update($"{configuration.Id}", configuration);
+                _configurationRepository.Update($"{configuration.Id}", configuration);
             }
         }
         #endregion
@@ -140,7 +140,7 @@ namespace Rhino.Controllers.Domain.Automation
 
         private void CascadeDelete(string id)
         {
-            foreach (var configuration in configurationRepository.Get().Where(i => i.TestsRepository.Contains(id)))
+            foreach (var configuration in _configurationRepository.Get().Where(i => i.TestsRepository.Contains(id)))
             {
                 // add
                 var testsRepository = configuration.TestsRepository.ToList();
@@ -150,7 +150,7 @@ namespace Rhino.Controllers.Domain.Automation
                 configuration.TestsRepository = testsRepository;
 
                 // update
-                configurationRepository.Update($"{configuration.Id}", configuration);
+                _configurationRepository.Update($"{configuration.Id}", configuration);
             }
         }
         #endregion
@@ -214,12 +214,12 @@ namespace Rhino.Controllers.Domain.Automation
             // not found
             if (statusCode == StatusCodes.Status404NotFound || !configurations.Any())
             {
-                logger?.Debug($"Update-RhinoTestCaseCollection -Id {id} = NotFound");
+                _logger?.Debug($"Update-RhinoTestCaseCollection -Id {id} = NotFound");
                 return (statusCode, entity);
             }
 
             // build
-            entity.Id = configurations.FirstOrDefault()?.Id ?? default;
+            entity.Id = configurations.FirstOrDefault()?.Id ?? Guid.Empty;
 
             // update
             collection.UpdateEntityModel(entity.Id, entity);
@@ -244,7 +244,7 @@ namespace Rhino.Controllers.Domain.Automation
             // exit conditions
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(configuration))
             {
-                logger?.Debug(message.Replace("$(StatusCode)", "BadRequest"));
+                _logger?.Debug(message.Replace("$(StatusCode)", "BadRequest"));
                 return (StatusCodes.Status400BadRequest, default);
             }
 
@@ -254,19 +254,19 @@ namespace Rhino.Controllers.Domain.Automation
             // get collection
             var collection = LiteDb.GetCollection<RhinoEntityModel>(name);
             var testCaseCollection = collection.Get<RhinoTestCollection>(id).Entities.FirstOrDefault();
-            var (statusCode, onConfiguration) = configurationRepository.SetAuthentication(Authentication).Get(configuration);
+            var (statusCode, onConfiguration) = _configurationRepository.SetAuthentication(Authentication).Get(configuration);
 
             // not found conditions
             if (testCaseCollection == default || statusCode == StatusCodes.Status404NotFound)
             {
-                logger?.Debug(message.Replace("$(StatusCode)", "NotFound"));
+                _logger?.Debug(message.Replace("$(StatusCode)", "NotFound"));
                 return (StatusCodes.Status404NotFound, default);
             }
 
             // exit conditions
             if (testCaseCollection.Configurations.Contains(configuration))
             {
-                logger?.Debug(message.Replace("$(StatusCode)", "NoContent, Duplicate"));
+                _logger?.Debug(message.Replace("$(StatusCode)", "NoContent, Duplicate"));
                 return (StatusCodes.Status204NoContent, testCaseCollection);
             }
 
@@ -276,7 +276,7 @@ namespace Rhino.Controllers.Domain.Automation
             CascadeUpdate(testCaseCollection, onConfiguration);
 
             // get
-            logger?.Debug(message.Replace("$(StatusCode)", "Ok"));
+            _logger?.Debug(message.Replace("$(StatusCode)", "Ok"));
             return (StatusCodes.Status204NoContent, testCaseCollection);
         }
 
@@ -290,7 +290,7 @@ namespace Rhino.Controllers.Domain.Automation
             // exit conditions
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(entity.Collection))
             {
-                logger?.Debug($"Update-RhinoTestCaseCollection -Id {id} = (BadRequest, RhinoTestCaseCollection | RhinoTestCaseModel)");
+                _logger?.Debug($"Update-RhinoTestCaseCollection -Id {id} = (BadRequest, RhinoTestCaseCollection | RhinoTestCaseModel)");
                 return (StatusCodes.Status400BadRequest, default);
             }
 
@@ -326,7 +326,7 @@ namespace Rhino.Controllers.Domain.Automation
             configuration.TestsRepository = testsRepository;
 
             // update
-            configurationRepository.Update($"{configuration.Id}", configuration);
+            _configurationRepository.Update($"{configuration.Id}", configuration);
         }
         #endregion
     }

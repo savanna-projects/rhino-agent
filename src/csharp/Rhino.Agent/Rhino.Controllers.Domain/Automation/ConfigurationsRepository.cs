@@ -14,10 +14,6 @@ using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Models;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Rhino.Controllers.Domain.Automation
 {
     /// <summary>
@@ -29,7 +25,7 @@ namespace Rhino.Controllers.Domain.Automation
         private const string Name = "configurations";
 
         // members: state
-        private readonly ILogger logger;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Domain.Repository.
@@ -40,7 +36,7 @@ namespace Rhino.Controllers.Domain.Automation
         public ConfigurationsRepository(ILogger logger, ILiteDatabase liteDb, IConfiguration configuration)
             : base(logger, liteDb, configuration)
         {
-            this.logger = logger.CreateChildLogger(nameof(ConfigurationsRepository));
+            _logger = logger.CreateChildLogger(nameof(ConfigurationsRepository));
         }
 
         #region *** Add    ***
@@ -65,7 +61,7 @@ namespace Rhino.Controllers.Domain.Automation
             var isPassword = !string.IsNullOrEmpty(Authentication.Password);
             entity.Authentication = isUser && isPassword ? Authentication : entity.Authentication;
             collection.UpdateEntityModel(entityModel.Id, entity);
-            logger?.Debug($"Update-RhinoConfiguration -Id {entity.Id} = Ok");
+            _logger?.Debug($"Update-RhinoConfiguration -Id {entity.Id} = Ok");
 
             // results
             return $"{entity.Id}";
@@ -160,7 +156,7 @@ namespace Rhino.Controllers.Domain.Automation
             // not found
             if (statusCode == StatusCodes.Status404NotFound || !configurations.Any())
             {
-                logger?.Debug($"Update-Configuration -Id {id} = NotFound");
+                _logger?.Debug($"Update-Configuration -Id {id} = NotFound");
                 return (statusCode, entity);
             }
 

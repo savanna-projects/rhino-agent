@@ -31,7 +31,7 @@ namespace Rhino.Controllers.Domain.Automation
     public class PluginsRepository : Repository<string>, IPluginsRepository
     {
         // members: state
-        private readonly ILogger logger;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Domain.Repository.
@@ -42,7 +42,7 @@ namespace Rhino.Controllers.Domain.Automation
         public PluginsRepository(ILogger logger, ILiteDatabase liteDb, IConfiguration configuration)
             : base(logger, liteDb, configuration)
         {
-            this.logger = logger.CreateChildLogger(nameof(EnvironmentRepository));
+            _logger = logger.CreateChildLogger(nameof(EnvironmentRepository));
         }
 
         #region *** Add    ***
@@ -96,14 +96,14 @@ namespace Rhino.Controllers.Domain.Automation
             // get
             if (exceptions.Count == 0)
             {
-                logger?.Debug($"Create-Plugin -Private {isPrivate} = Created");
+                _logger?.Debug($"Create-Plugin -Private {isPrivate} = Created");
                 return responseBody;
             }
 
             // error
             foreach (var exception in exceptions)
             {
-                logger?.Error($"Create-Plugin -Private {isPrivate} = InternalServerError", exception);
+                _logger?.Error($"Create-Plugin -Private {isPrivate} = InternalServerError", exception);
             }
 
             // get
@@ -197,18 +197,18 @@ namespace Rhino.Controllers.Domain.Automation
             {
                 if (!Directory.Exists(path))
                 {
-                    logger?.Debug($"Delete-Plugin -Path {path} = (NotFound, NoPlugin)");
+                    _logger?.Debug($"Delete-Plugin -Path {path} = (NotFound, NoPlugin)");
                     return default;
                 }
 
                 Directory.Delete(path, recursive: true);
-                logger?.Debug($"Delete-Plugin -Path {path} = NoContent");
+                _logger?.Debug($"Delete-Plugin -Path {path} = NoContent");
 
                 return default;
             }
             catch (Exception e) when (e != null)
             {
-                logger?.Debug($"Delete-Plugin -Path {path} = InternalServerError", e);
+                _logger?.Debug($"Delete-Plugin -Path {path} = InternalServerError", e);
                 return e;
             }
         }
@@ -260,7 +260,7 @@ namespace Rhino.Controllers.Domain.Automation
             // NotFound conditions
             if (!isPublic && !isPrivate)
             {
-                logger?.Debug($"Get-Plugins -Path {path} -UserPath {userPath} = (NotFound, Path | UserPath)");
+                _logger?.Debug($"Get-Plugins -Path {path} -UserPath {userPath} = (NotFound, Path | UserPath)");
                 return Array.Empty<string>();
             }
 
@@ -278,7 +278,7 @@ namespace Rhino.Controllers.Domain.Automation
             }
 
             // results
-            logger?.Debug($"Get-Plugins -Path {path} -UserPath {userPath} = (Ok, {plugins.Count})");
+            _logger?.Debug($"Get-Plugins -Path {path} -UserPath {userPath} = (Ok, {plugins.Count})");
             return plugins;
         }
         #endregion
@@ -292,7 +292,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns><see cref="int"/> and KeyValuePair<string, object> object (if any).</returns>
         public override (int StatusCode, string Entity) Update(string id, string entity)
         {
-            logger?.Debug($"Update-Plugin -Id {id} = (NotImplemented, NotSuiteable)");
+            _logger?.Debug($"Update-Plugin -Id {id} = (NotImplemented, NotSuiteable)");
             return (StatusCodes.Status200OK, string.Empty);
         }
         #endregion

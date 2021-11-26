@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30320.27
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5F276F3-7431-4018-8A38-179C8CA4B100}"
 	ProjectSection(SolutionItems) = preProject
@@ -51,15 +51,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "Gettings
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{F0581530-31D7-40C5-BD78-4322BD64C4F0}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\..\.dockerignore = ..\..\..\.dockerignore
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{242F1C4F-1F96-43A7-BBBA-53FD839F2F45}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\bash\create_cert.sh = ..\..\..\bash\create_cert.sh
+		..\..\..\bash\openssl.txt = ..\..\..\bash\openssl.txt
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Agent", "Rhino.Agent\Rhino.Agent.csproj", "{A82F3446-6153-43C3-BE3D-006A54E3803A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers", "Rhino.Controllers\Rhino.Controllers.csproj", "{6DC68289-26F0-45C0-825B-21D6103FBC97}"
 EndProject
@@ -71,16 +71,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Models", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Plugins.Custom", "Rhino.Plugins.Custom\Rhino.Plugins.Custom.csproj", "{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.ControlPanel", "Rhino.ControlPanel\Rhino.ControlPanel.csproj", "{B577B277-3E78-400D-9B03-02FD51C2FF50}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Agent", "Rhino.Agent\Rhino.Agent.csproj", "{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{E9F17CB3-15C4-420F-B1B4-57F7E935E9AA}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.gitignore = ..\..\..\.gitignore
+		..\..\..\LICENSE = ..\..\..\LICENSE
+		..\..\..\README.md = ..\..\..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A82F3446-6153-43C3-BE3D-006A54E3803A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A82F3446-6153-43C3-BE3D-006A54E3803A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A82F3446-6153-43C3-BE3D-006A54E3803A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A82F3446-6153-43C3-BE3D-006A54E3803A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6DC68289-26F0-45C0-825B-21D6103FBC97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6DC68289-26F0-45C0-825B-21D6103FBC97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DC68289-26F0-45C0-825B-21D6103FBC97}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -101,6 +108,14 @@ Global
 		{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B577B277-3E78-400D-9B03-02FD51C2FF50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B577B277-3E78-400D-9B03-02FD51C2FF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B577B277-3E78-400D-9B03-02FD51C2FF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B577B277-3E78-400D-9B03-02FD51C2FF50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,18 +8,17 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Rhino.Controllers.Extensions;
 
 using System.Net.Mime;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Formatters
 {
     /// <summary>
-    /// Formatter to read text/plain from mircoservice signature
+    /// Formatter to read text/plain from micro-service signature
     /// </summary>
     public class TextPlainInputFormatter : InputFormatter
     {
         // constants
         private const string ContentType = MediaTypeNames.Text.Plain;
-        
+
         /// <summary>
         /// Creates a new instance of <see cref="InputFormatter"/>.
         /// </summary>
@@ -36,19 +35,19 @@ namespace Rhino.Controllers.Formatters
         public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
         {
             // build
-            var request = await context.HttpContext.Request.ReadAsync();
-            
+            var request = await context.HttpContext.Request.ReadAsync().ConfigureAwait(false);
+
             // get
-            return await InputFormatterResult.SuccessAsync(request);
+            return await InputFormatterResult.SuccessAsync(request).ConfigureAwait(false);
         }
 
         public override bool CanRead(InputFormatterContext context)
         {
             // setup
             var contentType = context.HttpContext.Request.ContentType;
-            
+
             // get
-            return contentType.StartsWith(ContentType);
+            return contentType?.StartsWith(ContentType) == true;
         }
     }
 }

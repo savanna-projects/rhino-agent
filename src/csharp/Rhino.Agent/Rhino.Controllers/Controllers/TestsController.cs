@@ -23,6 +23,8 @@ using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 
+using ILogger = Gravity.Abstraction.Logging.ILogger;
+
 namespace Rhino.Controllers.Controllers
 {
     [ApiVersion("3.0")]
@@ -36,9 +38,8 @@ namespace Rhino.Controllers.Controllers
         private const string CountHeader = "Rhino-Total-Specs";
 
         // members: state
-        private readonly ITestsRepository testsRepository;
-        private readonly IRepository<RhinoConfiguration> configurationRepository;
-        private readonly ILogger logger;
+        private readonly IDomain _domain;
+        private readonly ILogger _logger;
 
         // members: private properties
         private Authentication Authentication => Request.GetAuthentication();
@@ -46,17 +47,12 @@ namespace Rhino.Controllers.Controllers
         /// <summary>
         /// Creates a new instance of <see cref="ControllerBase"/>.
         /// </summary>
-        /// <param name="testsRepository">An ITestsRepository implementation to use with the Controller.</param>
-        /// <param name="configurationsRepository">An IRepository<RhinoConfiguration> implementation to use with the Controller.</param>
+        /// <param name="domain">An IDomain implementation to use with the Controller.</param>
         /// <param name="logger">An ILogger implementation to use with the Controller.</param>
-        public TestsController(
-            ITestsRepository testsRepository,
-            IRepository<RhinoConfiguration> configurationsRepository,
-            ILogger logger)
+        public TestsController(IDomain domain, ILogger logger)
         {
-            this.testsRepository = testsRepository;
-            configurationRepository = configurationsRepository;
-            this.logger = logger;
+            _domain = domain;
+            _logger = logger;
         }
 
         #region *** Get    ***
@@ -71,7 +67,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Get()
         {
             // setup
-            var responseBody = testsRepository.SetAuthentication(Authentication).Get().Select(i => new TestResponseModel
+            var responseBody = _domain.Tests.SetAuthentication(Authentication).Get().Select(i => new TestResponseModel
             {
                 Id = $"{i.Id}",
                 Configurations = i.Configurations,
@@ -111,7 +107,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetConfigurations([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // setup
-            var (statusCode, entity) = testsRepository.SetAuthentication(Authentication).Get(id);
+            var (statusCode, entity) = _domain.Tests.SetAuthentication(Authentication).Get(id);
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound)
@@ -132,7 +128,7 @@ namespace Rhino.Controllers.Controllers
         [SwaggerOperation(
             Summary = "Create-TestCollection",
             Description = "Creates a new _**Rhino Test Case Collection**_.")]
-        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(TestResponseModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
         public Task<IActionResult> Create()
@@ -145,7 +141,7 @@ namespace Rhino.Controllers.Controllers
         [SwaggerOperation(
             Summary = "Create-TestCollection -Configuration {00000000-0000-0000-0000-000000000000}",
             Description = "Creates a new _**Rhino Test Case Collection**_ and attach it to the provided configuration.")]
-        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(TestResponseModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
         public Task<IActionResult> Create([SwaggerParameter(SwaggerDocument.Parameter.Congifuration)] string configuration)
@@ -167,7 +163,7 @@ namespace Rhino.Controllers.Controllers
                 .ToList();
 
             // create id for this collection
-            var id = testsRepository.SetAuthentication(Authentication).Add(collection);
+            var id = _domain.Tests.SetAuthentication(Authentication).Add(collection);
             AddConfiguration(onCollection: collection, configuration);
 
             // build
@@ -191,30 +187,30 @@ namespace Rhino.Controllers.Controllers
             // no configuration
             if (string.IsNullOrEmpty(configuration))
             {
-                logger.Debug($"Create-TestCollection -Configuration {configuration} = (BadRequest, NoConfiguration)");
+                _logger.Debug($"Create-TestCollection -Configuration {configuration} = (BadRequest, NoConfiguration)");
                 return;
             }
 
             // check configuration
-            var (statusCode, onConfiguration) = configurationRepository.SetAuthentication(Authentication).Get(configuration);
+            var (statusCode, onConfiguration) = _domain.Configurations.SetAuthentication(Authentication).Get(configuration);
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound)
             {
-                logger.Debug($"Create-TestCollection -Configuration {configuration} = (NotFound, NoConfiguration)");
+                _logger.Debug($"Create-TestCollection -Configuration {configuration} = (NotFound, NoConfiguration)");
                 return;
             }
 
             // add
             onCollection.Configurations.Add(configuration);
-            testsRepository.SetAuthentication(Authentication).Update($"{onCollection.Id}", onCollection);
+            _domain.Tests.SetAuthentication(Authentication).Update($"{onCollection.Id}", onCollection);
 
             // cascade
             onConfiguration.TestsRepository = new List<string>(onConfiguration.TestsRepository)
             {
                 $"{onCollection.Id}"
             };
-            configurationRepository.SetAuthentication(Authentication).Update(configuration, onConfiguration);
+            _domain.Configurations.SetAuthentication(Authentication).Update(configuration, onConfiguration);
         }
         #endregion
 
@@ -237,7 +233,7 @@ namespace Rhino.Controllers.Controllers
             var specs = requestBody.Split(Spec.Separator).Select(i => i.Trim());
 
             // get collection
-            var (statusCode, collection) = testsRepository.SetAuthentication(Authentication).Get(id);
+            var (statusCode, collection) = _domain.Tests.SetAuthentication(Authentication).Get(id);
 
             // bad request
             if (statusCode == StatusCodes.Status400BadRequest)
@@ -265,10 +261,10 @@ namespace Rhino.Controllers.Controllers
             collection.RhinoTestCaseModels = collection.RhinoTestCaseModels.Concat(testCaseModels).ToList();
 
             // update
-            testsRepository.SetAuthentication(Authentication).Update($"{collection.Id}", collection);
+            _domain.Tests.SetAuthentication(Authentication).Update($"{collection.Id}", collection);
 
             // get
-            return await InvokeGet(id);
+            return await InvokeGet(id).ConfigureAwait(false);
         }
 
         // PATCH api/v3/tests/:id/configurations/:configuration
@@ -285,7 +281,7 @@ namespace Rhino.Controllers.Controllers
             [SwaggerParameter(SwaggerDocument.Parameter.Congifuration)] string configuration)
         {
             // patch
-            var (statusCode, _) = ((ITestsRepository)testsRepository.SetAuthentication(Authentication)).Update(id, configuration);
+            var (statusCode, _) = ((ITestsRepository)_domain.Tests.SetAuthentication(Authentication)).Update(id, configuration);
 
             // bad request
             if (statusCode == StatusCodes.Status400BadRequest)
@@ -312,7 +308,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // get
-            var entity = testsRepository.SetAuthentication(Authentication).Get(id);
+            var entity = _domain.Tests.SetAuthentication(Authentication).Get(id);
             return new ContentResult
             {
                 Content = entity.Entity.Configurations.ToJson(),
@@ -334,7 +330,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Delete([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // delete
-            var statusCode = testsRepository.SetAuthentication(Authentication).Delete(id);
+            var statusCode = _domain.Tests.SetAuthentication(Authentication).Delete(id);
 
             // results
             return statusCode == StatusCodes.Status404NotFound
@@ -352,7 +348,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Delete()
         {
             // execute
-            testsRepository.SetAuthentication(Authentication).Delete();
+            _domain.Tests.SetAuthentication(Authentication).Delete();
 
             // get
             return NoContent();
@@ -363,7 +359,7 @@ namespace Rhino.Controllers.Controllers
         private async Task<IActionResult> InvokeGet(string id)
         {
             // setup
-            var (statusCode, entity) = testsRepository.SetAuthentication(Authentication).Get(id);
+            var (statusCode, entity) = _domain.Tests.SetAuthentication(Authentication).Get(id);
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound)

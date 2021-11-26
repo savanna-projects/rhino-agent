@@ -5,10 +5,10 @@
  */
 using Gravity.Abstraction.Logging;
 using Gravity.Abstraction.WebDriver;
-using Gravity.Extensions;
-using Gravity.Services.Comet;
 using Gravity.Services.Comet.Engine.Attributes;
 using Gravity.Services.DataContracts;
+
+using Microsoft.AspNetCore.Mvc;
 
 using OpenQA.Selenium;
 
@@ -35,32 +35,31 @@ namespace Rhino.Controllers.Domain.Data
     public class MetaDataRepository : IMetaDataRepository
     {
         // members: state
-        private readonly Orbit client;
-        private readonly IPluginsRepository plugins;
-        private readonly IRepository<RhinoModelCollection> models;
-        private readonly IEnumerable<Type> types;
-        private readonly ILogger logger;
+        private readonly IPluginsRepository _plugins;
+        private readonly IRepository<RhinoModelCollection> _models;
+        private readonly IEnumerable<Type> _types;
+        private readonly ILogger _logger;
 
         /// <summary>
-        /// Creates a new instance of StaticDataRepository.
+        /// Creates a new instance of MetaDataRepository.
         /// </summary>
-        /// <param name="client">An Orbit client to fetch data from Gravity components.</param>
         /// <param name="plugins">An IPluginsRepository implementation.</param>
         /// <param name="types">An IEnumerable<Type> implementation.</param>
         /// <param name="logger">An ILogger implementation to use with the Repository.</param>
         public MetaDataRepository(
-            Orbit client,
             IPluginsRepository plugins,
             IRepository<RhinoModelCollection> models,
             IEnumerable<Type> types,
             ILogger logger)
         {
-            this.client = client;
-            this.plugins = plugins;
-            this.models = models;
-            Logger = logger;
-            this.types = types;
-            this.logger = logger?.CreateChildLogger(nameof(MetaDataRepository));
+            // setup: fields
+            _plugins = plugins;
+            _models = models;
+            _types = types;
+            _logger = logger?.CreateChildLogger(nameof(MetaDataRepository));
+
+            // setup: properties
+            Logger = _logger;
         }
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace Rhino.Controllers.Domain.Data
             }
 
             // get
-            logger?.Debug($"Get-Actions = Ok, {actions.Count}");
+            _logger?.Debug($"Get-Actions = Ok, {actions.Count}");
             return actions.OrderBy(i => i.Key);
         }
 
@@ -107,7 +106,7 @@ namespace Rhino.Controllers.Domain.Data
             const BindingFlags Flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
             // setup
-            return types
+            return _types
                 .SelectMany(i => i.GetMethods(Flags))
                 .Select(i => i.GetCustomAttribute<AssertMethodAttribute>())
                 .Where(i => i != null)
@@ -123,7 +122,7 @@ namespace Rhino.Controllers.Domain.Data
         public IEnumerable<ConnectorModel> GetConnectors()
         {
             // setup
-            var onTypes = types.Where(t => typeof(IConnector).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+            var onTypes = _types.Where(t => typeof(IConnector).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
             var connectorTypes = onTypes.Where(i => i.GetCustomAttribute<ConnectorAttribute>() != null);
 
             // get
@@ -144,7 +143,7 @@ namespace Rhino.Controllers.Domain.Data
             const StringComparison Compare = StringComparison.Ordinal;
 
             // setup
-            var driverFactory = types.FirstOrDefault(t => t == typeof(DriverFactory));
+            var driverFactory = _types.FirstOrDefault(t => t == typeof(DriverFactory));
             if (driverFactory == default)
             {
                 return Array.Empty<DriverModel>();
@@ -177,7 +176,7 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>List of all available macros.</returns>
         public IEnumerable<MacroModel> GetMacros()
         {
-            return types.GetMacroAttributes().Select(i => ((MacroAttribute)i).ToModel());
+            return _types.GetMacroAttributes().Select(i => ((MacroAttribute)i).ToModel());
         }
 
         // TODO: implement GetExamples factory for getting examples for the different operators.
@@ -201,7 +200,7 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>A list all available reporters.</returns>
         public IEnumerable<ReporterModel> GetReporters()
         {
-            return types
+            return _types
                 .Where(i => i.GetCustomAttribute<ReporterAttribute>() != null)
                 .Select(i => i.GetCustomAttribute<ReporterAttribute>().ToModel())
                 .OrderBy(i => i.Key);
@@ -225,13 +224,29 @@ namespace Rhino.Controllers.Domain.Data
             };
 
             // build
-            var fileds = types.SelectMany(i => i.GetFields(Flags));
+            var fileds = _types.SelectMany(i => i.GetFields(Flags));
             var serviceEventFields = fileds.Where(i => i.GetCustomAttribute<ServiceEventAttribute>() != null);
             var serviceEvents = serviceEventFields
                 .Select(i => ($"{i.GetValue(null)}", i.GetCustomAttribute<ServiceEventAttribute>()));
 
             // get
             return serviceEvents.Select(i => GetModel(input: i));
+        }
+
+        /// <summary>
+        /// Gets a list of all available micro services under Rhino.Controllers.dll.
+        /// </summary>
+        /// <returns>A list all available reporters.</returns>
+        public IEnumerable<string> GetServices()
+        {
+            // setup
+            var types = Assembly.GetCallingAssembly().GetTypes();
+
+            // build
+            return types
+                .Where(i => typeof(ControllerBase).IsAssignableFrom(i))
+                .Select(i => i.Name.Replace("Controller", string.Empty).Trim().ToSpaceCase())
+                .OrderBy(i => i);
         }
 
         /// <summary>
@@ -260,12 +275,12 @@ namespace Rhino.Controllers.Domain.Data
             // not found
             if (!File.Exists(FileName))
             {
-                logger?.Debug("Get-Version = NotFound");
+                _logger?.Debug("Get-Version = NotFound");
                 return string.Empty;
             }
 
             // get
-            logger?.Debug("Get-Version = Ok");
+            _logger?.Debug("Get-Version = Ok");
             return await ControllerUtilities.ForceReadFileAsync(path: FileName).ConfigureAwait(false);
         }
 
@@ -312,7 +327,7 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>A collection of RhinoModelCollection</returns>
         public IEnumerable<RhinoModelCollection> GetModels()
         {
-            return models
+            return _models
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => i.Configurations?.Any() == false);
@@ -346,7 +361,7 @@ namespace Rhino.Controllers.Domain.Data
         public IEnumerable<BaseModel<object>> GetModelTypes()
         {
             // build
-            var _models = new RhinoModelTypeModel[]
+            var models = new RhinoModelTypeModel[]
             {
                 new RhinoModelTypeModel
                 {
@@ -373,7 +388,7 @@ namespace Rhino.Controllers.Domain.Data
             };
 
             // get
-            return _models.Concat(InvokeGetLocators());
+            return models.Concat(InvokeGetLocators());
         }
 
         // UTILITIES
@@ -381,13 +396,13 @@ namespace Rhino.Controllers.Domain.Data
         private IEnumerable<(string Source, ActionAttribute Action)> InvokeGetActions()
         {
             // setup
-            var gravityPlugins = types.GetActionAttributes();
-            var pluginSpecs = plugins.SetAuthentication(Authentication).Get();
+            var gravityPlugins = _types.GetActionAttributes();
+            var pluginSpecs = _plugins.SetAuthentication(Authentication).Get();
             var pluginObjcs = new RhinoPluginFactory().GetRhinoPlugins(pluginSpecs.ToArray());
 
             // convert
             var attributes = pluginObjcs.Select(i => (ActionModel.ActionSource.Plugin, i.ToAttribute()));
-            logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Plugin} = Ok, {attributes.Count()}");
+            _logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Plugin} = Ok, {attributes.Count()}");
 
             // all actions
             // collect all potential types
@@ -395,7 +410,7 @@ namespace Rhino.Controllers.Domain.Data
                 .Select(i => (ActionModel.ActionSource.Code, (ActionAttribute)gravityPlugins.FirstOrDefault(a => a.Name == i.Name)))
                 .Concat(attributes);
             actions = actions?.Any() == false ? Array.Empty<(string, ActionAttribute)>() : actions;
-            logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Code} = Ok, {actions.Count()}");
+            _logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Code} = Ok, {actions.Count()}");
 
             // get
             return actions;
@@ -404,7 +419,7 @@ namespace Rhino.Controllers.Domain.Data
         private IEnumerable<BaseModel<object>> InvokeGetLocators()
         {
             // get relevant by method
-            var methods = types
+            var methods = _types
                 .SelectMany(t => t.GetMethods())
                 .Where(m => m.IsStatic && m.ReturnType == typeof(By));
 

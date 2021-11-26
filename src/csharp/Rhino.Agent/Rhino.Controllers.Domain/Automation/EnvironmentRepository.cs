@@ -32,7 +32,7 @@ namespace Rhino.Controllers.Domain.Automation
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
         // members: state
-        private readonly ILogger logger;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Domain.Repository.
@@ -43,7 +43,7 @@ namespace Rhino.Controllers.Domain.Automation
         public EnvironmentRepository(ILogger logger, ILiteDatabase liteDb, IConfiguration configuration)
             : base(logger, liteDb, configuration)
         {
-            this.logger = logger.CreateChildLogger(nameof(EnvironmentRepository));
+            _logger = logger.CreateChildLogger(nameof(EnvironmentRepository));
         }
 
         #region *** Add    ***
@@ -80,7 +80,7 @@ namespace Rhino.Controllers.Domain.Automation
             // sync
             environment.Environment[entity.Key] = entity.Value;
             collection.UpdateEntityModel(environment.Id, environment);
-            logger?.Debug($"Update-RhinoEnvironmentModel -Id {environment.Id} = Ok");
+            _logger?.Debug($"Update-RhinoEnvironmentModel -Id {environment.Id} = Ok");
 
             // results
             return $"{entity.Value}";
@@ -95,7 +95,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns><see cref="int"/>.</returns>
         public override int Delete(string id)
         {
-            logger?.Debug($"Delete-Parameter -Id {id} = (NotImplemented, NotSuiteable)");
+            _logger?.Debug($"Delete-Parameter -Id {id} = (NotImplemented, NotSuiteable)");
             return StatusCodes.Status204NoContent;
         }
 
@@ -125,7 +125,7 @@ namespace Rhino.Controllers.Domain.Automation
             // not found
             if (environment == default)
             {
-                logger?.Debug($"Delete-Parameter -Name {name} = (NotFound, NoEnvironment)");
+                _logger?.Debug($"Delete-Parameter -Name {name} = (NotFound, NoEnvironment)");
                 return StatusCodes.Status404NotFound;
             }
 
@@ -135,7 +135,7 @@ namespace Rhino.Controllers.Domain.Automation
             // not found
             if (!isParameter)
             {
-                logger?.Debug($"Delete-Parameter -Name {name} = (NotFound, NoParameter)");
+                _logger?.Debug($"Delete-Parameter -Name {name} = (NotFound, NoParameter)");
                 return StatusCodes.Status404NotFound;
             }
 
@@ -165,7 +165,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns><see cref="int"/> and KeyValuePair<string, object> object (if any).</returns>
         public override (int StatusCode, KeyValuePair<string, object> Entity) Get(string id)
         {
-            logger?.Debug($"Get-Parameter -Id {id} = (NotImplemented, NotSuiteable)");
+            _logger?.Debug($"Get-Parameter -Id {id} = (NotImplemented, NotSuiteable)");
             return (StatusCodes.Status200OK, new KeyValuePair<string, object>("key", "value"));
         }
 
@@ -182,7 +182,7 @@ namespace Rhino.Controllers.Domain.Automation
             // not found
             if (!environment.ContainsKey(name))
             {
-                logger?.Debug($"Get-Parameter -Name {name} = (NotFound, Environment | Parameter)");
+                _logger?.Debug($"Get-Parameter -Name {name} = (NotFound, Environment | Parameter)");
                 return (StatusCodes.Status404NotFound, new KeyValuePair<string, object>("", ""));
             }
 
@@ -204,7 +204,7 @@ namespace Rhino.Controllers.Domain.Automation
             {
                 AutomationEnvironment.SessionParams[parameter.Key] = parameter.Value;
             }
-            logger?.Debug($"Update-Parameter -Sync -All = (Ok, {environment.Count})");
+            _logger?.Debug($"Update-Parameter -Sync -All = (Ok, {environment.Count})");
 
             // get
             return (StatusCodes.Status200OK, environment);
@@ -220,7 +220,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns><see cref="int"/> and KeyValuePair<string, object> object (if any).</returns>
         public override (int StatusCode, KeyValuePair<string, object> Entity) Update(string id, KeyValuePair<string, object> entity)
         {
-            logger?.Debug("Update-Parameter" +
+            _logger?.Debug("Update-Parameter" +
                 $"-Id {id}" +
                 $"-Key {entity.Key}" +
                 $"-Value {entity.Value} = (NotImplemented, NotSuiteable)");

@@ -121,10 +121,10 @@ namespace Rhino.Controllers.Extensions
             return DoReadAsync(request);
         }
 
-        private static Task<string> DoReadAsync(HttpRequest request)
+        private static async Task<string> DoReadAsync(HttpRequest request)
         {
             using var streamReader = new StreamReader(request.Body);
-            return streamReader.ReadToEndAsync();
+            return await streamReader.ReadToEndAsync().ConfigureAwait(false);
         }
         #endregion
     }

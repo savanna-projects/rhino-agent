@@ -30,7 +30,7 @@ namespace Rhino.Controllers.Domain
         public readonly string DataEncryptionConfiguration = "Rhino:StateManager:DataEncryptionKey";
 
         // members: state
-        private readonly ILogger logger;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Domain.Repository.
@@ -42,7 +42,7 @@ namespace Rhino.Controllers.Domain
         {
             LiteDb = liteDb;
             Configuration = configuration;
-            this.logger = logger;
+            _logger = logger;
         }
 
         /// <summary>
@@ -81,9 +81,9 @@ namespace Rhino.Controllers.Domain
 
             // log
             var userName = authentication.UserName.Length > 3
-                ? authentication.UserName.Substring(0, 3)
+                ? authentication.UserName[..3]
                 : authentication.UserName;
-            logger?.Debug($"Set-Authentication -User {userName}*** -Password HaHa ;o) = Ok");
+            _logger?.Debug($"Set-Authentication -User {userName}*** -Password HaHa ;o) = Ok");
 
             // get
             return this;
@@ -101,7 +101,7 @@ namespace Rhino.Controllers.Domain
 
             // convert
             CollectionName = $"{name}_{enStringBody}";
-            logger?.Debug($"Set-CollectionName -Name: {CollectionName} = Ok");
+            _logger?.Debug($"Set-CollectionName -Name: {CollectionName} = Ok");
 
             // get
             return this;
@@ -158,8 +158,8 @@ namespace Rhino.Controllers.Domain
         public virtual (int StatusCode, T Entity) Update(string id, IDictionary<string, object> fields)
         {
             // log
-            logger?.Debug($"Update-Entity -Partial -Type {typeof(T).Name} = NotImplemented");
-            
+            _logger?.Debug($"Update-Entity -Partial -Type {typeof(T).Name} = NotImplemented");
+
             // get
             return (StatusCodes.Status501NotImplemented, default);
         }

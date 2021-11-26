@@ -6,23 +6,17 @@
 using Gravity.Extensions;
 using Gravity.Services.DataContracts;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.AutomationProvider;
-using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mime;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {
@@ -35,8 +29,7 @@ namespace Rhino.Controllers.Controllers
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
         // members: state
-        private readonly IRepository<RhinoModelCollection> modelsRepository;
-        private readonly IRepository<RhinoConfiguration> configurationsRepository;
+        private readonly IDomain _domain;
 
         // members: private properties
         private Authentication Authentication => Request.GetAuthentication();
@@ -44,14 +37,10 @@ namespace Rhino.Controllers.Controllers
         /// <summary>
         /// Creates a new instance of <see cref="ControllerBase"/>.
         /// </summary>
-        /// <param name="modelsRepository">An IRepository<RhinoModelCollection> implementation to use with the Controller.</param>
-        /// <param name="configurationsRepository">An IRepository<RhinoConfiguration> configurationsRepository implementation to use with the Controller.</param>
-        public ModelsController(
-            IRepository<RhinoModelCollection> modelsRepository,
-            IRepository<RhinoConfiguration> configurationsRepository)
+        /// <param name="domain">An IDomain implementation to use with the Controller.</param>
+        public ModelsController(IDomain domain)
         {
-            this.modelsRepository = modelsRepository;
-            this.configurationsRepository = configurationsRepository;
+            _domain = domain;
         }
 
         #region *** Get    ***
@@ -66,7 +55,8 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Get()
         {
             // setup
-            var responseBody = modelsRepository
+            var responseBody = _domain
+                .Models
                 .SetAuthentication(Authentication)
                 .Get()
                 .Select(GetCollection);
@@ -87,7 +77,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Get([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // get data
-            var (statusCode, modelCollection) = modelsRepository.SetAuthentication(Authentication).Get(id);
+            var (statusCode, modelCollection) = _domain.Models.SetAuthentication(Authentication).Get(id);
 
             // exit conditions
             if (statusCode == StatusCodes.Status404NotFound)
@@ -113,7 +103,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetConfigurations([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // get data
-            var (statusCode, modelCollection) = modelsRepository.SetAuthentication(Authentication).Get(id);
+            var (statusCode, modelCollection) = _domain.Models.SetAuthentication(Authentication).Get(id);
 
             // exit conditions
             if (statusCode == StatusCodes.Status404NotFound)
@@ -216,7 +206,6 @@ namespace Rhino.Controllers.Controllers
             return InvokeCreate(configuration: configuration, _pageModels);
         }
 
-
         // TODO: remove when available from Rhino.Api
         private static string CleanSpec(string spec)
         {
@@ -260,7 +249,7 @@ namespace Rhino.Controllers.Controllers
                     .ErrorResultAsync<IEnumerable<RhinoPageModel>>(badRequest.Replace("$(Reason)", "NoModels"), StatusCodes.Status400BadRequest)
                     .ConfigureAwait(false);
             }
-            if (pageModels.SelectMany(i => i.Entries)?.Any() == false)
+            if (pageModels?.SelectMany(i => i.Entries)?.Any() == false)
             {
                 return await this
                     .ErrorResultAsync<IEnumerable<RhinoPageModel>>(badRequest.Replace("$(Reason)", "NoEntries"), StatusCodes.Status400BadRequest)
@@ -270,7 +259,7 @@ namespace Rhino.Controllers.Controllers
             // setup
             var collection = new RhinoModelCollection();
             collection.Configurations ??= new List<string>();
-            collection.Models = pageModels.ToList();
+            collection.Models = pageModels?.ToList() ?? new List<RhinoPageModel>();
 
             // add configuration
             if (!string.IsNullOrEmpty(configuration))
@@ -279,7 +268,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // add
-            var id = modelsRepository.SetAuthentication(Authentication).Add(entity: collection);
+            var id = _domain.Models.SetAuthentication(Authentication).Add(entity: collection);
 
             // already created
             if (string.IsNullOrEmpty(id))
@@ -317,7 +306,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // setup
-            var (statusCode, modelCollection) = modelsRepository.SetAuthentication(Authentication).Get(id);
+            var (statusCode, modelCollection) = _domain.Models.SetAuthentication(Authentication).Get(id);
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound)
@@ -337,10 +326,10 @@ namespace Rhino.Controllers.Controllers
             modelCollection.Models = models;
 
             // update
-            modelsRepository.Update(id, modelCollection);
+            _domain.Models.Update(id, modelCollection);
 
             // get
-            var (StatusCode, Entity) = modelsRepository.Get(id);
+            var (StatusCode, Entity) = _domain.Models.Get(id);
             return new ContentResult
             {
                 StatusCode = StatusCode,
@@ -349,13 +338,11 @@ namespace Rhino.Controllers.Controllers
             };
         }
 
-        // PATCH api/v3/models/:id/configurations/:configuration
         [HttpPatch("{id}/configurations/{configuration}")]
         [SwaggerOperation(
             Summary = "Add-RhinoModelCollection -Id {00000000-0000-0000-0000-000000000000} -Configuration {00000000-0000-0000-0000-000000000000}",
             Description = "Add an existing _**Configuration**_ to the provided _**Models Collection**_.")]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(RhinoModelCollection))]
         [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<IEnumerable<RhinoPageModel>>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<IEnumerable<RhinoPageModel>>))]
@@ -375,8 +362,8 @@ namespace Rhino.Controllers.Controllers
             }
 
             // setup
-            var (statusCode, modelCollection) = modelsRepository.SetAuthentication(Authentication).Get(id);
-            var (configurationStatusCode, _) = configurationsRepository.SetAuthentication(Authentication).Get(configuration);
+            var (statusCode, modelCollection) = _domain.Models.SetAuthentication(Authentication).Get(id);
+            var (configurationStatusCode, _) = _domain.Configurations.SetAuthentication(Authentication).Get(configuration);
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound || configurationStatusCode == StatusCodes.Status404NotFound)
@@ -390,16 +377,16 @@ namespace Rhino.Controllers.Controllers
             }
 
             // add if not exists
-            if (!modelCollection.Configurations.Any(i=>i.Equals(configuration, Compare)))
+            if (!modelCollection.Configurations.Any(i => i.Equals(configuration, Compare)))
             {
                 modelCollection.Configurations.Add(configuration);
             }
 
             // update
-            modelsRepository.Update(id, modelCollection);
+            _domain.Models.Update(id, modelCollection);
 
             // get
-            var (StatusCode, Entity) = modelsRepository.Get(id);
+            var (StatusCode, Entity) = _domain.Models.Get(id);
             return new ContentResult
             {
                 StatusCode = StatusCode,
@@ -421,7 +408,7 @@ namespace Rhino.Controllers.Controllers
         public async Task< IActionResult> Delete([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // delete
-            var statusCode = modelsRepository.SetAuthentication(Authentication).Delete(id);
+            var statusCode = _domain.Models.SetAuthentication(Authentication).Delete(id);
 
             // results
             return statusCode == StatusCodes.Status404NotFound
@@ -439,7 +426,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Delete()
         {
             // delete
-            modelsRepository.SetAuthentication(Authentication).Delete();
+            _domain.Models.SetAuthentication(Authentication).Delete();
 
             // results
             return NoContent();

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Rhino.Controllers.Extensions
 {
@@ -16,9 +17,6 @@ namespace Rhino.Controllers.Extensions
     /// </summary>
     public static class ObjectExtensions
     {
-        // constants
-        //private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
-
         /// <summary>
         /// Serialize and <see cref="object"/> to Json.
         /// </summary>
@@ -29,7 +27,7 @@ namespace Rhino.Controllers.Extensions
             // setup
             var options = new JsonSerializerOptions
             {
-                IgnoreNullValues = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true,
             };
@@ -47,33 +45,6 @@ namespace Rhino.Controllers.Extensions
         {
             return DoToJson(obj, options);
         }
-
-        //// TODO: fix all Gravity/Rhino attributes to exclude TypeId field.
-        //// TODO: remove when attributes were fixed.
-        ///// <summary>
-        ///// Converts a non-serializable object into a serializable object.
-        ///// </summary>
-        ///// <typeparam name="T">The type of the object.</typeparam>
-        ///// <param name="obj">The object con convert.</param>
-        ///// <returns>A serializable object</returns>
-        ///// <remarks>Supports only public properties. This is a bridge method and will be removed later on.</remarks>
-        //public static object ToSerializable<T>(this T obj)
-        //{
-        //    // constants
-        //    const BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public;
-
-        //    // setup
-        //    var objOut = new Dictionary<string, object>();
-
-        //    // build
-        //    foreach (var property in obj.GetType().GetProperties(Flags).Where(i => !i.Name.Equals("TypeId", Compare)))
-        //    {
-        //        objOut[property.Name] = property.GetValue(obj);
-        //    }
-
-        //    // get
-        //    return objOut;
-        //}
 
         private static string DoToJson(object obj, JsonSerializerOptions options)
         {

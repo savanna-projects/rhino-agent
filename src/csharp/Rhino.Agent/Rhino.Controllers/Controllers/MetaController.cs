@@ -6,7 +6,6 @@
 using Gravity.Extensions;
 using Gravity.Services.DataContracts;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.AutomationProvider;
@@ -17,11 +16,7 @@ using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mime;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {
@@ -31,7 +26,7 @@ namespace Rhino.Controllers.Controllers
     public class MetaController : ControllerBase
     {
         // constants
-        private static readonly string[] ExcludeActions = new[]
+        private static readonly string[] s_excludeActions = new[]
         {
             ActionType.Assert,
             ActionType.BannersListener,
@@ -70,13 +65,13 @@ namespace Rhino.Controllers.Controllers
             var entities = dataRepository
                 .SetAuthentication(Authentication)
                 .GetPlugins()
-                .Where(i => !ExcludeActions.Contains(i.Key))
+                .Where(i => !s_excludeActions.Contains(i.Key))
                 .Select(i => new
                 {
                     i.Key,
                     Literal = i.Key.PascalToSpaceCase(),
                     i.Source,
-                    Description = i.Entity.GetType().GetProperty("Description").GetValue(i.Entity),
+                    Description = i.Entity.GetType().GetProperty("Description")?.GetValue(i.Entity) ?? string.Empty,
                     Aliases = Array.Empty<string>()
                 });
 
@@ -99,7 +94,7 @@ namespace Rhino.Controllers.Controllers
             var entity = dataRepository
                 .SetAuthentication(Authentication)
                 .GetPlugins()
-                .FirstOrDefault(i => !ExcludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
+                .FirstOrDefault(i => !s_excludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
             if (entity == default)
@@ -115,7 +110,7 @@ namespace Rhino.Controllers.Controllers
                 entity.Key,
                 Literal = entity.Key.PascalToSpaceCase(),
                 entity.Source,
-                Description = entity.Entity.GetType().GetProperty("Description").GetValue(entity.Entity),
+                Description = entity.Entity.GetType().GetProperty("Description")?.GetValue(entity.Entity) ?? string.Empty,
                 Aliases = Array.Empty<string>()
             });
         }
@@ -134,7 +129,7 @@ namespace Rhino.Controllers.Controllers
             var entities = dataRepository
                 .SetAuthentication(Authentication)
                 .GetPlugins()
-                .Where(i => !ExcludeActions.Contains(i.Key));
+                .Where(i => !s_excludeActions.Contains(i.Key));
 
             // return
             return Ok(entities);
@@ -155,7 +150,7 @@ namespace Rhino.Controllers.Controllers
             var entity = dataRepository
                 .SetAuthentication(Authentication)
                 .GetPlugins()
-                .FirstOrDefault(i => !ExcludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
+                .FirstOrDefault(i => !s_excludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
 
             // not found
             if (entity == default)
@@ -662,7 +657,7 @@ namespace Rhino.Controllers.Controllers
             if (entities?.Any() == false)
             {
                 return await this
-                    .ErrorResultAsync<string>($"Get-Verbs -Name All = NotFound", StatusCodes.Status404NotFound)
+                    .ErrorResultAsync<string>("Get-Verbs -Name All = NotFound", StatusCodes.Status404NotFound)
                     .ConfigureAwait(false);
             }
 
@@ -690,7 +685,7 @@ namespace Rhino.Controllers.Controllers
         // GET: api/v3/meta/events/:key
         [HttpGet, Route("events/{key}")]
         [SwaggerOperation(
-            Summary = "Get-ServiceEvent -key {eventKey}",
+            Summary = "Get-ServiceEvent -Key {eventKey}",
             Description = "Returns a single available _**Service Event**_.")]
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(ServiceEventModel))]
@@ -714,6 +709,23 @@ namespace Rhino.Controllers.Controllers
 
             // return
             return Ok(entity);
+        }
+
+        // GET: api/v3/meta/services
+        [HttpGet, Route("services")]
+        [SwaggerOperation(
+            Summary = "Get-Services -All",
+            Description = "list of all available micro services under _**Rhino.Controllers.dll**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(ServiceEventModel))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetServices()
+        {
+            // build
+            var services = dataRepository.GetServices();
+
+            // get
+            return Ok(services);
         }
         #endregion
     }

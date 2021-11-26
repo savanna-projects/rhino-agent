@@ -5,7 +5,6 @@
  */
 using Gravity.Services.DataContracts;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.Configuration;
@@ -15,10 +14,7 @@ using Rhino.Controllers.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mime;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {
@@ -28,7 +24,7 @@ namespace Rhino.Controllers.Controllers
     public class ConfigurationsController : ControllerBase
     {
         // members: state
-        private readonly IRepository<RhinoConfiguration> configurationsRepository;
+        private readonly IDomain _domain;
 
         // members: private properties
         private Authentication Authentication => Request.GetAuthentication();
@@ -36,10 +32,10 @@ namespace Rhino.Controllers.Controllers
         /// <summary>
         /// Creates a new instance of <see cref="ControllerBase"/>.
         /// </summary>
-        /// <param name="configurationsRepository">An IRepository<RhinoConfiguration> implementation to use with the Controller.</param>
-        public ConfigurationsController(IRepository<RhinoConfiguration> configurationsRepository)
+        /// <param name="domain">An IDomain implementation to use with the Controller.</param>
+        public ConfigurationsController(IDomain domain)
         {
-            this.configurationsRepository = configurationsRepository;
+            _domain = domain;
         }
 
         #region *** Get    ***
@@ -54,7 +50,8 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Get()
         {
             // get response
-            var configurations = configurationsRepository
+            var configurations = _domain
+                .Configurations
                 .SetAuthentication(Authentication)
                 .Get()
                 .Select(GetConfigurationResponse);
@@ -75,7 +72,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Get([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // get data
-            var (statusCode, configuration) = configurationsRepository.SetAuthentication(Authentication).Get(id);
+            var (statusCode, configuration) = _domain.Configurations.SetAuthentication(Authentication).Get(id);
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound)
@@ -120,7 +117,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // build
-            var id = configurationsRepository.SetAuthentication(Authentication).Add(configuration);
+            var id = _domain.Configurations.SetAuthentication(Authentication).Add(configuration);
             var responseBody = new { id };
 
             // get
@@ -152,7 +149,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // get results
-            var (statusCode, _) = configurationsRepository.SetAuthentication(Authentication).Update(id, entity: configuration);
+            var (statusCode, _) = _domain.Configurations.SetAuthentication(Authentication).Update(id, entity: configuration);
 
             // exit conditions
             if (statusCode == StatusCodes.Status404NotFound)
@@ -163,7 +160,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // response
-            var (StatusCode, Entity) = configurationsRepository.Get(id);
+            var (StatusCode, Entity) = _domain.Configurations.Get(id);
             return new ContentResult
             {
                 StatusCode = StatusCode,
@@ -190,13 +187,13 @@ namespace Rhino.Controllers.Controllers
             [FromBody, SwaggerRequestBody(SwaggerDocument.Parameter.Entity)] IDictionary<string, object> fields)
         {
             // exit conditions
-            if (!fields.Any())
+            if (fields.Count == 0)
             {
                 return NoContent();
             }
 
             // get results
-            var (statusCode, _) = configurationsRepository.SetAuthentication(Authentication).Update(id, fields);
+            var (statusCode, _) = _domain.Configurations.SetAuthentication(Authentication).Update(id, fields);
 
             // exit conditions
             if (statusCode == StatusCodes.Status404NotFound)
@@ -213,7 +210,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // response
-            var (StatusCode, Entity) = configurationsRepository.Get(id);
+            var (StatusCode, Entity) = _domain.Configurations.Get(id);
             return new ContentResult
             {
                 StatusCode = StatusCode,
@@ -235,7 +232,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Delete([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // get credentials
-            var statusCode = configurationsRepository.SetAuthentication(Authentication).Delete(id);
+            var statusCode = _domain.Configurations.SetAuthentication(Authentication).Delete(id);
 
             // results
             return statusCode == StatusCodes.Status404NotFound
@@ -253,7 +250,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Delete()
         {
             // get credentials
-            configurationsRepository.SetAuthentication(Authentication).Delete();
+            _domain.Configurations.SetAuthentication(Authentication).Delete();
 
             // results
             return NoContent();

@@ -20,5 +20,6 @@ printf '%s\n' \
         '[ alt_names ]' \
         'DNS.1   = localhost' \
         'DNS.2   = 127.0.0.1' > https.config && \
-openssl req -x509 -subj '/commonName=Rhino API HTTPS development certificate' -nodes -days 365000 -newkey rsa:2048 -keyout https.key -out https.crt -config https.config && \
-openssl pkcs12 -export -out https.pfx -inkey https.key -in https.crt -passin pass:pin -passout pass:pot
+openssl req -x509 -subj '/commonName=Rhino API HTTPS development certificate' -nodes -newkey rsa:2048 -keyout https.key -out https.crt -config https.config && \
+openssl x509 -days 358000 -req -in https.csr -CA https.crt -CAkey https.key -CAcreateserial -out Rhino.Agent.crt
+openssl pkcs12 -export -out https.pfx -inkey https.key -in https.crt -passin pass:rhinoapi -passout pass:rhinoapi

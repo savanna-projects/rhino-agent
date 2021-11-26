@@ -5,7 +5,6 @@
  */
 using Gravity.Services.DataContracts;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.AutomationProvider;
@@ -17,11 +16,8 @@ using Rhino.Controllers.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {
@@ -31,9 +27,7 @@ namespace Rhino.Controllers.Controllers
     public class RhinoController : ControllerBase
     {
         // members: state
-        private readonly IRhinoRepository rhinoRepository;
-        private readonly ITestsRepository testsRepository;
-        private readonly IRepository<RhinoConfiguration> configurationsRepository;
+        private readonly IDomain _domain;
 
         // members: private properties
         private Authentication Authentication => Request.GetAuthentication();
@@ -41,18 +35,10 @@ namespace Rhino.Controllers.Controllers
         /// <summary>
         /// Creates a new instance of <see cref="ControllerBase"/>.
         /// </summary>
-        /// <param name="rhinoRepository">An IRhinoRepository implementation to use with the Controller.</param>
-        /// <param name="testsRepository">An ITestsRepository implementation to use with the Controller.</param>
-        /// <param name="configurationsRepository">An IRepository<RhinoConfiguration> implementation to use with the Controller.</param>
-        /// <param name="provider">An IServiceProvider implementation to use with the Controller. Use for explicit injection when run in parallel for thread safety.</param>
-        public RhinoController(
-            IRhinoRepository rhinoRepository,
-            ITestsRepository testsRepository,
-            IRepository<RhinoConfiguration> configurationsRepository)
+        /// <param name="domain">An IDomain implementation to use with the Controller.</param>
+        public RhinoController(IDomain domain)
         {
-            this.rhinoRepository = rhinoRepository;
-            this.testsRepository = testsRepository;
-            this.configurationsRepository = configurationsRepository;
+            _domain = domain;
         }
 
         #region *** Configurations ***
@@ -69,7 +55,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult InvokeConfiguration([FromBody, SwaggerRequestBody(SwaggerDocument.Parameter.Entity)] RhinoConfiguration configuration)
         {
             // invoke
-            var invokeResponse = rhinoRepository.SetAuthentication(Authentication).InvokeConfiguration(configuration);
+            var invokeResponse = _domain.Rhino.SetAuthentication(Authentication).InvokeConfiguration(configuration);
 
             // get
             return GetInvokeResponse(configuration, invokeResponse);
@@ -88,7 +74,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult InvokeConfiguration([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // invoke
-            var invokeResponse = rhinoRepository.SetAuthentication(Authentication).InvokeConfiguration(id);
+            var invokeResponse = _domain.Rhino.SetAuthentication(Authentication).InvokeConfiguration(id);
 
             // get
             return GetInvokeResponse(id, invokeResponse);
@@ -100,7 +86,7 @@ namespace Rhino.Controllers.Controllers
         [HttpPost, Route("configurations/{id}/collections/invoke")]
         [SwaggerOperation(
             Summary = "Invoke-Collection -Configuration {00000000-0000-0000-0000-000000000000}",
-            Description = "Invokes _**Rhino Spec**_ directly from the request body using pre existing configuration.")]
+            Description = "Invokes _**Rhino Spec**_ directly from the request body using preexisting configuration.")]
         [Consumes(MediaTypeNames.Text.Plain)]
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(RhinoTestRun))]
@@ -114,7 +100,7 @@ namespace Rhino.Controllers.Controllers
                 .Split(Spec.Separator)
                 .Select(i => i.Trim())
                 .Where(i => !string.IsNullOrEmpty(i));
-            var configuration = configurationsRepository.SetAuthentication(Authentication).Get(id);
+            var configuration = _domain.Configurations.SetAuthentication(Authentication).Get(id);
 
             // not found
             if (configuration.StatusCode == StatusCodes.Status404NotFound)
@@ -127,7 +113,10 @@ namespace Rhino.Controllers.Controllers
 
             // invoke
             configuration.Entity.TestsRepository = collection;
-            var invokeResponse = rhinoRepository.SetAuthentication(Authentication).InvokeConfiguration(configuration.Entity);
+            var invokeResponse = _domain
+                .Rhino
+                .SetAuthentication(Authentication)
+                .InvokeConfiguration(configuration.Entity);
 
             // get
             return GetInvokeResponse(collection, invokeResponse);
@@ -137,7 +126,7 @@ namespace Rhino.Controllers.Controllers
         [HttpGet, Route("configurations/{configuration}/collections/invoke/{collection}")]
         [SwaggerOperation(
             Summary = "Invoke-Collection -Configuration {00000000-0000-0000-0000-000000000000} -Collection {00000000-0000-0000-0000-000000000000}",
-            Description = "Invokes _**Rhino Spec**_ from the application state using pre existing configuration.")]
+            Description = "Invokes _**Rhino Spec**_ from the application state using preexisting configuration.")]
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(RhinoTestRun))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<string>))]
@@ -164,8 +153,8 @@ namespace Rhino.Controllers.Controllers
             }
 
             // setup
-            var (collectionStatusCode, collectionEntity) = testsRepository.SetAuthentication(Authentication).Get(id: collection);
-            var (configurationStatusCode, configurationEntity) = configurationsRepository.SetAuthentication(Authentication).Get(id: configuration);
+            var (collectionStatusCode, collectionEntity) = _domain.Tests.SetAuthentication(Authentication).Get(id: collection);
+            var (configurationStatusCode, configurationEntity) = _domain.Configurations.SetAuthentication(Authentication).Get(id: configuration);
 
             // not found
             isConfiguration = configurationStatusCode == StatusCodes.Status200OK;
@@ -180,7 +169,10 @@ namespace Rhino.Controllers.Controllers
 
             // invoke
             configurationEntity.TestsRepository = collectionEntity.RhinoTestCaseModels.Select(i => i.RhinoSpec);
-            var invokeResponse = rhinoRepository.SetAuthentication(Authentication).InvokeConfiguration(configurationEntity);
+            var invokeResponse = _domain
+                .Rhino
+                .SetAuthentication(Authentication)
+                .InvokeConfiguration(configurationEntity);
 
             // get
             return GetInvokeResponse(collection, invokeResponse);
@@ -190,7 +182,7 @@ namespace Rhino.Controllers.Controllers
         [HttpGet, Route("collections/invoke/{id}")]
         [SwaggerOperation(
             Summary = "Invoke-Collection -Configuration All -Collection {00000000-0000-0000-0000-000000000000} -Parallel {True|False}",
-            Description = "Invokes _**Rhino Spec**_ from the application state using pre existing collection.")]
+            Description = "Invokes _**Rhino Spec**_ from the application state using preexisting collection.")]
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<RhinoTestRun>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<string>))]
@@ -216,7 +208,10 @@ namespace Rhino.Controllers.Controllers
             }
 
             // invoke
-            var results = rhinoRepository.SetAuthentication(Authentication).InvokeCollection(collection: id, isParallel, maxParallel);
+            var results = _domain
+                .Rhino
+                .SetAuthentication(Authentication)
+                .InvokeCollection(collection: id, isParallel, maxParallel);
 
             // not found
             if (results.Count() == 1 && results.First().StatusCode == StatusCodes.Status404NotFound)

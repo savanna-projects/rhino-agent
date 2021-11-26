@@ -1,0 +1,70 @@
+﻿<li class="@_activeClass">
+    <a @onclick="@InvokeToggle">
+        <i class="@Icon"></i> @Title 
+        @if(Items?.Any() != false)
+        {
+            <span class="@_arrow"></span>
+        }
+    </a>
+    @if (Items?.Any() != false)
+    {
+        <ul class="nav child_menu" style="@_subMenuStyle">
+            @foreach (var item in Items)
+            {
+                <li><a href="#">@item</a></li>
+            }
+        </ul>
+    }
+</li>
+
+@code {
+    // Public Parameters
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Icon { get; set; }
+
+    [Parameter]
+    public IEnumerable<string> Items { get; set; }
+
+    [Parameter]
+    public bool Active { get; set; }
+
+    // Component Behaviour
+    private string _activeClass = "";
+    private string _subMenuStyle = "";
+    private string _arrow = "";
+
+    protected override void OnInitialized()
+    {
+        // setup: properties
+        Items ??= Array.Empty<string>();
+        Active = false;
+
+        // setup: state
+        _subMenuStyle = Active ? "display: block;" : "display: none;";
+        _arrow = Active ? "fa fa-chevron-down" : "fa fa-chevron-right";
+        StateHasChanged();
+    }
+
+    private void InvokeToggle()
+    {
+        // setup
+        Active = !Active;
+
+        // upadte state
+        _activeClass = Active ? "active" : "";
+        _arrow = Active ? "fa fa-chevron-down" : "fa fa-chevron-right";
+        StateHasChanged();
+
+        // invoke animation
+        InvokeAnimation(_activeClass == "active");
+    }
+
+    private void InvokeAnimation(bool show)
+    {
+        _subMenuStyle = show ? "display: block;" : "display: none;";
+        StateHasChanged();
+    }
+}

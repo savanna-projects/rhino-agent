@@ -26,7 +26,7 @@ namespace Rhino.Controllers.Domain.Automation
     public class LogsRepository : ILogsRepository
     {
         // members: state
-        private readonly ILogger logger;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Domain.Automation.LogsRepository.
@@ -34,7 +34,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// <param name="logger">An ILogger implementation to use with the Repository.</param>
         public LogsRepository(ILogger logger)
         {
-            this.logger = logger.CreateChildLogger(nameof(LogsRepository));
+            _logger = logger.CreateChildLogger(nameof(LogsRepository));
         }
 
         #region *** Get    ***
@@ -49,7 +49,7 @@ namespace Rhino.Controllers.Domain.Automation
             var logs = Directory.Exists(logPath)
                 ? Directory.GetFiles(logPath).Select(i => Path.GetFileName(i))
                 : Array.Empty<string>();
-            logger?.Debug($"Get-Logs -LogPath {logPath} = {logs.Count()}");
+            _logger?.Debug($"Get-Logs -LogPath {logPath} = {logs.Count()}");
 
             // get
             return logs;
@@ -88,7 +88,7 @@ namespace Rhino.Controllers.Domain.Automation
             var collection = logData.Split(Environment.NewLine);
             var logs = collection.Skip(Math.Max(0, collection.Length - numberOfLines));
             var logsResult = string.Join(Environment.NewLine, logs);
-            logger?.Debug($"Get-Log -LogPath {logPath} -Id {id} -NumberOfLines {numberOfLines} = Ok");
+            _logger?.Debug($"Get-Log -LogPath {logPath} -Id {id} -NumberOfLines {numberOfLines} = Ok");
 
             // results
             return (StatusCodes.Status200OK, logsResult);
@@ -113,7 +113,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // build
             var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(logData ?? ""));
-            logger?.Debug($"Get-LogAsMemoryStream -LogPath {logPath} Id {id} = Ok");
+            _logger?.Debug($"Get-LogAsMemoryStream -LogPath {logPath} Id {id} = Ok");
 
             // get
             return (StatusCodes.Status200OK, memoryStream);
@@ -124,7 +124,7 @@ namespace Rhino.Controllers.Domain.Automation
             // exit conditions
             if (!Directory.Exists(logPath))
             {
-                logger?.Debug($"Get-Log -LogPath {logPath} -Id {id} = NotFound");
+                _logger?.Debug($"Get-Log -LogPath {logPath} -Id {id} = NotFound");
                 return (StatusCodes.Status404NotFound, string.Empty);
             }
 
@@ -132,19 +132,19 @@ namespace Rhino.Controllers.Domain.Automation
             var logsOut = logPath == "."
                 ? Path.Join($"{Environment.CurrentDirectory}", "Logs")
                 : logPath;
-            logger?.Debug($"Set-LogPath -Path {logsOut} = Ok");
+            _logger?.Debug($"Set-LogPath -Path {logsOut} = Ok");
 
             // get
             var logFile = Path.Join(logsOut, $"RhinoApi-{id}.log");
             if (!File.Exists(path: logFile))
             {
-                logger?.Debug($"Get-Log -LogFile {logFile} = NotFound");
+                _logger?.Debug($"Get-Log -LogFile {logFile} = NotFound");
                 return (StatusCodes.Status404NotFound, string.Empty);
             }
 
             // read
             var log = await ControllerUtilities.ForceReadFileAsync(path: logFile).ConfigureAwait(false);
-            logger?.Debug($"Get-Log -LogFile {logFile} = Ok");
+            _logger?.Debug($"Get-Log -LogFile {logFile} = Ok");
 
             // get
             return (StatusCodes.Status200OK, log);

@@ -24,7 +24,7 @@ namespace Rhino.Controllers.Extensions
         /// <summary>
         /// Normalize line breaks into Environment.NewLine format.
         /// </summary>
-        /// <param name="str">The <see cref="string"/> to mormalize.</param>
+        /// <param name="str">The <see cref="string"/> to normalize.</param>
         /// <returns>Normalized <see cref="string"/>.</returns>
         public static string NormalizeLineBreaks(this string str)
         {
@@ -105,7 +105,7 @@ namespace Rhino.Controllers.Extensions
             // 2. select first character, uppercase it and concatenate with the rest of the string
             var arr = result?
                 .Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.Substring(0, 1).ToUpper() + s[1..]);
+                .Select(s => s[..1].ToUpper() + s[1..]);
 
             // join the resulting collection
             return string.Concat(arr);

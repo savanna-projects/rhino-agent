@@ -28,7 +28,7 @@ namespace Rhino.Controllers.Domain.Extensions
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
         // members: state
-        private static readonly ILogger logger = ControllerUtilities.GetLogger(typeof(LiteDbExtensions));
+        private static readonly ILogger s_logger = ControllerUtilities.GetLogger(typeof(LiteDbExtensions));
 
         #region *** Add    ***
         /// <summary>
@@ -49,7 +49,7 @@ namespace Rhino.Controllers.Domain.Extensions
 
             if (!isSettable)
             {
-                logger?.Debug($"Add-EntityModel -Type {type} = (BadRequst, NotSettable)");
+                s_logger?.Debug($"Add-EntityModel -Type {type} = (BadRequst, NotSettable)");
                 return default;
             }
 
@@ -58,7 +58,7 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // insert
             collection.Insert(entityModel);
-            logger?.Debug($"Add-EntityModel -Type {type} = {entityModel.Id}");
+            s_logger?.Debug($"Add-EntityModel -Type {type} = {entityModel.Id}");
 
             // sync id
             entity.GetType().GetProperty("Id").SetValue(entity, entityModel.Id);
@@ -84,7 +84,7 @@ namespace Rhino.Controllers.Domain.Extensions
             var isGuid = Guid.TryParse(id, out Guid idOut);
             if (!isGuid)
             {
-                logger?.Debug($"Delete-{entityType} -Id {id} = (BadRequest, NotGuid)");
+                s_logger?.Debug($"Delete-{entityType} -Id {id} = (BadRequest, NotGuid)");
                 return StatusCodes.Status400BadRequest;
             }
 
@@ -94,13 +94,13 @@ namespace Rhino.Controllers.Domain.Extensions
             // not found
             if (statusCode == StatusCodes.Status404NotFound || !entity.Any())
             {
-                logger?.Debug($"Delete-{entityType} -Id {id} = NotFound");
+                s_logger?.Debug($"Delete-{entityType} -Id {id} = NotFound");
                 return StatusCodes.Status404NotFound;
             }
 
             // delete
             collection.Delete(idOut);
-            logger?.Debug($"Delete-{entityType} -Id {id} = Ok, NoContent");
+            s_logger?.Debug($"Delete-{entityType} -Id {id} = Ok, NoContent");
 
             // get
             return StatusCodes.Status204NoContent;
@@ -120,7 +120,7 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // delete
             collection.DeleteAll();
-            logger?.Debug($"Delete-{entityType} -All True = (Ok, NoContent)");
+            s_logger?.Debug($"Delete-{entityType} -All True = (Ok, NoContent)");
 
             // get
             return StatusCodes.Status204NoContent;
@@ -180,7 +180,7 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // update
             collection.Update(entityModel);
-            logger?.Debug($"Update-EntityModel -Type {type} -Id {id} = Ok");
+            s_logger?.Debug($"Update-EntityModel -Type {type} -Id {id} = Ok");
 
             // get
             return entityModel;
@@ -203,7 +203,7 @@ namespace Rhino.Controllers.Domain.Extensions
             {
                 var entities = collection.FindAll().Select(i => i.GetEntity<T>()).ToArray();
                 var result = (StatusCode: StatusCodes.Status200OK, Entities: entities);
-                logger?.Debug($"Get-{entityType} = {result.Entities.Length}");
+                s_logger?.Debug($"Get-{entityType} = {result.Entities.Length}");
 
                 return result;
             }
@@ -214,12 +214,12 @@ namespace Rhino.Controllers.Domain.Extensions
             // not found
             if (entity == default)
             {
-                logger?.Debug($"Get-{entityType} -Id {id} = NotFound");
+                s_logger?.Debug($"Get-{entityType} -Id {id} = NotFound");
                 return (StatusCodes.Status404NotFound, Array.Empty<T>());
             }
 
             // get
-            logger?.Debug($"Get-{entityType} -Id {id} = Ok");
+            s_logger?.Debug($"Get-{entityType} -Id {id} = Ok");
             return (StatusCodes.Status200OK, new[] { entity.GetEntity<T>() });
         }
     }

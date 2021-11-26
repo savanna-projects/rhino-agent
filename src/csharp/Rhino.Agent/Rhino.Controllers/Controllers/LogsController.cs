@@ -3,9 +3,7 @@
  * 
  * RESSOURCES
  */
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
@@ -13,11 +11,8 @@ using Rhino.Controllers.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System.Collections.Generic;
-using System.IO;
 using System.Net.Mime;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {
@@ -27,21 +22,20 @@ namespace Rhino.Controllers.Controllers
     public class LogsController : ControllerBase
     {
         // members: state
-        private readonly ILogsRepository logsRepository;
-        private readonly string logPath;
+        private readonly IDomain _domain;
+        private readonly string _logPath;
 
         /// <summary>
         /// Creates a new instance of <see cref="ControllerBase"/>.
         /// </summary>
-        /// <param name="logsRepository">An ILogsRepository implementation to use with the Controller.</param>
-        /// <param name="appSettings">An IConfiguration implementation to use with the Controller.</param>
-        public LogsController(ILogsRepository logsRepository, IConfiguration appSettings)
+        /// <param name="domain">An ILogsRepository implementation to use with the Controller.</param>
+        public LogsController(IDomain domain)
         {
-            this.logsRepository = logsRepository;
+            _domain = domain;
 
             // get in-folder
-            var inFolder = appSettings.GetValue<string>(ControllerUtilities.LogsConfigurationKey);
-            logPath = string.IsNullOrEmpty(inFolder) ? ControllerUtilities.LogsDefaultFolder : inFolder;
+            var inFolder = domain.AppSettings.GetValue<string>(ControllerUtilities.LogsConfigurationKey);
+            _logPath = string.IsNullOrEmpty(inFolder) ? ControllerUtilities.LogsDefaultFolder : inFolder;
         }
 
         #region *** Get    ***
@@ -56,7 +50,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Get()
         {
             // get
-            var responseBody = logsRepository.Get(logPath);
+            var responseBody = _domain.Logs.Get(_logPath);
 
             // response
             return Ok(responseBody);
@@ -74,7 +68,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Get([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // get
-            var (statusCode, responseBody) = await logsRepository.GetAsync(logPath, id).ConfigureAwait(false);
+            var (statusCode, responseBody) = await _domain.Logs.GetAsync(_logPath, id).ConfigureAwait(false);
 
             // exit conditions
             if (statusCode == StatusCodes.Status404NotFound)
@@ -102,7 +96,7 @@ namespace Rhino.Controllers.Controllers
             [SwaggerParameter("A fixed number of lines from the end of the log upwards.")] int size)
         {
             // setup
-            var (statusCode, responseBody) = await logsRepository.GetAsync(logPath, id, size).ConfigureAwait(false);
+            var (statusCode, responseBody) = await _domain.Logs.GetAsync(_logPath, id, size).ConfigureAwait(false);
 
             // exit conditions
             if (statusCode == StatusCodes.Status404NotFound)
@@ -131,13 +125,13 @@ namespace Rhino.Controllers.Controllers
             var fullLogName = logName + ".log";
 
             // exit conditions
-            if (!Directory.Exists(logPath))
+            if (!Directory.Exists(_logPath))
             {
                 return NotFound();
             }
 
             // parse
-            var logsOut = logPath == "." ? ControllerUtilities.LogsDefaultFolder : logPath;
+            var logsOut = _logPath == "." ? ControllerUtilities.LogsDefaultFolder : _logPath;
 
             // get
             var logFile = Path.Join(logsOut, $"RhinoApi-{id}.log");

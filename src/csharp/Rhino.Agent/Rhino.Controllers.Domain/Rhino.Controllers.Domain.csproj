@@ -1,26 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>Latest</LangVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Gravity.Services.Comet" Version="2021.10.25.1" />
-    <PackageReference Include="Gravity.Services.DataContracts" Version="2021.10.25.1" />
-    <PackageReference Include="LiteDB" Version="5.0.11" />
-    <PackageReference Include="Rhino.Api" Version="2021.10.29.2" />
-    <PackageReference Include="Rhino.Connectors.Azure" Version="2021.10.21.6" />
-    <PackageReference Include="Rhino.Connectors.Gurock" Version="2021.9.15.2" />
-    <PackageReference Include="Rhino.Connectors.Saas" Version="2021.10.29.2" />
-    <PackageReference Include="Rhino.Connectors.Text" Version="2021.9.29.1" />
-    <PackageReference Include="Rhino.Connectors.Xray" Version="2021.10.23.1" />
-    <PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.10.23.1" />
-    <PackageReference Include="Rhino.Connectors.Xray.Text" Version="2021.10.23.1" />    
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Gravity.Services.Comet" Version="2021.10.25.1" />
+		<PackageReference Include="Gravity.Services.DataContracts" Version="2021.10.25.1" />
+		<PackageReference Include="LiteDB" Version="5.0.11" />
+		<PackageReference Include="Rhino.Api" Version="2021.10.29.2" />
+		<PackageReference Include="Rhino.Connectors.Azure" Version="2021.10.21.6" />
+		<PackageReference Include="Rhino.Connectors.Gurock" Version="2021.9.15.2" />
+		<PackageReference Include="Rhino.Connectors.Saas" Version="2021.10.29.2" />
+		<PackageReference Include="Rhino.Connectors.Text" Version="2021.9.29.1" />
+		<PackageReference Include="Rhino.Connectors.Xray" Version="2021.10.23.1" />
+		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2021.10.23.1" />
+		<PackageReference Include="Rhino.Connectors.Xray.Text" Version="2021.10.23.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj" />
-    <ProjectReference Include="..\Rhino.Controllers.Models\Rhino.Controllers.Models.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj" />
+		<ProjectReference Include="..\Rhino.Controllers.Models\Rhino.Controllers.Models.csproj" />
+	</ItemGroup>
 
 </Project>

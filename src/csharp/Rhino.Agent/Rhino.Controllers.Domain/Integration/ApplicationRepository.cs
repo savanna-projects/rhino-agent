@@ -21,13 +21,18 @@ namespace Rhino.Controllers.Domain.Integration
     public class ApplicationRepository : IApplicationRepository
     {
         // members: state
-        private readonly ILogger logger;
-        private readonly IEnumerable<Type> types;
+        private readonly ILogger _logger;
+        private readonly IEnumerable<Type> _types;
 
+        /// <summary>
+        /// Creates a new instance of ApplicationRepository.
+        /// </summary>
+        /// <param name="types">An IEnumerable<Type> implementation.</param>
+        /// <param name="logger">An ILogger implementation to use with the Repository.</param>
         public ApplicationRepository(IEnumerable<Type> types, ILogger logger)
         {
-            this.types = types;
-            this.logger = logger;
+            _types = types;
+            _logger = logger;
         }
 
         /// <summary>
@@ -69,7 +74,7 @@ namespace Rhino.Controllers.Domain.Integration
                 ConnectorConfiguration = Configuration,
                 TestsRepository = new[] { "-1" } // mocking test cases repository for connection validation.
             };
-            var type = tempConfiguration.GetConnector(types);
+            var type = tempConfiguration.GetConnector(_types);
 
             // not found
             if (type == default)
@@ -80,7 +85,7 @@ namespace Rhino.Controllers.Domain.Integration
             // build
             var connector = (IConnector)Activator.CreateInstance(type, new object[]
             {
-                    tempConfiguration, types, logger, false
+                    tempConfiguration, _types, _logger, false
             });
 
             // get

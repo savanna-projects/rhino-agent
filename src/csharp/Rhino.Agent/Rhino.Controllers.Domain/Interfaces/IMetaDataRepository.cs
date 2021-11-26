@@ -25,6 +25,7 @@ namespace Rhino.Controllers.Domain.Interfaces
         IEnumerable<ActionModel> GetPlugins();
         IEnumerable<ReporterModel> GetReporters();
         IEnumerable<ServiceEventModel> GetServiceEvents();
+        IEnumerable<string> GetServices();
         IEnumerable<RhinoVerbModel> GetVerbs();
         Task<string> GetVersionAsync();
     }

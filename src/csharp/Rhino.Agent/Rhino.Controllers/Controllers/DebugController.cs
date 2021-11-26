@@ -6,7 +6,6 @@
 using Gravity.Services.Comet.Engine.Extensions;
 using Gravity.Services.DataContracts;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Controllers.Models;

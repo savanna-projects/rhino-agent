@@ -12,12 +12,8 @@ using Newtonsoft.Json.Linq;
 
 using Rhino.Api.Contracts.AutomationProvider;
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Rhino.Controllers.Extensions
 {
@@ -157,7 +153,7 @@ namespace Rhino.Controllers.Extensions
         /// </summary>
         public static JsonSerializerOptions JsonSettings => new()
         {
-            IgnoreNullValues = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true
         };
@@ -183,8 +179,8 @@ namespace Rhino.Controllers.Extensions
                 DoRenderLogo(1, 33, Console.BackgroundColor, ConsoleColor.Red, Api());
 
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(new string(' ', 26) + "Powerd by Gravity Engine");
-                Console.WriteLine(new string(' ', 26) + "Version 0.0.0.0");
+                Console.WriteLine(new string(' ', 25) + "Powered by Gravity Engine");
+                Console.WriteLine(new string(' ', 25) + "Version 0.0.0.0");
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine("https://github.com/savanna-projects/rhino-agent");
@@ -253,7 +249,7 @@ namespace Rhino.Controllers.Extensions
             }
 
             // extract
-            var version = (await InvokeForceReadFileAsync(path: FileName)).Trim();
+            var version = (await InvokeForceReadFileAsync(path: FileName).ConfigureAwait(false)).Trim();
 
             // get
             return string.IsNullOrEmpty(version) ? Default : version;

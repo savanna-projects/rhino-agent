@@ -347,3 +347,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Rhino specifics
+Data/Data.dll
+Outputs/
+[Ii]mages/
+Plugins/

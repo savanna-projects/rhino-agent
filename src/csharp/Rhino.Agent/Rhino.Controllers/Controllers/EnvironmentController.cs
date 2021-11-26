@@ -5,7 +5,6 @@
  */
 using Gravity.Services.DataContracts;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Controllers.Domain.Interfaces;
@@ -26,7 +25,7 @@ namespace Rhino.Controllers.Controllers
     public class EnvironmentController : ControllerBase
     {
         // members: state
-        private readonly IEnvironmentRepository environmentRepository;
+        private readonly IDomain _domain;
 
         // members: private properties
         private Authentication Authentication => Request.GetAuthentication();
@@ -34,10 +33,10 @@ namespace Rhino.Controllers.Controllers
         /// <summary>
         /// Creates a new instance of <see cref="ControllerBase"/>.
         /// </summary>
-        /// <param name="environmentRepository">An IEnvironmentRepository implementation to use with the Controller.</param>
-        public EnvironmentController(IEnvironmentRepository environmentRepository)
+        /// <param name="domain">An IDomain implementation to use with the Controller.</param>
+        public EnvironmentController(IDomain domain)
         {
-            this.environmentRepository = environmentRepository;
+            _domain = domain;
         }
 
         #region *** Get    ***
@@ -52,7 +51,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Get()
         {
             // get response
-            var parameters = environmentRepository.SetAuthentication(Authentication).Get();
+            var parameters = _domain.Environments.SetAuthentication(Authentication).Get();
 
             // return
             return Ok(new Dictionary<string, object>(parameters));
@@ -70,8 +69,8 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Get([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
         {
             // get response
-            environmentRepository.SetAuthentication(Authentication);
-            var (statusCode, entity) = environmentRepository.GetByName(name);
+            _domain.Environments.SetAuthentication(Authentication);
+            var (statusCode, entity) = _domain.Environments.GetByName(name);
 
             // exit conditions
             if (statusCode == StatusCodes.Status404NotFound)
@@ -99,8 +98,8 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Sync()
         {
             // setup
-            environmentRepository.SetAuthentication(Authentication);
-            var entities = environmentRepository.Sync().Entities;
+            _domain.Environments.SetAuthentication(Authentication);
+            var entities = _domain.Environments.Sync().Entities;
 
             // get
             return Ok(entities);
@@ -135,7 +134,8 @@ namespace Rhino.Controllers.Controllers
             }
 
             // build
-            environmentRepository
+            _domain
+                .Environments
                 .SetAuthentication(Authentication)
                 .Add(new KeyValuePair<string, object>(name, value));
 
@@ -161,8 +161,8 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Delete([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
         {
             // get credentials
-            environmentRepository.SetAuthentication(Authentication).Delete(name);
-            var statusCode = environmentRepository.DeleteByName(name);
+            _domain.Environments.SetAuthentication(Authentication).Delete(name);
+            var statusCode = _domain.Environments.DeleteByName(name);
 
             // results
             return statusCode == StatusCodes.Status404NotFound
@@ -180,7 +180,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Delete()
         {
             // delete
-            environmentRepository.SetAuthentication(Authentication).Delete();
+            _domain.Environments.SetAuthentication(Authentication).Delete();
 
             // get
             return NoContent();

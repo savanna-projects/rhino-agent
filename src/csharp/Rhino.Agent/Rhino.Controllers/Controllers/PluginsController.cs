@@ -5,7 +5,6 @@
  */
 using Gravity.Services.DataContracts;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Parser.Contracts;
@@ -15,11 +14,7 @@ using Rhino.Controllers.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mime;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {
@@ -30,11 +25,11 @@ namespace Rhino.Controllers.Controllers
     {
         // members: constants
         private const string CountHeader = "Rhino-Total-Specs";
-        private static readonly string doubleLine = Environment.NewLine + Environment.NewLine;
-        private static readonly string separator = doubleLine + Spec.Separator + doubleLine;
+        private static readonly string s_doubleLine = Environment.NewLine + Environment.NewLine;
+        private static readonly string s_separator = s_doubleLine + Spec.Separator + s_doubleLine;
 
         // members: state
-        private readonly IPluginsRepository pluginsRepository;
+        private readonly IDomain _domain;
 
         // members: private properties
         private Authentication Authentication => Request.GetAuthentication();
@@ -42,10 +37,10 @@ namespace Rhino.Controllers.Controllers
         /// <summary>
         /// Creates a new instance of <see cref="ControllerBase"/>.
         /// </summary>
-        /// <param name="pluginsRepository">An IPluginsRepository implementation to use with the Controller.</param>
-        public PluginsController(IPluginsRepository pluginsRepository)
+        /// <param name="domain">An IDomain implementation to use with the Controller.</param>
+        public PluginsController(IDomain domain)
         {
-            this.pluginsRepository = pluginsRepository;
+            _domain = domain;
         }
 
         #region *** Get    ***
@@ -65,7 +60,7 @@ namespace Rhino.Controllers.Controllers
             Response.Headers[CountHeader] = $"{entities.Count()}";
 
             // get
-            return Ok(string.Join(separator, entities));
+            return Ok(string.Join(s_separator, entities));
         }
 
         // GET: api/v3/plugins/:id
@@ -100,12 +95,12 @@ namespace Rhino.Controllers.Controllers
             // get all
             if (string.IsNullOrEmpty(id))
             {
-                var plugins = pluginsRepository.SetAuthentication(Authentication).Get();
+                var plugins = _domain.Plugins.SetAuthentication(Authentication).Get();
                 return (StatusCodes.Status200OK, plugins);
             }
 
             // get one
-            var (statusCode, entity) = pluginsRepository.SetAuthentication(Authentication).Get(id);
+            var (statusCode, entity) = _domain.Plugins.SetAuthentication(Authentication).Get(id);
 
             // setup
             return (statusCode, new[] { entity });
@@ -131,8 +126,8 @@ namespace Rhino.Controllers.Controllers
                 .Select(i => i.Trim().NormalizeLineBreaks());
 
             // create plugins
-            pluginsRepository.SetAuthentication(Authentication);
-            var plugins = pluginsRepository.Add(pluginSpecs, isPrivate);
+            _domain.Plugins.SetAuthentication(Authentication);
+            var plugins = _domain.Plugins.Add(pluginSpecs, isPrivate);
 
             // response
             if (string.IsNullOrEmpty(plugins))
@@ -141,11 +136,11 @@ namespace Rhino.Controllers.Controllers
             }
 
             // setup            
-            var okResponse = pluginsRepository.SetAuthentication(Authentication).Get();
+            var okResponse = _domain.Plugins.SetAuthentication(Authentication).Get();
             Response.Headers[CountHeader] = $"{okResponse.Count()}";
 
             // get
-            return Created("/api/v3/plugins", string.Join(separator, okResponse));
+            return Created("/api/v3/plugins", string.Join(s_separator, okResponse));
         }
         #endregion
 
@@ -161,7 +156,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Delete([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // delete
-            var statusCode = pluginsRepository.SetAuthentication(Authentication).Delete(id);
+            var statusCode = _domain.Plugins.SetAuthentication(Authentication).Delete(id);
 
             // results
             return statusCode == StatusCodes.Status404NotFound
@@ -179,7 +174,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Delete()
         {
             // get credentials
-            pluginsRepository.SetAuthentication(Authentication).Delete();
+            _domain.Plugins.SetAuthentication(Authentication).Delete();
 
             // results
             return NoContent();
