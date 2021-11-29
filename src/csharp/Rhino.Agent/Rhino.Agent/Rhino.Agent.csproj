@@ -27,7 +27,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Rhino.Controllers\Rhino.Controllers.csproj" />
 		<ProjectReference Include="..\Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj" />
-		<ProjectReference Include="..\Rhino.ControlPanel\Rhino.ControlPanel.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -37,11 +36,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Certificates\Rhino.Agent.pfx">
+		<None Update="Certificates\Rhino.Https.pfx">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="chromedriver.exe">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 </Project>

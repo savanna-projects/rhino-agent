@@ -29,6 +29,9 @@
 		<None Update="Certificates\Rhino.Agent.pfx">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="Certificates\Rhino.Https.pfx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>

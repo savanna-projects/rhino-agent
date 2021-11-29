@@ -48,7 +48,7 @@ namespace Rhino.Controllers.Extensions
 
             // build
             var certPassword = isCert ? cert[1] : "30908f87-8539-477a-86e7-a4c13d4583c4";
-            var certPath = Path.Combine("Certificates", isCert ? cert[0] : "Rhino.Agent.pfx");
+            var certPath = Path.Combine("Certificates", isCert ? cert[0] : "Rhino.Https.pfx");
 
             options.Listen(IPAddress.Any, httpsPort, listenOptions => listenOptions.UseHttps(certPath, certPassword));
             options.Listen(IPAddress.Any, httpPort);

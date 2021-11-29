@@ -71,8 +71,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Models", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Plugins.Custom", "Rhino.Plugins.Custom\Rhino.Plugins.Custom.csproj", "{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.ControlPanel", "Rhino.ControlPanel\Rhino.ControlPanel.csproj", "{B577B277-3E78-400D-9B03-02FD51C2FF50}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Agent", "Rhino.Agent\Rhino.Agent.csproj", "{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{E9F17CB3-15C4-420F-B1B4-57F7E935E9AA}"
@@ -108,10 +106,6 @@ Global
 		{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B577B277-3E78-400D-9B03-02FD51C2FF50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B577B277-3E78-400D-9B03-02FD51C2FF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B577B277-3E78-400D-9B03-02FD51C2FF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B577B277-3E78-400D-9B03-02FD51C2FF50}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
