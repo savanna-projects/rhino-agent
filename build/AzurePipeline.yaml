@@ -129,3 +129,11 @@ stages:
           destinationFolder: '$(System.ArtifactsDirectory)/app'
           cleanDestinationFolder: true
           overwriteExistingFiles: true
+
+      - task: PowerShell@2
+        displayName: 'Start Rhino API Server'
+        inputs:
+          targetType: 'inline'
+          script: Start-Process dotnet -ArgumentList '$(System.ArtifactsDirectory)/app/Rhino.Agent.dll'
+          errorActionPreference: 'silentlyContinue'
+          failOnStderr: true
