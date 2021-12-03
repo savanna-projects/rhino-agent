@@ -22,16 +22,4 @@
 		<ProjectReference Include="..\Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Update="Certificates\Rhino.Agent.crt">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Certificates\Rhino.Agent.pfx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Certificates\Rhino.Https.pfx">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
 </Project>

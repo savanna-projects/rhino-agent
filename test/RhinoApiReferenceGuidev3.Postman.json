@@ -26,11 +26,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set('endpoint', 'https://localhost:9001/api/v3');\r",
+									"pm.collectionVariables.set('endpoint', 'http://localhost:9000/api/v3');\r",
 									"pm.collectionVariables.set('rhino_password', '');\r",
 									"pm.collectionVariables.set('rhino_user', '');\r",
-									"pm.collectionVariables.set('rhino_drivers', \".\");\r",
-									"//pm.collectionVariables.set('rhino_drivers', 'http://localhost:4444/wd/hub');"
+									"pm.collectionVariables.set('rhino_drivers', '.');"
 								],
 								"type": "text/javascript"
 							}
@@ -11505,6 +11504,37 @@
 								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
 							},
 							"response": []
+						},
+						{
+							"name": "Get Services",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/services",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"services"
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"description": "This guide explains how to access and use _**Meta**_ controller to get static data from Rhino server.",
@@ -12852,6 +12882,41 @@
 									]
 								},
 								"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Meta.md#get-reporter"
+							},
+							"response": []
+						},
+						{
+							"name": "Flow Action #33: Get Services",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"At least one service\", function () {\r",
+											"    pm.response.size() > 1;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/meta/services",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"meta",
+										"services"
+									]
+								}
 							},
 							"response": []
 						}
