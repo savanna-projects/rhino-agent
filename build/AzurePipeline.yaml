@@ -85,7 +85,7 @@ stages:
 
   - stage: Deploy
     dependsOn: 'Build'
-    condition: 'success()'
+    condition: 'succeeded()'
     jobs:
     - job: 'DeployAndTest'
       displayName: 'Deploy Stage Environment & Test Rhino API'
