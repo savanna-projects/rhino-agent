@@ -83,3 +83,24 @@ stages:
           ArtifactName: 'drop'
           publishLocation: 'Container'
 
+  - stage: Deploy
+    jobs:
+    - job: 'DeployAndTest'
+      displayName: 'Deploy Stage Environment & Test Rhino API'
+      steps:
+      - task: PowerShell@2
+        displayName: 'Check Build Version'
+        inputs:
+          targetType: 'inline'
+          script: 'Write-Host "$(buildVersion)"'
+
+      - task: NodeTool@0
+        displayName: 'Install Node.JS'
+        inputs:
+          versionSpec: '>=6.x'
+          checkLatest: true
+      - task: Npm@1
+        displayName: 'Install newman-cli Package'
+        inputs:
+          command: 'custom'
+          customCommand: 'install -g newman'
