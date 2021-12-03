@@ -8,7 +8,7 @@ trigger:
     - new-integration
 
 pool:
-  name: Default
+  vmImage: windows-latest
 
 variables:
 - group: github.com
