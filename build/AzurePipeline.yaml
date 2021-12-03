@@ -116,7 +116,7 @@ stages:
           customCommand: 'install -g newman'
 
       - task: DownloadBuildArtifacts@1
-        displayName: 'Download Rhino API Agent Artifact'
+        displayName: 'Get Rhino API Agent Artifact'
         inputs:
           buildType: 'current'
           downloadType: 'single'
