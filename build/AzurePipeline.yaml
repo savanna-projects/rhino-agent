@@ -48,7 +48,7 @@ stages:
         inputs:
           command: 'publish'
           publishWebProjects: false
-          projects: '**/Rhino.Agent.csproj'
+          projects: '**/Rhino.Agent/Rhino.Agent.csproj'
           arguments: '--configuration $(Build.Configuration) --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
           modifyOutputPath: false
 
@@ -82,3 +82,4 @@ stages:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'drop'
           publishLocation: 'Container'
+
