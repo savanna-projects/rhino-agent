@@ -29,13 +29,12 @@ stages:
     - job: 'BuildAndPack'
       displayName: 'Build & Pack Rhino API Agent'
       steps:
+      
       - task: DotNetCoreCLI@2
         displayName: Restore Dependencies
         inputs:
           command: 'restore'
           projects: '**/*.csproj'
-          feedsToUse: 'select'
-          vstsFeed: '6ed1caf9-de4f-48e8-8276-201533d86a19'
           verbosityRestore: 'Diagnostic'
 
       - task: DotNetCoreCLI@2
