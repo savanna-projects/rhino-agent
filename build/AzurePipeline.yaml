@@ -132,11 +132,18 @@ stages:
           overwriteExistingFiles: true
 
       - task: PowerShell@2
+        displayName: 'Set Testing Environment Parameters'
         inputs:
           targetType: 'inline'
           script: |
-            Set-Location $(System.ArtifactsDirectory)/app
-            dir
+            $content = Get-Content '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json'
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_drivers',.*\)","pm.collectionVariables.set('rhino_drivers', '$(Grid.Endpoint.Rhino)')";
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_user',.*\)","pm.collectionVariables.set('rhino_user', '$(Rhino.UserName)')";
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_password',.*\)","pm.collectionVariables.set('rhino_password', '$(Rhino.Password)')";
+            Set-Content -Path '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json' -Value $content
+            Write-Host $content
+          errorActionPreference: 'silentlyContinue'
+          failOnStderr: true
 
       - task: PowerShell@2
         displayName: 'Start Rhino API Server'
