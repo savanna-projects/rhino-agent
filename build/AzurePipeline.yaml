@@ -141,7 +141,6 @@ stages:
             $content = $content -replace "pm\.collectionVariables\.set\('rhino_user',.*\)","pm.collectionVariables.set('rhino_user', '$(Rhino.UserName)')";
             $content = $content -replace "pm\.collectionVariables\.set\('rhino_password',.*\)","pm.collectionVariables.set('rhino_password', '$(Rhino.Password)')";
             Set-Content -Path '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json' -Value $content
-            Write-Host $content
           errorActionPreference: 'silentlyContinue'
           failOnStderr: true
 
@@ -152,3 +151,10 @@ stages:
           script: Start-Process dotnet -ArgumentList '$(System.ArtifactsDirectory)/app/Rhino.Agent.dll'
           errorActionPreference: 'silentlyContinue'
           failOnStderr: true
+      
+      - task: PowerShell@2
+        displayName: 'Invoke Automation Tests'
+        inputs:
+          targetType: 'inline'
+          script: 'newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json --insecure'
+
