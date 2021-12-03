@@ -59,7 +59,7 @@ stages:
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
-            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
+            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
             # set value
             Write-Host "##vso[task.setvariable variable=buildVersion]$version"
 
@@ -70,6 +70,7 @@ stages:
           script: |
             Set-Content -Path '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' -Value '$(buildVersion)'
             Compress-Archive -update '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
+            Compress-Archive -update '$(Build.Repository.LocalPath)/test/RhinoApiReferenceGuidev3.Postman.json' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
             # setup
             [regex]$pattern = '(\d+.?)+'
             $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
@@ -82,4 +83,78 @@ stages:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'drop'
           publishLocation: 'Container'
+
+  - stage: Test
+    dependsOn: 'Build'
+    condition: 'succeeded()'
+    jobs:
+    - job: 'DeployAndTest'
+      displayName: 'Deploy Stage Environment & Test Rhino API'
+      steps:
+      - checkout: none
+      - task: PowerShell@2
+        displayName: 'Parse Build Version'
+        inputs:
+          targetType: 'inline'
+          script: |
+            # setup
+            [regex]$pattern = '(\d+.?)+'
+            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
+            # set value
+            Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+      - task: NodeTool@0
+        displayName: 'Install Node.JS'
+        inputs:
+          versionSpec: '>=6.x'
+          checkLatest: true
+
+      - task: Npm@1
+        displayName: 'Install newman-cli Package'
+        inputs:
+          command: 'custom'
+          customCommand: 'install -g newman'
+
+      - task: DownloadBuildArtifacts@1
+        displayName: 'Download Rhino API Agent Artifact'
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'drop'
+          downloadPath: '$(System.ArtifactsDirectory)'
+
+      - task: ExtractFiles@1
+        displayName: 'Extract Rhino API Files into $(System.ArtifactsDirectory)/app'
+        inputs:
+          archiveFilePatterns: '$(System.ArtifactsDirectory)/**/*.zip'
+          destinationFolder: '$(System.ArtifactsDirectory)/app'
+          cleanDestinationFolder: true
+          overwriteExistingFiles: true
+
+      - task: PowerShell@2
+        displayName: 'Set Testing Environment Parameters'
+        inputs:
+          targetType: 'inline'
+          script: |
+            $content = Get-Content '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json'
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_drivers',.*\)","pm.collectionVariables.set('rhino_drivers', '$(Grid.Endpoint.Rhino)')";
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_user',.*\)","pm.collectionVariables.set('rhino_user', '$(Rhino.UserName)')";
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_password',.*\)","pm.collectionVariables.set('rhino_password', '$(Rhino.Password)')";
+            Set-Content -Path '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json' -Value $content
+          errorActionPreference: 'silentlyContinue'
+          failOnStderr: true
+
+      - task: PowerShell@2
+        displayName: 'Start Rhino API Server'
+        inputs:
+          targetType: 'inline'
+          script: Start-Process dotnet -ArgumentList '$(System.ArtifactsDirectory)/app/Rhino.Agent.dll'
+          errorActionPreference: 'silentlyContinue'
+          failOnStderr: true
+      
+      - task: PowerShell@2
+        displayName: 'Invoke Automation Tests'
+        inputs:
+          targetType: 'inline'
+          script: 'newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json --insecure'
 
