@@ -8,7 +8,7 @@ trigger:
     - new-integration
 
 pool:
-  vmImage: windows-latest
+  vmImage: windows-2022
 
 variables:
 - group: github.com
@@ -29,7 +29,6 @@ stages:
     - job: 'BuildAndPack'
       displayName: 'Build & Pack Rhino API Agent'
       steps:
-      
       - task: DotNetCoreCLI@2
         displayName: Restore Dependencies
         inputs:
