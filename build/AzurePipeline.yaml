@@ -84,15 +84,19 @@ stages:
           publishLocation: 'Container'
 
   - stage: Deploy
+    dependsOn: 'Build'
+    condition: 'success()'
     jobs:
     - job: 'DeployAndTest'
       displayName: 'Deploy Stage Environment & Test Rhino API'
       steps:
+      - checkout: none
+
       - task: PowerShell@2
         displayName: 'Check Build Version'
         inputs:
           targetType: 'inline'
-          script: 'Write-Host "$(buildVersion)"'
+          script: Write-Host '$(buildVersion)'
 
       - task: NodeTool@0
         displayName: 'Install Node.JS'
