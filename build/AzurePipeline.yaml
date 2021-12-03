@@ -1,0 +1,85 @@
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
+
+name: Rhino.Agent.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+    - master
+
+pool:
+  name: Default
+
+variables:
+- group: github.com
+- group: browserstack.com
+- group: gravity.api
+- name: 'Build.Configuration'
+  value: 'Release'
+- name: 'Parallel.Workers'
+  value: '1'
+- name: 'Test.Settings.FileName.Deploy'
+  value: './test/azure_settings_deploy.runsettings'
+- name: 'Test.Settings.FileName.Development'
+  value: './test/azure_settings_mstest.runsettings'
+
+stages:
+  - stage: Build & Deploy
+    jobs:
+    - job: BuildAndPublish
+    stpes:
+    - task: DotNetCoreCLI@2
+      displayName: Restore Dependencies
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'select'
+        vstsFeed: '6ed1caf9-de4f-48e8-8276-201533d86a19'
+        verbosityRestore: 'Diagnostic'
+
+    - task: DotNetCoreCLI@2
+      displayName: Build Projects
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--configuration $(Build.Configuration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: Publish Files to $(build.artifactstagingdirectory)/$(Build.BuildNumber)
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        projects: '**/Rhino.Agent.csproj'
+        arguments: '--configuration $(Build.Configuration) --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
+        modifyOutputPath: false
+
+    - task: PowerShell@2
+      displayName: 'Parse Build Version'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # setup
+          [regex]$pattern = '(\d+.?)+'
+          $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
+          # set value
+          Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+    - task: PowerShell@2
+      displayName: 'Set Version File'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Set-Content -Path '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' -Value '$(buildVersion)'
+          Compress-Archive -update '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
+          # setup
+          [regex]$pattern = '(\d+.?)+'
+          $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
+          # set value
+          Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Artifact to Container
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'

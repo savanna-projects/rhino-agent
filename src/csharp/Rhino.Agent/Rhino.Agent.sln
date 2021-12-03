@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5F276F3-7431-4018-8A38-179C8CA4B100}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\build\azure_pipelines.yaml = ..\..\..\build\azure_pipelines.yaml
+		..\..\..\build\AzurePipeline.yaml = ..\..\..\build\AzurePipeline.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{3712E923-66B8-4982-9BE2-045E1B95C598}"
@@ -55,12 +55,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{F05815
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{242F1C4F-1F96-43A7-BBBA-53FD839F2F45}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\bash\create_cert.sh = ..\..\..\bash\create_cert.sh
-		..\..\..\bash\openssl.txt = ..\..\..\bash\openssl.txt
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers", "Rhino.Controllers\Rhino.Controllers.csproj", "{6DC68289-26F0-45C0-825B-21D6103FBC97}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Domain", "Rhino.Controllers.Domain\Rhino.Controllers.Domain.csproj", "{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}"
@@ -78,6 +72,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{E9F17CB3-15C
 		..\..\..\.gitignore = ..\..\..\.gitignore
 		..\..\..\LICENSE = ..\..\..\LICENSE
 		..\..\..\README.md = ..\..\..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{338C88C8-6A0B-4E73-8E55-692FE2123545}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\test\AzureSettingsMstest.runsettings = ..\..\..\test\AzureSettingsMstest.runsettings
+		..\..\..\test\RhinoApiReferenceGuidev3.Postman.json = ..\..\..\test\RhinoApiReferenceGuidev3.Postman.json
 	EndProjectSection
 EndProject
 Global

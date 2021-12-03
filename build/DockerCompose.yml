@@ -1,0 +1,30 @@
+version: '3'
+#
+# Create a common network for all services.
+networks:
+  selenoid:
+    name: selenoid
+
+services:
+  #
+  # Deploy selenoid service.
+  selenoid:
+    networks:
+      selenoid: null
+    image: aerokube/selenoid:latest-release
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs", "-container-network", "selenoid"]
+    ports:
+      - "4444:4444"
+  #
+  # Deploy selenoid-ui service and link to selenoid backend
+  selenoid-ui:
+    image: "aerokube/selenoid-ui"
+    networks:
+      selenoid: null
+    depends_on:
+      - selenoid
+    ports:
+      - "8080:8080"
+    command: ["--selenoid-uri", "http://selenoid:4444"]
