@@ -102,19 +102,22 @@ stages:
             # set value
             Write-Host "##vso[task.setvariable variable=buildVersion]$version"
 
-      - task: PowerShell@2
-        displayName: 'Check Build Version'
-        inputs:
-          targetType: 'inline'
-          script: Write-Host '$(buildVersion)'
-
       - task: NodeTool@0
         displayName: 'Install Node.JS'
         inputs:
           versionSpec: '>=6.x'
           checkLatest: true
+
       - task: Npm@1
         displayName: 'Install newman-cli Package'
         inputs:
           command: 'custom'
           customCommand: 'install -g newman'
+
+      - task: DownloadBuildArtifacts@1
+        displayName: 'Download Rhino API Agent Artifact'
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'drop'
+          downloadPath: '$(System.ArtifactsDirectory)'
