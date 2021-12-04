@@ -20,6 +20,9 @@ variables:
   value: true
 - name: 'Release.Prefix'
   value: 'Preview'
+- name: 'Docker.Tags'
+  value: |
+    v$(buildVersion)-$(Release.Prefix)
 
 stages:
   - stage: 'Build'
@@ -203,6 +206,15 @@ stages:
           artifactName: 'drop'
           downloadPath: '$(System.ArtifactsDirectory)'
 
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          errorActionPreference: 'silentlyContinue'
+          script: |
+            $artifact     = Get-ChildItem $(build.artifactstagingdirectory)/*.zip -Recurse
+            $artifactName = $item.FullName -replace '.zip', '-$(Release.Prefix).zip'
+            Rename-Item -Path $item.FullName -NewName $name
+          
       - task: GitHubRelease@1
         displayName: 'Create GitHub Tag'
         inputs:
@@ -216,7 +228,7 @@ stages:
           title: '$(Release.Prefix) v$(buildVersion)'
           changeLogCompareToRelease: 'lastFullRelease'
           changeLogType: 'commitBased'
-          assets: '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/*.zip'
+          assets: '$(build.artifactstagingdirectory)/**/*.zip'
 
   - stage: PublishDocker
     displayName: Publish on DockerHub
@@ -224,12 +236,26 @@ stages:
     condition: 'succeeded()'
     jobs:
     - job: 'CraeteRelease'
-      displayName: 'Create a GitHub Release & Tag'
+      displayName: 'Create a Docker Release & Tag'
       steps:
-      - task: PowerShell@2
+
+      - task: Docker@2
+        displayName: 'Logout from Docker'
         inputs:
-          targetType: 'inline'
-          script: |
-            # Write your PowerShell commands here.
-            
-            Write-Host "Hello World"
+          containerRegistry: 'docker.io'
+          command: 'logout'
+
+      - task: Docker@2
+        displayName: 'Login to Docker'
+        inputs:
+          containerRegistry: 'docker.io'
+          command: 'login'
+
+      - task: Docker@2
+        displayName: 'Create Docker Image - Linux'
+        inputs:
+          containerRegistry: 'docker.io'
+          repository: 'rhinoapi/rhino-agent'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: $(Docker.Tags)
