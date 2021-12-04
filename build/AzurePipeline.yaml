@@ -207,6 +207,7 @@ stages:
           downloadPath: '$(System.ArtifactsDirectory)'
 
       - task: PowerShell@2
+        displayName: 'Set Asset Name'
         inputs:
           targetType: 'inline'
           errorActionPreference: 'silentlyContinue'
@@ -256,7 +257,7 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-            $tags = $(Docker.Tags).ToLower()
+            $tags = '$(Docker.Tags)'.ToLower()
             Write-Host "##vso[task.setvariable variable=dockerTags]$tags"
             Write-Host $(dockerTags)
 
