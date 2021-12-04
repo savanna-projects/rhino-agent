@@ -51,7 +51,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "Gettings
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{F0581530-31D7-40C5-BD78-4322BD64C4F0}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\.dockerignore = ..\..\..\.dockerignore
+		.dockerignore = .dockerignore
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
