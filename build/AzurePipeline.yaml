@@ -16,12 +16,10 @@ variables:
 - group: gravity.api
 - name: 'Build.Configuration'
   value: 'Release'
-- name: 'Parallel.Workers'
-  value: '1'
-- name: 'Test.Settings.FileName.Deploy'
-  value: './test/azure_settings_deploy.runsettings'
-- name: 'Test.Settings.FileName.Development'
-  value: './test/azure_settings_mstest.runsettings'
+- name: 'Release.PreRelease'
+  value: true
+- name: 'Release.Prefix'
+  value: 'Preview'
 
 stages:
   - stage: 'Build'
@@ -163,11 +161,11 @@ stages:
           Action: 'Start Azure App Service'
           WebAppName: 'rhino'
 
-      - task: PowerShell@2
-        displayName: 'Invoke Automation Tests'
-        inputs:
-          targetType: 'inline'
-          script: 'newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json --insecure'
+      #- task: PowerShell@2
+      #  displayName: 'Invoke Automation Tests'
+      #  inputs:
+      #    targetType: 'inline'
+      #    script: 'newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json --insecure'
       
       - task: AzureAppServiceManage@0
         displayName: Start Rhino API Stage Application
@@ -196,3 +194,25 @@ stages:
             # set value
             Write-Host "##vso[task.setvariable variable=buildVersion]$version"
 
+      - task: DownloadBuildArtifacts@1
+        displayName: 'Get Rhino API Agent Artifact'
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'drop'
+          downloadPath: '$(System.ArtifactsDirectory)'
+
+      - task: GitHubRelease@1
+        displayName: 'Create GitHub Tag'
+        inputs:
+          gitHubConnection: 'github.com'
+          repositoryName: '$(Build.Repository.Name)'
+          action: 'create'
+          target: '$(Build.SourceVersion)'
+          tagSource: 'userSpecifiedTag'
+          isPreRelease: true
+          tag: 'v$(buildVersion)-$(Release.Prefix)'
+          title: '$(Release.Prefix) v$(buildVersion)'
+          changeLogCompareToRelease: 'lastFullRelease'
+          changeLogType: 'commitBased'
+          assets: '$(build.artifactstagingdirectory)/**/*.zip'
