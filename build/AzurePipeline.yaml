@@ -174,7 +174,7 @@ stages:
           Action: 'Stop Azure App Service'
           WebAppName: 'rhino'
 
-  - stage: Publish
+  - stage: PublishGit
     displayName: Publish on GitHub
     dependsOn: 'Test'
     condition: 'succeeded()'
@@ -216,4 +216,20 @@ stages:
           title: '$(Release.Prefix) v$(buildVersion)'
           changeLogCompareToRelease: 'lastFullRelease'
           changeLogType: 'commitBased'
-          assets: '$(build.artifactstagingdirectory)/drop/*.zip'
+          assets: '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/*.zip'
+
+  - stage: PublishDocker
+    displayName: Publish on DockerHub
+    dependsOn: 'Test'
+    condition: 'succeeded()'
+    jobs:
+    - job: 'CraeteRelease'
+      displayName: 'Create a GitHub Release & Tag'
+      steps:
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Write your PowerShell commands here.
+            
+            Write-Host "Hello World"
