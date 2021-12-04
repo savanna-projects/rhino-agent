@@ -216,4 +216,4 @@ stages:
           title: '$(Release.Prefix) v$(buildVersion)'
           changeLogCompareToRelease: 'lastFullRelease'
           changeLogType: 'commitBased'
-          assets: '$(build.artifactstagingdirectory)/*.zip'
+          assets: '$(build.artifactstagingdirectory)/drop/*.zip'
