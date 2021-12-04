@@ -74,7 +74,7 @@ stages:
             Compress-Archive -update '$(Build.Repository.LocalPath)/test/RhinoApiReferenceGuidev3.Postman.json' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
             # setup
             [regex]$pattern = '(\d+.?)+'
-            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
+            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
             # set value
             Write-Host "##vso[task.setvariable variable=buildVersion]$version"
 
@@ -164,12 +164,6 @@ stages:
           Action: 'Start Azure App Service'
           WebAppName: 'rhino'
 
-      #- task: PowerShell@2
-      #  displayName: 'Invoke Automation Tests'
-      #  inputs:
-      #    targetType: 'inline'
-      #    script: 'newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json --insecure'
-      
       - task: AzureAppServiceManage@0
         displayName: Stop Rhino API Stage Application
         inputs:
@@ -239,7 +233,6 @@ stages:
     - job: 'CraeteRelease'
       displayName: 'Create a Docker Release & Tag'
       steps:
-
       - task: Docker@2
         displayName: 'Logout from Docker'
         inputs:
@@ -259,7 +252,6 @@ stages:
           script: |
             $tags = '$(Docker.Tags)'.ToLower()
             Write-Host "##vso[task.setvariable variable=dockerTags]$tags"
-            Write-Host $(dockerTags)
 
       - task: Docker@2
         displayName: 'Create Docker Image - Linux'
