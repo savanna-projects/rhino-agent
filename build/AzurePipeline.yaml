@@ -171,7 +171,7 @@ stages:
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --insecure `
-            --reporters cli,junit `
+            --reporters 'cli,junit' `
             --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.$(Build.BuildNumber).xml
       
       - task: PublishTestResults@2
