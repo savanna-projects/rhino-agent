@@ -1,11 +1,11 @@
 # Setup: Base
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-focal AS base
 WORKDIR /app
 EXPOSE 9000
 EXPOSE 9001
 
 # Build
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-focal AS build
 
 # Install Utilities
 #RUN apt-get update && apt-get install -y wget
@@ -28,7 +28,7 @@ COPY ["Rhino.Controllers/Rhino.Controllers.csproj", "Rhino.Controllers/"]
 COPY ["Rhino.Controllers.Domain/Rhino.Controllers.Domain.csproj", "Rhino.Controllers.Domain/"]
 COPY ["Rhino.Controllers.Extensions/Rhino.Controllers.Extensions.csproj", "Rhino.Controllers.Extensions/"]
 COPY ["Rhino.Controllers.Models/Rhino.Controllers.Models.csproj", "Rhino.Controllers.Models/"]
-RUN dotnet restore --disable-parallel "Rhino.Agent/Rhino.Agent.csproj"
+RUN dotnet restore "Rhino.Agent/Rhino.Agent.csproj"
 COPY . .
 WORKDIR "/src/Rhino.Agent"
 RUN dotnet build "Rhino.Agent.csproj" -c Release -o /app/build
