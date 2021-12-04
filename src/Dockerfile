@@ -8,18 +8,18 @@ EXPOSE 9001
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 
 # Install Utilities
-RUN apt-get update && apt-get install -y wget
-RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-RUN dpkg -i packages-microsoft-prod.deb
-RUN apt-get update && apt-get install -y \
-    curl \
-    apt-transport-https \
-    dotnet-sdk-5.0 \
-    gss-ntlmssp \
-    vim \
-    jq \
-    sudo \
-    openssh-server sudo -y
+#RUN apt-get update && apt-get install -y wget
+#RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+#RUN dpkg -i packages-microsoft-prod.deb
+#RUN apt-get update && apt-get install -y \
+#    curl \
+#    apt-transport-https \
+#    dotnet-sdk-5.0 \
+#    gss-ntlmssp \
+#    vim \
+#    jq \
+#    sudo \
+#    openssh-server sudo -y
 
 # deploy
 WORKDIR /src
