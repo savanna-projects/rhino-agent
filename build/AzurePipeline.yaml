@@ -251,6 +251,15 @@ stages:
           containerRegistry: 'docker.io'
           command: 'login'
 
+      - task: PowerShell@2
+        displayName: 'Format Docker Tags'
+        inputs:
+          targetType: 'inline'
+          script: |
+            $tags = $(Docker.Tags).ToLower()
+            Write-Host "##vso[task.setvariable variable=dockerTags]$tags"
+            Write-Host $(dockerTags)
+
       - task: Docker@2
         displayName: 'Create Docker Image - Linux'
         inputs:
@@ -258,4 +267,4 @@ stages:
           repository: 'rhinoapi/rhino-agent'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
-          tags: $(Docker.Tags)
+          tags: $(dockerTags)
