@@ -77,6 +77,15 @@ stages:
             # set value
             Write-Host "##vso[task.setvariable variable=buildVersion]$version"
 
+      - task: AzureRmWebAppDeployment@4
+        displayName: Deploy Rhino API on Stage Environment
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
+          appType: 'webApp'
+          WebAppName: 'rhino'
+          packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
       - task: PublishBuildArtifacts@1
         displayName: Publish Artifact to Container
         inputs:
