@@ -181,6 +181,10 @@ stages:
           failTaskOnFailedTests: true
           testRunTitle: '$(Release.Prefix).$(Build.BuildNumber)'
 
+    - job: StopStageEnvironment
+      displayName: 'Stop Stage Environment'
+      dependsOn: 'DeployAndTestOnStageEnvironment'
+      steps:
       - task: AzureAppServiceManage@0
         displayName: Stop Rhino API Stage Application
         inputs:
