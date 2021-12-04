@@ -168,13 +168,14 @@ stages:
       #    script: 'newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json --insecure'
       
       - task: AzureAppServiceManage@0
-        displayName: Start Rhino API Stage Application
+        displayName: Stop Rhino API Stage Application
         inputs:
           azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
           Action: 'Stop Azure App Service'
           WebAppName: 'rhino'
 
   - stage: Publish
+    displayName: Publish on GitHub
     dependsOn: 'Test'
     condition: 'succeeded()'
     jobs:
@@ -215,4 +216,4 @@ stages:
           title: '$(Release.Prefix) v$(buildVersion)'
           changeLogCompareToRelease: 'lastFullRelease'
           changeLogType: 'commitBased'
-          assets: '$(build.artifactstagingdirectory)/**/*.zip'
+          assets: '$(build.artifactstagingdirectory)/*.zip'
