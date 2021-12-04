@@ -77,15 +77,6 @@ stages:
             # set value
             Write-Host "##vso[task.setvariable variable=buildVersion]$version"
 
-      - task: AzureRmWebAppDeployment@4
-        displayName: Deploy Rhino API on Stage Environment
-        inputs:
-          ConnectionType: 'AzureRM'
-          azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
-          appType: 'webApp'
-          WebAppName: 'rhino'
-          packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
-
       - task: PublishBuildArtifacts@1
         displayName: Publish Artifact to Container
         inputs:
@@ -153,17 +144,11 @@ stages:
           errorActionPreference: 'silentlyContinue'
           failOnStderr: true
 
-      - task: PowerShell@2
-        displayName: 'Start Rhino API Server'
+      - task: AzureRmWebAppDeployment@4
+        displayName: Deploy Rhino API on Stage Environment
         inputs:
-          targetType: 'inline'
-          script: Start-Process dotnet -ArgumentList '$(System.ArtifactsDirectory)/app/Rhino.Agent.dll'
-          errorActionPreference: 'silentlyContinue'
-          failOnStderr: true
-      
-      - task: PowerShell@2
-        displayName: 'Invoke Automation Tests'
-        inputs:
-          targetType: 'inline'
-          script: 'newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json --insecure'
-
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
+          appType: 'webApp'
+          WebAppName: 'rhino'
+          packageForLinux: '$(System.ArtifactsDirectory)/**/*.zip'
