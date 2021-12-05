@@ -189,7 +189,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"name\": \"Rhino Automation - Chrome & Firefox\",\r\n  \"testsRepository\": [],\r\n  \"driverParameters\": [\r\n    {\r\n      \"driver\": \"ChromeDriver\",\r\n      \"driverBinaries\": \"{{rhino_drivers}}\"\r\n    },\r\n    {\r\n      \"driver\": \"FirefoxDriver\",\r\n      \"driverBinaries\": \"{{rhino_drivers}}\"\r\n    }\r\n  ],\r\n  \"dataSource\": [],\r\n  \"models\": [],\r\n  \"authentication\": {\r\n    \"password\": \"{{rhino_password}}\",\r\n    \"userName\": \"{{rhino_user}}\"\r\n  },\r\n  \"engineConfiguration\": {\r\n    \"maxParallel\": 1,\r\n    \"failOnException\": false,\r\n    \"optimalThreshold\": 3,\r\n    \"qualityThreshold\": 0,\r\n    \"toleranceThreshold\": 0,\r\n    \"priority\": 0,\r\n    \"severity\": 0,\r\n    \"errorOnExitCode\": 0,\r\n    \"elementSearchingTimeout\": 15000,\r\n    \"pageLoadTimeout\": 60000,\r\n    \"retrunExceptions\": true,\r\n    \"returnPerformancePoints\": true,\r\n    \"returnEnvironment\": true,\r\n    \"terminateOnAssertFailure\": false\r\n  },\r\n  \"screenshotsConfiguration\": {\r\n    \"keepOriginal\": false,\r\n    \"returnScreenshots\": false,\r\n    \"onExceptionOnly\": false\r\n  },\r\n  \"reportConfiguration\": {\r\n    \"reporters\": [\r\n      \"reporter_basic\",\r\n      \"reporter_warehouse\"\r\n    ],\r\n    \"archive\": false,\r\n    \"localReport\": true,\r\n    \"addGravityData\": true\r\n  }\r\n}",
+									"raw": "{\r\n  \"name\": \"Rhino Automation - Chrome & Firefox\",\r\n  \"testsRepository\": [],\r\n  \"driverParameters\": [\r\n    {\r\n      \"driver\": \"ChromeDriver\",\r\n      \"driverBinaries\": \"{{rhino_drivers}}\"\r\n    },\r\n    {\r\n      \"driver\": \"FirefoxDriver\",\r\n      \"driverBinaries\": \"{{rhino_drivers}}\"\r\n    }\r\n  ],\r\n  \"dataSource\": [],\r\n  \"models\": [],\r\n  \"authentication\": {\r\n    \"password\": \"{{rhino_password}}\",\r\n    \"userName\": \"{{rhino_user}}\"\r\n  },\r\n  \"engineConfiguration\": {\r\n    \"maxParallel\": 1,\r\n    \"failOnException\": false,\r\n    \"optimalThreshold\": 3,\r\n    \"qualityThreshold\": 0,\r\n    \"toleranceThreshold\": 0,\r\n    \"priority\": 0,\r\n    \"severity\": 0,\r\n    \"errorOnExitCode\": 0,\r\n    \"elementSearchingTimeout\": 15000,\r\n    \"pageLoadTimeout\": 60000,\r\n    \"retrunExceptions\": true,\r\n    \"returnPerformancePoints\": true,\r\n    \"returnEnvironment\": true,\r\n    \"terminateOnAssertFailure\": false\r\n  },\r\n  \"screenshotsConfiguration\": {\r\n    \"keepOriginal\": false,\r\n    \"returnScreenshots\": {{use_reports}},\r\n    \"onExceptionOnly\": false\r\n  },\r\n  \"reportConfiguration\": {\r\n    \"reporters\": [\r\n      \"ReporterBasic\"\r\n    ],\r\n    \"archive\": false,\r\n    \"localReport\": {{use_reports}},\r\n    \"addGravityData\": {{use_reports}}\r\n  }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1113,7 +1113,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"Authentication\": {\r\n    \"Password\": \"{{rhino_password}}\",\r\n    \"UserName\": \"{{rhino_user}}\"\r\n  },\r\n  \"EngineConfiguration\": {\r\n    \"ElementSearchingTimeout\": 15000,\r\n    \"PageLoadTimeout\": 60000\r\n  },\r\n  \"ScreenshotsConfiguration\": {\r\n    \"KeepOriginal\": false,\r\n    \"ReturnScreenshots\": true\r\n  },\r\n  \"DriverParams\": \"{\\\"driver\\\": \\\"ChromeDriver\\\", \\\"driverBinaries\\\": \\\"{{rhino_drivers}}\\\"}\",\r\n  \"Actions\": [\r\n    {\r\n      \"ActionType\": \"GoToUrl\",\r\n      \"Argument\": \"https://gravitymvctestapplication.azurewebsites.net/student\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Assert\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Argument\": \"{{$ --url --match:gravitymvctestapplication.azurewebsites.net}}\"\r\n    },\r\n    {\r\n      \"ActionType\": \"CloseAllChildWindows\"\r\n    },\r\n    {\r\n      \"ActionType\": \"SendKeys\",\r\n      \"ElementToActOn\": \"//input[@id='SearchString']\",\r\n      \"Argument\": \"Carson\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Click\",\r\n      \"Locator\": \"CssSelector\",\r\n      \"ElementToActOn\": \"#SearchButton\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Wait\",\r\n      \"Argument\": \"3000\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Assert\",\r\n      \"ElementToActOn\": \"//td[@id]\",\r\n      \"Argument\": \"{{$ --count --gt:0}}\"\r\n    },\r\n    {\r\n      \"ActionType\": \"RegisterParameter\",\r\n      \"ElementToActOn\": \"Jhon\",\r\n      \"Argument\": \"first_name\"\r\n    },\r\n    {\r\n      \"ActionType\": \"CloseBrowser\"\r\n    }\r\n  ]\r\n}",
+									"raw": "{\r\n  \"Authentication\": {\r\n    \"Password\": \"{{rhino_password}}\",\r\n    \"UserName\": \"{{rhino_user}}\"\r\n  },\r\n  \"EngineConfiguration\": {\r\n    \"ElementSearchingTimeout\": 15000,\r\n    \"PageLoadTimeout\": 60000\r\n  },\r\n  \"ScreenshotsConfiguration\": {\r\n    \"KeepOriginal\": false,\r\n    \"ReturnScreenshots\": {{use_reports}}\r\n  },\r\n  \"DriverParams\": \"{\\\"driver\\\": \\\"ChromeDriver\\\", \\\"driverBinaries\\\": \\\"{{rhino_drivers}}\\\"}\",\r\n  \"Actions\": [\r\n    {\r\n      \"ActionType\": \"GoToUrl\",\r\n      \"Argument\": \"https://gravitymvctestapplication.azurewebsites.net/student\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Assert\",\r\n      \"Locator\": \"Xpath\",\r\n      \"Argument\": \"{{$ --url --match:gravitymvctestapplication.azurewebsites.net}}\"\r\n    },\r\n    {\r\n      \"ActionType\": \"CloseAllChildWindows\"\r\n    },\r\n    {\r\n      \"ActionType\": \"SendKeys\",\r\n      \"ElementToActOn\": \"//input[@id='SearchString']\",\r\n      \"Argument\": \"Carson\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Click\",\r\n      \"Locator\": \"CssSelector\",\r\n      \"ElementToActOn\": \"#SearchButton\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Wait\",\r\n      \"Argument\": \"3000\"\r\n    },\r\n    {\r\n      \"ActionType\": \"Assert\",\r\n      \"ElementToActOn\": \"//td[@id]\",\r\n      \"Argument\": \"{{$ --count --gt:0}}\"\r\n    },\r\n    {\r\n      \"ActionType\": \"RegisterParameter\",\r\n      \"ElementToActOn\": \"Jhon\",\r\n      \"Argument\": \"first_name\"\r\n    },\r\n    {\r\n      \"ActionType\": \"CloseBrowser\"\r\n    }\r\n  ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -8886,6 +8886,12 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"if(pm.response.status === 404) {\r",
+											"    postman.setNextRequest(pm.collectionVariables.get('callback_request'));\r",
+											"    console.log('Test status was not found, either test was completed or corrupted. Moving to next test.');\r",
+											"    return;\r",
+											"}\r",
+											"\r",
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
@@ -8909,7 +8915,7 @@
 											"}\r",
 											"\r",
 											"// test completed\r",
-											"if(jsonData.status === 'Complete' && !isTimeout) {\r",
+											"if((jsonData.status === 'Complete' || pm.response.status === 400) && !isTimeout) {\r",
 											"    pm.test(\"Test completed\", function () {\r",
 											"        pm.expect(jsonData.status).to.equal('Complete');\r",
 											"    });\r",
