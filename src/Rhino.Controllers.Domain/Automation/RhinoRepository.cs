@@ -416,8 +416,9 @@ namespace Rhino.Controllers.Domain.Automation
             // clean
             foreach (var status in statusCollection)
             {
-                var isComplete = status.Value.Status != AsyncStatus.Running;
-                if (!isComplete)
+                var isPending = status.Value.Status == AsyncStatus.Pending;
+                var isRuning = isPending || status.Value.Status == AsyncStatus.Running;
+                if (isRuning)
                 {
                     continue;
                 }
@@ -446,8 +447,17 @@ namespace Rhino.Controllers.Domain.Automation
             // setup
             var statusCollection =
                 (ConcurrentDictionary<string, AsyncStatusModel<RhinoConfiguration>>)s_status;
+            var statusModel = statusCollection[$"{id}"];
 
-            // clean
+            // ok
+            var isPending = statusModel.Status == AsyncStatus.Pending;
+            var isRuning = isPending || statusModel.Status == AsyncStatus.Running;
+            if (isRuning)
+            {
+                return (StatusCodes.Status200OK, statusModel);
+            }
+
+            // clear
             statusCollection.TryRemove($"{id}", out AsyncStatusModel<RhinoConfiguration> value);
 
             // get
