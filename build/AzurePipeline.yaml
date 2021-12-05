@@ -155,7 +155,15 @@ stages:
           WebAppName: 'rhino'
           packageForLinux: '$(System.ArtifactsDirectory)/**/*.zip'
           enableCustomDeployment: true
-          DeploymentType: 'zipDeploy'
+          DeploymentType: 'webDeploy'
+          RemoveAdditionalFilesFlag: true
+
+      - task: AzureAppServiceManage@0
+        displayName: Stop Rhino API Stage Application
+        inputs:
+          azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
+          Action: 'Stop Azure App Service'
+          WebAppName: 'rhino'
 
       - task: AzureAppServiceManage@0
         displayName: Start Rhino API Stage Application
@@ -163,16 +171,6 @@ stages:
           azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
           Action: 'Start Azure App Service'
           WebAppName: 'rhino'
-
-      - task: PowerShell@2
-        displayName: 'Invoke Automation Tests'
-        inputs:
-          targetType: 'inline'
-          script: |
-            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
-            --insecure `
-            --reporters 'cli,junit' `
-            --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.$(Build.BuildNumber).xml
       
       - task: PublishTestResults@2
         inputs:
