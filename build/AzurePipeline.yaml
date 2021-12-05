@@ -155,14 +155,8 @@ stages:
           WebAppName: 'rhino'
           packageForLinux: '$(System.ArtifactsDirectory)/**/*.zip'
           enableCustomDeployment: true
-          DeploymentType: 'zipDeploy'
-          ScriptType: 'Inline Script'
-          InlineScript: |
-            Set-Location '/home/site/wwwroot'
-            Remove-Item -Path 'Data' -Recurse
-            Remove-Item -Path 'images' -Recurse
-            Remove-Item -Path 'Outputs' -Recurse
-            Remove-Item -Path 'Plugins' -Recurse
+          DeploymentType: 'webDeploy'
+          RemoveAdditionalFilesFlag: true
 
       - task: AzureAppServiceManage@0
         displayName: Stop Rhino API Stage Application
