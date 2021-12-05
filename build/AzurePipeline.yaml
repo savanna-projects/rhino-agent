@@ -158,6 +158,7 @@ stages:
           DeploymentType: 'webDeploy'
           RemoveAdditionalFilesFlag: true
           RuntimeStack: 'DOTNETCORE|6.0'
+          StartupCommand: 'dotnet Rhino.Agent.dll'
 
       - task: AzureAppServiceManage@0
         displayName: Stop Rhino API Stage Application
@@ -176,6 +177,8 @@ stages:
       - task: PowerShell@2
         displayName: 'Invoke Automation Tests'
         inputs:
+          errorActionPreference: 'silentlyContinue'
+          failOnStderr: false
           targetType: 'inline'
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
