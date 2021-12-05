@@ -6,6 +6,8 @@
 using Gravity.Abstraction.Logging;
 using Gravity.Services.DataContracts;
 
+using LiteDB;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
@@ -15,13 +17,10 @@ using Rhino.Api.Extensions;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Rhino.Controllers.Domain.Automation
 {
@@ -409,7 +408,26 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns>A collection of AsyncStatusModel object (if any).</returns>
         public IEnumerable<AsyncStatusModel<RhinoConfiguration>> GetStatus()
         {
-            return s_status.Select(i => i.Value);
+            // find
+            var statusCollection =
+                (ConcurrentDictionary<string, AsyncStatusModel<RhinoConfiguration>>)s_status;
+            var completed = new List<AsyncStatusModel<RhinoConfiguration>>();
+
+            // clean
+            foreach (var status in statusCollection)
+            {
+                var isComplete = status.Value.Status != AsyncStatus.Running;
+                if (!isComplete)
+                {
+                    continue;
+                }
+
+                statusCollection.TryRemove(status.Key, out AsyncStatusModel<RhinoConfiguration> value);
+                completed.Add(value);
+            }
+
+            // get
+            return s_status.Select(i => i.Value).Concat(completed).OrderBy(i => i.Status);
         }
 
         /// <summary>
@@ -419,9 +437,21 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns>Status code and AsyncStatusModel object (if any).</returns>
         public (int StatusCode, AsyncStatusModel<RhinoConfiguration> Status) GetStatus(Guid id)
         {
-            return s_status.ContainsKey($"{id}")
-                ? (StatusCodes.Status200OK, s_status[$"{id}"])
-                : (StatusCodes.Status404NotFound, default);
+            // not found
+            if (!s_status.ContainsKey($"{id}"))
+            {
+                return (StatusCodes.Status404NotFound, default);
+            }
+
+            // setup
+            var statusCollection =
+                (ConcurrentDictionary<string, AsyncStatusModel<RhinoConfiguration>>)s_status;
+
+            // clean
+            statusCollection.TryRemove($"{id}", out AsyncStatusModel<RhinoConfiguration> value);
+
+            // get
+            return (StatusCodes.Status200OK, value);
         }
         #endregion
 
