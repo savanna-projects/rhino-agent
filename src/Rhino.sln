@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5F276F3-7431-4018-8A38-179C8CA4B100}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\build\AzurePipeline.yaml = ..\..\..\build\AzurePipeline.yaml
+		..\build\AzurePipelineResetEnvironment.yaml = ..\build\AzurePipelineResetEnvironment.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{3712E923-66B8-4982-9BE2-045E1B95C598}"
