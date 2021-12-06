@@ -25,7 +25,7 @@
     targetType: 'inline'
     script: |
       # setup
-      $timeout     = 90
+      $timeout     = 180
       $endTime     = [DateTime]::Now.AddSeconds($timeout)
       $assertions  = 10
       $onAssertion = 0
