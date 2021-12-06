@@ -17,4 +17,5 @@ variables:
   value: |
     v$(buildVersion)-$(Release.Prefix)
 
-stages: 'AzurePipeline.yaml'
+stages:
+- template: 'AzurePipeline.yaml'
