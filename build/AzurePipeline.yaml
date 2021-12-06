@@ -26,7 +26,7 @@ stages:
         inputs:
           command: 'build'
           projects: '**/*.csproj'
-          arguments: '--configuration $(Build.Configuration)'
+          arguments: '--configuration ${{ parameters.Build.Configuration }}'
 
       - task: DotNetCoreCLI@2
         displayName: Publish Files to $(build.artifactstagingdirectory)/$(Build.BuildNumber)
