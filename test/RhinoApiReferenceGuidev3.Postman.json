@@ -1276,38 +1276,6 @@
 					"response": []
 				},
 				{
-					"name": "Delete Model",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 204\", function () {\r",
-									"    pm.response.to.have.status(204);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{endpoint}}/models/{{collection_id}}",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"models",
-								"{{collection_id}}"
-							]
-						},
-						"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Models.md#delete-model"
-					},
-					"response": []
-				},
-				{
 					"name": "Add Model",
 					"event": [
 						{
@@ -1345,6 +1313,38 @@
 							]
 						},
 						"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Models.md#add-models-to-collection"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Model",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{endpoint}}/models/{{collection_id}}",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"models",
+								"{{collection_id}}"
+							]
+						},
+						"description": "https://github.com/savanna-projects/rhino-agent/blob/master/docs/pages/ApiReference/Models.md#delete-model"
 					},
 					"response": []
 				},
