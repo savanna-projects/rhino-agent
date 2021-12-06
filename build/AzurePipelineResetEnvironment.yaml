@@ -1,3 +1,4 @@
+steps:
 - task: AzureRmWebAppDeployment@4
   displayName: Deploy Rhino API on Stage Environment
   inputs:
