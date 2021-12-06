@@ -1,7 +1,7 @@
 parameters:
 - name: 'Rhino.Async.Pooling'
   default: 15000
-- name: 'Build.Configuration'
+- name: 'BuildConfiguration'
   default: 'Release'
 - name: 'Release.PreRelease'
   default: true
@@ -26,7 +26,7 @@ stages:
         inputs:
           command: 'build'
           projects: '**/*.csproj'
-          arguments: '--configuration ${{ parameters.Build.Configuration }}'
+          arguments: '--configuration ${{ parameters.BuildConfiguration }}'
 
       - task: DotNetCoreCLI@2
         displayName: Publish Files to $(build.artifactstagingdirectory)/$(Build.BuildNumber)
