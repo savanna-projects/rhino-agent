@@ -9,10 +9,16 @@ pool:
   vmImage: windows-2022
 
 variables:
+- group: github.com
+- group: browserstack.com
+- group: gravity.api
+
 - name: 'Release.PreRelease'
   value: true
+
 - name: 'Release.Prefix'
   value: 'Preview'
+
 - name: 'Docker.Tags'
   value: |
     v$(buildVersion)-$(Release.Prefix)

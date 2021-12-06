@@ -1,15 +1,12 @@
-variables:
-- group: github.com
-- group: browserstack.com
-- group: gravity.api
+parameters:
 - name: 'Rhino.Async.Pooling'
-  value: 15000
+  default: 15000
 - name: 'Build.Configuration'
-  value: 'Release'
+  default: 'Release'
 - name: 'Release.PreRelease'
-  value: true
+  default: true
 - name: 'Release.Prefix'
-  value: ''
+  default: 'preview'
 
 stages:
   - stage: 'Build'
