@@ -13,6 +13,10 @@ variables:
 - group: browserstack.com
 - group: gravity.api
 
+- name: 'Build.Configuration'
+- name: 'Rhino.Async.Pooling'
+- name: 'Release.PreRelease'
+
 - name: 'Release.PreRelease'
   value: true
 
