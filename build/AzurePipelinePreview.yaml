@@ -1,0 +1,17 @@
+name: Rhino.Agent.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+    - preview
+
+pool:
+  vmImage: windows-2022
+
+variables:
+- name: 'Release.PreRelease'
+  value: true
+- name: 'Release.Prefix'
+  value: 'Preview'
+
+stages: 'AzurePipeline.yaml'

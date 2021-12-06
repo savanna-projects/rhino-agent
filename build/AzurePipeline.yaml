@@ -1,15 +1,3 @@
-# https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
-
-name: Rhino.Agent.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
-
-trigger:
-  branches:
-    include:
-    - new-integration
-
-pool:
-  vmImage: windows-2022
-
 variables:
 - group: github.com
 - group: browserstack.com
@@ -21,7 +9,7 @@ variables:
 - name: 'Release.PreRelease'
   value: true
 - name: 'Release.Prefix'
-  value: 'Preview'
+  value: ''
 - name: 'Docker.Tags'
   value: |
     v$(buildVersion)-$(Release.Prefix)
