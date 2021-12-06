@@ -19,18 +19,13 @@ namespace Rhino.Controllers.Controllers
     [ApiVersion("3.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [Obsolete(message: "This controller is obsolete. Use _**Gravity Controller**_ instead.", error: false)]
-    public class DebugController : ControllerBase
+    public class GravityController : ControllerBase
     {
         // GET: api/v3/debug
         [HttpPost]
         [SwaggerOperation(
-            Summary = "Invoke-Debug",
-            Description =
-            "**IMPORTANT!**\n" +
-            "\n" +
-            "This controller is obsolete. Use _**Gravity Controller**_ instead.  \n  \n  \n" +
-            "Creates a new _**Debug Session**_.  \nNote, the API used for these requests is the underline Gravity API.")]
+            Summary = "Invoke-OrbitRequest",
+            Description = "Creates a new _**Orbit Session**_.  \nNote, the API used for these requests is the underline Gravity API.")]
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(OrbitResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<WebAutomation>))]

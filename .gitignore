@@ -349,7 +349,8 @@ MigrationBackup/
 .ionide/
 
 # Rhino specifics
-Data/Data.dll
+Data.dll
+Data-*.dll
 Outputs/
 [Ii]mages/
 Plugins/

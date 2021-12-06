@@ -11,43 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5F276F3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{3712E923-66B8-4982-9BE2-045E1B95C598}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\docs\pages\Home.md = ..\..\..\docs\pages\Home.md
-		..\..\..\README.md = ..\..\..\README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiReference", "ApiReference", "{0E8FAD52-5AFA-4983-8F0A-9E772FA845D9}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\docs\pages\ApiReference\Configurations.md = ..\..\..\docs\pages\ApiReference\Configurations.md
-		..\..\..\docs\pages\ApiReference\Debug.md = ..\..\..\docs\pages\ApiReference\Debug.md
-		..\..\..\docs\pages\ApiReference\Environment.md = ..\..\..\docs\pages\ApiReference\Environment.md
-		..\..\..\docs\pages\ApiReference\Logs.md = ..\..\..\docs\pages\ApiReference\Logs.md
-		..\..\..\docs\pages\ApiReference\Meta.md = ..\..\..\docs\pages\ApiReference\Meta.md
-		..\..\..\docs\pages\ApiReference\Models.md = ..\..\..\docs\pages\ApiReference\Models.md
-		..\..\..\docs\pages\ApiReference\Plugins.md = ..\..\..\docs\pages\ApiReference\Plugins.md
-		..\..\..\docs\pages\ApiReference\Rhino.md = ..\..\..\docs\pages\ApiReference\Rhino.md
-		..\..\..\docs\pages\ApiReference\RhinoAsync.md = ..\..\..\docs\pages\ApiReference\RhinoAsync.md
-		..\..\..\docs\pages\ApiReference\Tests.md = ..\..\..\docs\pages\ApiReference\Tests.md
-		..\..\..\docs\pages\ApiReference\Utilities.md = ..\..\..\docs\pages\ApiReference\Utilities.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingsStarted", "GettingsStarted", "{93EE5C18-B0DA-4D71-B345-FC7B44BC3D79}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\docs\pages\GettingStarted\ConnectWidget.md = ..\..\..\docs\pages\GettingStarted\ConnectWidget.md
-		..\..\..\docs\pages\GettingStarted\CreateYourFirstAutomation.md = ..\..\..\docs\pages\GettingStarted\CreateYourFirstAutomation.md
-		..\..\..\docs\pages\GettingStarted\Deployment.md = ..\..\..\docs\pages\GettingStarted\Deployment.md
-		..\..\..\docs\pages\GettingStarted\DeploymentDocker.md = ..\..\..\docs\pages\GettingStarted\DeploymentDocker.md
-		..\..\..\docs\pages\GettingStarted\DeploymentIIS.md = ..\..\..\docs\pages\GettingStarted\DeploymentIIS.md
-		..\..\..\docs\pages\GettingStarted\Register.md = ..\..\..\docs\pages\GettingStarted\Register.md
-		..\..\..\docs\pages\GettingStarted\ServerSettings.md = ..\..\..\docs\pages\GettingStarted\ServerSettings.md
-		..\..\..\docs\pages\GettingStarted\VerifyDeployment.md = ..\..\..\docs\pages\GettingStarted\VerifyDeployment.md
-		..\..\..\docs\pages\GettingStarted\WidgetOverview.md = ..\..\..\docs\pages\GettingStarted\WidgetOverview.md
-		..\..\..\docs\pages\GettingStarted\WidgetOverviewActions.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewActions.md
-		..\..\..\docs\pages\GettingStarted\WidgetOverviewButtons.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewButtons.md
-		..\..\..\docs\pages\GettingStarted\WidgetOverviewExpected.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewExpected.md
-		..\..\..\docs\pages\GettingStarted\WidgetOverviewHelp.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewHelp.md
-		..\..\..\docs\pages\GettingStarted\WidgetOverviewLocators.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewLocators.md
-		..\..\..\docs\pages\GettingStarted\WidgetOverviewScenario.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewScenario.md
-		..\..\..\docs\pages\GettingStarted\WidgetOverviewSettings.md = ..\..\..\docs\pages\GettingStarted\WidgetOverviewSettings.md
+		..\docs\pages\Home.md = ..\docs\pages\Home.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{F0581530-31D7-40C5-BD78-4322BD64C4F0}"
@@ -70,15 +34,50 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Agent", "Rhino.Agent\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{E9F17CB3-15C4-420F-B1B4-57F7E935E9AA}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\.gitignore = ..\..\..\.gitignore
-		..\..\..\LICENSE = ..\..\..\LICENSE
-		..\..\..\README.md = ..\..\..\README.md
+		..\.gitignore = ..\.gitignore
+		..\LICENSE = ..\LICENSE
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{338C88C8-6A0B-4E73-8E55-692FE2123545}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\test\AzureSettingsMstest.runsettings = ..\..\..\test\AzureSettingsMstest.runsettings
-		..\..\..\test\RhinoApiReferenceGuidev3.Postman.json = ..\..\..\test\RhinoApiReferenceGuidev3.Postman.json
+		..\test\AzureSettingsMstest.runsettings = ..\test\AzureSettingsMstest.runsettings
+		..\test\RhinoApiReferenceGuidev3.Postman.json = ..\test\RhinoApiReferenceGuidev3.Postman.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiReference", "ApiReference", "{953D0FA4-95D1-4820-A766-DCA290225D76}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\pages\ApiReference\Configurations.md = ..\docs\pages\ApiReference\Configurations.md
+		..\docs\pages\ApiReference\Debug.md = ..\docs\pages\ApiReference\Debug.md
+		..\docs\pages\ApiReference\Environment.md = ..\docs\pages\ApiReference\Environment.md
+		..\docs\pages\ApiReference\Logs.md = ..\docs\pages\ApiReference\Logs.md
+		..\docs\pages\ApiReference\Meta.md = ..\docs\pages\ApiReference\Meta.md
+		..\docs\pages\ApiReference\Models.md = ..\docs\pages\ApiReference\Models.md
+		..\docs\pages\ApiReference\Plugins.md = ..\docs\pages\ApiReference\Plugins.md
+		..\docs\pages\ApiReference\Rhino.md = ..\docs\pages\ApiReference\Rhino.md
+		..\docs\pages\ApiReference\RhinoAsync.md = ..\docs\pages\ApiReference\RhinoAsync.md
+		..\docs\pages\ApiReference\Tests.md = ..\docs\pages\ApiReference\Tests.md
+		..\docs\pages\ApiReference\Utilities.md = ..\docs\pages\ApiReference\Utilities.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GettingStarted", "GettingStarted", "{B4FF2554-0F59-4F59-86D3-97DE3DFF359F}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\pages\GettingStarted\ConnectWidget.md = ..\docs\pages\GettingStarted\ConnectWidget.md
+		..\docs\pages\GettingStarted\CreateYourFirstAutomation.md = ..\docs\pages\GettingStarted\CreateYourFirstAutomation.md
+		..\docs\pages\GettingStarted\Deployment.md = ..\docs\pages\GettingStarted\Deployment.md
+		..\docs\pages\GettingStarted\DeploymentDocker.md = ..\docs\pages\GettingStarted\DeploymentDocker.md
+		..\docs\pages\GettingStarted\DeploymentIIS.md = ..\docs\pages\GettingStarted\DeploymentIIS.md
+		..\docs\pages\GettingStarted\Register.md = ..\docs\pages\GettingStarted\Register.md
+		..\docs\pages\GettingStarted\ServerSettings.md = ..\docs\pages\GettingStarted\ServerSettings.md
+		..\docs\pages\GettingStarted\VerifyDeployment.md = ..\docs\pages\GettingStarted\VerifyDeployment.md
+		..\docs\pages\GettingStarted\WidgetOverview.md = ..\docs\pages\GettingStarted\WidgetOverview.md
+		..\docs\pages\GettingStarted\WidgetOverviewActions.md = ..\docs\pages\GettingStarted\WidgetOverviewActions.md
+		..\docs\pages\GettingStarted\WidgetOverviewButtons.md = ..\docs\pages\GettingStarted\WidgetOverviewButtons.md
+		..\docs\pages\GettingStarted\WidgetOverviewExpected.md = ..\docs\pages\GettingStarted\WidgetOverviewExpected.md
+		..\docs\pages\GettingStarted\WidgetOverviewHelp.md = ..\docs\pages\GettingStarted\WidgetOverviewHelp.md
+		..\docs\pages\GettingStarted\WidgetOverviewLocators.md = ..\docs\pages\GettingStarted\WidgetOverviewLocators.md
+		..\docs\pages\GettingStarted\WidgetOverviewScenario.md = ..\docs\pages\GettingStarted\WidgetOverviewScenario.md
+		..\docs\pages\GettingStarted\WidgetOverviewSettings.md = ..\docs\pages\GettingStarted\WidgetOverviewSettings.md
 	EndProjectSection
 EndProject
 Global
@@ -116,8 +115,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0E8FAD52-5AFA-4983-8F0A-9E772FA845D9} = {3712E923-66B8-4982-9BE2-045E1B95C598}
-		{93EE5C18-B0DA-4D71-B345-FC7B44BC3D79} = {3712E923-66B8-4982-9BE2-045E1B95C598}
+		{953D0FA4-95D1-4820-A766-DCA290225D76} = {3712E923-66B8-4982-9BE2-045E1B95C598}
+		{B4FF2554-0F59-4F59-86D3-97DE3DFF359F} = {3712E923-66B8-4982-9BE2-045E1B95C598}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A97237FA-2877-4119-AE16-96138FD97CFC}
