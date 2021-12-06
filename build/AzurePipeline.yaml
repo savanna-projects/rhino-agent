@@ -214,6 +214,7 @@ stages:
             --folder 'Test Cases' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
+            --delay-request 1000
             --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.Api.$(Build.BuildNumber).xml
       
       - task: PublishTestResults@2
@@ -272,6 +273,7 @@ stages:
             --folder 'Debug Automation' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
+            --delay-request 1000
             --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.Gravity.$(Build.BuildNumber).xml
 
       - task: PublishTestResults@2
@@ -330,6 +332,7 @@ stages:
             --folder 'Rhino' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
+            --delay-request 1000
             --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.Rhino.$(Build.BuildNumber).xml
 
       - task: PublishTestResults@2
@@ -400,6 +403,7 @@ stages:
             --folder 'Rhino Async' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
+            --delay-request 1000
             --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.RhinoAsync.$(Build.BuildNumber).xml
 
       - task: PublishTestResults@2
