@@ -222,6 +222,7 @@ stages:
           targetType: 'inline'
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            --folder 'One Time Setup' `
             --folder 'Debug Automation' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
@@ -256,6 +257,7 @@ stages:
           targetType: 'inline'
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            --folder 'One Time Setup' `
             --folder 'Rhino' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
