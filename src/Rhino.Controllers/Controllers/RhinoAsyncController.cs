@@ -21,7 +21,7 @@ using System.Net.Mime;
 namespace Rhino.Controllers.Controllers
 {
     [ApiVersion("3.0")]
-    [Route("api/v{version:apiVersion}/Rhino/async")]
+    [Route("api/v{version:apiVersion}/rhino/async")]
     [ApiController]
     public class RhinoAsyncController : ControllerBase
     {
@@ -84,7 +84,7 @@ namespace Rhino.Controllers.Controllers
         #endregion
 
         #region *** Collections    ***
-        // POST /rhino/configurations/:id/collections/invoke
+        // POST api/v3/rhino/async/configurations/:id/collections/invoke
         [HttpPost, Route("configurations/{id}/collections/invoke")]
         [SwaggerOperation(
             Summary = "Start-Collection -Configuration {00000000-0000-0000-0000-000000000000}",
@@ -121,13 +121,13 @@ namespace Rhino.Controllers.Controllers
             return Created($"/api/v3/rhino/async/status/{invokeResponse.Id}", invokeResponse);
         }
 
-        // GET /rhino/configurations/:configuration/collections/:collection/invoke
+        // GET api/v3/rhino/async/configurations/:configuration/collections/:collection/invoke
         [HttpGet, Route("configurations/{configuration}/collections/invoke/{collection}")]
         [SwaggerOperation(
             Summary = "Start-Collection -Configuration 00000000-0000-0000-0000-000000000000 -Collection 00000000-0000-0000-0000-000000000000",
             Description = "Invokes _**Rhino Spec**_ from the application state using preexisting configuration.")]
         [Produces(MediaTypeNames.Application.Json)]
-        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(AsyncInvokeModel))]
+        [SwaggerResponse(StatusCodes.Status201Created, SwaggerDocument.StatusCode.Status201Created, Type = typeof(AsyncInvokeModel))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<string>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
@@ -174,7 +174,7 @@ namespace Rhino.Controllers.Controllers
             return Created($"/api/v3/rhino/async/status/{invokeResponse.Id}", invokeResponse);
         }
 
-        // GET /rhino/collections/invoke/:id
+        // GET api/v3/rhino/async/collections/invoke/:id
         [HttpGet, Route("collections/invoke/{id}")]
         [SwaggerOperation(
             Summary = "Start-Collection -Configuration All -Collection {00000000-0000-0000-0000-000000000000} -Parallel {True|False}",

@@ -1,0 +1,47 @@
+- task: AzureRmWebAppDeployment@4
+  displayName: Deploy Rhino API on Stage Environment
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
+    appType: 'webApp'
+    WebAppName: 'rhino'
+    packageForLinux: '$(System.ArtifactsDirectory)/**/*.zip'
+    enableCustomDeployment: true
+    DeploymentType: 'webDeploy'
+    RemoveAdditionalFilesFlag: true
+
+- task: AzureAppServiceManage@0
+  displayName: Restart Rhino API Stage Application
+  inputs:
+    azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
+    Action: 'Restart Azure App Service'
+    WebAppName: 'rhino'
+
+- task: PowerShell@2
+  displayName: Rhino API Health Check
+  inputs:
+    errorActionPreference: 'silentlyContinue'
+    pwsh: true
+    targetType: 'inline'
+    script: |
+      # setup
+      $timeout     = 90
+      $endTime     = [DateTime]::Now.AddSeconds($timeout)
+      $assertions  = 10
+      $onAssertion = 0
+      #
+      # fixed wait
+      Start-Sleep -Seconds 10
+      #
+      # ping
+      while($endTime -gt [DateTime]::Now -and $onAssertion -ne $assertions) {
+      $response = Invoke-WebRequest -Uri '$(Rhino.Stage.Endpoint)/ping/rhino'
+      Write-Host "Ping $('$(Rhino.Stage.Endpoint)') $($response.StatusCode)"
+          if($response.StatusCode -eq 200) {
+              $onAssertion = $onAssertion + 1;
+          }
+          else {
+              $onAssertion
+          }
+          Start-Sleep -Seconds 3
+      }
