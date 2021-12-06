@@ -160,11 +160,16 @@ stages:
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
-            --folder 'Configurations' `
-            --folder 'Environment' `
-            --folder 'Logs & Analysis' `
-            --folder 'Page Models' `
-            --folder 'Test Cases' `
+            --folder 'Documentation: Configurations' `
+            --folder 'Tests: Configurations' `
+            --folder 'Documentation: Environment' `
+            --folder 'Tests: Environment' `
+            --folder 'Documentation: Logs & Analysis' `
+            --folder 'Tests: Logs & Analysis' `
+            --folder 'Documentation: Page Models' `
+            --folder 'Tests: Page Models' `
+            --folder 'Documentation: Test Cases' `
+            --folder 'Tests: Test Cases' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
             --delay-request 1000 `
@@ -188,7 +193,7 @@ stages:
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
-            --folder 'Debug Automation' `
+            --folder 'Tests: Debug Automation' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
             --delay-request 1000 `
@@ -212,7 +217,7 @@ stages:
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
-            --folder 'Rhino' `
+            --folder 'Documentation: Rhino' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
             --delay-request 1000 `
@@ -237,7 +242,7 @@ stages:
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
-            --folder 'Rhino Async' `
+            --folder 'Documentation: Rhino Async' `
             --reporters 'cli,junit' `
             --suppress-exit-code `
             --delay-request 1000 `
