@@ -1,12 +1,8 @@
 parameters:
-- name: 'Rhino.Async.Pooling'
+- name: 'RhinoAsyncPooling'
   default: 15000
 - name: 'BuildConfiguration'
   default: 'Release'
-- name: 'Release.PreRelease'
-  default: true
-- name: 'Release.Prefix'
-  default: 'preview'
 
 stages:
   - stage: 'Build'
@@ -34,7 +30,7 @@ stages:
           command: 'publish'
           publishWebProjects: false
           projects: '**/Rhino.Agent/Rhino.Agent.csproj'
-          arguments: '--configuration $(Build.Configuration) --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
+          arguments: '--configuration ${{ parameters.BuildConfiguration }} --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
           modifyOutputPath: false
 
       - task: PowerShell@2
@@ -128,7 +124,7 @@ stages:
             $content = $content -replace "pm\.collectionVariables\.set\('rhino_drivers',.*\)","pm.collectionVariables.set('rhino_drivers', '$(Grid.Endpoint.Rhino)')"
             $content = $content -replace "pm\.collectionVariables\.set\('rhino_user',.*\)","pm.collectionVariables.set('rhino_user', '$(Rhino.UserName)')"
             $content = $content -replace "pm\.collectionVariables\.set\('rhino_password',.*\)","pm.collectionVariables.set('rhino_password', '$(Rhino.Password)')"
-            $content = $content -replace "pm\.collectionVariables\.set\('async_pooling',.*\)","pm.collectionVariables.set('async_pooling', '$(Rhino.Async.Pooling)')"
+            $content = $content -replace "pm\.collectionVariables\.set\('async_pooling',.*\)","pm.collectionVariables.set('async_pooling', '${{ parameters.RhinoAsyncPooling }}')"
             Set-Content -Path '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json' -Value $content
 
       - template: AzurePipelineResetEnvironment.yaml
@@ -295,7 +291,7 @@ stages:
           action: 'create'
           target: '$(Build.SourceVersion)'
           tagSource: 'userSpecifiedTag'
-          isPreRelease: true
+          isPreRelease: $(Release.PreRelease)
           tag: 'v$(buildVersion)-$(Release.Prefix)'
           title: '$(Release.Prefix) v$(buildVersion)'
           changeLogCompareToRelease: 'lastFullRelease'
