@@ -3999,7 +3999,7 @@
 			"description": "This guide explains how to access and use _**Automation Collection API**_ to integrate automated tests, submit test results and automate various aspects of your application."
 		},
 		{
-			"name": "Tests: Configuration",
+			"name": "Tests: Configurations",
 			"item": [
 				{
 					"name": "Flow Action #01: Create Configuration - Positive",
