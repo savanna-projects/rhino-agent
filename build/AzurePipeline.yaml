@@ -10,9 +10,6 @@ variables:
   value: true
 - name: 'Release.Prefix'
   value: ''
-- name: 'Docker.Tags'
-  value: |
-    v$(buildVersion)-$(Release.Prefix)
 
 stages:
   - stage: 'Build'

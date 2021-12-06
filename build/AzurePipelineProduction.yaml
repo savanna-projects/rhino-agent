@@ -3,7 +3,7 @@ name: Rhino.Agent.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 trigger:
   branches:
     include:
-    - preview
+    - master
 
 pool:
   vmImage: windows-2022
@@ -12,9 +12,10 @@ variables:
 - name: 'Release.PreRelease'
   value: true
 - name: 'Release.Prefix'
-  value: 'Preview'
+  value: 'Production'
 - name: 'Docker.Tags'
   value: |
     v$(buildVersion)-$(Release.Prefix)
+    latest
 
 stages: 'AzurePipeline.yaml'
