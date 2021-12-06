@@ -174,18 +174,24 @@ stages:
           targetType: 'inline'
           script: |
             # setup
-            $timeout = 30
-            $endTime = [DateTime]::Now.AddSeconds($timeout)
+            $timeout     = 90
+            $endTime     = [DateTime]::Now.AddSeconds($timeout)
+            $assertions  = 10
+            $onAssertion = 0
             #
             # fixed wait
-            Start-Sleep -Seconds 15
+            Start-Sleep -Seconds 10
             #
             # ping
-            while($endTime -gt [DateTime]::Now) {
+            while($endTime -gt [DateTime]::Now -and $onAssertion -ne $assertions) {
                 $response = Invoke-WebRequest -Uri '$(Rhino.Stage.Endpoint)/ping/rhino'
                 Write-Host "Ping $('$(Rhino.Stage.Endpoint)') $($response.StatusCode)"
+                
                 if($response.StatusCode -eq 200) {
-                    break;
+                    $onAssertion = $onAssertion + 1;
+                }
+                else {
+                    $onAssertion
                 }
                 Start-Sleep -Seconds 3
             }
@@ -230,18 +236,24 @@ stages:
           targetType: 'inline'
           script: |
             # setup
-            $timeout = 30
-            $endTime = [DateTime]::Now.AddSeconds($timeout)
+            $timeout     = 90
+            $endTime     = [DateTime]::Now.AddSeconds($timeout)
+            $assertions  = 10
+            $onAssertion = 0
             #
             # fixed wait
-            Start-Sleep -Seconds 15
+            Start-Sleep -Seconds 10
             #
             # ping
-            while($endTime -gt [DateTime]::Now) {
+            while($endTime -gt [DateTime]::Now -and $onAssertion -ne $assertions) {
                 $response = Invoke-WebRequest -Uri '$(Rhino.Stage.Endpoint)/ping/rhino'
                 Write-Host "Ping $('$(Rhino.Stage.Endpoint)') $($response.StatusCode)"
+                
                 if($response.StatusCode -eq 200) {
-                    break;
+                    $onAssertion = $onAssertion + 1;
+                }
+                else {
+                    $onAssertion
                 }
                 Start-Sleep -Seconds 3
             }
@@ -282,18 +294,24 @@ stages:
           targetType: 'inline'
           script: |
             # setup
-            $timeout = 30
-            $endTime = [DateTime]::Now.AddSeconds($timeout)
+            $timeout     = 90
+            $endTime     = [DateTime]::Now.AddSeconds($timeout)
+            $assertions  = 10
+            $onAssertion = 0
             #
             # fixed wait
-            Start-Sleep -Seconds 15
+            Start-Sleep -Seconds 10
             #
             # ping
-            while($endTime -gt [DateTime]::Now) {
+            while($endTime -gt [DateTime]::Now -and $onAssertion -ne $assertions) {
                 $response = Invoke-WebRequest -Uri '$(Rhino.Stage.Endpoint)/ping/rhino'
                 Write-Host "Ping $('$(Rhino.Stage.Endpoint)') $($response.StatusCode)"
+                
                 if($response.StatusCode -eq 200) {
-                    break;
+                    $onAssertion = $onAssertion + 1;
+                }
+                else {
+                    $onAssertion
                 }
                 Start-Sleep -Seconds 3
             }
