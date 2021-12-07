@@ -17,8 +17,6 @@ using Newtonsoft.Json;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 
-using System.Collections.Generic;
-
 namespace Rhino.Controllers.Domain
 {
     /// <summary>

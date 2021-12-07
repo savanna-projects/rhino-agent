@@ -3,8 +3,6 @@
  * 
  * RESSOURCES
  */
-using Gravity.Services.Comet.Engine.Attributes;
-
 using System.Runtime.Serialization;
 
 namespace Rhino.Controllers.Models

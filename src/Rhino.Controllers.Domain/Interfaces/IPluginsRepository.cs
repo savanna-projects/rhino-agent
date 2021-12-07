@@ -3,8 +3,6 @@
  * 
  * RESSOURCES
  */
-using System.Collections.Generic;
-
 namespace Rhino.Controllers.Domain.Interfaces
 {
     public interface IPluginsRepository : IRepository<string>

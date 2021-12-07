@@ -13,9 +13,6 @@ using Rhino.Api.Interfaces;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 
-using System;
-using System.Collections.Generic;
-
 namespace Rhino.Controllers.Domain.Integration
 {
     public class ApplicationRepository : IApplicationRepository

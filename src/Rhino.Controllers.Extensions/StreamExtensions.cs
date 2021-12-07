@@ -3,7 +3,6 @@
  * 
  * RESSOURCES
  */
-using System.IO;
 using System.IO.Compression;
 
 namespace Rhino.Controllers.Extensions

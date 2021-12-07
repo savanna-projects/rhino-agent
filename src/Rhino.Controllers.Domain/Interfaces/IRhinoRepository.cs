@@ -6,8 +6,6 @@
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 
-using System.Collections.Generic;
-
 namespace Rhino.Controllers.Domain.Interfaces
 {
     public interface IRhinoRepository : IHasAuthentication<IRhinoRepository>

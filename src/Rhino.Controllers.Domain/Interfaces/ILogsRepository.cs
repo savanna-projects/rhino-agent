@@ -3,10 +3,6 @@
  * 
  * RESSOURCES
  */
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-
 namespace Rhino.Controllers.Domain.Interfaces
 {
     public interface ILogsRepository

@@ -14,7 +14,7 @@ variables:
 - group: gravity.api
 
 - name: 'Release.PreRelease'
-  value: true
+  value: false
 
 - name: 'Release.Prefix'
   value: 'Production'

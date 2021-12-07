@@ -2,7 +2,7 @@
   "description": "Coming soon.",
   "examples": [
     {
-      "description": "Sample action invokaction.",
+      "description": "Sample action invocation.",
       "literalExample": "sample action",
       "actionExample": {
         "actionType": "SampleAction"

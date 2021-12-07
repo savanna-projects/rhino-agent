@@ -15,10 +15,6 @@ using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Rhino.Controllers.Domain.Automation
 {
     /// <summary>

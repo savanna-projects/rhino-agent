@@ -4,9 +4,6 @@
  * RESSOURCES
  * https://stackoverflow.com/questions/18627112/how-can-i-convert-text-to-pascal-case
  */
-using System;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;

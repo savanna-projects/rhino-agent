@@ -4,8 +4,6 @@ using Gravity.Services.DataContracts;
 
 using OpenQA.Selenium;
 
-using System;
-using System.Collections.Generic;
 namespace Rhino.Plugins.Custom
 {
     [Action("SampleAction.json", Name = "SampleAction")]

@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 using Rhino.Controllers.Models;
 
-using System;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Domain.Middleware
 {

@@ -3,13 +3,10 @@
  * 
  * RESSOURCES
  */
-using Gravity.Abstraction.Logging;
 using Gravity.Services.DataContracts;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Parser.Contracts;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
@@ -17,11 +14,7 @@ using Rhino.Controllers.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mime;
-using System.Threading.Tasks;
 
 using ILogger = Gravity.Abstraction.Logging.ILogger;
 
