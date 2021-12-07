@@ -12,10 +12,17 @@ steps:
     RemoveAdditionalFilesFlag: true
 
 - task: AzureAppServiceManage@0
-  displayName: Restart Rhino API Stage Application
+  displayName: Stop Rhino App Service
   inputs:
     azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
-    Action: 'Restart Azure App Service'
+    Action: 'Stop Azure App Service'
+    WebAppName: 'rhino'
+      
+- task: AzureAppServiceManage@0
+  displayName: Start Rhino App Service
+  inputs:
+    azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
+    Action: 'Start Azure App Service'
     WebAppName: 'rhino'
 
 - task: PowerShell@2
