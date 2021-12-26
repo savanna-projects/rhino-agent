@@ -279,6 +279,7 @@ namespace Rhino.Controllers.Domain.Data
             return await ControllerUtilities.ForceReadFileAsync(path: FileName).ConfigureAwait(false);
         }
 
+        // TODO: replace with reflection on the next Rhino.Api version.
         /// <summary>
         /// Gets a list of all available properties.
         /// </summary>
@@ -300,7 +301,7 @@ namespace Rhino.Controllers.Domain.Data
                 ["test-actions"] = ("A collection of atomic pieces of logic which execute a single test case.", 6),
                 ["test-data-provider"] = ("_*Data*_ created or selected to satisfy the execution preconditions and inputs to execute one or more _*test cases*_.", 7),
                 ["test-expected-results"] = ("An ideal result that the tester should get after a test action is performed.", 8),
-                ["test-parameters"] = ("A list of parameters the use can provide and are exposed by the plugin.", 9),
+                ["test-parameters"] = ("A list of parameters the user can provide and are exposed by the plugin.", 9),
                 ["test-examples"] = ("Mandatory! One or more examples of how to implement the Plugin in a test.", 10),
                 ["test-models"] = ("A collection of elements and static data mapping which can be accessed by a reference for optimal reuse.", 11)
             };

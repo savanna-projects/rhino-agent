@@ -12,7 +12,7 @@
 		<PackageReference Include="Gravity.Services.DataContracts" Version="2021.12.21.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-		<PackageReference Include="Rhino.Api.Contracts" Version="2021.12.1.8" />
+		<PackageReference Include="Rhino.Api.Contracts" Version="2021.12.26.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
 		<PackageReference Include="System.Text.Json" Version="6.0.1" />
 	</ItemGroup>
