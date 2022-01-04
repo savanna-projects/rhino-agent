@@ -1,0 +1,28 @@
+name: Rhino.Agent.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+    - master
+
+pool:
+  vmImage: windows-2022
+
+variables:
+- group: github.com
+- group: browserstack.com
+- group: gravity.api
+
+- name: 'Release.PreRelease'
+  value: false
+
+- name: 'Release.Prefix'
+  value: 'Production'
+
+- name: 'Docker.Tags'
+  value: |
+    v$(buildVersion)-$(Release.Prefix)
+    latest
+
+stages:
+- template: 'AzurePipeline.yaml'

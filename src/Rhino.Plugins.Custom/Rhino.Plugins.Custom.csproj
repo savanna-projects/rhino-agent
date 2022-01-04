@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>Latest</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Manifest\SampleAction.json" />
+		<EmbeddedResource Include="Manifest\SampleMacro.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Gravity.Services.Comet" Version="2021.12.21.2" />
+		<PackageReference Include="Gravity.Services.DataContracts" Version="2021.12.21.2" />
+	</ItemGroup>
+
+</Project>
