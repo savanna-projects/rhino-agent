@@ -7,10 +7,11 @@ using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Mvc;
 
-using Rhino.Api.Parser.Contracts;
+using Rhino.Api.Contracts;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,11 +24,6 @@ namespace Rhino.Controllers.Controllers
     [ApiController]
     public class PluginsController : ControllerBase
     {
-        // members: constants
-        private const string CountHeader = "Rhino-Total-Specs";
-        private static readonly string s_doubleLine = Environment.NewLine + Environment.NewLine;
-        private static readonly string s_separator = s_doubleLine + Spec.Separator + s_doubleLine;
-
         // members: state
         private readonly IDomain _domain;
 
@@ -57,10 +53,10 @@ namespace Rhino.Controllers.Controllers
         {
             // get response
             var entities = DoGet(id: string.Empty).Entities;
-            Response.Headers[CountHeader] = $"{entities.Count()}";
+            Response.Headers[RhinoResponseHeader.CountTotalSpecs] = $"{entities.Count()}";
 
             // get
-            return Ok(string.Join(s_separator, entities));
+            return Ok(string.Join(Utilities.Separator, entities));
         }
 
         // GET: api/v3/plugins/:id
@@ -86,7 +82,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // return
-            Response.Headers[CountHeader] = $"{entity.Count()}";
+            Response.Headers[RhinoResponseHeader.CountTotalSpecs] = $"{entity.Count()}";
             return Ok(entity.FirstOrDefault());
         }
 
@@ -122,7 +118,7 @@ namespace Rhino.Controllers.Controllers
         {
             // setup
             var pluginSpecs = (await Request.ReadAsync().ConfigureAwait(false))
-                .Split(Spec.Separator)
+                .Split(RhinoSpecification.Separator)
                 .Select(i => i.Trim().NormalizeLineBreaks());
 
             // create plugins
@@ -137,10 +133,10 @@ namespace Rhino.Controllers.Controllers
 
             // setup            
             var okResponse = _domain.Plugins.SetAuthentication(Authentication).Get();
-            Response.Headers[CountHeader] = $"{okResponse.Count()}";
+            Response.Headers[RhinoResponseHeader.CountTotalSpecs] = $"{okResponse.Count()}";
 
             // get
-            return Created("/api/v3/plugins", string.Join(s_separator, okResponse));
+            return Created("/api/v3/plugins", string.Join(Utilities.Separator, okResponse));
         }
         #endregion
 

@@ -7,9 +7,9 @@ using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Mvc;
 
+using Rhino.Api.Contracts;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
-using Rhino.Api.Parser.Contracts;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -97,7 +97,7 @@ namespace Rhino.Controllers.Controllers
         {
             // setup
             var collection = (await Request.ReadAsync().ConfigureAwait(false))
-                .Split(Spec.Separator)
+                .Split(RhinoSpecification.Separator)
                 .Select(i => i.Trim())
                 .Where(i => !string.IsNullOrEmpty(i));
             var configuration = _domain.Configurations.SetAuthentication(Authentication).Get(id);

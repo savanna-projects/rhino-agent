@@ -34,11 +34,7 @@ ControllerUtilities.RenderLogo();
 var builder = WebApplication.CreateBuilder(args);
 
 #region *** Url & Kestrel ***
-builder.WebHost.UseUrls();//.SetRhinoKestrel(args);
-//builder.Host.ConfigureWebHostDefaults(i =>
-//{
-//    i.Build();
-//});
+builder.WebHost.UseUrls();
 #endregion
 
 #region *** Service       ***

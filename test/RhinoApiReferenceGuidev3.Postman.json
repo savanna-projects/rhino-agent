@@ -28,7 +28,7 @@
 								"exec": [
 									"//┌─[ Rhino Settings ]─────────────\r",
 									"//└────────────────────────────────\r",
-									"pm.collectionVariables.set('endpoint', 'http://localhost:9000/api/v3');\r",
+									"pm.collectionVariables.set('endpoint', 'https://rhino.azurewebsites.net/api/v3');\r",
 									"pm.collectionVariables.set('rhino_password', '');\r",
 									"pm.collectionVariables.set('rhino_user', '');\r",
 									"pm.collectionVariables.set('use_reports', false);\r",
@@ -3371,9 +3371,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}

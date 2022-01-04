@@ -9,10 +9,10 @@
  */
 using Microsoft.AspNetCore.Mvc;
 
+using Rhino.Api.Contracts;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Parser;
-using Rhino.Api.Parser.Contracts;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -29,11 +29,6 @@ namespace Rhino.Controllers.Controllers
     [ApiController]
     public class IntegrationController : ControllerBase
     {
-        // members: constants
-        private readonly string Seperator =
-            Environment.NewLine + Environment.NewLine + Spec.Separator + Environment.NewLine + Environment.NewLine;
-        private const string CountHeader = "Rhino-Total-Specs";
-
         // members: state
         private readonly IDomain _domain;
 
@@ -68,14 +63,14 @@ namespace Rhino.Controllers.Controllers
 
             // parse test case & configuration
             var configuration = model.Connector;
-            var spec = model.Entity.Spec.Split(Spec.Separator).Select(i => i.Trim()).ToArray();
+            var spec = model.Entity.Spec.Split(RhinoSpecification.Separator).Select(i => i.Trim()).ToArray();
             var testSuites = model.Entity.TestSuites;
 
             // text connector
             if (configuration.Connector.Equals(RhinoConnectors.Text))
             {
-                Response.Headers.Add(CountHeader, $"{spec.Length}");
-                return Created(string.Join(Seperator, spec), StatusCodes.Status200OK);
+                Response.Headers.Add(RhinoResponseHeader.CountTotalSpecs, $"{spec.Length}");
+                return Created(string.Join(Utilities.Separator, spec), StatusCodes.Status200OK);
             }
 
             // convert into bridge object

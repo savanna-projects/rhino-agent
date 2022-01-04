@@ -7,10 +7,11 @@ using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Mvc;
 
-using Rhino.Api.Parser.Contracts;
+using Rhino.Api.Contracts;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -25,11 +26,6 @@ namespace Rhino.Controllers.Controllers
     [ApiController]
     public class TestsController : ControllerBase
     {
-        // members: constants
-        private readonly string Seperator =
-            Environment.NewLine + Environment.NewLine + Spec.Separator + Environment.NewLine + Environment.NewLine;
-        private const string CountHeader = "Rhino-Total-Specs";
-
         // members: state
         private readonly IDomain _domain;
         private readonly ILogger _logger;
@@ -68,7 +64,7 @@ namespace Rhino.Controllers.Controllers
             });
 
             // add count header
-            Response.Headers.Add(CountHeader, $"{responseBody.Select(i => i.Tests).Sum()}");
+            Response.Headers.Add(RhinoResponseHeader.CountTotalSpecs, $"{responseBody.Select(i => i.Tests).Sum()}");
 
             // response
             return Ok(responseBody);
@@ -146,7 +142,7 @@ namespace Rhino.Controllers.Controllers
         {
             // setup
             var tests = await Request.ReadAsync().ConfigureAwait(false);
-            var documents = tests.Split(Seperator);
+            var documents = tests.Split(Utilities.Separator);
             var collection = new RhinoTestCollection();
 
             // parse test cases
@@ -160,7 +156,7 @@ namespace Rhino.Controllers.Controllers
             AddConfiguration(onCollection: collection, configuration);
 
             // build
-            Response.Headers.Add(CountHeader, $"{collection.RhinoTestCaseModels.Count}");
+            Response.Headers.Add(RhinoResponseHeader.CountTotalSpecs, $"{collection.RhinoTestCaseModels.Count}");
             var responseBody = new TestResponseModel
             {
                 Id = id,
@@ -223,7 +219,7 @@ namespace Rhino.Controllers.Controllers
         {
             // read test case from request body
             var requestBody = await Request.ReadAsync().ConfigureAwait(false);
-            var specs = requestBody.Split(Spec.Separator).Select(i => i.Trim());
+            var specs = requestBody.Split(RhinoSpecification.Separator).Select(i => i.Trim());
 
             // get collection
             var (statusCode, collection) = _domain.Tests.SetAuthentication(Authentication).Get(id);
@@ -364,10 +360,10 @@ namespace Rhino.Controllers.Controllers
 
             // setup
             var specs = entity.RhinoTestCaseModels.Select(i => i.RhinoSpec);
-            var responseBody = string.Join(Seperator, specs);
+            var responseBody = string.Join(Utilities.Separator, specs);
 
             // add count header
-            Response.Headers.Add(CountHeader, $"{specs.Count()}");
+            Response.Headers.Add(RhinoResponseHeader.CountTotalSpecs, $"{specs.Count()}");
 
             // get
             return Ok(responseBody);

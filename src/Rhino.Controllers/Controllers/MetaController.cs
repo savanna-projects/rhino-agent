@@ -36,7 +36,7 @@ namespace Rhino.Controllers.Controllers
         };
 
         // members: state
-        private readonly IMetaDataRepository dataRepository;
+        private readonly IMetaDataRepository _dataRepository;
 
         // members: private properties
         private Authentication Authentication => Request.GetAuthentication();
@@ -47,7 +47,7 @@ namespace Rhino.Controllers.Controllers
         /// <param name="dataRepository">An IStaticDataRepository implementation to use with the Controller.</param>
         public MetaController(IMetaDataRepository dataRepository)
         {
-            this.dataRepository = dataRepository;
+            _dataRepository = dataRepository;
         }
 
         #region *** Get    ***
@@ -62,7 +62,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetPluginsReferences()
         {
             // get response
-            var entities = dataRepository
+            var entities = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetPlugins()
                 .Where(i => !s_excludeActions.Contains(i.Key))
@@ -91,7 +91,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetPluginsReferences([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetPlugins()
                 .FirstOrDefault(i => !s_excludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
@@ -126,7 +126,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetPlugins()
         {
             // get response
-            var entities = dataRepository
+            var entities = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetPlugins()
                 .Where(i => !s_excludeActions.Contains(i.Key));
@@ -147,7 +147,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetPlugins([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetPlugins()
                 .FirstOrDefault(i => !s_excludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
@@ -175,7 +175,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetAssertions()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).GetAssertions();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetAssertions();
 
             // return
             return Ok(entities);
@@ -193,7 +193,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetAssertions([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetAssertions()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
@@ -221,7 +221,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetConnectors()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).GetConnectors();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetConnectors();
 
             // return
             return Ok(entities);
@@ -239,7 +239,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetConnectors([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetConnectors()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
@@ -267,7 +267,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetDrivers()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).GetDrivers();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetDrivers();
 
             // return
             return Ok(entities);
@@ -285,7 +285,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetDrivers([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetDrivers()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
@@ -313,7 +313,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetLocators()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).GetLocators();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetLocators();
 
             // return
             return Ok(entities);
@@ -331,7 +331,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetLocators([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetLocators()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
@@ -359,7 +359,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetMacros()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).GetMacros();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetMacros();
 
             // return
             return Ok(entities);
@@ -377,7 +377,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetMacros([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetMacros()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
@@ -405,7 +405,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetOperators()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).GetOperators();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetOperators();
 
             // return
             return Ok(entities);
@@ -423,7 +423,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetOperators([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetOperators()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
@@ -451,7 +451,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetReporters()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).GetReporters();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetReporters();
 
             // return
             return Ok(entities);
@@ -469,7 +469,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetReporters([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetReporters()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
@@ -497,7 +497,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetAnnotations()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).GetAnnotations();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetAnnotations();
 
             // return
             return Ok(entities);
@@ -515,7 +515,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetAnnotations([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetAnnotations()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
@@ -567,7 +567,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetVersion()
         {
             // get response
-            var version = await dataRepository.GetVersionAsync().ConfigureAwait(false);
+            var version = await _dataRepository.GetVersionAsync().ConfigureAwait(false);
 
             // return
             return Ok(version);
@@ -584,7 +584,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetModels()
         {
             // setup
-            var entities = dataRepository.SetAuthentication(Authentication).GetModels();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetModels();
 
             // return
             return Ok(entities);
@@ -602,7 +602,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetModels([SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
         {
             // setup
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetModels()
                 .SelectMany(i => i.Models)
@@ -631,7 +631,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetModelTypes()
         {
             // setup
-            var entity = dataRepository.SetAuthentication(Authentication).GetModelTypes();
+            var entity = _dataRepository.SetAuthentication(Authentication).GetModelTypes();
 
             // get
             return Ok(entity);
@@ -649,7 +649,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetVerbs()
         {
             // setup
-            var entities = dataRepository
+            var entities = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetVerbs();
 
@@ -676,7 +676,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetServiceEvents()
         {
             // get response
-            var entities = dataRepository.SetAuthentication(Authentication).GetServiceEvents();
+            var entities = _dataRepository.SetAuthentication(Authentication).GetServiceEvents();
 
             // return
             return Ok(entities);
@@ -694,7 +694,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetServiceEvents([SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
         {
             // get response
-            var entity = dataRepository
+            var entity = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetServiceEvents()
                 .FirstOrDefault(i => i.Key.Equals(key, StringComparison.Ordinal));
@@ -722,7 +722,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetServices()
         {
             // build
-            var services = dataRepository.GetServices();
+            var services = _dataRepository.GetServices();
 
             // get
             return Ok(services);

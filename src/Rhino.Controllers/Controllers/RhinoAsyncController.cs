@@ -7,12 +7,13 @@ using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Mvc;
 
+using Rhino.Api.Contracts;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
-using Rhino.Api.Parser.Contracts;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -25,9 +26,6 @@ namespace Rhino.Controllers.Controllers
     [ApiController]
     public class RhinoAsyncController : ControllerBase
     {
-        // constants
-        private const string CountHeader = "Rhino-Total-Invokes";
-
         // members: state
         private readonly IDomain _domain;
 
@@ -99,7 +97,7 @@ namespace Rhino.Controllers.Controllers
         {
             // setup
             var collection = (await Request.ReadAsync().ConfigureAwait(false))
-                .Split(Spec.Separator)
+                .Split(RhinoSpecification.Separator)
                 .Select(i => i.Trim())
                 .Where(i => !string.IsNullOrEmpty(i));
             var configuration = _domain.Configurations.SetAuthentication(Authentication).Get(id);
@@ -294,7 +292,7 @@ namespace Rhino.Controllers.Controllers
             // all
             if (!id.Any())
             {
-                Response.Headers.Add(CountHeader, $"{response.Count()}");
+                Response.Headers.Add(RhinoResponseHeader.CountTotalInvokes, $"{response.Count()}");
                 return Ok(response);
             }
 
@@ -313,7 +311,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // add count header
-            Response.Headers.Add(CountHeader, $"{response.Count()}");
+            Response.Headers.Add(RhinoResponseHeader.CountTotalInvokes, $"{response.Count()}");
 
             // get
             return Ok(response.Select(i => i));

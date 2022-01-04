@@ -3,6 +3,7 @@
  * 
  * RESSOURCES
  */
+using Rhino.Api.Contracts;
 using Rhino.Api.Contracts.AutomationProvider;
 
 using System.Diagnostics.CodeAnalysis;
@@ -26,6 +27,18 @@ namespace Rhino.Controllers.Extensions
             .SelectMany(i => i.Types ?? Array.Empty<Type>())
             .Distinct()
             .ToList();
+
+        /// <summary>
+        /// Gets the RhinoSpecification separator including the empty lines.
+        /// </summary>
+        public static string Separator
+        {
+            get
+            {
+                var doubleLine = Environment.NewLine + Environment.NewLine;
+                return doubleLine + RhinoSpecification.Separator + doubleLine;
+            }
+        }
 
         #region *** Assemblies ***
         /// <summary>
