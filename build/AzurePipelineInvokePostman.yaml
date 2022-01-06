@@ -1,73 +1,15 @@
 parameters:
 - name: 'RhinoAsyncPooling'
   default: 15000
+
 - name: 'BuildConfiguration'
   default: 'Release'
 
+- name: 'ArtifactName'
+  value: 'drop'
+
 stages:
-  - stage: 'Build'
-    jobs:
-    - job: 'BuildAndPack'
-      displayName: 'Build & Pack Rhino API Agent'
-      steps:
-      - task: DotNetCoreCLI@2
-        displayName: Restore Dependencies
-        inputs:
-          command: 'restore'
-          projects: '**/*.csproj'
-          verbosityRestore: 'Diagnostic'
-
-      - task: DotNetCoreCLI@2
-        displayName: Build Projects
-        inputs:
-          command: 'build'
-          projects: '**/*.csproj'
-          arguments: '--configuration ${{ parameters.BuildConfiguration }}'
-
-      - task: DotNetCoreCLI@2
-        displayName: Publish Files to $(build.artifactstagingdirectory)/$(Build.BuildNumber)
-        inputs:
-          command: 'publish'
-          publishWebProjects: false
-          projects: '**/Rhino.Agent/Rhino.Agent.csproj'
-          arguments: '--configuration ${{ parameters.BuildConfiguration }} --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
-          modifyOutputPath: false
-
-      - task: PowerShell@2
-        displayName: 'Parse Build Version'
-        inputs:
-          targetType: 'inline'
-          script: |
-            # setup
-            [regex]$pattern = '(\d+.?)+'
-            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
-            # set value
-            Write-Host "##vso[task.setvariable variable=buildVersion]$version"
-
-      - task: PowerShell@2
-        displayName: 'Set Version File'
-        inputs:
-          targetType: 'inline'
-          script: |
-            Set-Content -Path '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' -Value '$(buildVersion)'
-            Compress-Archive -update '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
-            Compress-Archive -update '$(Build.Repository.LocalPath)/test/RhinoApiReferenceGuidev3.Postman.json' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
-            # setup
-            [regex]$pattern = '(\d+.?)+'
-            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
-            # set value
-            Write-Host "##vso[task.setvariable variable=buildVersion]$version"
-
-      - task: PublishBuildArtifacts@1
-        displayName: Publish Artifact to Container
-        inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          ArtifactName: 'drop'
-          publishLocation: 'Container'
-
   - stage: Test
-    dependsOn: 'Build'
-    condition: 'succeeded()'
     jobs:
     - job: 'DeployAndTestOnStageEnvironment'
       displayName: 'Deploy Stage Environment & Invoke Automation Tests'
@@ -97,11 +39,11 @@ stages:
           customCommand: 'install -g newman'
 
       - task: DownloadBuildArtifacts@1
-        displayName: 'Get Rhino API Agent Artifact'
+        displayName: 'Get Postman Collections'
         inputs:
           buildType: 'current'
           downloadType: 'single'
-          artifactName: 'drop'
+          artifactName: '${{ parameters.ArtifactName }}'
           downloadPath: '$(System.ArtifactsDirectory)'
 
       - task: ExtractFiles@1

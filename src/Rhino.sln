@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5F276F3-7431-4018-8A38-179C8CA4B100}"
 	ProjectSection(SolutionItems) = preProject
 		..\build\AzurePipeline.yaml = ..\build\AzurePipeline.yaml
+		..\build\AzurePipelineInvokePostman.yaml = ..\build\AzurePipelineInvokePostman.yaml
 		..\build\AzurePipelinePreview.yaml = ..\build\AzurePipelinePreview.yaml
 		..\build\AzurePipelineProduction.yaml = ..\build\AzurePipelineProduction.yaml
 		..\build\AzurePipelineResetEnvironment.yaml = ..\build\AzurePipelineResetEnvironment.yaml
