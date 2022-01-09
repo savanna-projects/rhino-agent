@@ -9,20 +9,33 @@ pool:
   vmImage: windows-2022
 
 variables:
+# Library
 - group: github.com
 - group: browserstack.com
 - group: gravity.api
 
+# Build
 - name: 'Release.PreRelease'
   value: false
 
 - name: 'Release.Prefix'
   value: 'Production'
 
+# Docker
 - name: 'Docker.Tags'
   value: |
     v$(buildVersion)-$(Release.Prefix)
     latest
+
+# Conditions (switch)
+- name: 'InvokeTests'
+  value: true
+
+- name: 'CreateGitTag'
+  value: true
+
+- name: 'CreateDockerImage'
+  value: true
 
 stages:
 - template: 'AzurePipeline.yaml'
