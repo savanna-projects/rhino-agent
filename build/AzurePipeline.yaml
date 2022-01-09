@@ -67,7 +67,7 @@ stages:
 
   - stage: Test
     dependsOn: 'Build'
-    condition: 'succeeded()'
+    condition: and('succeeded()', eq(variables.InvokeTests, 'true'))
     jobs:
     - job: 'DeployAndTestOnStageEnvironment'
       displayName: 'Deploy Stage Environment & Invoke Automation Tests'
@@ -252,7 +252,7 @@ stages:
   - stage: PublishGit
     displayName: Publish on GitHub
     dependsOn: 'Test'
-    condition: 'succeeded()'
+    condition: and('succeeded()', eq(variables.CreateGitTag, 'true'))
     jobs:
     - job: 'CraeteRelease'
       displayName: 'Create a GitHub Release & Tag'
@@ -306,7 +306,7 @@ stages:
   - stage: PublishDocker
     displayName: Publish on DockerHub
     dependsOn: 'Test'
-    condition: 'succeeded()'
+    condition: and('succeeded()', eq(variables.CreateDockerImage, 'true'))
     jobs:
     - job: 'CraeteRelease'
       displayName: 'Create a Docker Release & Tag'
