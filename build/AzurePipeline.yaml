@@ -343,10 +343,30 @@ stages:
             Write-Host "##vso[task.setvariable variable=dockerTags]$tags"
 
       - task: Docker@2
-        displayName: 'Create Docker Image - Linux'
         inputs:
           containerRegistry: 'docker.io'
           repository: 'rhinoapi/rhino-agent'
-          command: 'buildAndPush'
+          command: 'build'
           Dockerfile: '**/Dockerfile'
-          tags: $(dockerTags)
+          tags: |
+            v$(buildVersion)-$(Release.Prefix)
+            latest
+          arguments: '--platform linux/amd64'
+
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'docker.io'
+          repository: 'rhinoapi/rhino-agent'
+          command: 'push'
+          tags: |
+            v$(buildVersion)-$(Release.Prefix)
+            latest
+
+#      - task: Docker@2
+#        displayName: 'Create Docker Image - Linux'
+#        inputs:
+#          containerRegistry: 'docker.io'
+#          repository: 'rhinoapi/rhino-agent'
+#          command: 'buildAndPush'
+#          Dockerfile: '**/Dockerfile'
+#          tags: $(dockerTags)
