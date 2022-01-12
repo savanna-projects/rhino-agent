@@ -28,13 +28,13 @@ variables:
 
 # Conditions (switch)
 - name: 'InvokeTests'
-  value: false
+  value: true
 
 - name: 'CreateGitTag'
   value: false
 
 - name: 'CreateDockerImage'
-  value: true
+  value: false
 
 stages:
 - template: 'AzurePipeline.yaml'
