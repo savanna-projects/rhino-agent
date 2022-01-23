@@ -81,7 +81,6 @@ stages:
     - job: 'DeployAndTestOnStageEnvironment'
       displayName: 'Deploy Stage Environment & Invoke Automation Tests'
       steps:
-      - checkout: none
       - task: PowerShell@2
         displayName: 'Parse Build Version'
         inputs:
