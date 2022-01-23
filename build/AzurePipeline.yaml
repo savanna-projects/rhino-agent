@@ -44,6 +44,7 @@ stages:
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -55,6 +56,7 @@ stages:
         displayName: 'Set Version File'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             Set-Content -Path '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' -Value '$(buildVersion)'
             Compress-Archive -update '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
@@ -84,6 +86,7 @@ stages:
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -101,7 +104,7 @@ stages:
         displayName: 'Install newman-cli Package'
         inputs:
           command: 'custom'
-          customCommand: 'install -g newman'
+          customCommand: 'install -g newman --unsafe-perm=true --allow-root'
 
       - task: DownloadBuildArtifacts@1
         displayName: 'Get Rhino API Agent Artifact'
@@ -123,6 +126,7 @@ stages:
         displayName: 'Set Testing Environment Parameters'
         inputs:
           targetType: 'inline'
+          pwsh: true
           errorActionPreference: 'silentlyContinue'
           failOnStderr: true
           script: |
@@ -142,6 +146,7 @@ stages:
           errorActionPreference: 'silentlyContinue'
           failOnStderr: false
           targetType: 'inline'
+          pwsh: true
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
@@ -176,6 +181,7 @@ stages:
           errorActionPreference: 'silentlyContinue'
           failOnStderr: false
           targetType: 'inline'
+          pwsh: true
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
@@ -201,6 +207,7 @@ stages:
           errorActionPreference: 'silentlyContinue'
           failOnStderr: false
           targetType: 'inline'
+          pwsh: true
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
@@ -270,6 +277,7 @@ stages:
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -289,6 +297,7 @@ stages:
         displayName: 'Set Asset Name'
         inputs:
           targetType: 'inline'
+          pwsh: true
           errorActionPreference: 'silentlyContinue'
           script: |
             $artifact     = Get-ChildItem $(build.artifactstagingdirectory)/*.zip -Recurse
@@ -334,6 +343,7 @@ stages:
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -345,6 +355,7 @@ stages:
         displayName: 'Format Docker Tags'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             $tags = '$(Docker.Tags)'.ToLower()
             Write-Host "##vso[task.setvariable variable=dockerTags]$tags"
