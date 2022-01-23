@@ -91,6 +91,7 @@ namespace Rhino.Controllers.Domain.Data
             return actions.OrderBy(i => i.Key);
         }
 
+        // TODO: replace with Rhino.Utilities reflection on the next Rhino.Api version.
         /// <summary>
         /// Gets a collection of available assertions (based on AssertMethodAttribute).
         /// </summary>
