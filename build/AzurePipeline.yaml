@@ -156,7 +156,7 @@ stages:
           targetType: 'inline'
           pwsh: true
           script: |
-            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            sudo newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
             --folder 'Documentation: Configurations' `
             --folder 'Tests: Configurations' `
