@@ -8,7 +8,6 @@ steps:
     WebAppName: 'rhino'
     packageForLinux: '$(System.ArtifactsDirectory)/**/*.zip'
     enableCustomDeployment: true
-    DeploymentType: 'webDeploy'
     RemoveAdditionalFilesFlag: true
 
 - task: AzureAppServiceManage@0
