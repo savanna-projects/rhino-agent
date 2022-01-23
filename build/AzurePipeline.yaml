@@ -103,7 +103,7 @@ stages:
         displayName: 'Install newman-cli Package'
         inputs:
           command: 'custom'
-          customCommand: 'install -g newman --unsafe-perm=true --allow-root'
+          customCommand: 'install newman'
 
       - task: DownloadBuildArtifacts@1
         displayName: 'Get Rhino API Agent Artifact'
@@ -136,6 +136,15 @@ stages:
             $content = $content -replace "pm\.collectionVariables\.set\('rhino_password',.*\)","pm.collectionVariables.set('rhino_password', '$(Rhino.Password)')"
             $content = $content -replace "pm\.collectionVariables\.set\('async_pooling',.*\)","pm.collectionVariables.set('async_pooling', '${{ parameters.RhinoAsyncPooling }}')"
             Set-Content -Path '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json' -Value $content
+
+      - task: Docker@2
+        displayName: 'Create Docker Image for Testing - Linux'
+        inputs:
+          containerRegistry: 'docker.io'
+          repository: 'rhinoapi/agent-stage'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: 'test'
 
       - template: AzurePipelineResetEnvironment.yaml
 
