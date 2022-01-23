@@ -1,6 +1,7 @@
 parameters:
 - name: 'RhinoAsyncPooling'
   default: 15000
+
 - name: 'BuildConfiguration'
   default: 'Release'
 
@@ -148,6 +149,7 @@ stages:
 
       - template: AzurePipelineResetEnvironment.yaml
 
+      # TODO: find a way to dispose sudo.
       - task: PowerShell@2
         displayName: 'Invoke Automation Tests - API'
         inputs:
@@ -183,6 +185,7 @@ stages:
 
       - template: AzurePipelineResetEnvironment.yaml
 
+      # TODO: find a way to dispose sudo.
       - task: PowerShell@2
         displayName: 'Invoke Automation Tests - Gravity'
         inputs:
@@ -191,7 +194,7 @@ stages:
           targetType: 'inline'
           pwsh: true
           script: |
-            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            sudo newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
             --folder 'Tests: Debug Automation' `
             --reporters 'cli,junit' `
@@ -209,6 +212,7 @@ stages:
 
       - template: AzurePipelineResetEnvironment.yaml
 
+      # TODO: find a way to dispose sudo.
       - task: PowerShell@2
         displayName: 'Invoke Automation Tests - Rhino'
         inputs:
@@ -217,7 +221,7 @@ stages:
           targetType: 'inline'
           pwsh: true
           script: |
-            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            sudo newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
             --folder 'Documentation: Rhino' `
             --reporters 'cli,junit' `
@@ -235,6 +239,7 @@ stages:
 
       - template: AzurePipelineResetEnvironment.yaml
 
+      # TODO: find a way to dispose sudo.
       - task: PowerShell@2
         displayName: 'Invoke Automation Tests - Rhino Async'
         inputs:
@@ -243,7 +248,7 @@ stages:
           targetType: 'inline'
           pwsh: true
           script: |
-            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            sudo newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
             --folder 'Documentation: Rhino Async' `
             --reporters 'cli,junit' `
