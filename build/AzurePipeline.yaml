@@ -103,7 +103,7 @@ stages:
         displayName: 'Install newman-cli Package'
         inputs:
           command: 'custom'
-          customCommand: 'install newman'
+          customCommand: 'install -g newman'
 
       - task: DownloadBuildArtifacts@1
         displayName: 'Get Rhino API Agent Artifact'
