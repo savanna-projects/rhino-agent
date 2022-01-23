@@ -37,7 +37,7 @@ stages:
           command: 'publish'
           publishWebProjects: false
           projects: '**/Rhino.Agent/Rhino.Agent.csproj'
-          arguments: '--configuration ${{ parameters.BuildConfiguration }} --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
+          arguments: "--configuration ${{ parameters.BuildConfiguration }} --framework 'net6.0' -r 'linux-x64' --self-contained false --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)"
           modifyOutputPath: false
 
       - task: PowerShell@2
