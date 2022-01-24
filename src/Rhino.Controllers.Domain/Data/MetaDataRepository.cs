@@ -430,10 +430,10 @@ namespace Rhino.Controllers.Domain.Data
             return methods.Select(i => i.Name).Distinct().Select(i => new LocatorModel
             {
                 Key = i,
-                Literal = Api.Extensions.StringExtensions.ToSpaceCase(i).ToLower(),
+                Literal = i.ToSpaceCase().ToLower(),
                 Entity = new
                 {
-                    Name = Api.Extensions.StringExtensions.ToSpaceCase(i).ToLower(),
+                    Name = i.ToSpaceCase().ToLower(),
                     Description = "Coming soon.",
                     Examples = Array.Empty<(string Description, string Example)>()
                 },
