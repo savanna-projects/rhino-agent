@@ -30,9 +30,9 @@ steps:
     targetType: 'inline'
     script: |
       # setup
-      $timeout     = 180
+      $timeout     = $(HealthCheckTimeout)
       $endTime     = [DateTime]::Now.AddSeconds($timeout)
-      $assertions  = 10
+      $assertions  = $(NumberOfHealthyResponses)
       $onAssertion = 0
       #
       # fixed wait
