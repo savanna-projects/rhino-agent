@@ -1,6 +1,7 @@
 parameters:
 - name: 'RhinoAsyncPooling'
   default: 15000
+
 - name: 'BuildConfiguration'
   default: 'Release'
 
@@ -37,13 +38,14 @@ stages:
           command: 'publish'
           publishWebProjects: false
           projects: '**/Rhino.Agent/Rhino.Agent.csproj'
-          arguments: '--configuration ${{ parameters.BuildConfiguration }} --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)'
+          arguments: "--configuration ${{ parameters.BuildConfiguration }} --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)"
           modifyOutputPath: false
 
       - task: PowerShell@2
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -55,6 +57,7 @@ stages:
         displayName: 'Set Version File'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             Set-Content -Path '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' -Value '$(buildVersion)'
             Compress-Archive -update '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
@@ -79,11 +82,11 @@ stages:
     - job: 'DeployAndTestOnStageEnvironment'
       displayName: 'Deploy Stage Environment & Invoke Automation Tests'
       steps:
-      - checkout: none
       - task: PowerShell@2
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -123,6 +126,7 @@ stages:
         displayName: 'Set Testing Environment Parameters'
         inputs:
           targetType: 'inline'
+          pwsh: true
           errorActionPreference: 'silentlyContinue'
           failOnStderr: true
           script: |
@@ -134,16 +138,27 @@ stages:
             $content = $content -replace "pm\.collectionVariables\.set\('async_pooling',.*\)","pm.collectionVariables.set('async_pooling', '${{ parameters.RhinoAsyncPooling }}')"
             Set-Content -Path '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json' -Value $content
 
+      - task: Docker@2
+        displayName: 'Create Docker Image for Testing - Linux'
+        inputs:
+          containerRegistry: 'docker.io'
+          repository: 'rhinoapi/agent-stage'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: 'test'
+
       - template: AzurePipelineResetEnvironment.yaml
 
+      # TODO: find a way to dispose sudo.
       - task: PowerShell@2
         displayName: 'Invoke Automation Tests - API'
         inputs:
           errorActionPreference: 'silentlyContinue'
           failOnStderr: false
           targetType: 'inline'
+          pwsh: true
           script: |
-            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            sudo newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
             --folder 'Documentation: Configurations' `
             --folder 'Tests: Configurations' `
@@ -170,14 +185,16 @@ stages:
 
       - template: AzurePipelineResetEnvironment.yaml
 
+      # TODO: find a way to dispose sudo.
       - task: PowerShell@2
         displayName: 'Invoke Automation Tests - Gravity'
         inputs:
           errorActionPreference: 'silentlyContinue'
           failOnStderr: false
           targetType: 'inline'
+          pwsh: true
           script: |
-            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            sudo newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
             --folder 'Tests: Debug Automation' `
             --reporters 'cli,junit' `
@@ -195,14 +212,16 @@ stages:
 
       - template: AzurePipelineResetEnvironment.yaml
 
+      # TODO: find a way to dispose sudo.
       - task: PowerShell@2
         displayName: 'Invoke Automation Tests - Rhino'
         inputs:
           errorActionPreference: 'silentlyContinue'
           failOnStderr: false
           targetType: 'inline'
+          pwsh: true
           script: |
-            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            sudo newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
             --folder 'Documentation: Rhino' `
             --reporters 'cli,junit' `
@@ -220,6 +239,7 @@ stages:
 
       - template: AzurePipelineResetEnvironment.yaml
 
+      # TODO: find a way to dispose sudo.
       - task: PowerShell@2
         displayName: 'Invoke Automation Tests - Rhino Async'
         inputs:
@@ -228,7 +248,7 @@ stages:
           targetType: 'inline'
           pwsh: true
           script: |
-            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            sudo newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
             --folder 'Documentation: Rhino Async' `
             --reporters 'cli,junit' `
@@ -270,6 +290,7 @@ stages:
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -289,6 +310,7 @@ stages:
         displayName: 'Set Asset Name'
         inputs:
           targetType: 'inline'
+          pwsh: true
           errorActionPreference: 'silentlyContinue'
           script: |
             $artifact     = Get-ChildItem $(build.artifactstagingdirectory)/*.zip -Recurse
@@ -334,6 +356,7 @@ stages:
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -345,6 +368,7 @@ stages:
         displayName: 'Format Docker Tags'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             $tags = '$(Docker.Tags)'.ToLower()
             Write-Host "##vso[task.setvariable variable=dockerTags]$tags"

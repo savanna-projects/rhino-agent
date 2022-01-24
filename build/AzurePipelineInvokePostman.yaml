@@ -19,6 +19,7 @@ stages:
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -58,6 +59,7 @@ stages:
         displayName: 'Set Testing Environment Parameters'
         inputs:
           targetType: 'inline'
+          pwsh: true
           errorActionPreference: 'silentlyContinue'
           failOnStderr: true
           script: |
@@ -75,6 +77,7 @@ stages:
         displayName: 'Invoke Automation Tests - API'
         inputs:
           errorActionPreference: 'silentlyContinue'
+          pwsh: true
           failOnStderr: false
           targetType: 'inline'
           script: |
@@ -111,6 +114,7 @@ stages:
           errorActionPreference: 'silentlyContinue'
           failOnStderr: false
           targetType: 'inline'
+          pwsh: true
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
@@ -136,6 +140,7 @@ stages:
           errorActionPreference: 'silentlyContinue'
           failOnStderr: false
           targetType: 'inline'
+          pwsh: true
           script: |
             newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
             --folder 'One Time Setup' `
@@ -269,6 +274,7 @@ stages:
         displayName: 'Parse Build Version'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
@@ -280,6 +286,7 @@ stages:
         displayName: 'Format Docker Tags'
         inputs:
           targetType: 'inline'
+          pwsh: true
           script: |
             $tags = '$(Docker.Tags)'.ToLower()
             Write-Host "##vso[task.setvariable variable=dockerTags]$tags"
