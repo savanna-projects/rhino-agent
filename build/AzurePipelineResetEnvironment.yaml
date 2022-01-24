@@ -1,15 +1,12 @@
 steps:
-- task: AzureRmWebAppDeployment@4
-  displayName: Deploy Rhino API on Stage Environment
+- task: AzureWebAppContainer@1
   inputs:
-    ConnectionType: 'AzureRM'
+    displayName: 'Deploy Rhino Api to Stage Environment'
     azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
-    appType: 'webApp'
-    WebAppName: 'rhino'
-    packageForLinux: '$(System.ArtifactsDirectory)/**/*.zip'
-    enableCustomDeployment: true
-    DeploymentType: 'webDeploy'
+    appName: 'rhino'
+    containers: 'rhinoapi/agent-stage:test'
     RemoveAdditionalFilesFlag: true
+    enableCustomDeployment: true
 
 - task: AzureAppServiceManage@0
   displayName: Stop Rhino App Service
@@ -33,9 +30,9 @@ steps:
     targetType: 'inline'
     script: |
       # setup
-      $timeout     = 180
+      $timeout     = $(HealthCheckTimeout)
       $endTime     = [DateTime]::Now.AddSeconds($timeout)
-      $assertions  = 10
+      $assertions  = $(NumberOfHealthyResponses)
       $onAssertion = 0
       #
       # fixed wait

@@ -21,6 +21,13 @@ variables:
 - name: 'Release.Prefix'
   value: 'Production'
 
+# test
+- name: 'HealthCheckTimeout'
+  value: 600
+
+- name: 'NumberOfHealthyResponses'
+  value: 10
+
 # Docker
 - name: 'Docker.Tags'
   value: |
