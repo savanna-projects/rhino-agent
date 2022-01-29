@@ -38,10 +38,10 @@ variables:
   value: false
 
 - name: 'CreateGitTag'
-  value: false
+  value: true
 
 - name: 'CreateDockerImage'
-  value: false
+  value: true
 
 stages:
 - template: 'AzurePipeline.yaml'
