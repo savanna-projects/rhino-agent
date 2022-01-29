@@ -55,7 +55,10 @@ namespace Rhino.Controllers.Controllers
         public IActionResult InvokeConfiguration([FromBody, SwaggerRequestBody(SwaggerDocument.Parameter.Entity)] RhinoConfiguration configuration)
         {
             // invoke
-            var invokeResponse = _domain.Rhino.SetAuthentication(Authentication).InvokeConfiguration(configuration);
+            var invokeResponse = _domain
+                .Rhino
+                .SetAuthentication(Authentication)
+                .InvokeConfiguration(configuration);
 
             // get
             return GetInvokeResponse(configuration, invokeResponse);
