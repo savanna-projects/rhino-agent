@@ -36,7 +36,7 @@ variables:
 
 # Conditions (switch)
 - name: 'InvokeTests'
-  value: true
+  value: false
 
 - name: 'CreateGitTag'
   value: true

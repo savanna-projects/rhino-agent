@@ -175,6 +175,8 @@ namespace Rhino.Controllers.Extensions
         {
             try
             {
+                Console.Clear();
+
                 DoRenderLogo(1, 1, Console.BackgroundColor, Console.ForegroundColor, Rhino());
                 DoRenderLogo(1, 33, Console.BackgroundColor, ConsoleColor.Red, Api());
 

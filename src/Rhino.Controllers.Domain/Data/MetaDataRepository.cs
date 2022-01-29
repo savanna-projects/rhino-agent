@@ -330,6 +330,7 @@ namespace Rhino.Controllers.Domain.Data
                 .Where(i => i.Configurations?.Any() == false);
         }
 
+        // TODO: get by reflection from GravityApi when available.
         /// <summary>
         /// Gets a collection of all available RhinoVerbs.
         /// </summary>
@@ -339,6 +340,7 @@ namespace Rhino.Controllers.Domain.Data
             return new[]
             {
                 new RhinoVerbModel{ Key = "on", Literal = "on", Entity = new { Scope = "onElement" } },
+                new RhinoVerbModel{ Key = "to", Literal = "to", Entity = new { Scope = "onElement" } },
                 new RhinoVerbModel{ Key = "into", Literal = "into", Entity = new { Scope = "onElement" } },
                 new RhinoVerbModel{ Key = "take", Literal = "take", Entity = new { Scope = "onElement" } },
                 new RhinoVerbModel{ Key = "of", Literal = "of", Entity = new { Scope = "onElement" } },
