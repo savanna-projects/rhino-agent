@@ -1,11 +1,4 @@
-﻿param([string]$RhinoVersion)
-
-if([string]::IsNullOrEmpty($RhinoVersion)) {
-    Write-Error 'You must provide a valid Rhino API version in the following format xxxx.xx.xx.xx (e.g, 2022.01.30.1), please check for available versions on: https://github.com/savanna-projects/rhino-agent/releases'
-    return
-}
-
-#┌─[ Application Arguments ]────────────────────────────────────
+﻿#┌─[ Application Arguments ]────────────────────────────────────
 #│
 #└──────────────────────────────────────────────────────────────
 $partition   = [string]::Empty

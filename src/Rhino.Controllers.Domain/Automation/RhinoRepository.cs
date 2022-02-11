@@ -203,7 +203,7 @@ namespace Rhino.Controllers.Domain.Automation
             {
                 try
                 {
-                    var responseBody = configuration.Execute(_types);
+                    var responseBody = configuration.Invoke(_types);
                     _logger?.Debug($"Invoke-Configuration = {responseBody.Key}");
                     results.Add((StatusCodes.Status200OK, responseBody));
                 }
