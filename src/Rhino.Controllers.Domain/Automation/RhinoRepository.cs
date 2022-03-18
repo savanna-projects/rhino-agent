@@ -622,6 +622,9 @@ namespace Rhino.Controllers.Domain.Automation
             const string ScreenshotsOut = "Rhino:ScreenshotsConfiguration:ScreenshotsOut";
             const string KeepOriginal = "Rhino:ScreenshotsConfiguration:KeepOriginal";
 
+            // configuration
+            var reporters = configuration.ReportConfiguration.Reporters ?? Array.Empty<string>();
+
             // reporting
             configuration.ReportConfiguration.ReportOut = _appSettings.GetValue(ReportsOut, defaultValue: ".");
             configuration.ReportConfiguration.LogsOut = _appSettings.GetValue(LogsOut, defaultValue: ".");
@@ -630,7 +633,9 @@ namespace Rhino.Controllers.Domain.Automation
                 .GetSection(Reporters)
                 .GetChildren()
                 .Select(i => i.Value)
+                .Concat(reporters)
                 .Where(i => !string.IsNullOrEmpty(i))
+                .Distinct()
                 .ToArray();
 
             // screen-shots
