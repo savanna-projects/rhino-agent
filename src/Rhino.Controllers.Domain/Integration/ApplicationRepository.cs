@@ -38,6 +38,11 @@ namespace Rhino.Controllers.Domain.Integration
         public RhinoConnectorConfiguration Configuration { get; private set; }
 
         /// <summary>
+        /// Gets the underline connector state of the repository (must call SetConnector) before.
+        /// </summary>
+        public IConnector Connector { get; private set; }
+
+        /// <summary>
         /// Sets the connector configuration state of the repository.
         /// </summary>
         /// <param name="configuration">The configuration state to set.</param>
@@ -128,7 +133,33 @@ namespace Rhino.Controllers.Domain.Integration
         /// <returns><see cref="int"/> and RhinoTestCase object (if any).</returns>
         public (int StatusCode, RhinoTestCase Entity) Get(string id)
         {
-            throw new NotImplementedException();
+            // bad request
+            if(Configuration == null)
+            {
+                return (StatusCodes.Status400BadRequest, default);
+            }
+
+            // setup
+            var configuration = new RhinoConfiguration
+            {
+                ConnectorConfiguration = Configuration,
+                TestsRepository = new[] { id },
+                DriverParameters = new[]
+                {
+                    new Dictionary<string, object>()
+                }
+            };
+            var @params = new object[] { configuration, _types, _logger, false };
+
+            // build
+            var connectorType = configuration.GetConnector(_types);
+            var connector = (IConnector)Activator.CreateInstance(connectorType, @params);
+            var testCase = connector.ProviderManager.GetTestCases(id).DistinctBy(i => i.Key).FirstOrDefault();
+
+            // get
+            return testCase == default
+                ? (StatusCodes.Status404NotFound, default)
+                : (StatusCodes.Status200OK, testCase);
         }
         #endregion        
 
