@@ -16,10 +16,10 @@
 		<PackageReference Include="Rhino.Connectors.Gurock" Version="2022.3.21.1" />
 		<PackageReference Include="Rhino.Connectors.Saas" Version="2022.3.20.1" />
 		<PackageReference Include="Rhino.Connectors.Text" Version="2022.3.21.2" />
-		<PackageReference Include="Rhino.Connectors.Xray" Version="2022.3.21.1" />
-		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2022.3.21.1" />
-		<PackageReference Include="Rhino.Connectors.Xray.Cloud.Text" Version="2022.3.21.1" />
-		<PackageReference Include="Rhino.Connectors.Xray.Text" Version="2022.3.21.1" />
+		<PackageReference Include="Rhino.Connectors.Xray" Version="2022.3.22.2" />
+		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2022.3.22.2" />
+		<PackageReference Include="Rhino.Connectors.Xray.Cloud.Text" Version="2022.3.22.2" />
+		<PackageReference Include="Rhino.Connectors.Xray.Text" Version="2022.3.22.2" />
 	</ItemGroup>
 
 	<ItemGroup>
