@@ -21,6 +21,11 @@ using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 
 using System.Reflection;
+using System;
+using System.Text;
+using Rhino.Connectors.Text;
+using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Contracts.AutomationProvider;
 
 namespace Rhino.Controllers.Domain.Data
 {
@@ -388,6 +393,120 @@ namespace Rhino.Controllers.Domain.Data
 
             // get
             return models.Concat(InvokeGetLocators());
+        }
+
+        /// <summary>
+        /// Gets an ASCII tree based on the RhinoTestCase spec provided.
+        /// </summary>
+        /// <param name="rhinoTestCase">The RhinoTestCase spec by which to create the ASCII tree.</param>
+        /// <returns>An ASCII tree that represents the RhinoTestCase.</returns>
+        public string GetTestTree(string rhinoTestCase)
+        {
+            // setup
+            var configuration = new RhinoConfiguration
+            {
+                TestsRepository = new[] { rhinoTestCase },
+                DriverParameters = new[]
+                {
+                    new Dictionary<string, object>
+                    {
+                        ["driver"] = "ChromeDriver",
+                        ["driverBinaries"] = "."
+                    }
+                }
+            };
+            var connector = new TextConnector(configuration, _types);
+            var tree = new StringBuilder();
+
+            // local
+            void RenderTree(RhinoTestStep testStep, int level)
+            {
+                // normalize
+                level = level < 1 ? 1 : level;
+
+                // setup
+                var isPlugin = testStep.Steps != null && testStep.Steps.Any();
+                var actions = isPlugin ? testStep.Steps.ToArray() : Array.Empty<RhinoTestStep>();
+                var actionLine = GetLine(level - 1);
+                var entityType = actions.Length > 0 ? "(P)" : "(A)";
+                var line = $"{actionLine} {entityType} {testStep.Command.ToSpaceCase().ToLower()}";
+
+                // render entity
+                tree.AppendLine(line);
+                
+                // collect models
+                if (testStep.ModelEntries != null && testStep.ModelEntries.Any())
+                {
+                    var modelsLine = GetLine(level);
+                    var models = testStep.ModelEntries.ToArray();
+
+                    for (int i = 0; i < models.Length; i++)
+                    {
+                        modelsLine = i == models.Length - 1 && (!isPlugin)
+                            ? ReplaceLastOccurrence(modelsLine, "├──", "└──")
+                            : modelsLine;
+                        modelsLine = $"{modelsLine} (M) {models[i].Name}";
+                        tree.AppendLine(modelsLine);
+                    }
+                }
+
+                // root
+                if (!isPlugin)
+                {
+                    return;
+                }
+
+                // setup tree level
+                var treeLevel = level + 1;
+
+                // iterate
+                var nestedSteps = testStep.Steps.ToArray();
+                for (int i = 0; i < nestedSteps.Length; i++)
+                {
+                    RenderTree(nestedSteps[i], treeLevel);
+                }
+            }
+
+            // get tree line
+            static string GetLine(int level, char seperator = '│')
+            {
+                // setup
+                var levels = string.Empty;
+
+                // build
+                for (int i = 0; i < level; i++)
+                {
+                    levels += $"{seperator}   ";
+                }
+
+                // get
+                return levels + "├──";
+            }
+
+            // replace the last occurrence on sub string
+            static string ReplaceLastOccurrence(string source, string find, string replace)
+            {
+                var place = source.LastIndexOf(find);
+                var result = source.Remove(place, find.Length).Insert(place, replace);
+                return result;
+            }
+
+            // get
+            var testCases = connector.ProviderManager.TestRun.TestCases.ToArray();
+
+            // iterate
+            foreach (var testCase in testCases)
+            {
+                tree.AppendLine(testCase.Key).AppendLine(".");
+                foreach (var step in testCase.Steps)
+                {
+                    RenderTree(step, 1);
+                }
+                tree.AppendLine();
+            }
+
+            // get
+            return $"{tree}";
         }
 
         // UTILITIES

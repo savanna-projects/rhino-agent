@@ -727,6 +727,26 @@ namespace Rhino.Controllers.Controllers
             // get
             return Ok(services);
         }
+
+        // GET: api/v3/meta/tests/tree
+        [HttpPost, Route("tests/tree")]
+        [SwaggerOperation(
+            Summary = "Get-TestTree",
+            Description = "Gets an ASCII tree based on the RhinoTestCase spec provided.")]
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Text.Plain)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetTestTree([FromBody] string rhinoTestCase)
+        {
+            // get response
+            var entities = _dataRepository
+                .SetAuthentication(Authentication)
+                .GetTestTree(rhinoTestCase);
+
+            // return
+            return Ok(entities);
+        }
         #endregion
     }
 }

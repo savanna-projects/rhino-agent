@@ -25,5 +25,6 @@ namespace Rhino.Controllers.Domain.Interfaces
         IEnumerable<string> GetServices();
         IEnumerable<RhinoVerbModel> GetVerbs();
         Task<string> GetVersionAsync();
+        string GetTestTree(string rhinoTestCase);
     }
 }
