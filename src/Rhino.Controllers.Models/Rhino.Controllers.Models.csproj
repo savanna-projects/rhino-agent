@@ -8,8 +8,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Gravity.Services.Comet" Version="2022.3.29.2" />
-		<PackageReference Include="Gravity.Services.DataContracts" Version="2022.3.29.2" />
+		<PackageReference Include="Gravity.Services.Comet" Version="2022.4.16.1" />
+		<PackageReference Include="Gravity.Services.DataContracts" Version="2022.4.16.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
 		<PackageReference Include="Rhino.Api.Contracts" Version="2022.4.11.2" />
