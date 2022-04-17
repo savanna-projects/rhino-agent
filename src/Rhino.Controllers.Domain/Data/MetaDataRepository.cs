@@ -26,6 +26,7 @@ using System.Text;
 using Rhino.Connectors.Text;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Contracts.AutomationProvider;
+using System.Text.RegularExpressions;
 
 namespace Rhino.Controllers.Domain.Data
 {
@@ -429,7 +430,16 @@ namespace Rhino.Controllers.Domain.Data
                 var actions = isPlugin ? testStep.Steps.ToArray() : Array.Empty<RhinoTestStep>();
                 var actionLine = GetLine(level - 1);
                 var entityType = actions.Length > 0 ? "(P)" : "(A)";
-                var line = $"{actionLine} {entityType} {testStep.Command.ToSpaceCase().ToLower()}";
+                var command = string.IsNullOrEmpty(testStep.Command) ? "MissingPlugin" : testStep.Command;
+
+                // normalize
+                entityType = command.Equals("MissingPlugin") ? "(E)" : entityType;
+                command = command.ToSpaceCase().ToLower();
+
+                // build
+                var line = entityType.Equals("(E)")
+                    ? $"{actionLine} {entityType} {command + " - " + Regex.Match(testStep.Action, "[^{]*").Value.Trim().ToLower()}"
+                    : $"{actionLine} {entityType} {command}";
 
                 // render entity
                 tree.AppendLine(line);
