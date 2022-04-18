@@ -97,25 +97,11 @@ namespace Rhino.Controllers.Domain.Data
             return actions.OrderBy(i => i.Key);
         }
 
-        // TODO: replace with Rhino.Utilities reflection on the next Rhino.Api version.
         /// <summary>
         /// Gets a collection of available assertions (based on AssertMethodAttribute).
         /// </summary>
         /// <returns>A collection of AssertMethodAttribute.</returns>
-        public IEnumerable<AssertModel> GetAssertions()
-        {
-            // constants
-            const BindingFlags Flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
-
-            // setup
-            return _types
-                .SelectMany(i => i.GetMethods(Flags))
-                .Select(i => i.GetCustomAttribute<AssertMethodAttribute>())
-                .Where(i => i != null)
-                .Select(i => i.ToModel())
-                .Where(i => i != default)
-                .OrderBy(i => i.Key);
-        }
+        public IEnumerable<AssertModel> GetAssertions() => InvokeGetAssertions();
 
         /// <summary>
         /// Gets a list of all available connectors.
@@ -418,6 +404,7 @@ namespace Rhino.Controllers.Domain.Data
             };
             var connector = new TextConnector(configuration, _types);
             var tree = new StringBuilder();
+            var pattern = string.Join("|", GetAssertions().Select(i => i.Key.ToLower()).OrderBy(i => i.Length));
 
             // local
             void RenderTree(RhinoTestStep testStep, int level)
@@ -453,10 +440,25 @@ namespace Rhino.Controllers.Domain.Data
                     for (int i = 0; i < models.Length; i++)
                     {
                         modelsLine = i == models.Length - 1 && (!isPlugin)
-                            ? ReplaceLastOccurrence(modelsLine, "├──", "└──")
+                            ? ReplaceLastOccurrence(modelsLine, "├──", "├──")
                             : modelsLine;
                         modelsLine = $"{modelsLine} (M) {models[i].Name}";
                         tree.AppendLine(modelsLine);
+                    }
+                }
+
+                if(testStep.ExpectedResults !=null && testStep.ExpectedResults.Any())
+                {
+                    var asserts = testStep.ExpectedResults.Select(i => Regex.Match(i.ExpectedResult, pattern).Value).ToArray();
+
+                    for (int i = 0; i < asserts.Length; i++)
+                    {
+                        var assertLine = GetLine(level);
+                        assertLine = i == asserts.Length - 1
+                            ? ReplaceLastOccurrence(assertLine, "├──", "├──")
+                            : assertLine;
+                        assertLine = $"{assertLine} (R) assert {asserts[i]}";
+                        tree.AppendLine(assertLine);
                     }
                 }
 
@@ -570,6 +572,21 @@ namespace Rhino.Controllers.Domain.Data
                 },
                 Verb = "using"
             });
+        }
+
+        private IEnumerable<AssertModel> InvokeGetAssertions()
+        {
+            // constants
+            const BindingFlags Flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+
+            // setup
+            return Api.Extensions.Utilities.Types
+                .SelectMany(i => i.GetMethods(Flags))
+                .Select(i => i.GetCustomAttribute<AssertMethodAttribute>())
+                .Where(i => i != null)
+                .Select(i => i.ToModel())
+                .Where(i => i != default)
+                .OrderBy(i => i.Key);
         }
     }
 }
