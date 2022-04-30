@@ -3,6 +3,7 @@
  * 
  * RESSOURCES
  */
+using Gravity.Abstraction.Cli;
 using Gravity.Services.Comet.Engine.Core;
 
 using Rhino.Api.Contracts.Attributes;
