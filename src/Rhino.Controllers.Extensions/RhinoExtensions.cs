@@ -45,7 +45,7 @@ namespace Rhino.Controllers.Extensions
                 // setup: CLI arguments
                 var cliArguments = plugin
                     .Parameters
-                    .Select(i => new KeyValuePair<string, string>(i.Parameter, i.Description))
+                    .Select(i => new KeyValuePair<string, object>(i.Parameter, i.Description))
                     .ToDictionary(i => i.Key, i => i.Value);
 
                 // setup
@@ -96,7 +96,7 @@ namespace Rhino.Controllers.Extensions
 
         private static ActionAttribute GetDefauleActionAttribute() => new()
         {
-            CliArguments = new Dictionary<string, string>(),
+            CliArguments = new Dictionary<string, object>(),
             Description = string.Empty,
             Examples = Array.Empty<PluginExample>(),
             Name = string.Empty,
