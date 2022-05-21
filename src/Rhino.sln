@@ -89,6 +89,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elastic", "Elastic", "{3F768065-921B-437B-A98F-E30FC42D676A}"
 	ProjectSection(SolutionItems) = preProject
 		..\elastic\ActionsStabilityDashboard.ndjson = ..\elastic\ActionsStabilityDashboard.ndjson
+		..\elastic\BuildingBlocksOverviewDashboard.ndjson = ..\elastic\BuildingBlocksOverviewDashboard.ndjson
 	EndProjectSection
 EndProject
 Global
