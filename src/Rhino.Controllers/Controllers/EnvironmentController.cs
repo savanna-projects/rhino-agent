@@ -111,13 +111,16 @@ namespace Rhino.Controllers.Controllers
             Summary = "Update-EnvironmentParameter -Name {parameterKey}",
             Description = "Updates the value of the specified _**Rhino Parameter**_ if the parameter exists or create a new one if not.")]
         [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Text.Plain)]
         [SwaggerResponse(StatusCodes.Status201Created, SwaggerDocument.StatusCode.Status201Created, Type = typeof(IDictionary<string, object>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<IDictionary<string, object>>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<IDictionary<string, object>>))]
-        public async Task<IActionResult> Update([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
+        public async Task<IActionResult> Update(
+            [FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name,
+            [FromBody, SwaggerParameter(SwaggerDocument.Parameter.Entity)] string value)
         {
             // setup
-            var value = await Request.ReadAsync().ConfigureAwait(false);
+            // var value = await Request.ReadAsync().ConfigureAwait(false);
 
             // exit conditions
             if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(name))
