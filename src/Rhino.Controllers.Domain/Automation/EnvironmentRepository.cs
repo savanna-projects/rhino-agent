@@ -44,6 +44,26 @@ namespace Rhino.Controllers.Domain.Automation
 
         #region *** Add    ***
         /// <summary>
+        /// Add a new parameters set to the domain state.
+        /// </summary>
+        /// <param name="entity">The environment object to post.</param>
+        /// <returns>The id of the environment.</returns>
+        public IDictionary<string, object> Add(IDictionary<string, object> entity)
+        {
+            // push to gravity
+            foreach (var item in entity)
+            {
+                AutomationEnvironment.SessionParams[item.Key] = item.Value;
+            }
+
+            // invoke
+            InvokeAdd(entity);
+
+            // get
+            return entity;
+        }
+
+        /// <summary>
         /// Add a new parameter to the domain state.
         /// </summary>
         /// <param name="entity">The environment object to post.</param>
@@ -53,6 +73,15 @@ namespace Rhino.Controllers.Domain.Automation
             // push to gravity
             AutomationEnvironment.SessionParams[entity.Key] = entity.Value;
 
+            // invoke
+            InvokeAdd(new Dictionary<string, object>(new[] { entity }, StringComparer.OrdinalIgnoreCase));
+
+            // get
+            return $"{entity.Value}";
+        }
+
+        private void InvokeAdd(IDictionary<string, object> entity)
+        {
             // validate
             var name = SetCollectionName(Name).CollectionName;
 
@@ -74,12 +103,12 @@ namespace Rhino.Controllers.Domain.Automation
             }
 
             // sync
-            environment.Environment[entity.Key] = entity.Value;
+            foreach (var item in entity)
+            {
+                environment.Environment[item.Key] = item.Value;
+            }
             collection.UpdateEntityModel(environment.Id, environment);
             _logger?.Debug($"Update-RhinoEnvironmentModel -Id {environment.Id} = Ok");
-
-            // results
-            return $"{entity.Value}";
         }
         #endregion
 

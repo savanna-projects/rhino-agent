@@ -30,6 +30,6 @@ namespace Rhino.Controllers.Models
         /// Environment data to sync with Gravity static in-memory environment.
         /// </summary>
         [DataMember]
-        public IDictionary<string, object> Environment { get; set; } = new ConcurrentDictionary<string, object>();
+        public IDictionary<string, object> Environment { get; set; } = new ConcurrentDictionary<string, object>(StringComparer.OrdinalIgnoreCase);
     }
 }

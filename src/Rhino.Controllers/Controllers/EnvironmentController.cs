@@ -104,6 +104,40 @@ namespace Rhino.Controllers.Controllers
         }
         #endregion
 
+        #region *** Post   ***
+        // POST: api/v3/environment
+        [HttpPost]
+        [SwaggerOperation(
+            Summary = "Add-EnvironmentParameters -Name {parameterKey}",
+            Description = "Updates a set of _**Rhino Parameter**_ if the parameters exists or create a new one if not.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status201Created, SwaggerDocument.StatusCode.Status201Created, Type = typeof(IDictionary<string, object>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<IDictionary<string, object>>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<IDictionary<string, object>>))]
+        public async Task<IActionResult> Add(
+            [FromBody, SwaggerParameter(SwaggerDocument.Parameter.Entity)] IDictionary<string, object> value)
+        {
+            // bad request
+            if (value == null || !value.Any())
+            {
+                return await this
+                    .ErrorResultAsync<IDictionary<string, object>>($"Add-EnvironmentParameters = (BadRequest, NoValue | NoKey)")
+                    .ConfigureAwait(false);
+            }
+
+            // build
+            _domain.Environments.SetAuthentication(Authentication);
+            _domain.Environments.Add(value);
+
+            // build
+            var responseBody = new Dictionary<string, object>(value, StringComparer.OrdinalIgnoreCase);
+
+            // get
+            return Created($"/api/v3/environment", responseBody);
+        }
+        #endregion
+
         #region *** Put    ***
         // PUT: api/v3/environment
         [HttpPut("{name}")]
@@ -119,10 +153,7 @@ namespace Rhino.Controllers.Controllers
             [FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name,
             [FromBody, SwaggerParameter(SwaggerDocument.Parameter.Entity)] string value)
         {
-            // setup
-            // var value = await Request.ReadAsync().ConfigureAwait(false);
-
-            // exit conditions
+            // bad request
             if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(name))
             {
                 Request.SetBody(new Dictionary<string, object>
@@ -130,7 +161,7 @@ namespace Rhino.Controllers.Controllers
                     [string.IsNullOrEmpty(name) ? "" : name] = value
                 });
                 return await this
-                    .ErrorResultAsync<IDictionary<string, object>>($"Create-EnvironmentParameter -Key {name} = (BadRequest, NoValue | NoKey)")
+                    .ErrorResultAsync<IDictionary<string, object>>($"Update-EnvironmentParameter -Key {name} = (BadRequest, NoValue | NoKey)")
                     .ConfigureAwait(false);
             }
 
