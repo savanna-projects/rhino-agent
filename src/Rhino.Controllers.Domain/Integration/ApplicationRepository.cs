@@ -127,6 +127,15 @@ namespace Rhino.Controllers.Domain.Integration
         }
 
         /// <summary>
+        /// Gets all RhinoTestCase from the target application.
+        /// </summary>
+        /// <returns>A Collection of RhinoTestCase.</returns>
+        public IEnumerable<RhinoTestCase> Get(IEnumerable<string> ids)
+        {
+            return GetTestCases(ids);
+        }
+
+        /// <summary>
         /// Gets a RhinoTestCase from the target application.
         /// </summary>
         /// <param name="id">The RhinoTestCase id by which to get.</param>
@@ -139,11 +148,28 @@ namespace Rhino.Controllers.Domain.Integration
                 return (StatusCodes.Status400BadRequest, default);
             }
 
+            // build
+            var testCase = GetTestCases(new[] {id}).FirstOrDefault();
+
+            // get
+            return testCase == default
+                ? (StatusCodes.Status404NotFound, default)
+                : (StatusCodes.Status200OK, testCase);
+        }
+
+        private IEnumerable<RhinoTestCase> GetTestCases(IEnumerable<string> ids)
+        {
+            // bad request
+            if (Configuration == null)
+            {
+                return Array.Empty<RhinoTestCase>();
+            }
+
             // setup
             var configuration = new RhinoConfiguration
             {
                 ConnectorConfiguration = Configuration,
-                TestsRepository = new[] { id },
+                TestsRepository = ids,
                 DriverParameters = new[]
                 {
                     new Dictionary<string, object>()
@@ -154,12 +180,13 @@ namespace Rhino.Controllers.Domain.Integration
             // build
             var connectorType = configuration.GetConnector(_types);
             var connector = (IConnector)Activator.CreateInstance(connectorType, @params);
-            var testCase = connector.ProviderManager.GetTestCases(id).DistinctBy(i => i.Key).FirstOrDefault();
+            var testCases = connector
+                .ProviderManager
+                .GetTestCases(ids.ToArray())
+                .DistinctBy(i => i.Key);
 
             // get
-            return testCase == default
-                ? (StatusCodes.Status404NotFound, default)
-                : (StatusCodes.Status200OK, testCase);
+            return testCases;
         }
         #endregion        
 

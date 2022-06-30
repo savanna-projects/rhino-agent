@@ -27,6 +27,7 @@ using Rhino.Connectors.Text;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Contracts.AutomationProvider;
 using System.Text.RegularExpressions;
+using Rhino.Api.Parser.Components;
 
 namespace Rhino.Controllers.Domain.Data
 {
@@ -521,6 +522,41 @@ namespace Rhino.Controllers.Domain.Data
             return $"{tree}";
         }
 
+        /// <summary>
+        /// Gets a collection of ActionRule based on the RhinoTestCase spec provided.
+        /// </summary>
+        /// <param name="rhinoTestCase">The RhinoTestCase spec by which to create the ASCII tree.</param>
+        /// <returns>An ASCII tree that represents the RhinoTestCase.</returns>
+        public IEnumerable<ActionRule> GetGravityActions(string rhinoTestCase)
+        {
+            // setup
+            var configuration = new RhinoConfiguration
+            {
+                TestsRepository = new[] { rhinoTestCase },
+                DriverParameters = new[]
+                {
+                    new Dictionary<string, object>
+                    {
+                        ["driver"] = "ChromeDriver",
+                        ["driverBinaries"] = "."
+                    }
+                }
+            };
+            var connector = new TextConnector(configuration, _types);
+
+            // not found
+            if (connector.ProviderManager?.TestRun?.TestCases?.Any() == false)
+            {
+                return Array.Empty<ActionRule>();
+            }
+
+            // setup
+            var factory = new RhinoTestCaseFactory(Logger);
+
+            // get
+            return factory.GetActions(connector.ProviderManager.TestRun.TestCases.First().Steps);
+        }
+
         // UTILITIES
         // execute GetActions routine
         private IEnumerable<(string Source, ActionAttribute Action)> InvokeGetActions()
@@ -574,7 +610,7 @@ namespace Rhino.Controllers.Domain.Data
             });
         }
 
-        private IEnumerable<AssertModel> InvokeGetAssertions()
+        private static IEnumerable<AssertModel> InvokeGetAssertions()
         {
             // constants
             const BindingFlags Flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;

@@ -207,6 +207,12 @@ namespace Rhino.Controllers.Domain.Automation
                     _logger?.Debug($"Invoke-Configuration = {responseBody.Key}");
                     results.Add((StatusCodes.Status200OK, responseBody));
                 }
+                catch (NullReferenceException e)
+                {
+                    var connector = configuration.ConnectorConfiguration.Connector;
+                    _logger?.Debug($"Invoke-Configuration -Connector {connector} = (NotFound | NoSuchConnector)");
+                    results.Add((StatusCodes.Status404NotFound, default));
+                }
                 catch (Exception e) when (e != null)
                 {
                     _logger?.Debug($"Invoke-Configuration = (InternalServerError, {e.GetBaseException().Message})");

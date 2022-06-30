@@ -14,5 +14,6 @@ namespace Rhino.Controllers.Domain.Interfaces
         RhinoConnectorConfiguration Configuration { get; }
         IConnector Connector { get; }
         IApplicationRepository SetConnector(RhinoConnectorConfiguration configuration);
+        IEnumerable<RhinoTestCase> Get(IEnumerable<string> ids);
     }
 }
