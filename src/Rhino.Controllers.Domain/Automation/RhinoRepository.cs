@@ -207,7 +207,7 @@ namespace Rhino.Controllers.Domain.Automation
                     _logger?.Debug($"Invoke-Configuration = {responseBody.Key}");
                     results.Add((StatusCodes.Status200OK, responseBody));
                 }
-                catch (NullReferenceException e)
+                catch (NullReferenceException)
                 {
                     var connector = configuration.ConnectorConfiguration.Connector;
                     _logger?.Debug($"Invoke-Configuration -Connector {connector} = (NotFound | NoSuchConnector)");
