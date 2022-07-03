@@ -747,26 +747,6 @@ namespace Rhino.Controllers.Controllers
             // return
             return Ok(entities);
         }
-
-        // GET: api/v3/meta/tests/actions
-        [HttpPost, Route("tests/actions")]
-        [SwaggerOperation(
-            Summary = "Get-TestActions",
-            Description = "Gets a collection of ActionRule based on the RhinoTestCase spec provided.")]
-        [Consumes(MediaTypeNames.Text.Plain)]
-        [Produces(MediaTypeNames.Application.Json)]
-        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ActionRule>))]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<ActionRule>))]
-        public IActionResult GetTestActions([FromBody] string rhinoTestCase)
-        {
-            // get response
-            var entities = _dataRepository
-                .SetAuthentication(Authentication)
-                .GetGravityActions(rhinoTestCase);
-
-            // return
-            return Ok(entities);
-        }
         #endregion
     }
 }

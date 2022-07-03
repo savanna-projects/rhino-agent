@@ -3,8 +3,6 @@
  * 
  * RESSOURCES
  */
-using Gravity.Services.DataContracts;
-
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 
@@ -28,6 +26,5 @@ namespace Rhino.Controllers.Domain.Interfaces
         IEnumerable<RhinoVerbModel> GetVerbs();
         Task<string> GetVersionAsync();
         string GetTestTree(string rhinoTestCase);
-        public IEnumerable<ActionRule> GetGravityActions(string rhinoTestCase);
     }
 }

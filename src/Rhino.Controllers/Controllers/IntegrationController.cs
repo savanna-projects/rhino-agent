@@ -159,47 +159,9 @@ namespace Rhino.Controllers.Controllers
             return StatusCode(statusCode, entity);
         }
 
-        [HttpPost, Route("test/specs")]
-        [SwaggerOperation(
-            Summary = "Get-TestSpecifications",
-            Description = "Gets one or more _**Test Case**_ specification from the integrated application.")]
-        [Consumes(MediaTypeNames.Application.Json)]
-        [Produces(MediaTypeNames.Application.Json)]
-        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<RhinoIntegrationModel<IEnumerable<string>>>))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<RhinoIntegrationModel<IEnumerable<string>>>))]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<RhinoIntegrationModel<IEnumerable<string>>>))]
-        public async Task<IActionResult> GetTestsSpecifications([FromBody] RhinoIntegrationModel<IEnumerable<string>> model)
-        {
-            // bad request
-            if (model.Connector == null || model.Entity == null)
-            {
-                return await this
-                    .ErrorResultAsync<string>("Get-TestCase = (BadRequest, NoConnector | Entity)")
-                    .ConfigureAwait(false);
-            }
-
-            // parse test case & configuration
-            var configuration = model.Connector;
-
-            // get
-            var testCases = _domain.Application.SetConnector(configuration).Get(model.Entity);
-
-            // not found
-            if (testCases == null || !testCases.Any())
-            {
-                return await this
-                    .ErrorResultAsync<string>("Get-TestCase = NotFound")
-                    .ConfigureAwait(false);
-            }
-
-            // return results
-            return StatusCode(200, testCases.Select(i => i.TestSpecifications));
-        }
-
         [HttpPost, Route("test/spec")]
         [SwaggerOperation(
-            Summary = "Get-TestSpecifications",
+            Summary = "Get-TestCase",
             Description = "Gets a _**Test Case**_ specification from the integrated application.")]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Text.Plain)]
@@ -207,7 +169,7 @@ namespace Rhino.Controllers.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<RhinoIntegrationModel<string>>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<RhinoIntegrationModel<string>>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<RhinoIntegrationModel<string>>))]
-        public async Task<IActionResult> GetTestSpecifications([FromBody] RhinoIntegrationModel<string> model)
+        public async Task<IActionResult> GetTestSpec([FromBody] RhinoIntegrationModel<string> model)
         {
             // bad request
             if (model.Connector == null || model.Entity == null)
