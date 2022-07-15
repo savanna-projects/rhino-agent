@@ -115,6 +115,71 @@ namespace Rhino.Controllers.Controllers
             });
         }
 
+        // GET: api/v3/meta/plugins/references/:key/configurations/:configuration
+        [HttpGet, Route("plugins/references/{key}/configurations/{configuration}")]
+        [SwaggerOperation(
+            Summary = "Get-Plugin -All -Names -Configuration 6846d0b7-839a-404f-a7f4-f927dc168e0c -Key {pluginKey}",
+            Description = "Returns a single available _**Plugins**_ of any type (_**Rhino**_, _**Code**_ & _**External**_).")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ActionModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetPluginsReferencesByConfiguration(
+            [SwaggerParameter(SwaggerDocument.Parameter.Congifuration)] string configuration,
+            [SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
+        {
+            // get response
+            var entity = _dataRepository
+                .SetAuthentication(Authentication)
+                .GetPlugins(configuration)
+                .FirstOrDefault(i => !s_excludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
+
+            // not found
+            if (entity == default)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-Plugin -Configuration {configuration} -Key {key} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // return
+            return Ok(new
+            {
+                entity.Key,
+                Literal = entity.Key.PascalToSpaceCase(),
+                entity.Source,
+                Description = entity.Entity.GetType().GetProperty("Description")?.GetValue(entity.Entity) ?? string.Empty,
+                Aliases = Array.Empty<string>()
+            });
+        }
+
+        // GET: api/v3/meta/plugins/references/configurations/:configuration
+        [HttpGet, Route("plugins/references/configurations/{configuration}")]
+        [SwaggerOperation(
+            Summary = "Get-Plugin -All -Names -Configuration 6846d0b7-839a-404f-a7f4-f927dc168e0c",
+            Description = "Returns a list of available _**Plugins**_ of all types (_**Rhino**_, _**Code**_ & _**External**_).")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ActionModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetPluginsReferencesByConfiguration([SwaggerParameter(SwaggerDocument.Parameter.Congifuration)] string configuration)
+        {
+            // get response
+            var entities = _dataRepository
+                .SetAuthentication(Authentication)
+                .GetPlugins(configuration)
+                .Where(i => !s_excludeActions.Contains(i.Key))
+                .Select(i => new
+                {
+                    i.Key,
+                    Literal = i.Key.PascalToSpaceCase(),
+                    i.Source,
+                    Description = i.Entity.GetType().GetProperty("Description")?.GetValue(i.Entity) ?? string.Empty,
+                    Aliases = Array.Empty<string>()
+                });
+
+            // return
+            return Ok(entities);
+        }
+
         // GET: api/v3/meta/plugins
         [HttpGet, Route("plugins")]
         [SwaggerOperation(
@@ -162,6 +227,56 @@ namespace Rhino.Controllers.Controllers
 
             // return
             return Ok(entity);
+        }
+
+        // GET: api/v3/meta/plugins/:key/configurations/:configuration
+        [HttpGet, Route("plugins/{key}/configurations/{configuration}")]
+        [SwaggerOperation(
+            Summary = "Get-Plugin -All -Configuration 6846d0b7-839a-404f-a7f4-f927dc168e0c -Key {pluginKey}",
+            Description = "Returns a single available _**Plugins**_ of any type (_**Rhino**_, _**Code**_ & _**External**_).")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ActionModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetPluginsByConfiguration(
+            [SwaggerParameter(SwaggerDocument.Parameter.Congifuration)] string configuration,
+            [SwaggerParameter(SwaggerDocument.Parameter.Id)] string key)
+        {
+            // get response
+            var entity = _dataRepository
+                .SetAuthentication(Authentication)
+                .GetPlugins(configuration)
+                .FirstOrDefault(i => !s_excludeActions.Contains(i.Key) && i.Key.Equals(key, StringComparison.Ordinal));
+
+            // not found
+            if (entity == default)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-Plugin -Configuration {configuration} -Key {key} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // return
+            return Ok(entity);
+        }
+
+        // GET: api/v3/meta/plugins/configurations/:configuration
+        [HttpGet, Route("plugins/configurations/{configuration}")]
+        [SwaggerOperation(
+            Summary = "Get-Plugin -All -Configuration 6846d0b7-839a-404f-a7f4-f927dc168e0c",
+            Description = "Returns a list of available _**Plugins**_ of all types (_**Rhino**_, _**Code**_ & _**External**_).")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ActionModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetPluginsByConfiguration([SwaggerParameter(SwaggerDocument.Parameter.Congifuration)] string configuration)
+        {
+            // get response
+            var entities = _dataRepository
+                .SetAuthentication(Authentication)
+                .GetPlugins(configuration)
+                .Where(i => !s_excludeActions.Contains(i.Key));
+
+            // return
+            return Ok(entities);
         }
 
         // GET: api/v3/meta/assertions
@@ -727,7 +842,9 @@ namespace Rhino.Controllers.Controllers
             // get
             return Ok(services);
         }
+        #endregion
 
+        #region *** Post   ***
         // GET: api/v3/meta/tests/tree
         [HttpPost, Route("tests/tree")]
         [SwaggerOperation(

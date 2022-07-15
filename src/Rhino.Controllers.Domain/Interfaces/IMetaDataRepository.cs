@@ -3,6 +3,8 @@
  * 
  * RESSOURCES
  */
+using Gravity.Services.DataContracts;
+
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 
@@ -20,6 +22,7 @@ namespace Rhino.Controllers.Domain.Interfaces
         IEnumerable<BaseModel<object>> GetModelTypes();
         IEnumerable<OperatorModel> GetOperators();
         IEnumerable<ActionModel> GetPlugins();
+        IEnumerable<ActionModel> GetPlugins(string configuration);
         IEnumerable<ReporterModel> GetReporters();
         IEnumerable<ServiceEventModel> GetServiceEvents();
         IEnumerable<string> GetServices();

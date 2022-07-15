@@ -27,6 +27,8 @@ using Rhino.Connectors.Text;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Contracts.AutomationProvider;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
+using Rhino.Controllers.Domain.Extensions;
 
 namespace Rhino.Controllers.Domain.Data
 {
@@ -38,6 +40,7 @@ namespace Rhino.Controllers.Domain.Data
         // members: state
         private readonly IPluginsRepository _plugins;
         private readonly IRepository<RhinoModelCollection> _models;
+        private readonly IRepository<RhinoConfiguration> _configurations;
         private readonly IEnumerable<Type> _types;
         private readonly ILogger _logger;
 
@@ -50,12 +53,14 @@ namespace Rhino.Controllers.Domain.Data
         public MetaDataRepository(
             IPluginsRepository plugins,
             IRepository<RhinoModelCollection> models,
+            IRepository<RhinoConfiguration> configurations,
             IEnumerable<Type> types,
             ILogger logger)
         {
             // setup: fields
             _plugins = plugins;
             _models = models;
+            _configurations = configurations;
             _types = types;
             _logger = logger?.CreateChildLogger(nameof(MetaDataRepository));
 
@@ -94,6 +99,49 @@ namespace Rhino.Controllers.Domain.Data
 
             // get
             _logger?.Debug($"Get-Actions = Ok, {actions.Count}");
+            return actions.OrderBy(i => i.Key);
+        }
+
+        /// <summary>
+        /// Gets a list of non conditional actions with their literals default verbs
+        /// </summary>
+        /// <param name="configuration">Configuration ID.</param>
+        /// <returns>List of non conditional actions</returns>
+        public IEnumerable<ActionModel> GetPlugins(string configuration)
+        {
+            // setup
+            var actions = new List<ActionModel>();
+
+            // build
+            foreach (var (source, entity) in InvokeGetActions())
+            {
+                var action = entity.ToModel(source);
+                if (action != default)
+                {
+                    actions.Add(action);
+                }
+            }
+
+            // external
+            var (statusCode, configurationEntity) = _configurations.SetAuthentication(Authentication).Get(configuration);
+            var isNullOrEmpty = string.IsNullOrEmpty(configuration);
+            var isConfiguration = !isNullOrEmpty && statusCode == StatusCodes.Status200OK;
+            var isExternal = isConfiguration && configurationEntity.ExternalRepositories?.Any() == true;
+
+            if (isExternal)
+            {
+                var externalActions = configurationEntity
+                    .ExternalRepositories
+                    .Select(i => i.GetActions());
+
+                var models = externalActions
+                    .SelectMany(i => i.Entities.Select(x => x.ToModel(string.IsNullOrEmpty(i.Name) ? "external" : $"external:{i.Name}")));
+
+                actions.AddRange(models);
+            }
+
+            // get
+            _logger?.Debug($"Get-Actions -Configuration {configuration} = Ok, {actions.Count}");
             return actions.OrderBy(i => i.Key);
         }
 
@@ -574,7 +622,7 @@ namespace Rhino.Controllers.Domain.Data
             });
         }
 
-        private IEnumerable<AssertModel> InvokeGetAssertions()
+        private static IEnumerable<AssertModel> InvokeGetAssertions()
         {
             // constants
             const BindingFlags Flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
