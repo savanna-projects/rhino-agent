@@ -39,21 +39,21 @@ namespace Rhino.Controllers.Extensions
                 return new Authentication
                 {
                     Password = string.Empty,
-                    UserName = string.Empty
+                    Username = string.Empty
                 };
             }
 
             // only user
             if (credentials.Length == 1)
             {
-                return new Authentication { UserName = credentials[0] };
+                return new Authentication { Username = credentials[0] };
             }
 
             // get object
             return new Authentication
             {
                 Password = credentials[1],
-                UserName = credentials[0]
+                Username = credentials[0]
             };
         }
 

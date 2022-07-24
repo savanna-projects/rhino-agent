@@ -77,7 +77,7 @@ Automation.Kdd.Agent Information: 0 : INF - 2020-07-08 07:31:29.094
     Message    : executing 'Login'
 
 Automation.Kdd.Agent Information: 0 : [GoToUrl]; argument [https://gravitymvctestapplication.azurewebsites.net/] executed
-Automation.Kdd.Agent Information: 0 : [SendKeys]; element [UserName]; argument [userName] executed
+Automation.Kdd.Agent Information: 0 : [SendKeys]; element [Username]; argument [username] executed
 Automation.Kdd.Agent Information: 0 : [SendKeys]; element [Password]; argument [password] executed
 Automation.Kdd.Agent Information: 0 : [Click]; element [//button[contains(.,'Log In')]] executed
 Automation.Kdd.Agent Information: 0 : [WaitForUrl] executed

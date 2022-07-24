@@ -29,7 +29,7 @@ Please see below for a typical request:
   "DataSource": null,
   "Authentication": {
     "Password": "rhinoPassword",
-    "UserName": "rhinoUserName"
+    "Username": "rhinoUsername"
   },
   "EngineConfiguration": {
     "MaxParallel": 1,
@@ -172,7 +172,7 @@ The following system fields must be always included in the request:
 #### Authentication
 |Name    |Type  |Description                 |
 |--------|------|----------------------------|
-|userName|string|A valid Rhino API user name.|
+|username|string|A valid Rhino API user name.|
 |password|string|A valid Rhino API password. |
 
 #### Engine Configuration
@@ -365,7 +365,7 @@ Please see below for a typical response:
         "location": "D:\\sites\\RhinoOutputs\\Images\\20200821090100416-0-GoToUrl.png"
       }
     ],
-    "userName": "automation@rhino.api",
+    "username": "automation@rhino.api",
     "startTime": "2020-08-21T12:00:52.0187856+03:00",
     "endTime": "2020-08-21T12:01:22.0720038+03:00",
     "totalRunTime": 30053,
@@ -417,7 +417,7 @@ The following system fields are always included in the response:
 |[exceptions](#orbit-exception)         |array    |A collection of _**Orbit Exception**_ object thrown during execution.                                             |
 |[performancePoints](#performance-point)|array    |A collection of _**Orbit Performance Point**_ object.                                                             |
 |[screenshots](#gravity-screenshot)     |array    |A collection of _**Orbit Screenshot**_ object.                                                                    |
-|userName                               |string   |The user name used to execute this _**Web Automation**_ request.                                                  |
+|username                               |string   |The user name used to execute this _**Web Automation**_ request.                                                  |
 |start                                  |date+time|The start time of this _**Web Automation**_.                                                                      |
 |end                                    |date+time|The end time of this _**Web Automation**_.                                                                        |
 |runTime                                |time     |The run time (total) of this _**Web Automation**_.                                                                |

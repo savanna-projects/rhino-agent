@@ -57,7 +57,7 @@ namespace Rhino.Controllers.Domain.Automation
             var entityModel = collection.AddEntityModel(entity);
 
             // sync
-            var isUser = !string.IsNullOrEmpty(Authentication.UserName);
+            var isUser = !string.IsNullOrEmpty(Authentication.Username);
             var isPassword = !string.IsNullOrEmpty(Authentication.Password);
             entity.Authentication = isUser && isPassword ? Authentication : entity.Authentication;
             collection.UpdateEntityModel(entityModel.Id, entity);

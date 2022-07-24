@@ -505,7 +505,7 @@ namespace Rhino.Controllers.Domain.Automation
             }
 
             //  setup conditions
-            var isUser = Authentication.UserName != string.Empty;
+            var isUser = Authentication.Username != string.Empty;
 
             // build
             configuration.Authentication = isUser ? Authentication : configuration.Authentication;

@@ -101,7 +101,7 @@ Please see below for a typical response:
   "gravityEndpoint": "",
   "authentication": {
     "password": "<rhino_user>",
-    "userName": "<password>"
+    "username": "<password>"
   },
   "engineConfiguration": {
     "maxParallel": 1,
@@ -170,7 +170,7 @@ The following system fields are always included in the response:
 #### Authentication
 |Name    |Type  |Description                 |
 |--------|------|----------------------------|
-|userName|string|A valid Rhino API user name.|
+|username|string|A valid Rhino API user name.|
 |password|string|A valid Rhino API password. |
 
 #### Engine Configuration
@@ -216,7 +216,7 @@ The following system fields are always included in the response:
 |connector   |string |Connector implementation type to use with this _**Rhino Configuration**_. If not specified, 'connecor_text' will be used as default.              |
 |collection  |string |The server base address under which the application is hosted (i.e. Jira or DevOps server endpoint).                                              |
 |password    |string |A valid password for your application (i.e. Jira or DevOps password).                                                                             |
-|userName    |string |A valid user for your application (i.e. Jira or DevOps password). The use must have create permissions for **Tests**, **Bugs** and **Executions**.|
+|username    |string |A valid user for your application (i.e. Jira or DevOps password). The use must have create permissions for **Tests**, **Bugs** and **Executions**.|
 |project     |string |The project name or ID (depends on the connector implementation) under which to find and execute tests.                                           |
 |bugManager  |boolean|Set to **true** in order to activate the bug manager feature for the selected connector.                                                          |
 |dryRun      |boolean|When set to **true** all integration implementation which creates or manipulates A.L.M entities, will be ignored.                                 |
@@ -259,7 +259,7 @@ The request body follows the same format as [Get Configuration](#get-configurati
   "gravityEndpoint": "",
   "authentication": {
     "password": "<rhino_user>",
-    "userName": "<password>"
+    "username": "<password>"
   },
   "engineConfiguration": {
     "maxParallel": 1,
@@ -332,7 +332,7 @@ The request body follows the same format as [Get Configuration](#get-configurati
   "gravityEndpoint": "",
   "authentication": {
     "password": "<rhino_user>",
-    "userName": "<password>"
+    "username": "<password>"
   },
   "engineConfiguration": {
     "maxParallel": 1,

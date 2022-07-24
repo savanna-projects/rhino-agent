@@ -54,7 +54,7 @@ namespace Rhino.Controllers.Domain
         public Authentication Authentication { get; private set; } = new Authentication
         {
             Password = string.Empty,
-            UserName = string.Empty
+            Username = string.Empty
         };
 
         /// <summary>
@@ -78,10 +78,10 @@ namespace Rhino.Controllers.Domain
             Authentication = authentication;
 
             // log
-            var userName = authentication.UserName.Length > 3
-                ? authentication.UserName[..3]
-                : authentication.UserName;
-            _logger?.Debug($"Set-Authentication -User {userName}*** -Password HaHa ;o) = Ok");
+            var username = authentication.Username.Length > 3
+                ? authentication.Username[..3]
+                : authentication.Username;
+            _logger?.Debug($"Set-Authentication -User {username}*** -Password HaHa ;o) = Ok");
 
             // get
             return this;

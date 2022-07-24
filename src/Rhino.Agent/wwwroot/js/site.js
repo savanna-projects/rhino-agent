@@ -90,7 +90,7 @@ var E_TEST_CASE_TITLE = "#test_case_title";
 var E_TEST_STEPS = "#test_steps";
 var E_testSuite = "#testSuite";
 // -- U --
-var E_USER_NAME = "#userName";
+var E_USER_NAME = "#username";
 // -- W --
 var E_webDriver = "#webDriver";
 var E_WIDGET_FRAME = "#widget_frame";
@@ -802,7 +802,7 @@ function loadAllSettings(stateObj) {
     $(E_SERVER_ADDRESS).val(stateObj.connectorOptions.serverAddress);
     $(E_PROJECT).val(stateObj.connectorOptions.project);
     $(E_testSuite).val(stateObj.connectorOptions.testSuite);
-    $(E_USER_NAME).val(stateObj.connectorOptions.userName);
+    $(E_USER_NAME).val(stateObj.connectorOptions.username);
     $(E_PASSWORD).val(stateObj.connectorOptions.password);
     $(E_CONNECTOR_CAPABILITIES).val(stateObj.connectorOptions.capabilities);
 
@@ -813,7 +813,7 @@ function loadAllSettings(stateObj) {
     $(E_DRIVER_OPTIONS).val(stateObj.playbackOptions.options);
 
     // rhino options
-    $(E_USER_NAME).val(stateObj.rhinoOptions.userName);
+    $(E_USER_NAME).val(stateObj.rhinoOptions.username);
     $(E_PASSWORD).val(stateObj.rhinoOptions.password);
 }
 
@@ -885,7 +885,7 @@ function getConnectorOptions() {
         serverAddress: $(E_SERVER_ADDRESS).val(),
         project: $(E_PROJECT).val(),
         testSuite: $(E_testSuite).val(),
-        userName: $(E_USER_NAME).val(),
+        username: $(E_USER_NAME).val(),
         password: $(E_PASSWORD).val(),
         capabilities: $(E_CONNECTOR_CAPABILITIES).val()
     };
@@ -893,7 +893,7 @@ function getConnectorOptions() {
 
 function getRhinoOptions() {
     return {
-        userName: $(E_USER_NAME).val(),
+        username: $(E_USER_NAME).val(),
         password: $(E_PASSWORD).val()
     };
 }
@@ -1155,7 +1155,7 @@ function getConfiguration(settings) {
             errorOnExitCode: 10
         },
         authentication: {
-            userName: settings.rhinoOptions.userName,
+            username: settings.rhinoOptions.username,
             password: settings.rhinoOptions.password
         },
         driverParameters: driver_parameters,

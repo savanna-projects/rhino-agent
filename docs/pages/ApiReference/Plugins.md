@@ -19,7 +19,7 @@ _**Rhino Plugin**_ is basically a reusable test case which can be called as an a
 These 3 actions will repeat themselves in every test, because every test needs a new login. It is possible to wrap these action into a plugin and call them as single action as such:
 
 ```
-login {{$ --user_name:myUserName --password:my_password}}
+login {{$ --user_name:myUsername --password:my_password}}
 ```  
 
 Using the plugin will remove the necessity to recreate 3 identical steps for each test and will remove the maintenance time if these steps needs to be updated - you will have to update only the plugin and it will affect all the tests that use it.

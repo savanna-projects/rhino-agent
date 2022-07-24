@@ -29,7 +29,7 @@ The request body follows the same format as [Get Configuration](./Configurations
     "errorOnExitCode": 10
   },
   "authentication": {
-    "userName": "rhino_user",
+    "username": "rhino_user",
     "password": "rhino_password"
   },
   "driverParameters": [

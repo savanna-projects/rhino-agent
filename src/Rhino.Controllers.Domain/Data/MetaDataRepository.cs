@@ -8,27 +8,26 @@ using Gravity.Abstraction.WebDriver;
 using Gravity.Services.Comet.Engine.Attributes;
 using Gravity.Services.DataContracts;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using OpenQA.Selenium;
 
 using Rhino.Api.Contracts.Attributes;
+using Rhino.Api.Contracts.AutomationProvider;
+using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Interfaces;
 using Rhino.Api.Parser;
+using Rhino.Connectors.Text;
+using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 
 using System.Reflection;
-using System;
 using System.Text;
-using Rhino.Connectors.Text;
-using Rhino.Api.Contracts.Configuration;
-using Rhino.Api.Contracts.AutomationProvider;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Http;
-using Rhino.Controllers.Domain.Extensions;
 
 namespace Rhino.Controllers.Domain.Data
 {

@@ -44,13 +44,13 @@ namespace Rhino.Controllers.Domain.Extensions
         private static HttpRequestMessage GetRequest(ExternalRepository repository)
         {
             // setup
-            var credentials = $"{repository.UserName}:{repository.Password}";
+            var credentials = $"{repository.Username}:{repository.Password}";
             var bytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(credentials);
             var base64 = Convert.ToBase64String(bytes);
             var request = new HttpRequestMessage();
 
             // build
-            if (!string.IsNullOrEmpty(repository.UserName) || !string.IsNullOrEmpty(repository.Password))
+            if (!string.IsNullOrEmpty(repository.Username) || !string.IsNullOrEmpty(repository.Password))
             {
                 request.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64);
             }

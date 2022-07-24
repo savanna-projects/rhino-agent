@@ -66,7 +66,7 @@ stages:
             $content = Get-Content '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json'
             $content = $content -replace "pm\.collectionVariables\.set\('endpoint',.*\)","pm.collectionVariables.set('endpoint', '$(Rhino.Stage.Endpoint)')";
             $content = $content -replace "pm\.collectionVariables\.set\('rhino_drivers',.*\)","pm.collectionVariables.set('rhino_drivers', '$(Grid.Endpoint.Rhino)')"
-            $content = $content -replace "pm\.collectionVariables\.set\('rhino_user',.*\)","pm.collectionVariables.set('rhino_user', '$(Rhino.UserName)')"
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_user',.*\)","pm.collectionVariables.set('rhino_user', '$(Rhino.Username)')"
             $content = $content -replace "pm\.collectionVariables\.set\('rhino_password',.*\)","pm.collectionVariables.set('rhino_password', '$(Rhino.Password)')"
             $content = $content -replace "pm\.collectionVariables\.set\('async_pooling',.*\)","pm.collectionVariables.set('async_pooling', '${{ parameters.RhinoAsyncPooling }}')"
             Set-Content -Path '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json' -Value $content

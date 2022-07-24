@@ -135,7 +135,7 @@ namespace Rhino.Controllers.Domain.Automation
         public override int Delete(string id)
         {
             // setup conditions
-            var isUser = !string.IsNullOrEmpty(Authentication.UserName);
+            var isUser = !string.IsNullOrEmpty(Authentication.Username);
             var isPassword = !string.IsNullOrEmpty(Authentication.Password);
 
             // setup
@@ -172,7 +172,7 @@ namespace Rhino.Controllers.Domain.Automation
         public override int Delete()
         {
             // setup conditions
-            var isUser = !string.IsNullOrEmpty(Authentication.UserName);
+            var isUser = !string.IsNullOrEmpty(Authentication.Username);
             var isPassword = !string.IsNullOrEmpty(Authentication.Password);
 
             // setup
@@ -240,7 +240,7 @@ namespace Rhino.Controllers.Domain.Automation
         private IEnumerable<string> DoGet()
         {
             // setup conditions
-            var isUser = !string.IsNullOrEmpty(Authentication.UserName);
+            var isUser = !string.IsNullOrEmpty(Authentication.Username);
             var isPassword = !string.IsNullOrEmpty(Authentication.Password);
 
             // setup
