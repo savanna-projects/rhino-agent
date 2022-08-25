@@ -134,7 +134,12 @@ namespace Rhino.Controllers.Domain.Data
                     .Select(i => i.GetActions());
 
                 var models = externalActions
-                    .SelectMany(i => i.Entities.Select(x => x.ToModel(string.IsNullOrEmpty(i.Name) ? "external" : $"external:{i.Name}")));
+                    .SelectMany(i =>
+                    {
+                        var entities = i.Entities ?? Array.Empty<ActionAttribute>();
+                        var name = string.IsNullOrEmpty(i.Name) ? "external" : $"external:{i.Name}";
+                        return entities.Select(x => x.ToModel(name));
+                    });
 
                 actions.AddRange(models);
             }

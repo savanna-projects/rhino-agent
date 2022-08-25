@@ -1,6 +1,7 @@
 ﻿using Gravity.Services.Comet.Engine.Attributes;
 using Gravity.Services.DataContracts;
 
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -27,7 +28,19 @@ namespace Rhino.Controllers.Domain.Extensions
             request.RequestUri = new Uri(endpoint);
 
             // send
-            var response = s_httpClient.SendAsync(request).GetAwaiter().GetResult();
+            HttpResponseMessage response = null;
+            try
+            {
+                response = s_httpClient.SendAsync(request).GetAwaiter().GetResult();
+            }
+            catch (Exception e) when (e != null)
+            {
+                Trace.TraceError("Get-Actions " +
+                    $"-Type {nameof(ExternalRepository)} " +
+                    $"-Url {repository.Url} " +
+                    $"-Name {repository.Name} = (InternalServerError | {e.Message})");
+            }
+            
             if (response == null || !response.IsSuccessStatusCode)
             {
                 return (null, null);
