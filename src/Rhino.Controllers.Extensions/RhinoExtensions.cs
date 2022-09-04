@@ -311,13 +311,9 @@ namespace Rhino.Controllers.Extensions
             }
 
             // build
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
             var entries = table
                 .ToDictionary()
-                .Select(i => JsonSerializer.Deserialize<RhinoPageModelEntry>(JsonSerializer.Serialize(i), options));
+                .Select(i => JsonSerializer.Deserialize<RhinoPageModelEntry>(JsonSerializer.Serialize(i)));
 
             // get
             return new RhinoPageModel
