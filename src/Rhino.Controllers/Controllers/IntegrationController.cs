@@ -124,7 +124,7 @@ namespace Rhino.Controllers.Controllers
         [HttpPost, Route("test/obj")]
         [SwaggerOperation(
             Summary = "Get-TestCase",
-            Description = "Gets a_**Test Case**_ entity from the integrated application.")]
+            Description = "Gets a _**Test Case**_ entity from the integrated application.")]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(RhinoTestCase))]
