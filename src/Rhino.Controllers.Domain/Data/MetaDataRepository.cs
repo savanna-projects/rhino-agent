@@ -27,6 +27,7 @@ using Rhino.Controllers.Models.Server;
 
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Rhino.Controllers.Domain.Data
@@ -36,6 +37,9 @@ namespace Rhino.Controllers.Domain.Data
     /// </summary>
     public class MetaDataRepository : IMetaDataRepository
     {
+        // constants
+        private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
+
         // members: state
         private readonly IPluginsRepository _plugins;
         private readonly IRepository<RhinoModelCollection> _models;
@@ -87,7 +91,7 @@ namespace Rhino.Controllers.Domain.Data
             var actions = new List<ActionModel>();
 
             // build
-            foreach (var (source, entity) in InvokeGetActions())
+            foreach (var (source, entity) in GetActions(_types, Authentication, _plugins, _logger))
             {
                 var action = entity.ToModel(source);
                 if (action != default)
@@ -112,7 +116,7 @@ namespace Rhino.Controllers.Domain.Data
             var actions = new List<ActionModel>();
 
             // build
-            foreach (var (source, entity) in InvokeGetActions())
+            foreach (var (source, entity) in GetActions(_types, Authentication, _plugins, _logger))
             {
                 var action = entity.ToModel(source);
                 if (action != default)
@@ -153,7 +157,7 @@ namespace Rhino.Controllers.Domain.Data
         /// Gets a collection of available assertions (based on AssertMethodAttribute).
         /// </summary>
         /// <returns>A collection of AssertMethodAttribute.</returns>
-        public IEnumerable<AssertModel> GetAssertions() => InvokeGetAssertions();
+        public IEnumerable<AssertModel> GetAssertions() => GetAssertions(_types);
 
         /// <summary>
         /// Gets a list of all available connectors.
@@ -207,7 +211,7 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>A list all available locators.</returns>
         public IEnumerable<BaseModel<object>> GetLocators()
         {
-            return InvokeGetLocators();
+            return GetLocators(_types);
         }
 
         /// <summary>
@@ -431,7 +435,7 @@ namespace Rhino.Controllers.Domain.Data
             };
 
             // get
-            return models.Concat(InvokeGetLocators());
+            return models.Concat(GetLocators(_types));
         }
 
         /// <summary>
@@ -573,18 +577,108 @@ namespace Rhino.Controllers.Domain.Data
             return $"{tree}";
         }
 
-        // UTILITIES
-        // execute GetActions routine
-        private IEnumerable<(string Source, ActionAttribute Action)> InvokeGetActions()
+        /// <summary>
+        /// Gets a collection of Gravity ActionRule based on the provided test specifications.
+        /// </summary>
+        /// <param name="rhinoTestCase">The test specifications.</param>
+        /// <returns>A collection of Gravity ActionRule.</returns>
+        public IEnumerable<ActionRule> GetGravityActions(string rhinoTestCase)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets a collection of RhinoSymbolModel based to the provided test specifications.
+        /// </summary>
+        /// <param name="rhinoTestCase">The test specifications.</param>
+        /// <returns>A collection of RhinoSymbolModel.</returns>
+        public IEnumerable<RhinoSymbolModel> GetSymbols(string rhinoTestCase)
         {
             // setup
-            var gravityPlugins = _types.GetActionAttributes();
-            var pluginSpecs = _plugins.SetAuthentication(Authentication).Get();
+            var configuration = _configurations.GetOrDefault(id: string.Empty);
+            configuration.TestsRepository = new[] { rhinoTestCase };
+
+            // get
+            return GetSymbols(rhinoTestCase, configuration);
+        }
+
+        /// <summary>
+        /// Gets a collection of RhinoSymbolModel based to the provided test specifications and configuration.
+        /// </summary>
+        /// <param name="rhinoTestCase">The test specifications.</param>
+        /// <param name="id">The configuration id.</param>
+        /// <returns>A collection of RhinoSymbolModel.</returns>
+        public IEnumerable<RhinoSymbolModel> GetSymbols(string rhinoTestCase, string id)
+        {
+            // setup
+            var configuration = _configurations.GetOrDefault(id);
+            configuration.TestsRepository = new[] { rhinoTestCase };
+
+            // get
+            return GetSymbols(rhinoTestCase, configuration);
+        }
+
+        private IEnumerable<RhinoSymbolModel> GetSymbols(string rhinoTestCase, RhinoConfiguration configuration)
+        {
+            // bad request
+            if (string.IsNullOrEmpty(rhinoTestCase))
+            {
+                return Array.Empty<RhinoSymbolModel>();
+            }
+
+            // models
+            var models = GetModels($"{configuration.Id}", _models, Authentication);
+            configuration.Models = models.Select(i => JsonSerializer.Serialize(i, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            }));
+
+            // setup
+            var connector = configuration.Resolve(_logger);
+            var testsData = rhinoTestCase.CreateLines();
+
+            // iterate
+            var symbols = new List<RhinoSymbolModel>();
+            foreach (var testCase in connector.ProviderManager.TestRun.TestCases)
+            {
+                var data = testsData.FirstOrDefault(i => i.Any(x => x.Text.Contains(testCase.Key, Compare)));
+                var symbol = testCase.CreateSymbols(data);
+                symbols.Add(symbol);
+            }
+
+            // get
+            return symbols;
+        }
+
+        // UTILITIES
+        // execute GetActions routine
+        private static IEnumerable<RhinoPageModel> GetModels(
+            string id,
+            IRepository<RhinoModelCollection> models,
+            Authentication authentication)
+        {
+            // setup
+            return models
+                .SetAuthentication(authentication)
+                .Get()
+                .Where(i => i.Configurations?.Any() == false || $"{i.Id}".Equals(id, Compare))
+                .SelectMany(i => i.Models);
+        }
+
+        private static IEnumerable<(string Source, ActionAttribute Action)> GetActions(
+            IEnumerable<Type> types,
+            Authentication authentication,
+            IPluginsRepository plugins,
+            ILogger logger)
+        {
+            // setup
+            var gravityPlugins = types.GetActionAttributes();
+            var pluginSpecs = plugins.SetAuthentication(authentication).Get();
             var pluginObjcs = new RhinoPluginFactory().GetRhinoPlugins(pluginSpecs.ToArray());
 
             // convert
             var attributes = pluginObjcs.Select(i => (ActionModel.ActionSource.Plugin, i.ToAttribute()));
-            _logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Plugin} = Ok, {attributes.Count()}");
+            logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Plugin} = OK, {attributes.Count()}");
 
             // all actions
             // collect all potential types
@@ -592,16 +686,16 @@ namespace Rhino.Controllers.Domain.Data
                 .Select(i => (ActionModel.ActionSource.Code, (ActionAttribute)gravityPlugins.FirstOrDefault(a => a.Name == i.Name)))
                 .Concat(attributes);
             actions = actions?.Any() == false ? Array.Empty<(string, ActionAttribute)>() : actions;
-            _logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Code} = Ok, {actions.Count()}");
+            logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Code} = OK, {actions.Count()}");
 
             // get
             return actions;
         }
 
-        private IEnumerable<BaseModel<object>> InvokeGetLocators()
+        private static IEnumerable<BaseModel<object>> GetLocators(IEnumerable<Type> types)
         {
             // get relevant by method
-            var methods = _types
+            var methods = types
                 .SelectMany(t => t.GetMethods())
                 .Where(m => m.IsStatic && m.ReturnType == typeof(By));
 
@@ -626,13 +720,13 @@ namespace Rhino.Controllers.Domain.Data
             });
         }
 
-        private static IEnumerable<AssertModel> InvokeGetAssertions()
+        private static IEnumerable<AssertModel> GetAssertions(IEnumerable<Type> types)
         {
             // constants
             const BindingFlags Flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
             // setup
-            return Api.Extensions.Utilities.Types
+            return types
                 .SelectMany(i => i.GetMethods(Flags))
                 .Select(i => i.GetCustomAttribute<AssertMethodAttribute>())
                 .Where(i => i != null)

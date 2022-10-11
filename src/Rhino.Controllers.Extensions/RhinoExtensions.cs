@@ -17,6 +17,7 @@ using System.Data;
 using System.Text.Json;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Gravity.Abstraction.Logging;
 
 namespace Rhino.Controllers.Extensions
 {
@@ -105,13 +106,39 @@ namespace Rhino.Controllers.Extensions
 
         #region *** Connector  ***
         /// <summary>
+        /// Resolve all Rhino entities from the provided connector
+        /// </summary>
+        /// <param name="configuration">The configuration to resolve.</param>
+        /// <returns>Resolved connector</returns>
+        public static IConnector Resolve(this RhinoConfiguration configuration)
+        {
+            return Resolve(new TraceLogger("Rhino.Api", typeof(RhinoExtensions).Name), configuration);
+        }
+
+        /// <summary>
+        /// Resolve all Rhino entities from the provided connector
+        /// </summary>
+        /// <param name="configuration">The configuration to resolve.</param>
+        /// <param name="logger">Logger implementation to use with the connector.</param>
+        /// <returns>Resolved connector</returns>
+        public static IConnector Resolve(this RhinoConfiguration configuration, ILogger logger) => Resolve(logger, configuration);
+
+        private static IConnector Resolve(ILogger logger, RhinoConfiguration configuration)
+        {
+            // setup
+            var type = GetConnector(Utilities.Types, configuration);
+
+            // get
+            return (IConnector)Activator.CreateInstance(type, new object[] { configuration, Utilities.Types, logger });
+        }
+        /// <summary>
         /// Gets a connector.
         /// </summary>
         /// <param name="configuration">RhinoConfiguration by which to factor RhinoConnector</param>
         /// <returns>RhinoConnector implementation.</returns>
         public static Type GetConnector(this RhinoConfiguration configuration)
         {
-            return DoGetConnector(configuration, Utilities.Types);
+            return GetConnector(Utilities.Types, configuration);
         }
 
         /// <summary>
@@ -122,10 +149,10 @@ namespace Rhino.Controllers.Extensions
         /// <returns>RhinoConnector implementation.</returns>
         public static Type GetConnector(this RhinoConfiguration configuration, IEnumerable<Type> types)
         {
-            return DoGetConnector(configuration, types);
+            return GetConnector(types, configuration);
         }
 
-        private static Type DoGetConnector(RhinoConfiguration configuration, IEnumerable<Type> types)
+        private static Type GetConnector(IEnumerable<Type> types, RhinoConfiguration configuration)
         {
             // constants
             const StringComparison C = StringComparison.OrdinalIgnoreCase;

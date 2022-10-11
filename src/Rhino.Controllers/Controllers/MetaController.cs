@@ -845,7 +845,7 @@ namespace Rhino.Controllers.Controllers
         #endregion
 
         #region *** Post   ***
-        // GET: api/v3/meta/tests/tree
+        // POST: api/v3/meta/tests/tree
         [HttpPost, Route("tests/tree")]
         [SwaggerOperation(
             Summary = "Get-TestTree",
@@ -860,6 +860,46 @@ namespace Rhino.Controllers.Controllers
             var entities = _dataRepository
                 .SetAuthentication(Authentication)
                 .GetTestTree(rhinoTestCase);
+
+            // return
+            return Ok(entities);
+        }
+
+        // POST: api/v3/meta/tests/symbols
+        [HttpPost, Route("tests/symbols")]
+        [SwaggerOperation(
+            Summary = "Get-Symbols",
+            Description = "Gets a collection of RhinoSymbolModel based to the provided test specifications.")]
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<RhinoSymbolModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetSymbols([FromBody] string rhinoTestCase)
+        {
+            // get response
+            var entities = _dataRepository
+                .SetAuthentication(Authentication)
+                .GetSymbols(rhinoTestCase);
+
+            // return
+            return Ok(entities);
+        }
+
+        // POST: api/v3/meta/tests/symbols/<configuration>
+        [HttpPost, Route("tests/symbols/{configuration}")]
+        [SwaggerOperation(
+            Summary = "Get-Symbols",
+            Description = "Gets a collection of RhinoSymbolModel based to the provided test specifications and configuration.")]
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<RhinoSymbolModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetSymbols([FromBody] string rhinoTestCase, [FromRoute] string configuration)
+        {
+            // get response
+            var entities = _dataRepository
+                .SetAuthentication(Authentication)
+                .GetSymbols(rhinoTestCase, id: configuration);
 
             // return
             return Ok(entities);

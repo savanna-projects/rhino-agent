@@ -29,5 +29,8 @@ namespace Rhino.Controllers.Domain.Interfaces
         IEnumerable<RhinoVerbModel> GetVerbs();
         Task<string> GetVersionAsync();
         string GetTestTree(string rhinoTestCase);
+        IEnumerable<ActionRule> GetGravityActions(string rhinoTestCase);
+        IEnumerable<RhinoSymbolModel> GetSymbols(string rhinoTestCase);
+        IEnumerable<RhinoSymbolModel> GetSymbols(string rhinoTestCase, string id);
     }
 }
