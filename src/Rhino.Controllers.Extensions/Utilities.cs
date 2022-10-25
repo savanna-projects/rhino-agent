@@ -23,7 +23,7 @@ namespace Rhino.Controllers.Extensions
         /// <summary>
         /// Gets a distinct collection of <see cref="Type"/> loaded into the AppDomain.
         /// </summary>
-        public static IList<Type> Types => DoGetTypes(string.Empty)
+        public static IList<Type> Types => Get(string.Empty)
             .SelectMany(i => i.Types ?? Array.Empty<Type>())
             .Distinct()
             .ToList();
@@ -47,7 +47,7 @@ namespace Rhino.Controllers.Extensions
         /// <returns>A collection of <see cref="Assembly"/>.</returns>
         public static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> GetTypes()
         {
-            return DoGetTypes(string.Empty);
+            return Get(string.Empty);
         }
 
         /// <summary>
@@ -57,10 +57,10 @@ namespace Rhino.Controllers.Extensions
         /// <returns>A collection of <see cref="Assembly"/>.</returns>
         public static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> GetTypes(string root)
         {
-            return DoGetTypes(root);
+            return Get(root);
         }
 
-        private static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> DoGetTypes(string root)
+        private static IList<(Assembly Assembly, IEnumerable<Type> Types)> Get(string root)
         {
             // reset
             s_assemblies.Clear();
@@ -98,7 +98,7 @@ namespace Rhino.Controllers.Extensions
             }
 
             // get
-            return s_assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null);
+            return s_assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null).ToList();
         }
 
         [SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "Must be loaded from file")]
