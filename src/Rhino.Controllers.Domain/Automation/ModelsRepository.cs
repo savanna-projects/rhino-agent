@@ -81,7 +81,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // sync
             collection.UpdateEntityModel(entityModel.Id, entity);
-            _logger?.Debug($"Update-RhinoModelCollection -Id {entity.Id} = Ok");
+            _logger?.Debug($"Update-RhinoModelCollection -Id {entity.Id} = OK");
 
             // results
             return $"{entity.Id}";
@@ -147,7 +147,7 @@ namespace Rhino.Controllers.Domain.Automation
 
                 // update
                 _configurationRepository.Update($"{configuration.Id}", configuration);
-                _logger?.Debug($"Update-RhinoPageModes -Configuration {configuration} -Model {entity.Id} = Ok");
+                _logger?.Debug($"Update-RhinoPageModes -Configuration {configuration} -Model {entity.Id} = OK");
             }
         }
         #endregion
@@ -212,7 +212,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // delete
             entityModelCollection.Delete(models.FirstOrDefault()?.Id);
-            _logger?.Debug($"Delete-Model -Id {id} = Ok");
+            _logger?.Debug($"Delete-Model -Id {id} = OK");
 
             // get
             return StatusCodes.Status204NoContent;

@@ -61,7 +61,7 @@ namespace Rhino.Controllers.Domain.Automation
             var isPassword = !string.IsNullOrEmpty(Authentication.Password);
             entity.Authentication = isUser && isPassword ? Authentication : entity.Authentication;
             collection.UpdateEntityModel(entityModel.Id, entity);
-            _logger?.Debug($"Update-RhinoConfiguration -Id {entity.Id} = Ok");
+            _logger?.Debug($"Update-RhinoConfiguration -Id {entity.Id} = OK");
 
             // results
             return $"{entity.Id}";

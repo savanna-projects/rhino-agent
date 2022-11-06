@@ -65,7 +65,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // sync
             collection.UpdateEntityModel(entityModel.Id, entity);
-            _logger?.Debug($"Update-RhinoConfiguration -Id {entity.Id} = Ok");
+            _logger?.Debug($"Update-RhinoConfiguration -Id {entity.Id} = OK");
 
             // cascade
             CascadeAdd(entity, entity.Configurations);

@@ -108,7 +108,7 @@ namespace Rhino.Controllers.Domain.Automation
                 environment.Environment[item.Key] = item.Value;
             }
             collection.UpdateEntityModel(environment.Id, environment);
-            _logger?.Debug($"Update-RhinoEnvironmentModel -Id {environment.Id} = Ok");
+            _logger?.Debug($"Update-RhinoEnvironmentModel -Id {environment.Id} = OK");
         }
         #endregion
 

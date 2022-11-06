@@ -25,6 +25,7 @@ using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 
+using System.Data;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -101,7 +102,7 @@ namespace Rhino.Controllers.Domain.Data
             }
 
             // get
-            _logger?.Debug($"Get-Actions = Ok, {actions.Count}");
+            _logger?.Debug($"Get-Actions = OK, {actions.Count}");
             return actions.OrderBy(i => i.Key);
         }
 
@@ -149,7 +150,7 @@ namespace Rhino.Controllers.Domain.Data
             }
 
             // get
-            _logger?.Debug($"Get-Actions -Configuration {configuration} = Ok, {actions.Count}");
+            _logger?.Debug($"Get-Actions -Configuration {configuration} = OK, {actions.Count}");
             return actions.OrderBy(i => i.Key);
         }
 
@@ -184,7 +185,6 @@ namespace Rhino.Controllers.Domain.Data
         {
             // constants
             const BindingFlags Binding = BindingFlags.Instance | BindingFlags.NonPublic;
-            const StringComparison Compare = StringComparison.Ordinal;
 
             // setup
             var driverFactory = _types.FirstOrDefault(t => t == typeof(DriverFactory));
@@ -324,7 +324,7 @@ namespace Rhino.Controllers.Domain.Data
             }
 
             // get
-            _logger?.Debug("Get-Version = Ok");
+            _logger?.Debug("Get-Version = OK");
             return await ControllerUtilities.ForceReadFileAsync(path: FileName).ConfigureAwait(false);
         }
 
@@ -469,7 +469,7 @@ namespace Rhino.Controllers.Domain.Data
                 level = level < 1 ? 1 : level;
 
                 // setup
-                var isPlugin = testStep.Steps != null && testStep.Steps.Any();
+                var isPlugin = testStep.Steps?.Any() == true;
                 var actions = isPlugin ? testStep.Steps.ToArray() : Array.Empty<RhinoTestStep>();
                 var actionLine = GetLine(level - 1);
                 var entityType = actions.Length > 0 ? "(P)" : "(A)";
@@ -486,9 +486,9 @@ namespace Rhino.Controllers.Domain.Data
 
                 // render entity
                 tree.AppendLine(line);
-                
+
                 // collect models
-                if (testStep.ModelEntries != null && testStep.ModelEntries.Any())
+                if (testStep.ModelEntries?.Any() == true)
                 {
                     var modelsLine = GetLine(level);
                     var models = testStep.ModelEntries.ToArray();
@@ -503,7 +503,7 @@ namespace Rhino.Controllers.Domain.Data
                     }
                 }
 
-                if(testStep.ExpectedResults !=null && testStep.ExpectedResults.Any())
+                if(testStep.ExpectedResults?.Any() == true)
                 {
                     var asserts = testStep.ExpectedResults.Select(i => Regex.Match(i.ExpectedResult, pattern).Value).ToArray();
 
@@ -648,6 +648,25 @@ namespace Rhino.Controllers.Domain.Data
 
             // get
             return symbols;
+        }
+
+        /// <summary>
+        /// Gets a collection of ActionModel based to the provided test expression.
+        /// </summary>
+        /// <param name="model">The filter expressions.</param>
+        /// <returns>A collection of ActionModel.</returns>
+        public IEnumerable<ActionModel> FindPlugins(FindPluginsModel model)
+        {
+            // setup
+            var actions = GetActions(_types, Authentication, _plugins, _logger);
+            var filterExpression = string.IsNullOrEmpty(model?.Expression) ? string.Empty : model.Expression;
+            var actionsData = Gravity
+                .Extensions
+                .DataTableExtensions
+                .Filter(new DataTable().AddRows(actions), filterExpression);
+
+            // get
+            return actionsData.Rows.Cast<DataRow>().Select(i => i.ToModel());
         }
 
         // UTILITIES

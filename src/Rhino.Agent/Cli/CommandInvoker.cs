@@ -78,7 +78,7 @@ namespace Rhino.Agent.Cli
 
             // apply license
             File.WriteAllText("license.lcn", arguments[License]);
-            Console.WriteLine($"Set-License -License {arguments[License]} = Ok");
+            Console.WriteLine($"Set-License -License {arguments[License]} = OK");
         }
 
         [Command(command: "delete", order: 2)]
@@ -128,7 +128,7 @@ namespace Rhino.Agent.Cli
             connector?.ProviderManager.ExportTestCases(path);
 
             // log
-            Console.WriteLine($"Export-RhinoToGravity -Path {path} = Ok");
+            Console.WriteLine($"Export-RhinoToGravity -Path {path} = OK");
         }
 
         [Command(command: "configuration", order: 4)]
@@ -154,7 +154,7 @@ namespace Rhino.Agent.Cli
                 Console.WriteLine(JsonSerializer.Serialize(testRun, s_jsonOptions));
             }
 
-            // ok
+            // OK
             if (testRun?.TotalFail == 0)
             {
                 Environment.Exit(0);
@@ -264,7 +264,7 @@ namespace Rhino.Agent.Cli
             }
 
             // get
-            Console.WriteLine($"Get-Connector -Type {connectorType} = Ok");
+            Console.WriteLine($"Get-Connector -Type {connectorType} = OK");
             return connector;
         }
 

@@ -518,7 +518,7 @@ namespace Rhino.Controllers.Domain.Automation
             // invoke
             try
             {
-                _logger?.Debug("Create-Configuration = Ok");
+                _logger?.Debug("Create-Configuration = OK");
                 return (StatusCodes.Status200OK, configuration);
             }
             catch (Exception e) when (e != null)

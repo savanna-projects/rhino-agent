@@ -82,7 +82,7 @@ namespace Rhino.Controllers.Domain.Automation
             var collection = logData.Split(Environment.NewLine);
             var logs = collection.Skip(Math.Max(0, collection.Length - numberOfLines));
             var logsResult = string.Join(Environment.NewLine, logs);
-            _logger?.Debug($"Get-Log -LogPath {logPath} -Id {id} -NumberOfLines {numberOfLines} = Ok");
+            _logger?.Debug($"Get-Log -LogPath {logPath} -Id {id} -NumberOfLines {numberOfLines} = OK");
 
             // results
             return (StatusCodes.Status200OK, logsResult);
@@ -107,7 +107,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // build
             var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(logData ?? ""));
-            _logger?.Debug($"Get-LogAsMemoryStream -LogPath {logPath} Id {id} = Ok");
+            _logger?.Debug($"Get-LogAsMemoryStream -LogPath {logPath} Id {id} = OK");
 
             // get
             return (StatusCodes.Status200OK, memoryStream);
@@ -126,7 +126,7 @@ namespace Rhino.Controllers.Domain.Automation
             var logsOut = logPath == "."
                 ? Path.Join($"{Environment.CurrentDirectory}", "Logs")
                 : logPath;
-            _logger?.Debug($"Set-LogPath -Path {logsOut} = Ok");
+            _logger?.Debug($"Set-LogPath -Path {logsOut} = OK");
 
             // get
             var logFile = Path.Join(logsOut, $"RhinoApi-{id}.log");
@@ -138,7 +138,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // read
             var log = await ControllerUtilities.ForceReadFileAsync(path: logFile).ConfigureAwait(false);
-            _logger?.Debug($"Get-Log -LogFile {logFile} = Ok");
+            _logger?.Debug($"Get-Log -LogFile {logFile} = OK");
 
             // get
             return (StatusCodes.Status200OK, log);

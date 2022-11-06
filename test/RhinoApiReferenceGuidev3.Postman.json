@@ -14793,7 +14793,7 @@
 					"    const date = Date.now();",
 					"    while((date + milisecond) > Date.now());",
 					"}",
-					"console.log('Create-Utility -Name sleep = Ok');"
+					"console.log('Create-Utility -Name sleep = OK');"
 				]
 			}
 		},

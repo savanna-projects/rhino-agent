@@ -845,6 +845,26 @@ namespace Rhino.Controllers.Controllers
         #endregion
 
         #region *** Post   ***
+        // POST: api/v3/meta/plugins/find
+        [HttpPost, Route("plugins/find")]
+        [SwaggerOperation(
+            Summary = "Find-Plugins",
+            Description = "Finds all plugins references by passing a filter expression.")]
+        [Consumes(MediaTypeNames.Text.Plain)]
+        [Produces(MediaTypeNames.Text.Plain)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ActionModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<FindPluginsModel>))]
+        public IActionResult FindPlugins([FromBody] FindPluginsModel model)
+        {
+            // get response
+            var entities = _dataRepository
+                .SetAuthentication(Authentication)
+                .FindPlugins(model);
+
+            // return
+            return Ok(entities);
+        }
+
         // POST: api/v3/meta/tests/tree
         [HttpPost, Route("tests/tree")]
         [SwaggerOperation(

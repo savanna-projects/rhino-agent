@@ -81,7 +81,7 @@ namespace Rhino.Controllers.Domain
             var username = authentication.Username.Length > 3
                 ? authentication.Username[..3]
                 : authentication.Username;
-            _logger?.Debug($"Set-Authentication -User {username}*** -Password HaHa ;o) = Ok");
+            _logger?.Debug($"Set-Authentication -User {username}*** -Password HaHa ;o) = OK");
 
             // get
             return this;
@@ -99,7 +99,7 @@ namespace Rhino.Controllers.Domain
 
             // convert
             CollectionName = $"{name}_{enStringBody}";
-            _logger?.Debug($"Set-CollectionName -Name: {CollectionName} = Ok");
+            _logger?.Debug($"Set-CollectionName -Name: {CollectionName} = OK");
 
             // get
             return this;

@@ -150,7 +150,7 @@ new CommandInvoker(Utilities.Types, args).Invoke();
 using (var scope = app.Services.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger>();
-    logger?.Info("Create-ServiceApplication = Ok");
+    logger?.Info("Create-ServiceApplication = OK");
 }
 
 // invoke

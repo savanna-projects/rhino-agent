@@ -95,7 +95,7 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // delete
             collection.Delete(idOut);
-            s_logger?.Debug($"Delete-{entityType} -Id {id} = Ok, NoContent");
+            s_logger?.Debug($"Delete-{entityType} -Id {id} = OK, NoContent");
 
             // get
             return StatusCodes.Status204NoContent;
@@ -175,7 +175,7 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // update
             collection.Update(entityModel);
-            s_logger?.Debug($"Update-EntityModel -Type {type} -Id {id} = Ok");
+            s_logger?.Debug($"Update-EntityModel -Type {type} -Id {id} = OK");
 
             // get
             return entityModel;
@@ -214,7 +214,7 @@ namespace Rhino.Controllers.Domain.Extensions
             }
 
             // get
-            s_logger?.Debug($"Get-{entityType} -Id {id} = Ok");
+            s_logger?.Debug($"Get-{entityType} -Id {id} = OK");
             return (StatusCodes.Status200OK, new[] { entity.GetEntity<T>() });
         }
     }

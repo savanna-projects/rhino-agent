@@ -177,6 +177,23 @@ namespace Rhino.Controllers.Extensions
 
         #region *** Models     ***
         /// <summary>
+        /// Converts a DataRow object into ActionModel object.
+        /// </summary>
+        /// <param name="dataRow">DataRow to convert.</param>
+        /// <param name="source"> the source of the plugin (e.g. code, plugin, etc.).</param>
+        /// <returns>ActionModel object with ActionAttribute meta data.</returns>
+        public static ActionModel ToModel(this DataRow dataRow)
+        {
+            return new()
+            {
+                Key = $"{dataRow["Key"]}",
+                Literal = $"{dataRow["Literal"]}",
+                Source = $"{dataRow["Source"]}",
+                Verb = $"{dataRow["Verb"]}"
+            };
+        }
+
+        /// <summary>
         /// Converts a ActionAttribute object into ActionModel object.
         /// </summary>
         /// <param name="attribute">ActionAttribute to convert.</param>
