@@ -655,10 +655,10 @@ namespace Rhino.Controllers.Domain.Data
         /// </summary>
         /// <param name="model">The filter expressions.</param>
         /// <returns>A collection of ActionModel.</returns>
-        public IEnumerable<ActionModel> FindPlugins(FindPluginsModel model)
+        public IEnumerable<FindPluginsResponseModel> FindPlugins(FindPluginsModel model)
         {
             // setup
-            var actions = GetActions(_types, Authentication, _plugins, _logger);
+            var actions = GetActions(_types, Authentication, _plugins, _logger).Select(i => i.Action);
             var filterExpression = string.IsNullOrEmpty(model?.Expression) ? string.Empty : model.Expression;
             var actionsData = Gravity
                 .Extensions

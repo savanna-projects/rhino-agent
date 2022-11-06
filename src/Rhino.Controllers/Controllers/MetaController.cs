@@ -850,10 +850,10 @@ namespace Rhino.Controllers.Controllers
         [SwaggerOperation(
             Summary = "Find-Plugins",
             Description = "Finds all plugins references by passing a filter expression.")]
-        [Consumes(MediaTypeNames.Text.Plain)]
-        [Produces(MediaTypeNames.Text.Plain)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ActionModel>))]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<FindPluginsModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<object>))]
         public IActionResult FindPlugins([FromBody] FindPluginsModel model)
         {
             // get response

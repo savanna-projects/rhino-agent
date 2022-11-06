@@ -3,21 +3,24 @@
  * 
  * RESSOURCES
  */
+using Gravity.Abstraction.Logging;
 using Gravity.Extensions;
 using Gravity.Services.Comet.Engine.Attributes;
 using Gravity.Services.DataContracts;
+
+using Microsoft.AspNetCore.Components.Forms;
 
 using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Interfaces;
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using System.Data;
-using System.Text.Json;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.RegularExpressions;
-using Gravity.Abstraction.Logging;
 
 namespace Rhino.Controllers.Extensions
 {
@@ -180,16 +183,13 @@ namespace Rhino.Controllers.Extensions
         /// Converts a DataRow object into ActionModel object.
         /// </summary>
         /// <param name="dataRow">DataRow to convert.</param>
-        /// <param name="source"> the source of the plugin (e.g. code, plugin, etc.).</param>
         /// <returns>ActionModel object with ActionAttribute meta data.</returns>
-        public static ActionModel ToModel(this DataRow dataRow)
+        public static FindPluginsResponseModel ToModel(this DataRow dataRow)
         {
             return new()
             {
-                Key = $"{dataRow["Key"]}",
-                Literal = $"{dataRow["Literal"]}",
-                Source = $"{dataRow["Source"]}",
-                Verb = $"{dataRow["Verb"]}"
+                Name = $"{dataRow["Name"]}",
+                Summary = $"{dataRow["Summary"]}"
             };
         }
 

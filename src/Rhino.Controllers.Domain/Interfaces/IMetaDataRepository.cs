@@ -32,6 +32,6 @@ namespace Rhino.Controllers.Domain.Interfaces
         IEnumerable<ActionRule> GetGravityActions(string rhinoTestCase);
         IEnumerable<RhinoSymbolModel> GetSymbols(string rhinoTestCase);
         IEnumerable<RhinoSymbolModel> GetSymbols(string rhinoTestCase, string id);
-        IEnumerable<ActionModel> FindPlugins(FindPluginsModel model);
+        IEnumerable<FindPluginsResponseModel> FindPlugins(FindPluginsModel model);
     }
 }
