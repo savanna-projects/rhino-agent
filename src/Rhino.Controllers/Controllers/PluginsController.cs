@@ -5,6 +5,8 @@
  */
 using Gravity.Services.DataContracts;
 
+using LiteDB;
+
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts;
@@ -16,6 +18,9 @@ using Rhino.Controllers.Models.Server;
 using Swashbuckle.AspNetCore.Annotations;
 
 using System.Net.Mime;
+using System.Text.Json;
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Rhino.Controllers.Controllers
 {
@@ -108,7 +113,7 @@ namespace Rhino.Controllers.Controllers
         [HttpPost]
         [SwaggerOperation(
             Summary = "Create-Plugin",
-            Description = "Creates new or Updates existing one or more _**Rhino Plugin**_.")]
+            Description = "Creates new or updates existing one or more _**Rhino Plugin**_.")]
         [Consumes(MediaTypeNames.Text.Plain)]
         [Produces(MediaTypeNames.Text.Plain, MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status201Created, SwaggerDocument.StatusCode.Status201Created, Type = typeof(string))]
@@ -137,6 +142,55 @@ namespace Rhino.Controllers.Controllers
 
             // get
             return Created("/api/v3/plugins", string.Join(Utilities.Separator, okResponse));
+        }
+
+        // POST: api/v3/plugins/submit
+        [HttpPost("submit")]
+        [SwaggerOperation(
+            Summary = "Submit-Plugin",
+            Description = "Submits a plugins code package or updates an existing one or more _**Rhino Plugins Package**_.")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status201Created, SwaggerDocument.StatusCode.Status201Created, Type = typeof(object))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> Submit([FromBody] PackageUploadModel model)
+        {
+            // setup
+            _domain.Plugins.SetAuthentication(Authentication);
+
+            // submit
+            var response = await _domain.Plugins.SubmitAsync(model);
+
+            // bad request
+            if (response.StatusCode == StatusCodes.Status400BadRequest)
+            {
+                var badRequest = $"Submit-plugin -Id {model?.Id} = (BadRequest | {response.Message})";
+                return await this
+                    .ErrorResultAsync<string>(badRequest, StatusCodes.Status400BadRequest)
+                    .ConfigureAwait(false);
+            }
+
+            // bad request
+            if (response.StatusCode == StatusCodes.Status500InternalServerError)
+            {
+                var serverError = $"Submit-plugin -Id {model?.Id} = (InternalServerError | {response.Message})";
+                return await this
+                    .ErrorResultAsync<string>(serverError, StatusCodes.Status500InternalServerError)
+                    .ConfigureAwait(false);
+            }
+
+            // get
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            return new ContentResult
+            {
+                Content = JsonSerializer.Serialize(new { response.Message }, options),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = response.StatusCode
+            };
         }
         #endregion
 

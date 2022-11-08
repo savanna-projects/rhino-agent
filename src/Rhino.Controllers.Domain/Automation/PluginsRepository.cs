@@ -14,7 +14,10 @@ using Microsoft.Extensions.Configuration;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
+using Rhino.Controllers.Models.Server;
 
+using System.IO.Compression;
+using System.Text;
 using System.Text.RegularExpressions;
 
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -26,6 +29,15 @@ namespace Rhino.Controllers.Domain.Automation
     /// </summary>
     public class PluginsRepository : Repository<string>, IPluginsRepository
     {
+        // members: static
+        private static readonly string s_basePath = Path.Combine(Environment.CurrentDirectory, "Plugins");
+        private static readonly IDictionary<string, string> s_folders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Gravity"] = Path.Combine(s_basePath, "Gravity"),
+            ["Reporter"] = Path.Combine(s_basePath, "Reporters"),
+            ["Connector"] = Path.Combine(s_basePath, "Connector")
+        };
+
         // members: state
         private readonly ILogger _logger;
 
@@ -49,7 +61,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns>The id of the RhinoPlugin.</returns>
         public override string Add(string entity)
         {
-            return DoAdd(new[] { entity }, false);
+            return Add(false, new[] { entity });
         }
 
         /// <summary>
@@ -61,10 +73,10 @@ namespace Rhino.Controllers.Domain.Automation
         /// <remarks>Private plugins can only be modified by the use created them.</remarks>
         public string Add(IEnumerable<string> entity, bool isPrivate)
         {
-            return DoAdd(entity, isPrivate);
+            return Add(isPrivate, entity);
         }
 
-        private string DoAdd(IEnumerable<string> entity, bool isPrivate)
+        private string Add(bool isPrivate, IEnumerable<string> entity)
         {
             // setup
             var basePath = Path.Combine(Environment.CurrentDirectory, RhinoPluginEntry.PluginsRhinoFolder);
@@ -123,6 +135,59 @@ namespace Rhino.Controllers.Domain.Automation
                 return e;
             }
             return exception;
+        }
+
+        /// <summary>
+        /// Submits a code package into Rhino Domain.
+        /// </summary>
+        /// <param name="uploadModel">Package information.</param>
+        /// <returns>Submit results</returns>
+        /// <remarks>Please note, you need to restart the server or reload the domain in order to apply the changes.</remarks>
+        public async Task<(int StatusCode, string Message)> SubmitAsync(PackageUploadModel uploadModel)
+        {
+            try
+            {
+                // bad request
+                if (!s_folders.ContainsKey(uploadModel.PackageType))
+                {
+                    var badReqeust =
+                        $"The package type, {uploadModel?.PackageType} is not supported. " +
+                        "Please provide a valid package type (e.g., `Gravity`, `Reporter` or `Connector`)";
+                    return (StatusCodes.Status400BadRequest, badReqeust);
+                }
+
+                // setup
+                var pluginsDirecory = Path.Combine(s_folders[uploadModel.PackageType]);
+                var packageFile = $"{uploadModel.Id}.zip";
+                var packageDirectory = Path.Combine(pluginsDirecory, uploadModel.Id);
+                var packagePath = Path.Combine(pluginsDirecory, packageFile);
+                var bytes = Convert.FromBase64String(uploadModel.FileData);
+
+                // clean
+                if (Directory.Exists(packageDirectory))
+                {
+                    Directory.Delete(packageDirectory, true);
+                }
+
+                // write
+                Directory.CreateDirectory(packageDirectory);
+                await File.WriteAllBytesAsync(packagePath, bytes);
+
+                // extract
+                ZipFile.ExtractToDirectory(packagePath, packageDirectory, true);
+
+                // clean
+                File.Delete(packagePath);
+
+                // get
+                var created = $"Submit-Plugin -Id {uploadModel.Id} -Type {uploadModel.PackageType} = Created";
+                _logger?.Debug(created);
+                return (StatusCodes.Status201Created, created);
+            }
+            catch (Exception e) when (e != null)
+            {
+                return (StatusCodes.Status500InternalServerError, e.GetBaseException().Message);
+            }
         }
         #endregion
 
