@@ -2,7 +2,7 @@
 #│ 
 #│ Using Ubuntu aspnet:6.0 as base layer.
 #└──────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 9000
 EXPOSE 9001
@@ -11,7 +11,7 @@ EXPOSE 9001
 #│ 
 #│ Using Ubuntu sdk:6.0 as build layer.
 #└──────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 #┌─[ Setup ]────────────────────────────────
 #│ 
