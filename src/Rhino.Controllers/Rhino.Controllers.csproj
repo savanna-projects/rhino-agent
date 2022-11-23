@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<LangVersion>Latest</LangVersion>
 		<AssemblyVersion>7.0.0.0</AssemblyVersion>
@@ -23,6 +22,18 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Rhino.Controllers.Domain\Rhino.Controllers.Domain.csproj" />
 		<ProjectReference Include="..\Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Pages\Status\index.css">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Pages\Status\index.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Pages\Status\index.js">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

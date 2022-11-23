@@ -3,7 +3,9 @@
  * 
  * RESSOURCES
  */
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
@@ -11,8 +13,11 @@ using Rhino.Controllers.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Mime;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {

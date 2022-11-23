@@ -24,7 +24,7 @@ RUN echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 #┌─[ Installation: Tools & SDKs ]───────────
 #│ 
 #│ Install all the tools and libraries
-#│ requierd by the agent image.
+#│ required by the agent image.
 #└──────────────────────────────────────────
 # Install tools & SDKs
 RUN apt-get update && apt-get install -y --fix-missing --no-install-recommends \
@@ -76,7 +76,7 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Rhino.Agent.dll"] 
 
-#┌─[ Setup: Arguments & Environement ]──────
+#┌─[ Setup: Arguments & Environment ]───────
 #│ 
 #│ ASPNETCORE_URLS: The URLs and ports to which the service is listening.
 #└──────────────────────────────────────────

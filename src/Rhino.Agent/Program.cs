@@ -3,14 +3,23 @@
  * 
  * RESSOURCES
  */
+using Gravity.Abstraction.Cli;
 using Gravity.Abstraction.Logging;
 using Gravity.Services.Comet;
+using Gravity.Services.DataContracts;
 
 using LiteDB;
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 using Rhino.Agent.Cli;
+using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Converters;
 using Rhino.Controllers.Controllers;
@@ -20,10 +29,16 @@ using Rhino.Controllers.Domain.Data;
 using Rhino.Controllers.Domain.Integration;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Middleware;
+using Rhino.Controllers.Domain.Orchestrator;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Formatters;
+using Rhino.Controllers.Hubs;
 using Rhino.Controllers.Models;
 
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -31,7 +46,9 @@ using ILogger = Gravity.Abstraction.Logging.ILogger;
 
 // Setup
 ControllerUtilities.RenderLogo();
+const int Version = 3;
 var builder = WebApplication.CreateBuilder(args);
+var arguments = new CliFactory("{{$ " + string.Join(' ', args) + "}}").Parse();
 
 #region *** Url & Kestrel ***
 builder.WebHost.UseUrls();
@@ -82,13 +99,23 @@ builder
 #endregion
 
 #region *** Dependencies  ***
+// hub
+builder.Services.AddSingleton(typeof(IDictionary<string, TestCaseQueueModel>), new ConcurrentDictionary<string, TestCaseQueueModel>());
+builder.Services.AddSingleton(new ConcurrentQueue<TestCaseQueueModel>());
+builder.Services.AddSingleton(typeof(IDictionary<string, WebAutomation>), new ConcurrentDictionary<string, WebAutomation>());
+builder.Services.AddSingleton(new ConcurrentQueue<WebAutomation>());
+builder.Services.AddSingleton(new ConcurrentQueue<RhinoTestRun>());
+builder.Services.AddSingleton(typeof(AppSettings));
+builder.Services.AddSingleton(typeof(IDictionary<string, RhinoTestRun>), new ConcurrentDictionary<string, RhinoTestRun>());
+builder.Services.AddTransient<IHubRepository, HubRepository>();
+
 // utilities
 builder.Services.AddTransient(typeof(ILogger), (_) => ControllerUtilities.GetLogger(builder.Configuration));
 builder.Services.AddTransient(typeof(Orbit), (_) => new Orbit(Utilities.Types));
 builder.Services.AddSingleton(typeof(IEnumerable<Type>), Utilities.Types);
 
 // data
-builder.Services.AddLiteDatabase(builder.Configuration.GetValue<string>("Rhino:StateManager:Key"));
+builder.Services.AddLiteDatabase(builder.Configuration.GetValue<string>("Rhino:StateManager:DataEncryptionKey"));
 
 // domain
 builder.Services.AddTransient<IEnvironmentRepository, EnvironmentRepository>();
@@ -120,26 +147,28 @@ else
 }
 
 // setup
-var logsFolder = app.Configuration.GetValue("Rhino:ReportConfiguration:LogsOut", Environment.CurrentDirectory);
-var physicalPath = ControllerUtilities.GetStaticReportsFolder(configuration: app.Configuration);
+var logsPath = app.Configuration.GetValue("Rhino:ReportConfiguration:LogsOut", Environment.CurrentDirectory);
+var reportsPath = ControllerUtilities.GetStaticReportsFolder(configuration: app.Configuration);
+var statusPath = Path.Combine(Environment.CurrentDirectory, "Pages", "Status");
 
 // build
-app.ConfigureExceptionHandler(new TraceLogger("RhinoApi", "ExceptionHandler", logsFolder));
+app.ConfigureExceptionHandler(new TraceLogger("RhinoApi", "ExceptionHandler", logsPath));
+
 app.UseCookiePolicy();
 app.UseCors("CorsPolicy");
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", "Rhino Controllers v3"));
 app.UseRouting();
 app.UseBlazorFrameworkFiles();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapDefaultControllerRoute();
-    endpoints.MapFallbackToFile("index.html");
-});
-app.UseEndpoints(endpoints => endpoints.MapRazorPages());
-app.UseEndpoints(endpoints => endpoints.MapControllers());
 app.UseStaticFiles();
-app.UseStaticFiles(physicalPath, route: "/reports");
+app.UseStaticFiles(reportsPath, route: "/reports");
+app.UseStaticFiles(statusPath, route: "/status");
+
+app.MapDefaultControllerRoute();
+app.MapFallbackToFile("index.html");
+app.MapRazorPages();
+app.MapControllers();
+app.MapHub<RhinoHub>($"/api/v{Version}/rhino/orchestrator");
 #endregion
 
 #region *** Program       ***

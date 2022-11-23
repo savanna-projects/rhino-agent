@@ -6,6 +6,7 @@
 using Gravity.Extensions;
 using Gravity.Services.DataContracts;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.AutomationProvider;
@@ -16,7 +17,11 @@ using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mime;
+using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {

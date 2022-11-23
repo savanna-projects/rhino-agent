@@ -6,6 +6,7 @@
 using Gravity.Services.Comet.Engine.Extensions;
 using Gravity.Services.DataContracts;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.Configuration;
@@ -14,6 +15,7 @@ using Rhino.Controllers.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net.Mime;
 
 namespace Rhino.Controllers.Controllers

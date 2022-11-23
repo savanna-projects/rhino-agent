@@ -3,6 +3,8 @@
  * 
  * RESSOURCES
  */
+using Microsoft.AspNetCore.Mvc;
+
 using Rhino.Controllers.Models.Server;
 
 namespace Rhino.Controllers.Domain.Interfaces
@@ -11,5 +13,6 @@ namespace Rhino.Controllers.Domain.Interfaces
     {
         string Add(IEnumerable<string> entity, bool isPrivate);
         Task<(int StatusCode, string Message)> SubmitAsync(PackageUploadModel uploadModel);
+        (int StatusCode, FileStream Stream) ExportPlugins();
     }
 }

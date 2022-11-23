@@ -103,7 +103,7 @@ namespace Rhino.Controllers.Domain.Data
 
             // get
             _logger?.Debug($"Get-Actions = OK, {actions.Count}");
-            return actions.OrderBy(i => i.Key);
+            return actions.Where(i => !string.IsNullOrEmpty(i.Key)).OrderBy(i => i.Key);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Rhino.Controllers.Domain.Data
 
             // get
             _logger?.Debug($"Get-Actions -Configuration {configuration} = OK, {actions.Count}");
-            return actions.OrderBy(i => i.Key);
+            return actions.Where(i => !string.IsNullOrEmpty(i.Key)).OrderBy(i => i.Key);
         }
 
         /// <summary>
@@ -173,6 +173,7 @@ namespace Rhino.Controllers.Domain.Data
             // get
             return connectorTypes
                 .Select(i => i.GetCustomAttribute<ConnectorAttribute>().ToModel())
+                .Where(i => !string.IsNullOrEmpty(i.Key))
                 .OrderBy(i => i.Key);
         }
 
@@ -200,6 +201,7 @@ namespace Rhino.Controllers.Domain.Data
                 .Where(i => i.AttributeType.Name.Equals("DriverMethodAttribute", Compare))
                 .SelectMany(i => i.NamedArguments.Where(i => i.MemberName.Equals("Driver", Compare)))
                 .Select(i => new DriverModel { Key = $"{i.TypedValue.Value}", Literal = $"{i.TypedValue.Value}".ToSpaceCase().ToLower() })
+                .Where(i => !string.IsNullOrEmpty(i.Key))
                 .DistinctBy(i => i.Key)
                 .OrderBy(i => i.Key);
         }
@@ -220,7 +222,10 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>List of all available macros.</returns>
         public IEnumerable<MacroModel> GetMacros()
         {
-            return _types.GetMacroAttributes().Select(i => ((MacroAttribute)i).ToModel());
+            return _types
+                .GetMacroAttributes()
+                .Select(i => ((MacroAttribute)i).ToModel())
+                .Where(i => !string.IsNullOrEmpty(i.Key));
         }
 
         // TODO: implement GetExamples factory for getting examples for the different operators.
@@ -247,6 +252,7 @@ namespace Rhino.Controllers.Domain.Data
             return _types
                 .Where(i => i.GetCustomAttribute<ReporterAttribute>() != null)
                 .Select(i => i.GetCustomAttribute<ReporterAttribute>().ToModel())
+                .Where(i => !string.IsNullOrEmpty(i.Key))
                 .OrderBy(i => i.Key);
         }
 
@@ -274,7 +280,7 @@ namespace Rhino.Controllers.Domain.Data
                 .Select(i => ($"{i.GetValue(null)}", i.GetCustomAttribute<ServiceEventAttribute>()));
 
             // get
-            return serviceEvents.Select(i => GetModel(input: i));
+            return serviceEvents.Select(GetModel).Where(i => !string.IsNullOrEmpty(i.Key));
         }
 
         /// <summary>
@@ -703,7 +709,8 @@ namespace Rhino.Controllers.Domain.Data
             // collect all potential types
             var actions = gravityPlugins
                 .Select(i => (ActionModel.ActionSource.Code, (ActionAttribute)gravityPlugins.FirstOrDefault(a => a.Name == i.Name)))
-                .Concat(attributes);
+                .Concat(attributes)
+                .Where(i => !string.IsNullOrEmpty(i.Item2.Name));
             actions = actions?.Any() == false ? Array.Empty<(string, ActionAttribute)>() : actions;
             logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Code} = OK, {actions.Count()}");
 
@@ -750,7 +757,7 @@ namespace Rhino.Controllers.Domain.Data
                 .Select(i => i.GetCustomAttribute<AssertMethodAttribute>())
                 .Where(i => i != null)
                 .Select(i => i.ToModel())
-                .Where(i => i != default)
+                .Where(i => i != default || !string.IsNullOrEmpty(i.Key))
                 .OrderBy(i => i.Key);
         }
     }

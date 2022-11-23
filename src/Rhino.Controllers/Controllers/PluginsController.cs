@@ -7,6 +7,7 @@ using Gravity.Services.DataContracts;
 
 using LiteDB;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts;
@@ -17,8 +18,13 @@ using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -57,7 +63,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Get()
         {
             // get response
-            var entities = DoGet(id: string.Empty).Entities;
+            var entities = InvokeGet(id: string.Empty).Entities;
             Response.Headers[RhinoResponseHeader.CountTotalSpecs] = $"{entities.Count()}";
 
             // get
@@ -76,7 +82,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Get([SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // get data
-            var (statusCode, entity) = DoGet(id);
+            var (statusCode, entity) = InvokeGet(id);
 
             // exit conditions
             if (statusCode == StatusCodes.Status404NotFound)
@@ -91,7 +97,7 @@ namespace Rhino.Controllers.Controllers
             return Ok(entity.FirstOrDefault());
         }
 
-        private (int StatusCode, IEnumerable<string> Entities) DoGet(string id)
+        private (int StatusCode, IEnumerable<string> Entities) InvokeGet(string id)
         {
             // get all
             if (string.IsNullOrEmpty(id))
@@ -105,6 +111,50 @@ namespace Rhino.Controllers.Controllers
 
             // setup
             return (statusCode, new[] { entity });
+        }
+
+        // GET: api/v3/plugins/export
+        [HttpGet("export")]
+        [SwaggerOperation(
+            Summary = "Export-Plugins",
+            Description = "Downloads the entire `Plugins` folder as `ZIP Archive`.")]
+        [Produces(MediaTypeNames.Application.Octet)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(string))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> Export()
+        {
+            // cleanup
+            var filePath = Path.Combine(Environment.CurrentDirectory, "Plugins.zip");
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            // get data
+            var (statusCode, stream) = _domain.Plugins.ExportPlugins();
+
+            // not found
+            if (statusCode == StatusCodes.Status404NotFound)
+            {
+                return await this
+                    .ErrorResultAsync<string>("Export-Plugins = (NotFound | NoPlugins)", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // server error
+            if (statusCode == StatusCodes.Status500InternalServerError)
+            {
+                return await this
+                    .ErrorResultAsync<string>("Export-Plugins = InternalServerError", StatusCodes.Status500InternalServerError)
+                    .ConfigureAwait(false);
+            }
+
+            // get
+            return new FileStreamResult(stream, MediaTypeNames.Application.Octet)
+            {
+                FileDownloadName = "Plugins.zip"
+            };
         }
         #endregion
 

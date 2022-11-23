@@ -17,7 +17,6 @@ using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models.Server;
 
 using System.IO.Compression;
-using System.Text;
 using System.Text.RegularExpressions;
 
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -27,7 +26,7 @@ namespace Rhino.Controllers.Domain.Automation
     /// <summary>
     /// Data Access Layer for Rhino API plugins repository.
     /// </summary>
-    public class PluginsRepository : Repository<string>, IPluginsRepository
+    public partial class PluginsRepository : Repository<string>, IPluginsRepository
     {
         // members: static
         private static readonly string s_basePath = Path.Combine(Environment.CurrentDirectory, "Plugins");
@@ -123,7 +122,7 @@ namespace Rhino.Controllers.Domain.Automation
             Exception exception = default;
             try
             {
-                var id = Regex.Match(input: spec, pattern: @"(?i)(?<=\[test-id]\s+)\w+").Value;
+                var id = TestIdRegex().Match(input: spec).Value;
                 var pluginPath = Path.Combine(path, id);
                 var pluginFilePath = Path.Combine(pluginPath, RhinoPluginEntry.PluginsRhinoSpecFile);
 
@@ -136,6 +135,9 @@ namespace Rhino.Controllers.Domain.Automation
             }
             return exception;
         }
+
+        [GeneratedRegex("(?i)(?<=\\[test-id]\\s+)\\w+", RegexOptions.None, "en-US")]
+        private static partial Regex TestIdRegex();
 
         /// <summary>
         /// Submits a code package into Rhino Domain.
@@ -282,7 +284,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns>A Collection of RhinoPlugin.</returns>
         public override IEnumerable<string> Get()
         {
-            return DoGet();
+            return InvokeGet();
         }
 
         /// <summary>
@@ -293,7 +295,7 @@ namespace Rhino.Controllers.Domain.Automation
         public override (int StatusCode, string Entity) Get(string id)
         {
             // get
-            var plugin = DoGet().FirstOrDefault(i => Regex.IsMatch(i, @"(?i)(?<=\[test-id]\s+)" + id));
+            var plugin = InvokeGet().FirstOrDefault(i => Regex.IsMatch(i, @"(?i)(?<=\[test-id]\s+)" + id));
 
             // setup: status
             var statusCode = plugin == default ? StatusCodes.Status404NotFound : StatusCodes.Status200OK;
@@ -302,7 +304,7 @@ namespace Rhino.Controllers.Domain.Automation
             return (statusCode, plugin);
         }
 
-        private IEnumerable<string> DoGet()
+        private IEnumerable<string> InvokeGet()
         {
             // setup conditions
             var isUser = !string.IsNullOrEmpty(Authentication.Username);
@@ -311,7 +313,11 @@ namespace Rhino.Controllers.Domain.Automation
             // setup
             var path = Path.Combine(Environment.CurrentDirectory, RhinoPluginEntry.PluginsRhinoFolder);
             var encryptionKey = Configuration.GetValue(DataEncryptionConfiguration, string.Empty);
-            var privateKey = "-" + JsonSerializer.Serialize(Authentication).ToBase64().Encrypt(encryptionKey).RemoveNonWord();
+            var privateKey = "-" + JsonSerializer
+                .Serialize(Authentication)
+                .ToBase64()
+                .Encrypt(encryptionKey)
+                .RemoveNonWord();
             var userPath = !isUser && !isPassword ? path : path + privateKey;
 
             // setup conditions
@@ -321,7 +327,7 @@ namespace Rhino.Controllers.Domain.Automation
             // NotFound conditions
             if (!isPublic && !isPrivate)
             {
-                _logger?.Debug($"Get-Plugins -Path {path} -UserPath {userPath} = (NotFound, Path | UserPath)");
+                _logger?.Debug($"Get-Plugins -Path {path} -UserPath {userPath} = (NotFound | Path | UserPath)");
                 return Array.Empty<string>();
             }
 
@@ -329,18 +335,60 @@ namespace Rhino.Controllers.Domain.Automation
             var plugins = new List<string>();
             if (isPublic)
             {
-                var collection = Directory.GetDirectories(path).SelectMany(Directory.GetFiles).Select(File.ReadAllText);
+                var collection = Directory
+                    .GetDirectories(path)
+                    .SelectMany(Directory.GetFiles)
+                    .Select(File.ReadAllText);
                 plugins.AddRange(collection);
             }
             if (isPrivate && !path.Equals(userPath, StringComparison.OrdinalIgnoreCase))
             {
-                var collection = Directory.GetDirectories(userPath).SelectMany(Directory.GetFiles).Select(File.ReadAllText);
+                var collection = Directory
+                    .GetDirectories(userPath)
+                    .SelectMany(Directory.GetFiles)
+                    .Select(File.ReadAllText);
                 plugins.AddRange(collection);
             }
 
             // results
-            _logger?.Debug($"Get-Plugins -Path {path} -UserPath {userPath} = (Ok, {plugins.Count})");
+            _logger?.Debug($"Get-Plugins -Path {path} -UserPath {userPath} = (OK, {plugins.Count})");
             return plugins;
+        }
+
+        /// <summary>
+        /// Exports the entire `Plugins` folder as a ZIP archive.
+        /// </summary>
+        /// <returns>File stream result</returns>
+        public (int StatusCode, FileStream Stream) ExportPlugins()
+        {
+            // constants
+            const string FileName = "Plugins.zip";
+
+            try
+            {
+                // setup
+                var pluginsDirectory = Path.Combine(Environment.CurrentDirectory, "Plugins");
+
+                // not found
+                if (!Directory.Exists(pluginsDirectory))
+                {
+                    return (StatusCodes.Status404NotFound, default);
+                }
+
+                // build
+                var filePath = Path.Combine(Environment.CurrentDirectory, FileName);
+                ZipFile.CreateFromDirectory(pluginsDirectory, FileName, CompressionLevel.Optimal, false);
+                Thread.Sleep(1000);
+                var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+                // get
+                return (StatusCodes.Status200OK, stream);
+            }
+            catch (Exception e) when (e != null)
+            {
+                _logger.Error(e.Message, e);
+                return (StatusCodes.Status500InternalServerError, default);
+            }
         }
         #endregion
 

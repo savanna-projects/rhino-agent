@@ -4,13 +4,16 @@
  * RESSOURCES
  */
 using Gravity.Abstraction.Cli;
-using Gravity.Services.Comet.Engine.Core;
 
 using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Interfaces;
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 
@@ -224,8 +227,7 @@ namespace Rhino.Agent.Cli
             return configuration;
         }
 
-        private static IConnector GetConnector(
-            IEnumerable<Type> types, RhinoConfiguration configuration)
+        private static IConnector GetConnector(IEnumerable<Type> types, RhinoConfiguration configuration)
         {
             // constants
             const StringComparison Compare = StringComparison.OrdinalIgnoreCase;

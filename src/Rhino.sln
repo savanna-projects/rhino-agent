@@ -20,10 +20,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{F0581530-31D7-40C5-BD78-4322BD64C4F0}"
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
-		..\docker\deploy.ps1 = ..\docker\deploy.ps1
+		Agent.Dockerfile = Agent.Dockerfile
 		..\docker\DockerComposeLinux.yml = ..\docker\DockerComposeLinux.yml
 		..\docker\DockerComposeWindows.yml = ..\docker\DockerComposeWindows.yml
-		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers", "Rhino.Controllers\Rhino.Controllers.csproj", "{6DC68289-26F0-45C0-825B-21D6103FBC97}"
@@ -90,6 +89,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elastic", "Elastic", "{3F76
 	ProjectSection(SolutionItems) = preProject
 		..\elastic\ActionsStabilityDashboard.ndjson = ..\elastic\ActionsStabilityDashboard.ndjson
 		..\elastic\BuildingBlocksOverviewDashboard.ndjson = ..\elastic\BuildingBlocksOverviewDashboard.ndjson
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{848ECA26-EBBB-472A-8D6C-6319AF0C3545}"
+	ProjectSection(SolutionItems) = preProject
+		..\scripts\deploy.wsl.ps1 = ..\scripts\deploy.wsl.ps1
 	EndProjectSection
 EndProject
 Global

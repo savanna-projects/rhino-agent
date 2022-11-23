@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Interfaces;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models.Server;
 
@@ -88,6 +89,16 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // get
             return testCases;
+        }
+
+        /// <summary>
+        /// Gets the TestRun key from the connector or an empty string if not possible.
+        /// </summary>
+        /// <param name="connector">The IConnector implementation.</param>
+        /// <returns>The TestRun key.</returns>
+        public static string GetRunKey(this IConnector connector)
+        {
+            return connector?.ProviderManager?.TestRun?.Key ?? string.Empty;
         }
 
         #region *** Symbols ***

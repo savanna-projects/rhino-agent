@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Rhino.Controllers.Extensions;
 
 using System.Net.Mime;
+using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Formatters
 {

@@ -5,6 +5,11 @@
  */
 using LiteDB;
 
+using Microsoft.Extensions.DependencyInjection;
+
+using System;
+using System.IO;
+
 namespace Rhino.Controllers.Extensions
 {
     public static class ServiceCollectionExtensions

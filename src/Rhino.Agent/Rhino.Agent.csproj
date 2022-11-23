@@ -4,8 +4,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<UserSecretsId>560fcd40-f4c0-4803-88d0-390796909059</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<DockerfileFile>../Dockerfile</DockerfileFile>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<DockerfileFile>../Agent.Dockerfile</DockerfileFile>
 		<LangVersion>Latest</LangVersion>
 		<AssemblyVersion>7.0.0.0</AssemblyVersion>
 		<FileVersion>7.0.0.0</FileVersion>
@@ -37,11 +36,6 @@
 
 	<ItemGroup>
 		<None Update="Certificates\Rhino.Https.pfx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
-		<None Update="..\..\..\test\RhinoApiReferenceGuidev3.Postman.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
