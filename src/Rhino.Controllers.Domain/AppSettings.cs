@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 
+using Rhino.Api.Reporter.Internal;
+
 using System.Net;
 using System.Net.Sockets;
 
@@ -11,17 +13,21 @@ namespace Rhino.Controllers.Domain
         {
             // setup
             Hub ??= new HubConfiguration();
+            ReportsAndLogs ??= new ReportConfiguration();
             Worker ??= new WorkerConfiguration();
             Configuration = configuration;
 
             // bind
             configuration.GetSection("Rhino:HubConfiguration").Bind(Hub);
-            configuration.GetSection("Rhino:WorkerConfiguration").Bind(Hub);
+            configuration.GetSection("Rhino:ReportConfiguration").Bind(ReportsAndLogs);
+            configuration.GetSection("Rhino:WorkerConfiguration").Bind(Worker);
         }
 
         public IConfiguration Configuration { get; }
 
         public HubConfiguration Hub { get; }
+
+        public ReportConfiguration ReportsAndLogs { get; }
 
         public WorkerConfiguration Worker { get; }
 
@@ -54,6 +60,17 @@ namespace Rhino.Controllers.Domain
         {
             public string HubAddress { get; set; }
             public int HubApiVersion { get; set; }
+        }
+
+        /// <summary>
+        /// Child configuration
+        /// </summary>
+        public class ReportConfiguration
+        {
+            public bool Archive { get; set; }
+            public string LogsOut { get; set; }
+            public IEnumerable<string> Reporters { get; set;}
+            public string ReportsOut { get; set; }
         }
     }
 }

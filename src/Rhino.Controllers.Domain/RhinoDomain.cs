@@ -30,7 +30,7 @@ namespace Rhino.Controllers.Domain
         /// <param name="tests">An ITestsRepository implementation to use with RhinoDomain.</param>
         public RhinoDomain(
             IApplicationRepository application,
-            IConfiguration appSettings,
+            AppSettings appSettings,
             IRepository<RhinoConfiguration> configurations,
             IEnvironmentRepository environments,
             IHubRepository hub,
@@ -57,7 +57,7 @@ namespace Rhino.Controllers.Domain
         }
 
         public IApplicationRepository Application { get; set; }
-        public IConfiguration AppSettings { get; set; }
+        public AppSettings AppSettings { get; set; }
         public IRepository<RhinoConfiguration> Configurations { get; set; }
         public IEnvironmentRepository Environments { get; set; }
         public IHubRepository Hub { get; }

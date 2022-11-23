@@ -39,7 +39,7 @@ namespace Rhino.Controllers.Controllers
             _domain = domain;
 
             // get in-folder
-            var inFolder = domain.AppSettings.GetValue<string>(ControllerUtilities.LogsConfigurationKey);
+            var inFolder = domain.AppSettings.ReportsAndLogs.LogsOut;
             _logPath = string.IsNullOrEmpty(inFolder) ? ControllerUtilities.LogsDefaultFolder : inFolder;
         }
 

@@ -8,7 +8,7 @@ namespace Rhino.Controllers.Domain.Interfaces
     public interface IDomain
     {
         IApplicationRepository Application { get; set; }
-        IConfiguration AppSettings { get; set; }
+        AppSettings AppSettings { get; set; }
         IRepository<RhinoConfiguration> Configurations { get; set; }
         IEnvironmentRepository Environments { get; set; }
         IHubRepository Hub { get; }
