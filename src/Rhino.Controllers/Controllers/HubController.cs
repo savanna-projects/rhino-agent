@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.Configuration;
-using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -106,7 +105,7 @@ namespace Rhino.Controllers.Controllers
             };
         }
 
-        // GET: api/v3/rhino/hub/status/:run
+        // GET: api/v3/rhino/hub/status/:id
         [HttpGet, Route("status/{id}")]
         [SwaggerOperation(
             Summary = "Get-Status -Id '2022.01.01.01.00.00.00.000'",
@@ -126,6 +125,47 @@ namespace Rhino.Controllers.Controllers
                 var notFound = $"Get-Status -Type 'Rhino' -Id {id} = (NotFound | NoSuchRun | NoTests)";
                 return await this
                     .ErrorResultAsync<string>(notFound, StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // get
+            return new ContentResult
+            {
+                Content = JsonSerializer.Serialize(entity, s_jsonOptions),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = statusCode
+            };
+        }
+
+        // GET: api/v3/rhino/hub/completed/:id
+        [HttpGet, Route("completed/{id}")]
+        [SwaggerOperation(
+            Summary = "Get-Completed -Id '2022.01.01.01.00.00.00.000'",
+            Description = "Gets the a `RhinoTestRun` object from the `Completed` list.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK)]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetCompleted([FromRoute] string id)
+        {
+            // setup
+            var (statusCode, entity) = _domain.Hub.GetCompleted(id);
+
+            // not found
+            if (statusCode == StatusCodes.Status404NotFound)
+            {
+                var notFound = $"Get-Completed -Type 'Rhino' -Id {id} = (NotFound | NoSuchRun)";
+                return await this
+                    .ErrorResultAsync<string>(notFound, StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // internal server error
+            if (statusCode == StatusCodes.Status500InternalServerError)
+            {
+                var notFound = $"Get-Completed -Type 'Rhino' -Id {id} = InternalServerError";
+                return await this
+                    .ErrorResultAsync<string>(notFound, StatusCodes.Status500InternalServerError)
                     .ConfigureAwait(false);
             }
 

@@ -20,6 +20,9 @@ namespace Rhino.Controllers.Domain.Orchestrator
 {
     public class HubRepository : IHubRepository
     {
+        // members
+        private IConnector _connector;
+
         // members: injection
         private readonly AppSettings _appSettings;
         private readonly ConcurrentQueue<RhinoTestRun> _completed;
@@ -54,14 +57,14 @@ namespace Rhino.Controllers.Domain.Orchestrator
         public (int StatusCode, object Entity) CreateTestRun(RhinoConfiguration configuration)
         {
             // setup
-            var connector = configuration.GetConnector();
+            _connector = configuration.GetConnector();
             var id = string.Empty;
             var isRunning = false;
 
             // setup: delegates
-            connector.TestEnqueuing += TestSetup;   // intercept connector queue and pull the test
-            connector.RunInvoked += RunTeardown;    // cleanup relevant queues at the end of the run
-            connector.RunInvoking += (sender, e) => // gets the run id from the underline connector and set in collection
+            _connector.TestEnqueuing += TestSetup;   // intercept connector queue and pull the test
+            _connector.RunInvoked += RunTeardown;    // cleanup relevant queues at the end of the run
+            _connector.RunInvoking += (sender, e) => // gets the run id from the underline connector and set in collection
             {
                 id = e.TestRun.Key;
                 isRunning = true;
@@ -69,7 +72,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
             };
 
             // start an invocation session
-            connector.InvokeAsync();
+            _connector.InvokeAsync();
 
             // wait for creation
             var timeout = DateTime.Now.AddMinutes(_appSettings.Hub.CreationTimeout);
@@ -86,8 +89,18 @@ namespace Rhino.Controllers.Domain.Orchestrator
 
         private void RunTeardown(object sender, TestRunInvocationEventArgs e)
         {
+            // remove from test runs queue
             _testRuns.Remove(e.TestRun.Key);
+
+            // enforce number of completed in queue
+            var maxCompleted = _appSettings.Hub.MaxCompleted == 0 ? 1 : _appSettings.Hub.MaxCompleted;
             _completed.Enqueue(e.TestRun);
+
+            // clean
+            while (_completed.Count > maxCompleted)
+            {
+                _ = _completed.TryDequeue(out _);
+            }
         }
 
         private void TestSetup(object sender, ConnectorEventArgs e)
@@ -187,6 +200,39 @@ namespace Rhino.Controllers.Domain.Orchestrator
 
             // get
             return (StatusCodes.Status200OK, entity);
+        }
+
+        /// <summary>
+        /// Gets a RhinoTestRun from the completed list.
+        /// </summary>
+        /// <param name="id">The run id.</param>
+        /// <returns>The RhinoTestRun (null if not found) and the status code.</returns>
+        public (int StatusCode, RhinoTestRun Entity) GetCompleted(string id)
+        {
+            // extract
+            var run = _completed.FirstOrDefault(i => i.Key.Equals(id, StringComparison.OrdinalIgnoreCase));
+
+            // get
+            return run == default
+                ? (StatusCodes.Status404NotFound, default)
+                : (StatusCodes.Status200OK, run);
+        }
+
+        /// <summary>
+        /// Gets a RunStatusModel from the running list.
+        /// </summary>
+        /// <param name="id">The RhinoTestCase id (not key).</param>
+        /// <returns>The RunStatusModel (null if not found) and the status code.</returns>
+        public (int StatusCode, TestCaseQueueModel Entity) GetRunningTest(string id)
+        {
+            // extract
+            var isTest = _running.TryGetValue(id, out TestCaseQueueModel testOut);
+            var test = isTest ? testOut : default;
+
+            // get
+            return test == default
+                ? (StatusCodes.Status404NotFound, default)
+                : (StatusCodes.Status200OK, test);
         }
 
         /// <summary>

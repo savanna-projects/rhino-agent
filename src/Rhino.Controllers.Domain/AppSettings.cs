@@ -51,6 +51,7 @@ namespace Rhino.Controllers.Domain
         public class HubConfiguration
         {
             public double CreationTimeout { get; set; }
+            public int MaxCompleted { get; set; }
         }
 
         /// <summary>
