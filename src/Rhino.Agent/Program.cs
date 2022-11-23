@@ -56,6 +56,7 @@ builder.WebHost.UseUrls();
 
 #region *** Service       ***
 // application
+builder.Services.AddRouting(i => i.LowercaseUrls = true);
 builder.Services.AddRazorPages();
 builder.Services.AddMvc().AddApplicationPart(typeof(RhinoController).Assembly).AddControllersAsServices();
 
@@ -72,37 +73,45 @@ builder.Services
     });
 
 // open api
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(i =>
 {
-    c.SwaggerDoc("v3", new OpenApiInfo { Title = "Rhino Controllers", Version = "v3" });
-    c.EnableAnnotations();
+    i.SwaggerDoc("v3", new OpenApiInfo { Title = "Rhino Controllers", Version = "v3" });
+    i.OrderActionsBy(a => a.HttpMethod);
+    i.EnableAnnotations();
 });
 
 // versions manager
-builder.Services.AddApiVersioning(c =>
+builder.Services.AddApiVersioning(i =>
 {
-    c.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(3, 0);
-    c.AssumeDefaultVersionWhenUnspecified = true;
-    c.ErrorResponses = new GenericErrorModel<object>();
-    c.ReportApiVersions = true;
+    i.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(3, 0);
+    i.AssumeDefaultVersionWhenUnspecified = true;
+    i.ErrorResponses = new GenericErrorModel<object>();
+    i.ReportApiVersions = true;
 });
 
 // cookies & CORS
-builder.Services.Configure<CookiePolicyOptions>(options =>
+builder.Services.Configure<CookiePolicyOptions>(i =>
 {
-    options.CheckConsentNeeded = _ => true;
-    options.MinimumSameSitePolicy = SameSiteMode.None;
+    i.CheckConsentNeeded = _ => true;
+    i.MinimumSameSitePolicy = SameSiteMode.None;
 });
 builder
     .Services
-    .AddCors(o => o.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+    .AddCors(i => i.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
+// signalR
+builder.Services.AddSignalR((i) =>
+{
+    i.EnableDetailedErrors = true;
+    i.MaximumReceiveMessageSize = long.MaxValue;
+});
 #endregion
 
 #region *** Dependencies  ***
 // hub
 builder.Services.AddSingleton(typeof(IDictionary<string, TestCaseQueueModel>), new ConcurrentDictionary<string, TestCaseQueueModel>());
 builder.Services.AddSingleton(new ConcurrentQueue<TestCaseQueueModel>());
-builder.Services.AddSingleton(typeof(IDictionary<string, WebAutomation>), new ConcurrentDictionary<string, WebAutomation>());
+builder.Services.AddSingleton(new ConcurrentDictionary<string, WebAutomation>());
 builder.Services.AddSingleton(new ConcurrentQueue<WebAutomation>());
 builder.Services.AddSingleton(new ConcurrentQueue<RhinoTestRun>());
 builder.Services.AddSingleton(typeof(AppSettings));
@@ -157,7 +166,13 @@ app.ConfigureExceptionHandler(new TraceLogger("RhinoApi", "ExceptionHandler", lo
 app.UseCookiePolicy();
 app.UseCors("CorsPolicy");
 app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", "Rhino Controllers v3"));
+app.UseSwaggerUI(i =>
+{
+    i.SwaggerEndpoint("/swagger/v3/swagger.json", "Rhino Controllers v3");
+    i.DisplayRequestDuration();
+    i.EnableFilter();
+    i.EnableTryItOutByDefault();
+});
 app.UseRouting();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();

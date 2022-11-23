@@ -21,7 +21,6 @@ using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
@@ -47,27 +46,6 @@ namespace Rhino.Controllers.Controllers
         }
 
         #region *** Post ***
-        [Obsolete(message: "This action is obsolete. Use `/test/create` action instead.", error: false)]
-        [HttpPost, Route("create")]
-        [SwaggerOperation(
-            Summary = "Create-TestCase",
-            Description =
-            "Creates a new _**Test Case**_ entity on the integrated application.  \n  \n" +
-            "**IMPORTANT!**\n" +
-            "\n" +
-            "This action is obsolete. Use `/test/create` action instead.  \n  \n  \n" +
-            "Creates a new _**Test Case**_ entity on the integrated application.")]
-        [Consumes(MediaTypeNames.Application.Json)]
-        [Produces(MediaTypeNames.Application.Json)]
-        [SwaggerResponse(StatusCodes.Status201Created, Type = typeof(IEnumerable<RhinoTestCase>))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<RhinoIntegrationModel<string>>))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<RhinoIntegrationModel<string>>))]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<RhinoIntegrationModel<string>>))]
-        public Task<IActionResult> CreateTestCaseDeprecated([FromBody] RhinoIntegrationModel<TestCreateModel<string>> model)
-        {
-            return Create(model);
-        }
-
         [HttpPost, Route("test/create")]
         [SwaggerOperation(
             Summary = "Create-TestCase",

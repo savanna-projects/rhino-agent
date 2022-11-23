@@ -55,6 +55,7 @@ builder.WebHost.UseUrls();
 
 #region *** Service       ***
 // application
+builder.Services.AddRouting(i => i.LowercaseUrls = true);
 builder.Services.AddRazorPages();
 builder.Services.AddMvc().AddApplicationPart(typeof(RhinoController).Assembly).AddControllersAsServices();
 
@@ -71,10 +72,11 @@ builder.Services
     });
 
 // open api
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(i =>
 {
-    c.SwaggerDoc("v3", new OpenApiInfo { Title = "Rhino Controllers", Version = "v3" });
-    c.EnableAnnotations();
+    i.SwaggerDoc("v3", new OpenApiInfo { Title = "Rhino Controllers", Version = "v3" });
+    i.OrderActionsBy(a => a.HttpMethod);
+    i.EnableAnnotations();
 });
 
 // versions manager
@@ -95,6 +97,13 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 builder
     .Services
     .AddCors(o => o.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
+// signalR
+builder.Services.AddSignalR((o) =>
+{
+    o.EnableDetailedErrors = true;
+    o.MaximumReceiveMessageSize = long.MaxValue;
+});
 #endregion
 
 #region *** Dependencies  ***
@@ -156,7 +165,13 @@ app.ConfigureExceptionHandler(new TraceLogger("RhinoApi", "ExceptionHandler", lo
 app.UseCookiePolicy();
 app.UseCors("CorsPolicy");
 app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", "Rhino Controllers v3"));
+app.UseSwaggerUI(i =>
+{
+    i.SwaggerEndpoint("/swagger/v3/swagger.json", "Rhino Controllers v3");
+    i.DisplayRequestDuration();
+    i.EnableFilter();
+    i.EnableTryItOutByDefault();
+});
 app.UseRouting();
 app.UseStaticFiles();
 app.UseStaticFiles(reportsPath, route: "/reports");
