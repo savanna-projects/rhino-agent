@@ -20,8 +20,9 @@ namespace Rhino.Controllers.Domain
         /// <param name="appSettings">An IConfiguration implementation to use with RhinoDomain.</param>
         /// <param name="configurations">An IRepository<RhinoConfiguration> implementation to use with RhinoDomain.</param>
         /// <param name="environments">An IEnvironmentRepository implementation to use with RhinoDomain.</param>
+        /// <param name="hub">An IEnvironmentRepository implementation to use with RhinoDomain.</param>
         /// <param name="logs">An ILogsRepository implementation to use with RhinoDomain.</param>
-        /// <param name="metaData">An IMetaDataRepository implementation to use with RhinoDomain.</param>
+        /// <param name="metaData">An IHubRepository implementation to use with RhinoDomain.</param>
         /// <param name="models">An IRepository<RhinoModelCollection> implementation to use with RhinoDomain.</param>
         /// <param name="plugins">An IPluginsRepository implementation to use with RhinoDomain.</param>
         /// <param name="rhino">An IRhinoRepository implementation to use with RhinoDomain.</param>
@@ -32,6 +33,7 @@ namespace Rhino.Controllers.Domain
             IConfiguration appSettings,
             IRepository<RhinoConfiguration> configurations,
             IEnvironmentRepository environments,
+            IHubRepository hub,
             ILogsRepository logs,
             IMetaDataRepository metaData,
             IRepository<RhinoModelCollection> models,
@@ -44,6 +46,7 @@ namespace Rhino.Controllers.Domain
             AppSettings = appSettings;
             Configurations = configurations;
             Environments = environments;
+            Hub = hub;
             Logs = logs;
             MetaData = metaData;
             Models = models;
@@ -57,6 +60,7 @@ namespace Rhino.Controllers.Domain
         public IConfiguration AppSettings { get; set; }
         public IRepository<RhinoConfiguration> Configurations { get; set; }
         public IEnvironmentRepository Environments { get; set; }
+        public IHubRepository Hub { get; }
         public ILogsRepository Logs { get; set; }
         public IMetaDataRepository MetaData { get; set; }
         public IRepository<RhinoModelCollection> Models { get; set; }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -32,11 +33,11 @@ namespace Rhino.Controllers.Controllers
         };
 
         // members: injection
-        private readonly IHubRepository _repository;
+        private readonly IDomain _domain;
 
-        public HubController(IHubRepository repository)
+        public HubController(IDomain domain)
         {
-            _repository = repository;
+            _domain = domain;
         }
 
         #region *** Create ***
@@ -52,12 +53,12 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> Create([FromBody] RhinoConfiguration configuration)
         {
             // setup
-            var (statusCode, entity) = _repository.CreateTestRun(configuration);
+            var (statusCode, entity) = _domain.Hub.CreateTestRun(configuration);
 
             // not found
-            if (statusCode == StatusCodes.Status404NotFound)
+            if (statusCode == StatusCodes.Status500InternalServerError)
             {
-                var notFound = "Create-Run -Type 'Rhino' = (InternalServerError | NotAbleToCreateRun)";
+                var notFound = "Create-Run -Type 'Rhino' = (InternalServerError | NotAbleToCreateRun | Timeout)";
                 return await this
                     .ErrorResultAsync<string>(notFound, StatusCodes.Status500InternalServerError)
                     .ConfigureAwait(false);
@@ -94,7 +95,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult GetStatus()
         {
             // setup
-            var (statusCode, entity) = _repository.GetStatus();
+            var (statusCode, entity) = _domain.Hub.GetStatus();
 
             // get
             return new ContentResult
@@ -117,7 +118,7 @@ namespace Rhino.Controllers.Controllers
         public async Task<IActionResult> GetStatus([FromRoute] string id)
         {
             // setup
-            var (statusCode, entity) = _repository.GetStatus(id);
+            var (statusCode, entity) = _domain.Hub.GetStatus(id);
 
             // not found
             if (statusCode == StatusCodes.Status404NotFound)
@@ -150,7 +151,7 @@ namespace Rhino.Controllers.Controllers
         public IActionResult Reset()
         {
             // invoke
-            _repository.Reset();
+            _domain.Hub.Reset();
 
             // get
             return NoContent();

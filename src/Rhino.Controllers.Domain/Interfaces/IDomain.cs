@@ -11,6 +11,7 @@ namespace Rhino.Controllers.Domain.Interfaces
         IConfiguration AppSettings { get; set; }
         IRepository<RhinoConfiguration> Configurations { get; set; }
         IEnvironmentRepository Environments { get; set; }
+        IHubRepository Hub { get; }
         ILogsRepository Logs { get; set; }
         IMetaDataRepository MetaData { get; set; }
         IRepository<RhinoModelCollection> Models { get; set; }
