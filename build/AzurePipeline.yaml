@@ -139,12 +139,12 @@ stages:
             Set-Content -Path '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json' -Value $content
 
       - task: Docker@2
-        displayName: 'Create Docker Image for Testing - Linux'
+        displayName: 'Create Agent Docker Image for Testing - Linux'
         inputs:
           containerRegistry: 'docker.io'
           repository: 'rhinoapi/agent-stage'
           command: 'buildAndPush'
-          Dockerfile: '**/Dockerfile'
+          Dockerfile: '**/Agent.Dockerfile'
           tags: 'test'
 
       - template: AzurePipelineResetEnvironment.yaml
@@ -374,10 +374,10 @@ stages:
             Write-Host "##vso[task.setvariable variable=dockerTags]$tags"
 
       - task: Docker@2
-        displayName: 'Create Docker Image - Linux'
+        displayName: 'Create Agent Docker Image - Linux'
         inputs:
           containerRegistry: 'docker.io'
           repository: 'rhinoapi/rhino-agent'
           command: 'buildAndPush'
-          Dockerfile: '**/Dockerfile'
+          Dockerfile: '**/Agent.Dockerfile'
           tags: $(dockerTags)

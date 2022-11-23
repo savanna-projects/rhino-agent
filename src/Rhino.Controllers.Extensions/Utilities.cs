@@ -15,7 +15,7 @@ namespace Rhino.Controllers.Extensions
     /// <summary>
     /// Extension package for <see cref="Stream"/> object and other related object.
     /// </summary>
-    public static class Utilities
+    public static partial class Utilities
     {
         // members: state
         private static readonly IList<Assembly> s_assemblies = new List<Assembly>();
@@ -89,7 +89,7 @@ namespace Rhino.Controllers.Extensions
             var files = locations
                 .Where(i => Directory.Exists(i))
                 .SelectMany(i => Directory.GetFiles(i))
-                .Where(i => Regex.IsMatch(i, @"(?i)\.dll$"));
+                .Where(i => GetDllFilePattern().IsMatch(i));
 
             // build
             foreach (var assemblyFile in files)
@@ -167,6 +167,9 @@ namespace Rhino.Controllers.Extensions
             }
             return (null, null);
         }
+
+        [GeneratedRegex("(?i)\\.dll$", RegexOptions.None, "en-US")]
+        private static partial Regex GetDllFilePattern();
         #endregion
     }
 }

@@ -27,11 +27,15 @@ namespace Rhino.Controllers.Domain.Automation
     /// <summary>
     /// Data Access Layer for Rhino API and integration operations.
     /// </summary>
-    public class RhinoRepository : IRhinoRepository, IRhinoAsyncRepository
+    public partial class RhinoRepository : IRhinoRepository, IRhinoAsyncRepository
     {
         // constants
-        private const string IdPattern = @"^\w{8}-(\w{4}-){3}\w{12}$";
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
+
+        #region *** Expressions ***
+        [GeneratedRegex("^\\w{8}-(\\w{4}-){3}\\w{12}$")]
+        private static partial Regex GetIdPattern();
+        #endregion
 
         // members: cache
         private readonly static IDictionary<string, AsyncStatusModel<RhinoConfiguration>> s_status
@@ -551,7 +555,7 @@ namespace Rhino.Controllers.Domain.Automation
             // setup
             var userModels = configuration
                 .Models
-                .Select(i => Regex.Match(i, IdPattern).Value)
+                .Select(i => GetIdPattern().Match(i).Value)
                 .Where(i => !string.IsNullOrEmpty(i));
 
             var dataModels = _modelsRespository
@@ -577,7 +581,7 @@ namespace Rhino.Controllers.Domain.Automation
                 .Select(i => JsonSerializer.Serialize(i, Utilities.JsonSettings));
 
             // update
-            configuration.Models = configuration.Models.Where(i => !Regex.IsMatch(i, IdPattern)).Concat(modelEntities);
+            configuration.Models = configuration.Models.Where(i => !GetIdPattern().IsMatch(i)).Concat(modelEntities);
         }
 
         private void SetTestsRepository(RhinoConfiguration configuration)
@@ -585,7 +589,7 @@ namespace Rhino.Controllers.Domain.Automation
             // setup
             var tests = configuration
                 .TestsRepository
-                .Select(i => Regex.Match(i, IdPattern).Value)
+                .Select(i => GetIdPattern().Match(i).Value)
                 .Where(i => !string.IsNullOrEmpty(i));
 
             // exit conditions
@@ -604,7 +608,7 @@ namespace Rhino.Controllers.Domain.Automation
                 .Where(i => tests.Contains($"{i.Id}"))
                 .SelectMany(i => i.RhinoTestCaseModels)
                 .Select(i => i.RhinoSpec)
-                .Concat(configuration.TestsRepository.Where(i => !Regex.IsMatch(i, IdPattern)));
+                .Concat(configuration.TestsRepository.Where(i => !GetIdPattern().IsMatch(i)));
 
             // get
             configuration.TestsRepository = configuration.ConnectorConfiguration.Connector != RhinoConnectors.Text && !stateRepository.Any()

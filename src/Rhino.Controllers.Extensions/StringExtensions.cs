@@ -15,8 +15,16 @@ namespace Rhino.Controllers.Extensions
     /// Extension package for <see cref="string"/> object.
     /// </summary>
     [Obsolete("Migrated to Rhino.Api.Extensions and will be removed on future release.")]
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
+        #region *** Expressions   ***
+        [GeneratedRegex("(\\\\r\\\\n|\\\\n|\\\\r)")]
+        private static partial Regex GetNewLineToken();
+
+        [GeneratedRegex("\\W")]
+        private static partial Regex GetNonWorkToken();
+        #endregion
+
         #region *** Case Converts ***
         /// <summary>
         /// Normalize line breaks into Environment.NewLine format.
@@ -25,7 +33,7 @@ namespace Rhino.Controllers.Extensions
         /// <returns>Normalized <see cref="string"/>.</returns>
         public static string NormalizeLineBreaks(this string str)
         {
-            return Regex.Replace(input: str, pattern: @"(\\r\\n|\\n|\\r)", replacement: Environment.NewLine);
+            return GetNewLineToken().Replace(input: str, replacement: Environment.NewLine);
         }
 
         /// <summary>
@@ -35,7 +43,7 @@ namespace Rhino.Controllers.Extensions
         /// <returns>A snake_case <see cref="string"/>.</returns>
         public static string ToSnakeCase(this string str)
         {
-            return DoSeparatorCase(str, '_').ToLower();
+            return InvokeSeparatorCase(str, '_').ToLower();
         }
 
         /// <summary>
@@ -45,7 +53,7 @@ namespace Rhino.Controllers.Extensions
         /// <returns>A kebab-case <see cref="string"/>.</returns>
         public static string ToKebabCase(this string str)
         {
-            return DoSeparatorCase(str, '-').ToLower();
+            return InvokeSeparatorCase(str, '-').ToLower();
         }
 
         /// <summary>
@@ -55,10 +63,10 @@ namespace Rhino.Controllers.Extensions
         /// <returns>A space case <see cref="string"/>.</returns>
         public static string ToSpaceCase(this string str)
         {
-            return DoSeparatorCase(str, ' ');
+            return InvokeSeparatorCase(str, ' ');
         }
 
-        private static string DoSeparatorCase(string str, char separator)
+        private static string InvokeSeparatorCase(string str, char separator)
         {
             // collect the final result
             var result = new StringBuilder();
@@ -72,7 +80,7 @@ namespace Rhino.Controllers.Extensions
                 var isNext = !isLast && char.IsUpper(str[i + 1]);
                 var isCurrent = char.IsUpper(str[i]);
 
-                if (isZero || isLast || (isCurrent && isNext && isPrevious) || !isCurrent)
+                if (isZero || isLast || isCurrent && isNext && isPrevious || !isCurrent)
                 {
                     result.Append(str[i]);
                     continue;
@@ -116,7 +124,7 @@ namespace Rhino.Controllers.Extensions
         /// <returns>The <see cref="string"/> without special chars.</returns>
         public static string RemoveNonWord(this string input)
         {
-            return DoRemoveNonWord(input);
+            return GetNonWorkToken().Replace(input, string.Empty);
         }
 
         /// <summary>
@@ -134,7 +142,7 @@ namespace Rhino.Controllers.Extensions
             var base64 = Encoding.UTF8.GetString(hash);
 
             // get
-            return DoRemoveNonWord(base64);
+            return GetNonWorkToken().Replace(base64, string.Empty);
         }
 
         /// <summary>
@@ -146,12 +154,6 @@ namespace Rhino.Controllers.Extensions
         {
             var bytes = Encoding.UTF8.GetBytes(string.IsNullOrEmpty(str) ? "{}" : str);
             return new MemoryStream(bytes);
-        }
-
-        // Utilities
-        private static string DoRemoveNonWord(string input)
-        {
-            return Regex.Replace(input, pattern: @"\W", string.Empty);
         }
     }
 }

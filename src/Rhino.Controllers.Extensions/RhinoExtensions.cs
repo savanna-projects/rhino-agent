@@ -27,8 +27,13 @@ namespace Rhino.Controllers.Extensions
     /// <summary>
     /// Extension package for Rhino API related objects.
     /// </summary>
-    public static class RhinoExtensions
+    public static partial class RhinoExtensions
     {
+        #region *** Expressions ***
+        [GeneratedRegex("{{\\$.*}}")]
+        private static partial Regex GetArgumentToekn();
+        #endregion
+
         // members: data
         private static IDictionary<string, IEnumerable<string>> VerbMap => new Dictionary<string, IEnumerable<string>>
         {
@@ -88,7 +93,7 @@ namespace Rhino.Controllers.Extensions
                     ActionExample = new ActionRule
                     {
                         ActionType = plugin.Key,
-                        Argument = Regex.Match(input: rhinoExample.Example, @"{{\$.*}}").Value
+                        Argument = GetArgumentToekn().Match(input: rhinoExample.Example).Value
                     }
                 };
                 onExamples.Add(onExample);

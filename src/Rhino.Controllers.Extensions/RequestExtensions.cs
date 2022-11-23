@@ -17,8 +17,11 @@ namespace Rhino.Controllers.Extensions
     /// <summary>
     /// Extension package for <see cref="HttpRequest"/> object and other related object.
     /// </summary>
-    public static class RequestExtensions
+    public static partial class RequestExtensions
     {
+        [GeneratedRegex("(?i)(?<=Basic\\s+)[^\\s](.+?)+", RegexOptions.None, "en-US")]
+        private static partial Regex GetBasicAuthenticationToken();
+
         /// <summary>
         /// Gets a Gravity API Authentication object based on request authorization header.
         /// </summary>
@@ -30,7 +33,7 @@ namespace Rhino.Controllers.Extensions
             var header = $"{request.Headers["Authorization"]}";
 
             // get token
-            var onToken = Regex.Match(header, @"(?i)(?<=Basic\s+)[^\s](.+?)+").Value.FromBase64();
+            var onToken = GetBasicAuthenticationToken().Match(header).Value.FromBase64();
             var credentials = onToken.Split(":").Where(i => !string.IsNullOrEmpty(i)).ToArray();
 
             // no credentials

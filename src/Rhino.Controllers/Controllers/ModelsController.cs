@@ -28,8 +28,16 @@ namespace Rhino.Controllers.Controllers
     [ApiVersion("3.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class ModelsController : ControllerBase
+    public partial class ModelsController : ControllerBase
     {
+        #region *** Expressions ***
+        [GeneratedRegex("(\\s+)?/\\*\\*.*")]
+        private static partial Regex GetEmptyOrCommentToken();
+
+        [GeneratedRegex("(?<=\\[test-models\\]).*")]
+        private static partial Regex GetModelsToken();
+        #endregion
+
         // constants
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
@@ -219,7 +227,7 @@ namespace Rhino.Controllers.Controllers
 
             // clear comments & empty lines
             lines = lines
-                .Select(i => Regex.Replace(i, @"(\s+)?/\*\*.*", string.Empty))
+                .Select(i => GetEmptyOrCommentToken().Replace(i, string.Empty))
                 .Where(i => !string.IsNullOrEmpty(i))
                 .ToArray();
 
@@ -231,7 +239,7 @@ namespace Rhino.Controllers.Controllers
         {
             // setup
             var lines = pageModel.Trim().SplitByLines().ToArray();
-            var name = lines.Length > 0 ? Regex.Match(lines[0], @"(?<=\[test-models\]).*").Value.Trim() : string.Empty;
+            var name = lines.Length > 0 ? GetModelsToken().Match(lines[0]).Value.Trim() : string.Empty;
             var markdownLines = lines.Skip(1).Where(i => !string.IsNullOrEmpty(i.Trim())).ToArray();
 
             // bad request

@@ -36,7 +36,7 @@ namespace Rhino.Controllers.Domain.Data
     /// <summary>
     /// Data Access Layer for all static data.
     /// </summary>
-    public class MetaDataRepository : IMetaDataRepository
+    public partial class MetaDataRepository : IMetaDataRepository
     {
         // constants
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
@@ -487,7 +487,7 @@ namespace Rhino.Controllers.Domain.Data
 
                 // build
                 var line = entityType.Equals("(E)")
-                    ? $"{actionLine} {entityType} {command + " - " + Regex.Match(testStep.Action, "[^{]*").Value.Trim().ToLower()}"
+                    ? $"{actionLine} {entityType} {command + " - " + GetErrorToken().Match(testStep.Action).Value.Trim().ToLower()}"
                     : $"{actionLine} {entityType} {command}";
 
                 // render entity
@@ -501,7 +501,7 @@ namespace Rhino.Controllers.Domain.Data
 
                     for (int i = 0; i < models.Length; i++)
                     {
-                        modelsLine = i == models.Length - 1 && (!isPlugin)
+                        modelsLine = i == models.Length - 1 && !isPlugin
                             ? ReplaceLastOccurrence(modelsLine, "├──", "├──")
                             : modelsLine;
                         modelsLine = $"{modelsLine} (M) {models[i].Name}";
@@ -760,5 +760,8 @@ namespace Rhino.Controllers.Domain.Data
                 .Where(i => i != default || !string.IsNullOrEmpty(i.Key))
                 .OrderBy(i => i.Key);
         }
+
+        [GeneratedRegex("[^{]*")]
+        private static partial Regex GetErrorToken();
     }
 }

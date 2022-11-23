@@ -25,9 +25,6 @@ namespace Rhino.Controllers.Controllers
     [ApiController]
     public class GravityController : ControllerBase
     {
-        // members
-        private static readonly IDictionary<string, object> s_sessions = new ConcurrentDictionary<string, object>();
-
         // GET: api/v3/gravity/invoke
         [HttpPost, Route("invoke")]
         [SwaggerOperation(
@@ -43,56 +40,6 @@ namespace Rhino.Controllers.Controllers
 
             // response
             return Ok(orbitResponse);
-        }
-
-        // POST: api/v3/gravity/debug/start
-        [HttpPost, Route("debug/start")]
-        public IActionResult DebugStartSession(RhinoConfiguration configuration)
-        {
-            return new ContentResult
-            {
-                StatusCode = StatusCodes.Status501NotImplemented
-            };
-        }
-
-        // POST: api/v3/gravity/debug/forward
-        [HttpPost, Route("debug/forward")]
-        public IActionResult DebugForward(string session)
-        {
-            return new ContentResult
-            {
-                StatusCode = StatusCodes.Status501NotImplemented
-            };
-        }
-
-        // POST: api/v3/gravity/debug/backward
-        [HttpPost, Route("debug/backward")]
-        public IActionResult DebugBackward(string session)
-        {
-            return new ContentResult
-            {
-                StatusCode = StatusCodes.Status501NotImplemented
-            };
-        }
-
-        // POST: api/v3/gravity/debug/repeat
-        [HttpPost, Route("debug/repeat")]
-        public IActionResult DebugRepeat(string session)
-        {
-            return new ContentResult
-            {
-                StatusCode = StatusCodes.Status501NotImplemented
-            };
-        }
-
-        // POST: api/v3/gravity/debug/stop
-        [HttpPost, Route("debug/stop")]
-        public IActionResult DebugStop(string session)
-        {
-            return new ContentResult
-            {
-                StatusCode = StatusCodes.Status501NotImplemented
-            };
         }
     }
 }

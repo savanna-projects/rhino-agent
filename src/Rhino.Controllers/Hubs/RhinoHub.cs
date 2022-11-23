@@ -4,7 +4,6 @@
  * RESSOURCES
  */
 using Gravity.Abstraction.Logging;
-using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
@@ -23,21 +22,15 @@ namespace Rhino.Controllers.Hubs
         // members: injection
         private readonly ConcurrentQueue<TestCaseQueueModel> _rhinoPending;
         private readonly IDictionary<string, TestCaseQueueModel> _rhinoRunning;
-        private readonly ConcurrentQueue<WebAutomation> _gravityPending;
-        private readonly IDictionary<string, WebAutomation> _gravityRunning;
         private readonly ILogger _logger;
 
         public RhinoHub(
             ConcurrentQueue<TestCaseQueueModel> rhinoPending,
             IDictionary<string, TestCaseQueueModel> rhinoRunning,
-            ConcurrentQueue<WebAutomation> gravityPending,
-            IDictionary<string, WebAutomation> gravityRunning,
             ILogger logger)
         {
             _rhinoPending = rhinoPending;
             _rhinoRunning = rhinoRunning;
-            _gravityPending = gravityPending;
-            _gravityRunning = gravityRunning;
             _logger = logger;
         }
 

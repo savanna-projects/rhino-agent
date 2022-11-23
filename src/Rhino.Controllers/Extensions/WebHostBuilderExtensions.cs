@@ -46,8 +46,8 @@ namespace Rhino.Controllers.Extensions
             const string Certificate = "cert";
 
             // setup
-            var cert = arguments.ContainsKey(Certificate)
-                ? arguments[Certificate].Split("::")
+            var cert = arguments.TryGetValue(Certificate, out string value)
+                ? value.Split("::")
                 : Array.Empty<string>();
             var isCert = cert.Length == 2;
 

@@ -11,7 +11,7 @@ namespace Rhino.Controllers.Models.Server
     /// Represents a line and character position, such as the position of the cursor.
     /// </summary>
     [DataContract]
-    public struct RhinoSymbolPositionModel
+    public readonly struct RhinoSymbolPositionModel
     {
         /// <summary>
         /// Initialize a new instance of RhinoSymbolPositionModel.

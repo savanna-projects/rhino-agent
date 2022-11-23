@@ -17,8 +17,16 @@ namespace Rhino.Controllers.Domain.Extensions
     /// <summary>
     /// Extension package for Rhino Agent Domain.
     /// </summary>
-    internal static class RhinoExtensions
+    internal static partial class RhinoExtensions
     {
+        #region *** Expressions ***
+        [GeneratedRegex("$", RegexOptions.Multiline)]
+        private static partial Regex GetEndOfLineToken();
+
+        [GeneratedRegex("(?<={).*(?=})")]
+        private static partial Regex GetActionToken();
+        #endregion
+
         // members
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
@@ -64,8 +72,7 @@ namespace Rhino.Controllers.Domain.Extensions
             // setup
             var index = 0;
             var testCases = new List<IEnumerable<(int LineNumber, string Text)>>();
-            var lines = Regex
-                .Split(input: rhinoTestCases, pattern: "$", RegexOptions.Multiline)
+            var lines = GetEndOfLineToken().Split(input: rhinoTestCases)
                 .Select(i => i.Trim())
                 .ToList();
 
@@ -204,7 +211,7 @@ namespace Rhino.Controllers.Domain.Extensions
             // normalize
             testStep.Steps ??= Array.Empty<RhinoTestStep>();
             testStep.Action = isPlugin
-                ? Regex.Match(testStep.Action, "(?<={).*(?=})").Value
+                ? GetActionToken().Match(testStep.Action).Value
                 : testStep.Action;
             testStep.Command = string.IsNullOrEmpty(testStep.Command) ? "MissingPlugin" : testStep.Command;
         }
