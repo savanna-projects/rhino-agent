@@ -4,6 +4,7 @@
  * RESOURCES
  */
 using Microsoft.AspNetCore.Http;
+using Microsoft.TeamFoundation.Build.WebApi;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
@@ -200,6 +201,22 @@ namespace Rhino.Controllers.Domain.Orchestrator
 
             // get
             return (StatusCodes.Status200OK, entity);
+        }
+
+        /// <summary>
+        /// Gets a RhinoTestRun from the completed list.
+        /// </summary>
+        /// <param name="id">The run id.</param>
+        /// <returns>The RhinoTestRun (null if not found) and the status code.</returns>
+        public (int StatusCode, IEnumerable<string> Entities) GetCompleted()
+        {
+            // extract
+            var runs = _completed.Select(i => i.Key);
+
+            // get
+            return runs == default
+                ? (StatusCodes.Status404NotFound, Array.Empty<string>())
+                : (StatusCodes.Status200OK, runs);
         }
 
         /// <summary>

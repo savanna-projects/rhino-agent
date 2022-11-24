@@ -9,6 +9,7 @@ namespace Rhino.Controllers.Domain.Interfaces
         (int StatusCode, object Entity) CreateTestRun(RhinoConfiguration configuration);
         (int StatusCode, RunsStatusModel Entity) GetStatus();
         (int StatusCode, RunStatusModel Entity) GetStatus(string id);
+        (int StatusCode, IEnumerable<string> Entities) GetCompleted();
         (int StatusCode, RhinoTestRun Entity) GetCompleted(string id);
         void Reset();
     }

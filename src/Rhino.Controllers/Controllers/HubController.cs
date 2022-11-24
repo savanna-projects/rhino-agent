@@ -177,6 +177,37 @@ namespace Rhino.Controllers.Controllers
                 StatusCode = statusCode
             };
         }
+
+        // GET: api/v3/rhino/hub/completed
+        [HttpGet, Route("completed")]
+        [SwaggerOperation(
+            Summary = "Get-Completed -All",
+            Description = "Gets the collection of `RhinoTestRun` objects from the `Completed` list.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK)]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetCompleted()
+        {
+            // setup
+            var (statusCode, entities) = _domain.Hub.GetCompleted();
+
+            // internal server error
+            if (statusCode == StatusCodes.Status500InternalServerError)
+            {
+                var notFound = $"Get-Completed -Type 'Rhino' -All = InternalServerError";
+                return await this
+                    .ErrorResultAsync<string>(notFound, StatusCodes.Status500InternalServerError)
+                    .ConfigureAwait(false);
+            }
+
+            // get
+            return new ContentResult
+            {
+                Content = JsonSerializer.Serialize(entities, s_jsonOptions),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = statusCode
+            };
+        }
         #endregion
 
         #region *** Delete ***
