@@ -52,6 +52,8 @@ namespace Rhino.Controllers.Domain
         {
             public double CreationTimeout { get; set; }
             public int MaxCompleted { get; set; }
+            public int RepairAttempts { get; set; }
+            public double RunningTimeout { get; set; }
         }
 
         /// <summary>

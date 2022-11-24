@@ -112,6 +112,30 @@ namespace Rhino.Controllers.Hubs
             _rhinoRunning.Remove(testCase.Identifier);
         }
 
+        /// <summary>
+        /// Handles an unexpected error on the worker side.
+        /// </summary>
+        /// <param name="testCase">The RhinoTestCase to update.</param>
+        /// <param name="context">The RhinoTestCase context back from the worker.</param>
+        [HubMethodName("repair")]
+        public void Repair(RhinoTestCase testCase, IDictionary<string, object> context)
+        {
+            // not found
+            if (!_rhinoRunning.ContainsKey(testCase.Identifier))
+            {
+                return;
+            }
+
+            // setup
+            var entity = _rhinoRunning[testCase.Identifier];
+            testCase.Context = context;
+            entity.TestCase = testCase;
+
+            // push back to pending to pickup by another worker
+            _rhinoRunning.Remove(testCase.Identifier);
+            _rhinoPending.Enqueue(entity);
+        }
+
         public override async Task OnConnectedAsync()
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, "SignalR Users");

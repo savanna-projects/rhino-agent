@@ -4,7 +4,6 @@
  * RESOURCES
  */
 using Microsoft.AspNetCore.Http;
-using Microsoft.TeamFoundation.Build.WebApi;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
