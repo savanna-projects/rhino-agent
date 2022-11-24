@@ -54,7 +54,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
 
         public Task StartConnection()
         {
-
+            return Task.Delay(1);
         }
 
         /// <summary>

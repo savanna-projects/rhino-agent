@@ -25,12 +25,12 @@ using Rhino.Controllers.Controllers;
 using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Automation;
 using Rhino.Controllers.Domain.Data;
+using Rhino.Controllers.Domain.Formatters;
 using Rhino.Controllers.Domain.Integration;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Domain.Orchestrator;
 using Rhino.Controllers.Extensions;
-using Rhino.Controllers.Formatters;
 using Rhino.Controllers.Hubs;
 using Rhino.Controllers.Models;
 

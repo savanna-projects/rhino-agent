@@ -10,7 +10,7 @@ using Rhino.Controllers.Extensions;
 using System.Net.Mime;
 using System.Threading.Tasks;
 
-namespace Rhino.Controllers.Formatters
+namespace Rhino.Controllers.Domain.Formatters
 {
     /// <summary>
     /// Formatter to read text/plain from micro-service signature

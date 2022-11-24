@@ -1,4 +1,4 @@
-﻿/*
+/*
  * CHANGE LOG - keep only last 5 threads
  * 
  * RESSOURCES
@@ -30,13 +30,11 @@ using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Domain.Orchestrator;
 using Rhino.Controllers.Extensions;
-using Rhino.Controllers.Hubs;
 using Rhino.Controllers.Models;
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -53,6 +51,7 @@ builder.WebHost.UseUrls();
 #region *** Service       ***
 // application
 builder.Services.AddRouting(i => i.LowercaseUrls = true);
+builder.Services.AddRazorPages();
 
 // formats & serialization
 builder.Services
@@ -151,8 +150,6 @@ else
 
 // setup
 var logsPath = app.Configuration.GetValue("Rhino:ReportConfiguration:LogsOut", Environment.CurrentDirectory);
-var reportsPath = ControllerUtilities.GetStaticReportsFolder(configuration: app.Configuration);
-var statusPath = Path.Combine(Environment.CurrentDirectory, "Pages", "Status");
 
 // build
 app.ConfigureExceptionHandler(new TraceLogger("RhinoApi", "ExceptionHandler", logsPath));
@@ -168,13 +165,9 @@ app.UseSwaggerUI(i =>
     i.EnableTryItOutByDefault();
 });
 app.UseRouting();
-app.UseStaticFiles();
-app.UseStaticFiles(reportsPath, route: "/reports");
-app.UseStaticFiles(statusPath, route: "/status");
 
 app.MapDefaultControllerRoute();
 app.MapControllers();
-app.MapHub<RhinoHub>($"/api/v{AppSettings.ApiVersion}/rhino/orchestrator");
 #endregion
 
 // log

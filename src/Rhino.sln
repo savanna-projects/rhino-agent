@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{F05815
 		Agent.Dockerfile = Agent.Dockerfile
 		..\docker\DockerComposeLinux.yml = ..\docker\DockerComposeLinux.yml
 		..\docker\DockerComposeWindows.yml = ..\docker\DockerComposeWindows.yml
+		Worker.Dockerfile = Worker.Dockerfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers", "Rhino.Controllers\Rhino.Controllers.csproj", "{6DC68289-26F0-45C0-825B-21D6103FBC97}"
@@ -96,6 +97,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{848E
 		..\scripts\deploy.wsl.ps1 = ..\scripts\deploy.wsl.ps1
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhino.Worker", "Rhino.Worker\Rhino.Worker.csproj", "{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,6 +129,10 @@ Global
 		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC7ADECB-3E17-4EDF-A01F-2DABB3D22C11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
