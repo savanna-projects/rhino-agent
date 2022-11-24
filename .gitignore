@@ -349,6 +349,7 @@ MigrationBackup/
 .ionide/
 
 # Rhino specifics
+*.zip
 Data.dll
 Data-*.dll
 Outputs/

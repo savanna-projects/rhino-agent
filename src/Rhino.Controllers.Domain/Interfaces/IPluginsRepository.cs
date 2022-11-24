@@ -13,6 +13,6 @@ namespace Rhino.Controllers.Domain.Interfaces
     {
         string Add(IEnumerable<string> entity, bool isPrivate);
         Task<(int StatusCode, string Message)> SubmitAsync(PackageUploadModel uploadModel);
-        (int StatusCode, FileStream Stream) ExportPlugins();
+        (int StatusCode, Stream Stream) ExportPlugins();
     }
 }

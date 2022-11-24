@@ -1,4 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿/*
+ * CHANGE LOG - keep only last 5 threads
+ * 
+ * RESSOURCES
+ */
+using Microsoft.Extensions.Configuration;
 
 using Rhino.Api.Reporter.Internal;
 

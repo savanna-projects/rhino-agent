@@ -41,6 +41,7 @@ namespace Rhino.Controllers.Domain.Extensions
             // validate settable GUID id
             var isGuid = typeof(T).GetProperty("Id").PropertyType == typeof(Guid);
             var isSettable = isGuid && typeof(T).GetProperty("Id").SetMethod != null;
+            var guid = isGuid ? (Guid)typeof(T).GetProperty("Id").GetValue(entity) : Guid.NewGuid();
 
             if (!isSettable)
             {
@@ -49,7 +50,10 @@ namespace Rhino.Controllers.Domain.Extensions
             }
 
             // build
-            var entityModel = new RhinoEntityModel();
+            var entityModel = new RhinoEntityModel
+            {
+                Id = guid
+            };
 
             // insert
             collection.Insert(entityModel);

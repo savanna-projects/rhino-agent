@@ -6,35 +6,50 @@
 using Gravity.Abstraction.Cli;
 
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.TeamFoundation.TestManagement.WebApi;
+using Microsoft.VisualStudio.Services.Directories;
+
+using Rhino.Controllers.Domain.Interfaces;
+using Rhino.Controllers.Models;
 
 using System.Diagnostics;
+using System.IO.Compression;
+using System.Text.Json;
 
 namespace Rhino.Controllers.Domain.Orchestrator
 {
     public class WorkerRepository
     {
+        // members: static
+        private readonly static JsonSerializerOptions s_jsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         // members
         private readonly AppSettings _appSettings;
+        private readonly IDomain _domain;
         private readonly (string HubEndpoint, string HubAddress) _endpoints;
 
         /// <summary>
         /// Initialize a new instance of WorkerRepository class.
         /// </summary>
-        /// <param name="appSettings">The application settings to use with the repository.</param>
-        public WorkerRepository(AppSettings appSettings)
-            :this(appSettings, string.Empty)
+        /// <param name="domain">The application domain to use with the repository.</param>
+        public WorkerRepository(IDomain domain)
+            :this(domain, string.Empty)
         { }
 
         /// <summary>
         /// Initialize a new instance of WorkerRepository class.
         /// </summary>
-        /// <param name="appSettings">The application settings to use with the repository.</param>
+        /// <param name="domain">The application domain to use with the repository.</param>
         /// <param name="cli">A command line integration phrase to use with the repository.</param>
-        public WorkerRepository(AppSettings appSettings, string cli)
+        public WorkerRepository(IDomain domain, string cli)
         {
             // setup
-            _appSettings = appSettings;
-            _endpoints = GetHubEndpoints(cli, appSettings);
+            _appSettings = domain.AppSettings;
+            _endpoints = GetHubEndpoints(cli, domain.AppSettings);
+            _domain = domain;
 
             // setup connection
             Connection = new HubConnectionBuilder()
@@ -43,7 +58,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
             Connection.KeepAliveInterval = TimeSpan.FromSeconds(5);
             Connection.Reconnected += (args) => Task.Run(() => Trace.TraceInformation($"Connect-Hub -Id {Connection?.ConnectionId} -Reconnect = InProgress"));
             Connection.Reconnecting += (args) => Task.Run(() => Trace.TraceInformation($"Connect-Hub -Id {Connection?.ConnectionId} = OK"));
-            Connection.Closed += (arg) => Task.Run(() => Trace.TraceInformation($"Close-HubConnection -Id {Connection?.ConnectionId} = (Error | {arg.Message})"));
+            Connection.Closed += (arg) => Task.Run(() => Trace.TraceInformation($"Close-HubConnection -Id {Connection?.ConnectionId} = (Error | {arg?.Message})"));
             Connection.StartAsync();
         }
 
@@ -52,9 +67,121 @@ namespace Rhino.Controllers.Domain.Orchestrator
         /// </summary>
         public HubConnection Connection { get; }
 
-        public Task StartConnection()
+        /// <summary>
+        /// Sync all dynamic data from the connected hub (equivalent to packages restore).
+        /// </summary>
+        /// <remarks>Sync will first clean all existing data and will override it.</remarks>
+        public async Task SyncDataAsync()
         {
-            return Task.Delay(1);
+            // setup
+            var requestUri = $"{_endpoints.HubAddress}/api/v{_appSettings.Worker.HubApiVersion}";
+            var client = new HttpClient();
+
+            // sync data
+            await SyncPluginsAsync(client, requestUri);
+            await SyncModelsAsync(_domain, client, requestUri);
+            await SyncEnvironmentAsync(_domain, client, requestUri);
+        }
+
+        private static async Task SyncPluginsAsync(HttpClient client, string requestUri)
+        {
+            // constants
+            const string FileName = "Plugins.zip";
+            const string DirectoryName = "Plugins";
+
+            // setup
+            var pluginsPath = Path.Combine(Environment.CurrentDirectory, DirectoryName);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{requestUri}/plugins/export");
+
+            // invoke
+            var response = await client.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                Trace.TraceWarning($"Sync-Plugins -Url {requestUri} = {response.StatusCode}");
+                return;
+            }
+
+            // extract
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+
+            // create plugins
+            await File.WriteAllBytesAsync(FileName, bytes);
+            if (Directory.Exists(pluginsPath))
+            {
+                Directory.Delete(pluginsPath, true);
+            }
+            Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, DirectoryName));
+            ZipFile.ExtractToDirectory(FileName, Path.Combine(Environment.CurrentDirectory, DirectoryName), true);
+
+            // cleanup
+            File.Delete("Plugins.zip");
+        }
+
+        private static async Task SyncModelsAsync(IDomain domain, HttpClient client, string requestUri)
+        {
+            // cleanup
+            domain.Models.Delete();
+
+            // setup
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{requestUri}/models");
+
+            // invoke
+            var response = await client.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                Trace.TraceWarning($"Sync-Models -Url {requestUri} = {response.StatusCode}");
+                return;
+            }
+
+            // build
+            var jsonData = await response.Content.ReadAsStringAsync();
+            var models = JsonSerializer
+                .Deserialize<IEnumerable<ModelCollectionResponseModel>>(jsonData, s_jsonOptions)
+                .Select(i => i.Id);
+
+            // iterate
+            foreach (var id in models)
+            {
+                request = new HttpRequestMessage(HttpMethod.Get, $"{requestUri}/models/{id}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    Trace.TraceWarning($"Sync-Model -Url {requestUri} -Id {id} = {response.StatusCode}");
+                    continue;
+                }
+                response = await client.SendAsync(request);
+                jsonData = await response.Content.ReadAsStringAsync();
+                
+                var model = JsonSerializer.Deserialize<RhinoModelCollection>(jsonData, s_jsonOptions);
+                domain.Models.Add(model);
+                Trace.TraceInformation($"Sync-Model -Url {requestUri} -Id {id} = OK");
+            }
+        }
+
+        private static async Task SyncEnvironmentAsync(IDomain domain, HttpClient client, string requestUri)
+        {
+            // cleanup
+            domain.Environments.Delete();
+
+            // setup
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{requestUri}/environment");
+
+            // invoke
+            var response = await client.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                Trace.TraceWarning($"Sync-Environment -Url {requestUri} = {response.StatusCode}");
+                return;
+            }
+
+            // build
+            var jsonData = await response.Content.ReadAsStringAsync();
+            var environment = JsonSerializer.Deserialize<IDictionary<string, object>>(jsonData, s_jsonOptions);
+
+            // iterate
+            foreach (var item in environment)
+            {
+                domain.Environments.Add(item);
+            }
         }
 
         /// <summary>

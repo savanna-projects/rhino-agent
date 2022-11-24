@@ -3,7 +3,6 @@
  * 
  * RESSOURCES
  */
-using Gravity.Abstraction.Cli;
 using Gravity.Abstraction.Logging;
 using Gravity.Services.Comet;
 using Gravity.Services.DataContracts;
@@ -170,11 +169,16 @@ app.MapDefaultControllerRoute();
 app.MapControllers();
 #endregion
 
-// log
+// sync from hub
 using (var scope = app.Services.CreateScope())
 {
+    var domain = scope.ServiceProvider.GetRequiredService<IDomain>();
+    var cli = "{{$ " + string.Join(" ", args) + "}}";
+    var repository = new WorkerRepository(domain, cli);
+    repository.SyncDataAsync().GetAwaiter().GetResult();
+
     var logger = scope.ServiceProvider.GetRequiredService<ILogger>();
-    logger?.Info("Create-ServiceApplication = OK");
+    logger?.Info("Sync-Worker = OK");
 }
 
 // invoke

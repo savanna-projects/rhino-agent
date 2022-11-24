@@ -359,10 +359,11 @@ namespace Rhino.Controllers.Domain.Automation
         /// Exports the entire `Plugins` folder as a ZIP archive.
         /// </summary>
         /// <returns>File stream result</returns>
-        public (int StatusCode, FileStream Stream) ExportPlugins()
+        public (int StatusCode, Stream Stream) ExportPlugins()
         {
             // constants
-            const string FileName = "Plugins.zip";
+            var fileName = $"{Guid.NewGuid()}.zip";
+            var tempFolder = Path.GetTempPath();
 
             try
             {
@@ -375,18 +376,30 @@ namespace Rhino.Controllers.Domain.Automation
                     return (StatusCodes.Status404NotFound, default);
                 }
 
-                // build
-                var filePath = Path.Combine(Environment.CurrentDirectory, FileName);
-                ZipFile.CreateFromDirectory(pluginsDirectory, FileName, CompressionLevel.Optimal, false);
-                Thread.Sleep(1000);
-                var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                // create archive
+                var filePath = Path.Combine(tempFolder, fileName);
+                ZipFile.CreateFromDirectory(pluginsDirectory, filePath, CompressionLevel.Optimal, false);
+
+                // read into stream
+                var bytes = File.ReadAllBytes(filePath);
+                var memoryStream = new MemoryStream(bytes);
+
+                // clean
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception e) when(e!=null)
+                {
+                    _logger.Warn(e.GetBaseException().Message);
+                }
 
                 // get
-                return (StatusCodes.Status200OK, stream);
+                return (StatusCodes.Status200OK, memoryStream);
             }
             catch (Exception e) when (e != null)
             {
-                _logger.Error(e.Message, e);
+                _logger.Error(e.GetBaseException().Message, e);
                 return (StatusCodes.Status500InternalServerError, default);
             }
         }

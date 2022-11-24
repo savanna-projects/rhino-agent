@@ -151,10 +151,7 @@ namespace Rhino.Controllers.Controllers
             }
 
             // get
-            return new FileStreamResult(stream, MediaTypeNames.Application.Octet)
-            {
-                FileDownloadName = "Plugins.zip"
-            };
+            return File(stream, MediaTypeNames.Application.Octet, "Plugins.zip");
         }
         #endregion
 
