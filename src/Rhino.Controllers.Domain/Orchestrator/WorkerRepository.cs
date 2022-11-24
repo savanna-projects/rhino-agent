@@ -1,39 +1,88 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Configuration;
-
+﻿/*
+ * CHANGE LOG - keep only last 5 threads
+ * 
+ * RESSOURCES
+ */
 using Gravity.Abstraction.Cli;
+
+using Microsoft.AspNetCore.SignalR.Client;
+
+using System.Diagnostics;
 
 namespace Rhino.Controllers.Domain.Orchestrator
 {
     public class WorkerRepository
     {
+        // members
         private readonly AppSettings _appSettings;
+        private readonly (string HubEndpoint, string HubAddress) _endpoints;
 
+        /// <summary>
+        /// Initialize a new instance of WorkerRepository class.
+        /// </summary>
+        /// <param name="appSettings">The application settings to use with the repository.</param>
         public WorkerRepository(AppSettings appSettings)
-        {
-            _appSettings = appSettings;
-        }
+            :this(appSettings, string.Empty)
+        { }
 
-        public void StartConnection()
+        /// <summary>
+        /// Initialize a new instance of WorkerRepository class.
+        /// </summary>
+        /// <param name="appSettings">The application settings to use with the repository.</param>
+        /// <param name="cli">A command line integration phrase to use with the repository.</param>
+        public WorkerRepository(AppSettings appSettings, string cli)
         {
             // setup
-            var url = $"{_appSettings.Worker.HubAddress}/api/v{_appSettings.Worker.HubApiVersion}/rhino/orchestrator";
-            var connection = new HubConnectionBuilder()
-                .WithUrl(url)
+            _appSettings = appSettings;
+            _endpoints = GetHubEndpoints(cli, appSettings);
+
+            // setup connection
+            Connection = new HubConnectionBuilder()
+                .WithUrl(_endpoints.HubEndpoint)
                 .Build();
+            Connection.KeepAliveInterval = TimeSpan.FromSeconds(5);
+            Connection.Reconnected += (args) => Task.Run(() => Trace.TraceInformation($"Connect-Hub -Id {Connection?.ConnectionId} -Reconnect = InProgress"));
+            Connection.Reconnecting += (args) => Task.Run(() => Trace.TraceInformation($"Connect-Hub -Id {Connection?.ConnectionId} = OK"));
+            Connection.Closed += (arg) => Task.Run(() => Trace.TraceInformation($"Close-HubConnection -Id {Connection?.ConnectionId} = (Error | {arg.Message})"));
+            Connection.StartAsync();
+        }
+
+        /// <summary>
+        /// Gets the underline HubConnection object.
+        /// </summary>
+        public HubConnection Connection { get; }
+
+        public Task StartConnection()
+        {
+
         }
 
         /// <summary>
         /// Try to get the endpoint for Rhino Hub based on configuration and/or command-line arguments.
         /// </summary>
-        /// <param name="configuration">The configuration implementation to use.</param>
+        /// <param name="appSettings">The configuration implementation to use.</param>
+        /// <returns>Rhino Hub endpoint information.</returns>
+        public static (string HubEndpoint, string HubAddress) GetHubEndpoints(AppSettings appSettings)
+        {
+            return GetHubEndpoints(cli: string.Empty, appSettings);
+        }
+
+        /// <summary>
+        /// Try to get the endpoint for Rhino Hub based on configuration and/or command-line arguments.
+        /// </summary>
+        /// <param name="appSettings">The configuration implementation to use.</param>
         /// <param name="cli">The command line arguments to use.</param>
-        /// <returns>Rhino Hub endpoint</returns>
-        public static (string HubEndpoint, string HubAddress) GetHubEndpoint(IConfiguration configuration, string cli)
+        /// <returns>Rhino Hub endpoint information.</returns>
+        public static (string HubEndpoint, string HubAddress) GetHubEndpoints(AppSettings appSettings, string cli)
+        {
+            return GetHubEndpoints(cli, appSettings);
+        }
+
+        private static (string HubEndpoint, string HubAddress) GetHubEndpoints(string cli, AppSettings appSettings)
         {
             // extract values
-            var hubAddress = configuration.GetValue<string>("Rhino:WrokerConfiguration:HubAddress");
-            var hubVersion = configuration.GetValue<int>("Rhino:WrokerConfiguration:HubApiVersion");
+            var hubAddress = appSettings.Worker.HubAddress;
+            var hubVersion = appSettings.Worker.HubApiVersion;
 
             // normalize
             hubAddress = string.IsNullOrEmpty(hubAddress) ? "http://localhost:9000" : hubAddress;

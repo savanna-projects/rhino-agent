@@ -23,6 +23,8 @@ namespace Rhino.Controllers.Domain
             configuration.GetSection("Rhino:WorkerConfiguration").Bind(Worker);
         }
 
+        public static int ApiVersion => 3;
+
         public IConfiguration Configuration { get; }
 
         public HubConfiguration Hub { get; }

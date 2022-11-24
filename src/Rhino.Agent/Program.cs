@@ -3,7 +3,6 @@
  * 
  * RESSOURCES
  */
-using Gravity.Abstraction.Cli;
 using Gravity.Abstraction.Logging;
 using Gravity.Services.Comet;
 using Gravity.Services.DataContracts;
@@ -46,9 +45,7 @@ using ILogger = Gravity.Abstraction.Logging.ILogger;
 
 // Setup
 ControllerUtilities.RenderLogo();
-const int Version = 3;
 var builder = WebApplication.CreateBuilder(args);
-var arguments = new CliFactory("{{$ " + string.Join(' ', args) + "}}").Parse();
 
 #region *** Url & Kestrel ***
 builder.WebHost.UseUrls();
@@ -116,7 +113,6 @@ builder.Services.AddSingleton(new ConcurrentQueue<WebAutomation>());
 builder.Services.AddSingleton(new ConcurrentQueue<RhinoTestRun>());
 builder.Services.AddSingleton(typeof(AppSettings));
 builder.Services.AddSingleton(typeof(IDictionary<string, RhinoTestRun>), new ConcurrentDictionary<string, RhinoTestRun>());
-builder.Services.AddTransient<IHubRepository, HubRepository>();
 
 // utilities
 builder.Services.AddTransient(typeof(ILogger), (_) => ControllerUtilities.GetLogger(builder.Configuration));
@@ -137,6 +133,7 @@ builder.Services.AddTransient<IRhinoAsyncRepository, RhinoRepository>();
 builder.Services.AddTransient<IRhinoRepository, RhinoRepository>();
 builder.Services.AddTransient<IMetaDataRepository, MetaDataRepository>();
 builder.Services.AddTransient<ITestsRepository, TestsRepository>();
+builder.Services.AddTransient<IHubRepository, HubRepository>();
 builder.Services.AddTransient<IDomain, RhinoDomain>();
 #endregion
 
@@ -183,7 +180,7 @@ app.MapDefaultControllerRoute();
 app.MapFallbackToFile("index.html");
 app.MapRazorPages();
 app.MapControllers();
-app.MapHub<RhinoHub>($"/api/v{Version}/rhino/orchestrator");
+app.MapHub<RhinoHub>($"/api/v{AppSettings.ApiVersion}/rhino/orchestrator");
 #endregion
 
 #region *** Program       ***
