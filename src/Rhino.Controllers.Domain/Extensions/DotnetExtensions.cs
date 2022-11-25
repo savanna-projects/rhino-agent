@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Rhino.Controllers.Domain.Extensions
 {
-    internal static class CsharpExtensions
+    internal static class DotnetExtensions
     {
         /// <summary>
         /// Converts an object to a DataTable based on the object public properties.

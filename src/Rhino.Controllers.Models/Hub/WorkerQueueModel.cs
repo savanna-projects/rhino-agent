@@ -17,6 +17,18 @@ namespace Rhino.Controllers.Models
         public string ConnectionId { get; set; }
 
         [DataMember]
+        public DateTime Created { get; set; }
+
+        [DataMember]
+        public string GroupName { get; set; }
+
+        [DataMember]
+        public DateTime LastHeartbeat { get; set; }
+
+        [DataMember]
         public int Port { get; set; }
+
+        [DataMember]
+        public TimeSpan UpTime => DateTime.Now.Subtract(Created);
     }
 }

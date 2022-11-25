@@ -70,10 +70,12 @@ RUN dotnet publish "Rhino.Worker.csproj" -c Release -o /app/publish
 #│ 
 #│ Setup Rhino.Api entry point. 
 #└──────────────────────────────────────────
+ENV HUB_URL=http://localhost:9000
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Rhino.Worker.dll"] 
+ENTRYPOINT ["dotnet", "Rhino.Worker.dll"]
+CMD ["--hubUrl:${HUB_URL}"]
 
 #┌─[ Setup: Arguments & Environment ]───────
 #│ 

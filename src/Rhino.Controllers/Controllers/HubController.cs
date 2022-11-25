@@ -13,6 +13,7 @@ using Rhino.Controllers.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 
+using System.Collections.Generic;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -195,6 +196,36 @@ namespace Rhino.Controllers.Controllers
             if (statusCode == StatusCodes.Status500InternalServerError)
             {
                 var notFound = $"Get-Completed -Type 'Rhino' -All = InternalServerError";
+                return await this
+                    .ErrorResultAsync<string>(notFound, StatusCodes.Status500InternalServerError)
+                    .ConfigureAwait(false);
+            }
+
+            // get
+            return new ContentResult
+            {
+                Content = JsonSerializer.Serialize(entities, s_jsonOptions),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = statusCode
+            };
+        }
+
+        [HttpGet, Route("workers")]
+        [SwaggerOperation(
+            Summary = "Get-Workers -All",
+            Description = "Gets the collection of `WorkerQueueModel` objects from the `Workers` list.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IDictionary<string, WorkerQueueModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetWorkers()
+        {
+            // setup
+            var (statusCode, entities) = _domain.Hub.GetWorkers();
+
+            // internal server error
+            if (statusCode == StatusCodes.Status500InternalServerError)
+            {
+                var notFound = $"Get-Workers -Type 'Rhino' -All = InternalServerError";
                 return await this
                     .ErrorResultAsync<string>(notFound, StatusCodes.Status500InternalServerError)
                     .ConfigureAwait(false);

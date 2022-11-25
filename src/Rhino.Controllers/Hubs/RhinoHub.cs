@@ -5,14 +5,17 @@
  */
 using Gravity.Abstraction.Logging;
 
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
 
 using Rhino.Api.Contracts.AutomationProvider;
+using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Hubs
@@ -21,15 +24,18 @@ namespace Rhino.Controllers.Hubs
     {
         // members: injection
         private readonly ConcurrentQueue<TestCaseQueueModel> _rhinoPending;
+        private readonly IDictionary<string, WorkerQueueModel> _workers;
         private readonly IDictionary<string, TestCaseQueueModel> _rhinoRunning;
         private readonly ILogger _logger;
 
         public RhinoHub(
             ConcurrentQueue<TestCaseQueueModel> rhinoPending,
+            IDictionary<string, WorkerQueueModel> workers,
             IDictionary<string, TestCaseQueueModel> rhinoRunning,
             ILogger logger)
         {
             _rhinoPending = rhinoPending;
+            _workers = workers;
             _rhinoRunning = rhinoRunning;
             _logger = logger;
         }
@@ -63,10 +69,7 @@ namespace Rhino.Controllers.Hubs
             }
 
             // setup
-            var feature = Context.Features.Get<IHttpConnectionFeature>();
-            var remoteAddress = $"{feature?.RemoteIpAddress}";
-            var ip = $"{(remoteAddress.Equals("::1") ? "localhost" : remoteAddress)}";
-            var port = feature == default ? 0 : feature.RemotePort;
+            var (ip, port) = Context.GetAddress();
 
             // build
             item.Worker ??= new WorkerQueueModel();
@@ -136,10 +139,50 @@ namespace Rhino.Controllers.Hubs
             _rhinoPending.Enqueue(entity);
         }
 
+        // Events
         public override async Task OnConnectedAsync()
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, "SignalR Users");
+            // setup
+            var (address, port) = Context.GetAddress();
+            var id = Context.ConnectionId;
+            var model = new WorkerQueueModel
+            {
+                Address = address,
+                ConnectionId = id,
+                Created = DateTime.Now,
+                GroupName = "RhinoWorkers",
+                LastHeartbeat = DateTime.Now,
+                Port = port
+            };
+
+            // invoke
+            _workers[id] = model;
+            await Groups.AddToGroupAsync(id, "RhinoWorkers");
+
+            // log
+            Trace.TraceInformation($"Add-Worker -Connection {id} -Address {address} -Port {port} = OK");
+
+            // base
             await base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            // setup
+            var id = Context.ConnectionId;
+
+            // invoke
+            await Groups.RemoveFromGroupAsync(id, "RhinoWorkers");
+            if (_workers.ContainsKey(id))
+            {
+                _workers.Remove(id);
+            }
+
+            // log
+            Trace.TraceInformation($"Remove-Worker -Connection {id} = OK");
+
+            // base
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }

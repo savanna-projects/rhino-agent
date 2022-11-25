@@ -44,6 +44,7 @@ using ILogger = Gravity.Abstraction.Logging.ILogger;
 
 // Setup
 ControllerUtilities.RenderLogo();
+var comparer = StringComparer.OrdinalIgnoreCase;
 var builder = WebApplication.CreateBuilder(args);
 
 #region *** Url & Kestrel ***
@@ -103,13 +104,14 @@ builder.Services.AddSignalR((o) =>
 
 #region *** Dependencies  ***
 // hub
-builder.Services.AddSingleton(typeof(IDictionary<string, TestCaseQueueModel>), new ConcurrentDictionary<string, TestCaseQueueModel>());
+builder.Services.AddSingleton(typeof(IDictionary<string, TestCaseQueueModel>), new ConcurrentDictionary<string, TestCaseQueueModel>(comparer));
 builder.Services.AddSingleton(new ConcurrentQueue<TestCaseQueueModel>());
-builder.Services.AddSingleton(typeof(IDictionary<string, WebAutomation>), new ConcurrentDictionary<string, WebAutomation>());
+builder.Services.AddSingleton(typeof(IDictionary<string, WebAutomation>), new ConcurrentDictionary<string, WebAutomation>(comparer));
 builder.Services.AddSingleton(new ConcurrentQueue<WebAutomation>());
 builder.Services.AddSingleton(new ConcurrentQueue<RhinoTestRun>());
 builder.Services.AddSingleton(typeof(AppSettings));
-builder.Services.AddSingleton(typeof(IDictionary<string, RhinoTestRun>), new ConcurrentDictionary<string, RhinoTestRun>());
+builder.Services.AddSingleton(typeof(IDictionary<string, RhinoTestRun>), new ConcurrentDictionary<string, RhinoTestRun>(comparer));
+builder.Services.AddSingleton(typeof(IDictionary<string, WorkerQueueModel>), new ConcurrentDictionary<string, WorkerQueueModel>(comparer));
 builder.Services.AddTransient<IHubRepository, HubRepository>();
 
 // utilities

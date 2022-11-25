@@ -11,6 +11,7 @@ namespace Rhino.Controllers.Domain.Interfaces
         (int StatusCode, RunStatusModel Entity) GetStatus(string id);
         (int StatusCode, IEnumerable<string> Entities) GetCompleted();
         (int StatusCode, RhinoTestRun Entity) GetCompleted(string id);
+        (int StatusCode, IDictionary<string, WorkerQueueModel> Entities) GetWorkers();
         void Reset();
     }
 }

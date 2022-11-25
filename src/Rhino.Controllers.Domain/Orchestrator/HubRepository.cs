@@ -29,6 +29,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
         private readonly ConcurrentQueue<TestCaseQueueModel> _pending;
         private readonly IDictionary<string, TestCaseQueueModel> _running;
         private readonly IDictionary<string, RhinoTestRun> _testRuns;
+        private readonly IDictionary<string, WorkerQueueModel> _workers;
 
         /// <summary>
         /// Initialize a new instance of HubRepository object.
@@ -40,13 +41,15 @@ namespace Rhino.Controllers.Domain.Orchestrator
             ConcurrentQueue<RhinoTestRun> completed,
             ConcurrentQueue<TestCaseQueueModel> pending,
             IDictionary<string, TestCaseQueueModel> running,
-            IDictionary<string, RhinoTestRun> testRuns)
+            IDictionary<string, RhinoTestRun> testRuns,
+            IDictionary<string, WorkerQueueModel> workers)
         {
             _appSettings = appSettings;
             _completed = completed;
             _pending = pending;
             _running = running;
             _testRuns = testRuns;
+            _workers = workers;
         }
 
         /// <summary>
@@ -249,6 +252,15 @@ namespace Rhino.Controllers.Domain.Orchestrator
             return test == default
                 ? (StatusCodes.Status404NotFound, default)
                 : (StatusCodes.Status200OK, test);
+        }
+
+        /// <summary>
+        /// Gets all connected workers.
+        /// </summary>
+        /// <returns>A collection of connected workers.</returns>
+        public (int StatusCode, IDictionary<string, WorkerQueueModel> Entities) GetWorkers()
+        {
+            return (StatusCodes.Status200OK, _workers);
         }
 
         /// <summary>
