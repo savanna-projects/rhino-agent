@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Rhino.Api.Contracts;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -26,7 +27,7 @@ using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {
-    [ApiVersion("3.0")]
+    [ApiVersion($"{AppSettings.ApiVersion}.0")]
     [Route("api/v{version:apiVersion}/rhino/async")]
     [ApiController]
     public class RhinoAsyncController : ControllerBase

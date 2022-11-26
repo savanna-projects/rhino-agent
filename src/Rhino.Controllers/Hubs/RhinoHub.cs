@@ -15,7 +15,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Hubs
@@ -151,7 +150,6 @@ namespace Rhino.Controllers.Hubs
                 ConnectionId = id,
                 Created = DateTime.Now,
                 GroupName = "RhinoWorkers",
-                LastHeartbeat = DateTime.Now,
                 Port = port
             };
 

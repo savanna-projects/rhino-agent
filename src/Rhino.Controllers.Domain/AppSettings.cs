@@ -14,6 +14,8 @@ namespace Rhino.Controllers.Domain
 {
     public class AppSettings
     {
+        public const string ApiVersion = "3";
+
         public AppSettings(IConfiguration configuration)
         {
             // setup
@@ -27,8 +29,6 @@ namespace Rhino.Controllers.Domain
             configuration.GetSection("Rhino:ReportConfiguration").Bind(ReportsAndLogs);
             configuration.GetSection("Rhino:WorkerConfiguration").Bind(Worker);
         }
-
-        public static int ApiVersion => 3;
 
         public IConfiguration Configuration { get; }
 

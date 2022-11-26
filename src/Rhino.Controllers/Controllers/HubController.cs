@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -20,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace Rhino.Controllers.Controllers
 {
-    [ApiVersion("3.0")]
+    [ApiVersion($"{AppSettings.ApiVersion}.0")]
     [Route("api/v{version:apiVersion}/rhino/[controller]")]
     [ApiController]
     public class HubController : ControllerBase

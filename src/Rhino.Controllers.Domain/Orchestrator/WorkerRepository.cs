@@ -6,8 +6,6 @@
 using Gravity.Abstraction.Cli;
 
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.TeamFoundation.TestManagement.WebApi;
-using Microsoft.VisualStudio.Services.Directories;
 
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
@@ -25,11 +23,20 @@ namespace Rhino.Controllers.Domain.Orchestrator
         {
             PropertyNameCaseInsensitive = true
         };
+        private readonly static SemaphoreSlim _semaphore = new(1, 1);
 
         // members
         private readonly AppSettings _appSettings;
         private readonly IDomain _domain;
         private readonly (string HubEndpoint, string HubAddress) _endpoints;
+
+        /// <summary>
+        /// Initialize all static members.
+        /// </summary>
+        static WorkerRepository()
+        {
+            _semaphore.Release();
+        }
 
         /// <summary>
         /// Initialize a new instance of WorkerRepository class.
@@ -231,6 +238,15 @@ namespace Rhino.Controllers.Domain.Orchestrator
 
             // get
             return ($"{hubAddress}/api/v{hubVersion}/rhino/orchestrator", hubAddress);
+        }
+
+        public void StartConnection()
+        {
+            var address = _appSettings.Worker.HubAddress;
+            var version = _appSettings.Worker.HubApiVersion;
+            var connection = new HubConnectionBuilder()
+                .WithUrl($"address/api/v{version}/rhino/orchestrator")
+                .Build();
         }
     }
 }

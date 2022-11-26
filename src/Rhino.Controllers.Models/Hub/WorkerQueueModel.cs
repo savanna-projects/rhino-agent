@@ -23,9 +23,6 @@ namespace Rhino.Controllers.Models
         public string GroupName { get; set; }
 
         [DataMember]
-        public DateTime LastHeartbeat { get; set; }
-
-        [DataMember]
         public int Port { get; set; }
 
         [DataMember]
