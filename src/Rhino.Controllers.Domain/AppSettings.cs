@@ -69,7 +69,7 @@ namespace Rhino.Controllers.Domain
         public class WorkerConfiguration
         {
             public string HubAddress { get; set; }
-            public int HubApiVersion { get; set; }
+            public string HubApiVersion { get; set; }
         }
 
         /// <summary>
