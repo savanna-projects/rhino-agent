@@ -5,12 +5,10 @@
  */
 using Microsoft.Extensions.Configuration;
 
-using Rhino.Api.Reporter.Internal;
-
 using System.Net;
 using System.Net.Sockets;
 
-namespace Rhino.Controllers.Domain
+namespace Rhino.Controllers.Models
 {
     public class AppSettings
     {
@@ -70,6 +68,8 @@ namespace Rhino.Controllers.Domain
         {
             public string HubAddress { get; set; }
             public string HubApiVersion { get; set; }
+            public int MaxParallel { get; set; }
+            public double ConnectionTimeout { get; set; }
         }
 
         /// <summary>

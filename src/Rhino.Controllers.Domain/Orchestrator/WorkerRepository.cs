@@ -3,47 +3,40 @@
  * 
  * RESSOURCES
  */
-using Gravity.Abstraction.Cli;
-
 using Microsoft.AspNetCore.SignalR.Client;
 
+using Rhino.Api.Contracts.AutomationProvider;
+using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Domain.Interfaces;
+using Rhino.Controllers.Domain.Middleware;
+using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Net.Http;
 using System.Text.Json;
 
 namespace Rhino.Controllers.Domain.Orchestrator
 {
-    public class WorkerRepository
+    public class WorkerRepository : IWorkerRepository
     {
         // members: static
+        private static CancellationTokenSource s_tokenSource = new();
         private readonly static JsonSerializerOptions s_jsonOptions = new()
         {
             PropertyNameCaseInsensitive = true
         };
-        private readonly static SemaphoreSlim _semaphore = new(1, 1);
 
         // members
         private readonly AppSettings _appSettings;
-        private readonly IDomain _domain;
-        private readonly (string HubEndpoint, string HubAddress) _endpoints;
-
-        /// <summary>
-        /// Initialize all static members.
-        /// </summary>
-        static WorkerRepository()
-        {
-            _semaphore.Release();
-        }
 
         /// <summary>
         /// Initialize a new instance of WorkerRepository class.
         /// </summary>
         /// <param name="domain">The application domain to use with the repository.</param>
-        public WorkerRepository(IDomain domain)
-            :this(domain, string.Empty)
+        public WorkerRepository(AppSettings settings)
+            : this(settings, string.Empty)
         { }
 
         /// <summary>
@@ -51,22 +44,27 @@ namespace Rhino.Controllers.Domain.Orchestrator
         /// </summary>
         /// <param name="domain">The application domain to use with the repository.</param>
         /// <param name="cli">A command line integration phrase to use with the repository.</param>
-        public WorkerRepository(IDomain domain, string cli)
+        public WorkerRepository(AppSettings settings, string cli)
         {
             // setup
-            _appSettings = domain.AppSettings;
-            _endpoints = GetHubEndpoints(cli, domain.AppSettings);
-            _domain = domain;
+            _appSettings = settings;
+            var (hubEndpoint, _, _) = settings.GetHubEndpoints(cli);
 
             // setup connection
             Connection = new HubConnectionBuilder()
-                .WithUrl(_endpoints.HubEndpoint)
+                .WithUrl(hubEndpoint)
                 .Build();
+
             Connection.KeepAliveInterval = TimeSpan.FromSeconds(5);
-            Connection.Reconnected += (args) => Task.Run(() => Trace.TraceInformation($"Connect-Hub -Id {Connection?.ConnectionId} -Reconnect = InProgress"));
-            Connection.Reconnecting += (args) => Task.Run(() => Trace.TraceInformation($"Connect-Hub -Id {Connection?.ConnectionId} = OK"));
-            Connection.Closed += (arg) => Task.Run(() => Trace.TraceInformation($"Close-HubConnection -Id {Connection?.ConnectionId} = (Error | {arg?.Message})"));
-            Connection.StartAsync();
+            Connection.Reconnected += (args) => Reconnected(Connection, args);
+            Connection.Reconnecting += (e) => Reconnecting(Connection, e);
+            Connection.Closed += (e) => Closed(Connection, e);
+
+            Connection.On<string>("ping", OnPing);
+            Connection.On<RhinoConfiguration, RhinoTestCase, IDictionary<string, object>>("get", (configuration, testCase, context) =>
+            {
+                OnGet(Connection, configuration, testCase, context);
+            });
         }
 
         /// <summary>
@@ -74,23 +72,24 @@ namespace Rhino.Controllers.Domain.Orchestrator
         /// </summary>
         public HubConnection Connection { get; }
 
+        #region *** Worker Sync ***
         /// <summary>
         /// Sync all dynamic data from the connected hub (equivalent to packages restore).
         /// </summary>
         /// <remarks>Sync will first clean all existing data and will override it.</remarks>
-        public async Task SyncDataAsync()
+        public static async Task SyncDataAsync(
+            string baseUrl, IRepository<RhinoModelCollection> models, IEnvironmentRepository environment, TimeSpan timeout)
         {
             // setup
-            var requestUri = $"{_endpoints.HubAddress}/api/v{_appSettings.Worker.HubApiVersion}";
             var client = new HttpClient();
 
             // sync data
-            await SyncPluginsAsync(client, requestUri);
-            await SyncModelsAsync(_domain, client, requestUri);
-            await SyncEnvironmentAsync(_domain, client, requestUri);
+            await SyncPluginsAsync(client, baseUrl, timeout);
+            await SyncModelsAsync(domain: models, client, baseUrl, timeout);
+            await SyncEnvironmentAsync(domain: environment, client, baseUrl, timeout);
         }
 
-        private static async Task SyncPluginsAsync(HttpClient client, string requestUri)
+        private static async Task SyncPluginsAsync(HttpClient client, string baseUrl, TimeSpan timeout)
         {
             // constants
             const string FileName = "Plugins.zip";
@@ -98,13 +97,13 @@ namespace Rhino.Controllers.Domain.Orchestrator
 
             // setup
             var pluginsPath = Path.Combine(Environment.CurrentDirectory, DirectoryName);
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{requestUri}/plugins/export");
+            var requestUri = $"{baseUrl}/plugins/export";
 
             // invoke
-            var response = await client.SendAsync(request);
+            var response = await client.GetAsync(requestUri, timeout);
             if (!response.IsSuccessStatusCode)
             {
-                Trace.TraceWarning($"Sync-Plugins -Url {requestUri} = {response.StatusCode}");
+                Trace.TraceWarning($"Sync-Plugins -Url {baseUrl} = {response.StatusCode}");
                 return;
             }
 
@@ -124,19 +123,19 @@ namespace Rhino.Controllers.Domain.Orchestrator
             File.Delete("Plugins.zip");
         }
 
-        private static async Task SyncModelsAsync(IDomain domain, HttpClient client, string requestUri)
+        private static async Task SyncModelsAsync(IRepository<RhinoModelCollection> domain, HttpClient client, string baseUrl, TimeSpan timeout)
         {
             // cleanup
-            domain.Models.Delete();
+            domain.Delete();
 
             // setup
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{requestUri}/models");
+            var requestUri = $"{baseUrl}/models";
 
             // invoke
-            var response = await client.SendAsync(request);
+            var response = await client.GetAsync(requestUri, timeout);
             if (!response.IsSuccessStatusCode)
             {
-                Trace.TraceWarning($"Sync-Models -Url {requestUri} = {response.StatusCode}");
+                Trace.TraceWarning($"Sync-Models -Url {baseUrl} = {response.StatusCode}");
                 return;
             }
 
@@ -149,34 +148,34 @@ namespace Rhino.Controllers.Domain.Orchestrator
             // iterate
             foreach (var id in models)
             {
-                request = new HttpRequestMessage(HttpMethod.Get, $"{requestUri}/models/{id}");
+                requestUri = $"{baseUrl}/models/{id}";
                 if (!response.IsSuccessStatusCode)
                 {
-                    Trace.TraceWarning($"Sync-Model -Url {requestUri} -Id {id} = {response.StatusCode}");
+                    Trace.TraceWarning($"Sync-Model -Url {baseUrl} -Id {id} = {response.StatusCode}");
                     continue;
                 }
-                response = await client.SendAsync(request);
+                response = await client.GetAsync(requestUri, timeout);
                 jsonData = await response.Content.ReadAsStringAsync();
-                
+
                 var model = JsonSerializer.Deserialize<RhinoModelCollection>(jsonData, s_jsonOptions);
-                domain.Models.Add(model);
-                Trace.TraceInformation($"Sync-Model -Url {requestUri} -Id {id} = OK");
+                domain.Add(model);
+                Trace.TraceInformation($"Sync-Model -Url {baseUrl} -Id {id} = OK");
             }
         }
 
-        private static async Task SyncEnvironmentAsync(IDomain domain, HttpClient client, string requestUri)
+        private static async Task SyncEnvironmentAsync(IEnvironmentRepository domain, HttpClient client, string baseUrl, TimeSpan timeout)
         {
             // cleanup
-            domain.Environments.Delete();
+            domain.Delete();
 
             // setup
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{requestUri}/environment");
+            var requestUri = $"{baseUrl}/environment";
 
             // invoke
-            var response = await client.SendAsync(request);
+            var response = await client.GetAsync(requestUri, timeout);
             if (!response.IsSuccessStatusCode)
             {
-                Trace.TraceWarning($"Sync-Environment -Url {requestUri} = {response.StatusCode}");
+                Trace.TraceWarning($"Sync-Environment -Url {baseUrl} = {response.StatusCode}");
                 return;
             }
 
@@ -187,66 +186,124 @@ namespace Rhino.Controllers.Domain.Orchestrator
             // iterate
             foreach (var item in environment)
             {
-                domain.Environments.Add(item);
+                domain.Add(item);
             }
         }
+        #endregion
 
         /// <summary>
-        /// Try to get the endpoint for Rhino Hub based on configuration and/or command-line arguments.
+        /// Stops the worker listener from collection new test cases.
         /// </summary>
-        /// <param name="appSettings">The configuration implementation to use.</param>
-        /// <returns>Rhino Hub endpoint information.</returns>
-        public static (string HubEndpoint, string HubAddress) GetHubEndpoints(AppSettings appSettings)
-        {
-            return GetHubEndpoints(cli: string.Empty, appSettings);
-        }
+        /// <remarks>The running tests will complete.</remarks>
+        public void StopWorker() => s_tokenSource.Cancel();
 
         /// <summary>
-        /// Try to get the endpoint for Rhino Hub based on configuration and/or command-line arguments.
+        /// Restart the worker listener collection new test cases.
         /// </summary>
-        /// <param name="appSettings">The configuration implementation to use.</param>
-        /// <param name="cli">The command line arguments to use.</param>
-        /// <returns>Rhino Hub endpoint information.</returns>
-        public static (string HubEndpoint, string HubAddress) GetHubEndpoints(AppSettings appSettings, string cli)
+        /// <remarks>Use if stop request was sent and you wish to restart the worker.</remarks>
+        public void RestartWorker() => s_tokenSource = new();
+
+        /// <summary>
+        /// Starts the worker listener, collecting test cases from the hub.
+        /// </summary>
+        /// <remarks>This is a long running action and will block the application main thread.</remarks>
+        public void StartWorker()
         {
-            return GetHubEndpoints(cli, appSettings);
-        }
-
-        private static (string HubEndpoint, string HubAddress) GetHubEndpoints(string cli, AppSettings appSettings)
-        {
-            // extract values
-            var hubAddress = appSettings.Worker.HubAddress;
-            var hubVersion = appSettings.Worker.HubApiVersion;
-
-            // normalize
-            hubAddress = string.IsNullOrEmpty(hubAddress) ? "http://localhost:9000" : hubAddress;
-            hubVersion = hubVersion == 0 ? 1 : hubVersion;
-
-            // get from command line
-            if (string.IsNullOrEmpty(cli))
+            // iterate
+            while (!s_tokenSource.IsCancellationRequested)
             {
-                return ($"{hubAddress}/api/v{hubVersion}/rhino/orchestrator", hubAddress);
+
+                if (Connection.State != HubConnectionState.Connected)
+                {
+                    StartConnection(Connection);
+                }
+                try
+                {
+                    Connection.InvokeAsync("get");
+                }
+                catch (Exception e) when (e != null)
+                {
+                    Trace.TraceError($"Start-Worker" +
+                        $"-Connection {Connection.ConnectionId} = (Error | {e.GetBaseException().Message})");
+                }
+                Thread.Sleep(3000);
             }
-
-            // parse
-            var arguments = new CliFactory(cli).Parse();
-            _ = arguments.TryGetValue("hubVersion", out string versionOut);
-            var isHubVersion = int.TryParse(versionOut, out int hubVersionOut);
-
-            hubAddress = arguments.TryGetValue("hubAddress", out string addressOut) ? addressOut : hubAddress;
-            hubVersion = isHubVersion ? hubVersionOut : hubVersion;
-
-            // get
-            return ($"{hubAddress}/api/v{hubVersion}/rhino/orchestrator", hubAddress);
         }
 
-        public void StartConnection()
+        /// <summary>
+        /// Gets the worker status (Disabled or Enabled).
+        /// </summary>
+        /// <returns>The worker status.</returns>
+        public string GetWorkerStatus()
         {
-            var address = _appSettings.Worker.HubAddress;
-            var version = _appSettings.Worker.HubApiVersion;
-            var connection = new HubConnectionBuilder()
-                .WithUrl($"address/api/v{version}/rhino/orchestrator")
-                .Build();
+            return s_tokenSource.IsCancellationRequested ? "Disabled" : "Enabled";
+        }
+
+        // Connection Events
+        private static Task Reconnecting(HubConnection connection, Exception e) => Task.Factory.StartNew(() =>
+        {
+            var message = $"Connect-Hub " +
+                $"-Id {connection?.ConnectionId} " +
+                $"-Event 'Reconnecting' = {(e == null ? "OK" : $"(OK | {e?.GetBaseException().Message})")}";
+            Trace.TraceInformation(message);
+        });
+
+        private static Task Reconnected(HubConnection connection, string args) => Task.Factory.StartNew(() =>
+        {
+            var message = $"Connect-Hub " +
+                $"-Id {connection?.ConnectionId} " +
+                (string.IsNullOrEmpty(args) ? string.Empty : $"-Arguments {args} ") +
+                $"-Event 'Reconnected' = InProgress";
+            Trace.TraceInformation(message);
+        });
+
+        private static Task Closed(HubConnection connection, Exception e) => Task.Factory.StartNew(() =>
+        {
+            // log
+            var message = $"Connect-Hub " +
+                $"-Id {connection?.ConnectionId} " +
+                $"-Event 'Closed' = {(e == null ? "Error" : $"(Error | {e?.GetBaseException().Message})")}";
+            Trace.TraceInformation(message);
+
+            // connect
+            StartConnection(connection);
+        });
+
+        // Connection Methods
+        private static void OnPing(string message) => Trace.TraceInformation($"Pong: {message}");
+
+        private static void OnGet(
+            HubConnection connection,
+            RhinoConfiguration configuration,
+            RhinoTestCase testCase,
+            IDictionary<string, object> context)
+        {
+            // invoke
+            try
+            {
+                new InvokeTestCaseMiddleware(connection, configuration).Invoke(testCase, context, "update");
+            }
+            catch (Exception e) when (e != null)
+            {
+                Trace.TraceError("Invoke-TestCase " +
+                    $"-Connection {connection?.ConnectionId} " +
+                    $"-TestCase {testCase.Identifier} " +
+                    $"-Configuration {configuration.Name} = (Error | {e.GetBaseException().Message})");
+            }
+        }
+
+        // Connection Life-Cycle
+        private static void StartConnection(HubConnection connection)
+        {
+            try
+            {
+                connection.StartAsync().Wait();
+                Trace.TraceInformation($"Connect-Hub = {connection?.State}");
+            }
+            catch (Exception e) when (e != null)
+            {
+                Trace.TraceError($"Connect-Hub = (Error | {e.GetBaseException().Message})");
+            }
         }
     }
 }

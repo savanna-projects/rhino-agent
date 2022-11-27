@@ -3,12 +3,11 @@
  * 
  * RESSOURCES
  */
+using Gravity.Abstraction.Cli;
 using Gravity.Abstraction.Logging;
 using Gravity.Extensions;
 using Gravity.Services.Comet.Engine.Attributes;
 using Gravity.Services.DataContracts;
-
-using Microsoft.AspNetCore.Components.Forms;
 
 using Rhino.Api.Contracts.Attributes;
 using Rhino.Api.Contracts.AutomationProvider;
@@ -370,6 +369,57 @@ namespace Rhino.Controllers.Extensions
                 Name = pageModel.Name,
                 Entries = entries
             };
+        }
+        #endregion
+
+        #region *** Settings   ***
+        /// <summary>
+        /// Try to get the endpoint for Rhino Hub based on configuration and/or command-line arguments.
+        /// </summary>
+        /// <param name="appSettings">The configuration implementation to use.</param>
+        /// <returns>Rhino Hub endpoint information.</returns>
+        public static (string HubEndpoint, string HubAddress, string HubApiVersion) GetHubEndpoints(this AppSettings appSettings)
+        {
+            return GetHubEndpoints(cli: string.Empty, appSettings);
+        }
+
+        /// <summary>
+        /// Try to get the endpoint for Rhino Hub based on configuration and/or command-line arguments.
+        /// </summary>
+        /// <param name="appSettings">The configuration implementation to use.</param>
+        /// <param name="cli">The command line arguments to use.</param>
+        /// <returns>Rhino Hub endpoint information.</returns>
+        public static (string HubEndpoint, string HubAddress, string HubApiVersion) GetHubEndpoints(this AppSettings appSettings, string cli)
+        {
+            return GetHubEndpoints(cli, appSettings);
+        }
+
+        private static (string HubEndpoint, string HubAddress, string HubApiVersion) GetHubEndpoints(string cli, AppSettings appSettings)
+        {
+            // extract values
+            var hubAddress = appSettings.Worker.HubAddress;
+            var hubVersion = appSettings.Worker.HubApiVersion;
+
+            // normalize
+            hubAddress = string.IsNullOrEmpty(hubAddress) ? "http://localhost:9000" : hubAddress;
+            hubVersion = string.IsNullOrEmpty(hubVersion) ? "1" : hubVersion;
+
+            // get from command line
+            if (string.IsNullOrEmpty(cli))
+            {
+                return ($"{hubAddress}/api/v{hubVersion}/rhino/orchestrator", hubAddress, hubVersion);
+            }
+
+            // parse
+            var arguments = new CliFactory(cli).Parse();
+            _ = arguments.TryGetValue("hubVersion", out string versionOut);
+            var isHubVersion = int.TryParse(versionOut, out int hubVersionOut);
+
+            hubAddress = arguments.TryGetValue("hubAddress", out string addressOut) ? addressOut : hubAddress;
+            hubVersion = isHubVersion ? $"{hubVersionOut}" : hubVersion;
+
+            // get
+            return ($"{hubAddress}/api/v{hubVersion}/rhino/orchestrator", hubAddress, hubVersion);
         }
         #endregion
     }

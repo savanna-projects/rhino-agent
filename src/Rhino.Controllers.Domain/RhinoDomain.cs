@@ -3,11 +3,25 @@
  * 
  * RESSOURCES
  */
-using Microsoft.Extensions.Configuration;
+using Gravity.Abstraction.Logging;
+using Gravity.Services.Comet;
+using Gravity.Services.DataContracts;
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Controllers.Domain.Automation;
+using Rhino.Controllers.Domain.Data;
+using Rhino.Controllers.Domain.Integration;
 using Rhino.Controllers.Domain.Interfaces;
+using Rhino.Controllers.Domain.Orchestrator;
+using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+
+using System.Collections.Concurrent;
 
 namespace Rhino.Controllers.Domain
 {
@@ -68,5 +82,45 @@ namespace Rhino.Controllers.Domain
         public IRhinoRepository Rhino { get; set; }
         public IRhinoAsyncRepository RhinoAsync { get; set; }
         public ITestsRepository Tests { get; set; }
+
+        public static void CreateDependencies(WebApplicationBuilder builder)
+        {
+            // setup
+            var comparer = StringComparer.OrdinalIgnoreCase;
+
+            // hub
+            builder.Services.AddSingleton(typeof(IDictionary<string, TestCaseQueueModel>), new ConcurrentDictionary<string, TestCaseQueueModel>(comparer));
+            builder.Services.AddSingleton(new ConcurrentQueue<TestCaseQueueModel>());
+            builder.Services.AddSingleton(typeof(IDictionary<string, WebAutomation>), new ConcurrentDictionary<string, WebAutomation>(comparer));
+            builder.Services.AddSingleton(new ConcurrentQueue<WebAutomation>());
+            builder.Services.AddSingleton(new ConcurrentQueue<RhinoTestRun>());
+            builder.Services.AddSingleton(typeof(AppSettings));
+            builder.Services.AddSingleton(typeof(IDictionary<string, RhinoTestRun>), new ConcurrentDictionary<string, RhinoTestRun>(comparer));
+            builder.Services.AddSingleton(typeof(IDictionary<string, WorkerQueueModel>), new ConcurrentDictionary<string, WorkerQueueModel>(comparer));
+            builder.Services.AddTransient<IHubRepository, HubRepository>();
+
+            // utilities
+            builder.Services.AddTransient(typeof(ILogger), (_) => ControllerUtilities.GetLogger(builder.Configuration));
+            builder.Services.AddTransient(typeof(Orbit), (_) => new Orbit(Utilities.Types));
+            builder.Services.AddSingleton(typeof(IEnumerable<Type>), Utilities.Types);
+
+            // data
+            builder.Services.AddLiteDatabase(builder.Configuration.GetValue<string>("Rhino:StateManager:DataEncryptionKey"));
+
+            // domain
+            builder.Services.AddTransient<IEnvironmentRepository, EnvironmentRepository>();
+            builder.Services.AddTransient<ILogsRepository, LogsRepository>();
+            builder.Services.AddTransient<IPluginsRepository, PluginsRepository>();
+            builder.Services.AddTransient<IRepository<RhinoConfiguration>, ConfigurationsRepository>();
+            builder.Services.AddTransient<IRepository<RhinoModelCollection>, ModelsRepository>();
+            builder.Services.AddTransient<IApplicationRepository, ApplicationRepository>();
+            builder.Services.AddTransient<IRhinoAsyncRepository, RhinoRepository>();
+            builder.Services.AddTransient<IRhinoRepository, RhinoRepository>();
+            builder.Services.AddTransient<IMetaDataRepository, MetaDataRepository>();
+            builder.Services.AddTransient<ITestsRepository, TestsRepository>();
+            builder.Services.AddTransient<IHubRepository, HubRepository>();
+            builder.Services.AddTransient<IDomain, RhinoDomain>();
+            builder.Services.AddTransient<IWorkerRepository, WorkerRepository>();
+        }
     }
 }

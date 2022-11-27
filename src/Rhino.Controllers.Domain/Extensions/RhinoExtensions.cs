@@ -8,8 +8,11 @@ using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Interfaces;
 using Rhino.Controllers.Domain.Interfaces;
+using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 
+using System.Diagnostics;
+using System.IO.Compression;
 using System.Text.RegularExpressions;
 
 namespace Rhino.Controllers.Domain.Extensions
@@ -108,7 +111,7 @@ namespace Rhino.Controllers.Domain.Extensions
             return connector?.ProviderManager?.TestRun?.Key ?? string.Empty;
         }
 
-        #region *** Symbols ***
+        #region *** Symbols     ***
         /// <summary>
         /// Creates a collection of RhinoSymbolModel based on lines text and numbers (sent from or by IDE).
         /// </summary>

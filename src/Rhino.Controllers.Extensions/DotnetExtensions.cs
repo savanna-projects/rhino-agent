@@ -6,8 +6,7 @@
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
 
-using System.Data;
-using System.Reflection;
+using System.Diagnostics;
 
 namespace Rhino.Controllers.Extensions
 {
@@ -28,6 +27,38 @@ namespace Rhino.Controllers.Extensions
 
             // get
             return (ip, port);
+        }
+
+        /// <summary>
+        /// Sends an HTTP request as an asynchronous operation.
+        /// </summary>
+        /// <param name="client">The HTTP client to send with.</param>
+        /// <param name="requestUri">The Uri the request is send to.</param>
+        public static async Task< HttpResponseMessage> GetAsync(this HttpClient client, string requestUri, TimeSpan timeout)
+        {
+            // setup
+            var onTimeout = DateTime.Now.Add(timeout);
+
+            // retry
+            while (DateTime.Now < onTimeout)
+            {
+                try
+                {
+                    return await client.GetAsync(requestUri);
+                }
+                catch (Exception e) when (e != null)
+                {
+                    Trace.TraceWarning($"Send-HttpRequest = (Error | {e.GetBaseException().Message})");
+                }
+                await Task.Delay(3000);
+            }
+
+            // default
+            return new HttpResponseMessage
+            {
+                StatusCode = System.Net.HttpStatusCode.InternalServerError,
+                ReasonPhrase = $"Send-HttpRequest = (Timeout | {timeout})"
+            };
         }
     }
 }

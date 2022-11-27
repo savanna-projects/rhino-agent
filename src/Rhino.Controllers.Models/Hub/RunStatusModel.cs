@@ -3,6 +3,8 @@
  * 
  * RESOURCES
  */
+using Microsoft.AspNetCore.Http.HttpResults;
+
 using System.Runtime.Serialization;
 
 namespace Rhino.Controllers.Models
@@ -12,6 +14,9 @@ namespace Rhino.Controllers.Models
     {
         [DataMember]
         public int Completed { get; set; }
+
+        [DataMember]
+        public DateTime Created { get; set; }
 
         [DataMember]
         public string Id { get; set; }
@@ -26,10 +31,7 @@ namespace Rhino.Controllers.Models
         public IEnumerable<object> Running { get; set; }
 
         [DataMember]
-        public TimeSpan RunningTime { get; set; }
-
-        [DataMember]
-        public DateTime StartTime { get; set; }
+        public TimeSpan UpTime => DateTime.Now.Subtract(Created);
 
         [DataMember]
         public int Total { get; set; }

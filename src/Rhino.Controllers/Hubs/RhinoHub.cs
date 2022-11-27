@@ -64,6 +64,7 @@ namespace Rhino.Controllers.Hubs
             // exit conditions
             if (!isItem)
             {
+                await Clients.Caller.SendAsync("404").ConfigureAwait(false);
                 return;
             }
 
