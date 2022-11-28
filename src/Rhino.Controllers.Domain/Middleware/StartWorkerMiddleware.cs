@@ -46,7 +46,7 @@ namespace Rhino.Controllers.Domain.Middleware
             var maxParallel = _appSettings.GetMaxParallel(cli);
             var (_, hubAddress, hubApiVersion) = _appSettings.GetHubEndpoints(cli);
             var baseUrl = $"{hubAddress}/api/v{hubApiVersion}";
-            var timeout = TimeSpan.FromMinutes(_appSettings.Worker.ConnectionTimeout);
+            var timeout = _appSettings.GetConnectionTimeout(cli);
 
             // sync
             WorkerRepository.SyncDataAsync(baseUrl, _models, _environment, timeout).GetAwaiter().GetResult();

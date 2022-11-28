@@ -462,10 +462,56 @@ namespace Rhino.Controllers.Extensions
             _ = arguments.TryGetValue("maxParallel", out string maxParallelValue);
             var isMaxParallel = int.TryParse(maxParallelValue, out int maxParallelout);
 
-            maxParallel = isMaxParallel ? maxParallelout : maxParallel;
+            // get
+            return isMaxParallel ? maxParallelout : maxParallel;
+        }
+
+        /// <summary>
+        /// Try to get the connection for Rhino Hub based on configuration and/or command-line arguments.
+        /// </summary>
+        /// <param name="appSettings">The configuration implementation to use.</param>
+        /// <returns>The connection timeout.</returns>
+        public static TimeSpan GetConnectionTimeout(this AppSettings appSettings)
+        {
+            return GetConnectionTimeout(string.Empty, appSettings);
+        }
+
+        /// <summary>
+        /// Try to get the connection for Rhino Hub based on configuration and/or command-line arguments.
+        /// </summary>
+        /// <param name="appSettings">The configuration implementation to use.</param>
+        /// <param name="cli">The command line arguments to use.</param>
+        /// <returns>The connection timeout.</returns>
+        public static TimeSpan GetConnectionTimeout(this AppSettings appSettings, string cli)
+        {
+            return GetConnectionTimeout(cli, appSettings);
+        }
+
+        private static TimeSpan GetConnectionTimeout(string cli, AppSettings appSettings)
+        {
+            // extract values
+            var connectionTimeout = appSettings.Worker.ConnectionTimeout;
+            var arguments = new CliFactory(cli).Parse();
+
+            // normalize
+            var timeout = connectionTimeout == default
+                ? TimeSpan.FromMinutes(10)
+                : TimeSpan.FromMinutes(connectionTimeout);
+
+            // get from command line
+            if (!arguments.ContainsKey("connectionTimeout"))
+            {
+                return timeout;
+            }
+
+            // parse
+            _ = arguments.TryGetValue("connectionTimeout", out string connectionTimeoutlValue);
+            var isConnectionTimeout = double.TryParse(connectionTimeoutlValue, out double connectionTimeoutOut);
 
             // get
-            return maxParallel;
+            return isConnectionTimeout
+                ? TimeSpan.FromMinutes(connectionTimeoutOut)
+                : timeout;
         }
         #endregion
     }

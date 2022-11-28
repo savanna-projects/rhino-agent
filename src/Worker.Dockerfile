@@ -72,13 +72,14 @@ RUN dotnet publish "Rhino.Worker.csproj" -c Release -o /app/publish
 #└──────────────────────────────────────────
 FROM base AS final
 
+ENV CONNECTION_TIMEOUT 10
 ENV HUB_ADDRESS http://localhost:9000
 ENV HUB_API_VERSION 3
 ENV MAX_PARALLEL 1
 
 WORKDIR /app
 COPY --from=publish /app/publish .
-CMD dotnet Rhino.Worker.dll --maxParallel:$MAX_PARALLEL --hubAddress:$HUB_ADDRESS --hubApiVersion:$HUB_API_VERSION
+CMD dotnet Rhino.Worker.dll --maxParallel:$MAX_PARALLEL --hubAddress:$HUB_ADDRESS --hubApiVersion:$HUB_API_VERSION --connectionTimeout:$CONNECTION_TIMEOUT
 
 #┌─[ Setup: Arguments & Environment ]───────
 #│ 

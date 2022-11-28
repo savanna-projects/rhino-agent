@@ -381,3 +381,12 @@ stages:
           command: 'buildAndPush'
           Dockerfile: '**/Agent.Dockerfile'
           tags: $(dockerTags)
+
+      - task: Docker@2
+        displayName: 'Create Rhino Worker Docker Image - Linux'
+        inputs:
+          containerRegistry: 'docker.io'
+          repository: 'rhinoapi/rhino-worker'
+          command: 'buildAndPush'
+          Dockerfile: '**/Worker.Dockerfile'
+          tags: $(dockerTags)

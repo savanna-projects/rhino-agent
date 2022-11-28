@@ -34,3 +34,40 @@
 * [Atlassian, Jira with XRay (Cloud & Server) Connector](https://github.com/savanna-projects/rhino-connectors-atlassian)
 * [Plain Text Connector](https://github.com/savanna-projects/rhino-connectors-text)
 * [Microsoft, Azure DevOps (>= 2018) Connector](https://github.com/savanna-projects/rhino-connectors-azure)
+
+## Rhino Worker
+
+`Rhino Worker` is a special process that can connect to a `Rhino Agent Hub` and take payload from it, allowing distributed tests invocation.
+
+### Worker Command Line Parameters
+
+```bash
+dotnet Rhino.Worker.dll --hubAddress:http://localhost:9000 --hubApiVersion:3 --maxParallel:1 --connectionTimeout:10
+```
+
+| Parameter           | Type   | Description                                                                                                             |
+|---------------------|--------|-------------------------------------------------------------------------------------------------------------------------|
+| `ConnectionTimeout` | Double | The amount of time _**in minutes**_ to retry syncing with `Rhino Hub` before the connection is terminated.              |
+| `hubAddress`        | String | The public address of the hub (`Rhino Agent`) including the port (e.g., `http://localhost:9000`).                       |
+| `hubApiVersion`     | String | The API version of the hub (e.g., `3`).                                                                                 |
+| `maxParallel`       | Number | The maximum connections that will be opened by the `Rhino Worker` this allows each worker to run more than one process. |
+
+### Wroker Settings
+
+These settings can be found in `appsettings.json` file under `Rhino > WorkerConfiguration` node.
+
+| Parameter           | Type   | Description                                                                                                             |
+|---------------------|--------|-------------------------------------------------------------------------------------------------------------------------|
+| `ConnectionTimeout` | Double | The amount of time _**in minutes**_ to retry syncing with `Rhino Hub` before the connection is terminated.              |
+| `HubAddress`        | String | The public address of the hub (`Rhino Agent`) including the port (e.g., `http://localhost:9000`).                       |
+| `HubApiVersion`     | String | The API version of the hub (e.g., `3`).                                                                                 |
+| `MaxParallel`       | Number | The maximum connections that will be opened by the `Rhino Worker` this allows each worker to run more than one process. |
+
+### Worker Docker Environment Parameters
+
+| Parameter            | Type   | Description                                                                                                             |
+|----------------------|--------|-------------------------------------------------------------------------------------------------------------------------|
+| `CONNECTION_TIMEOUT` | Double | The amount of time _**in minutes**_ to retry syncing with `Rhino Hub` before the connection is terminated.              |
+| `HUB_ADDRESS`        | String | The public address of the hub (`Rhino Agent`) including the port (e.g., `http://localhost:9000`).                       |
+| `HUB_API_VERSION`    | String | The API version of the hub (e.g., `3`).                                                                                 |
+| `MAX_PARALLEL`       | Number | The maximum connections that will be opened by the `Rhino Worker` this allows each worker to run more than one process. |
