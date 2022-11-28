@@ -61,7 +61,7 @@ stages:
           script: |
             Set-Content -Path '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' -Value '$(buildVersion)'
             Compress-Archive -update '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
-            Compress-Archive -update '$(Build.Repository.LocalPath)/test/RhinoApiReferenceGuidev3.Postman.json' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
+            Compress-Archive -update '$(Build.Repository.LocalPath)/docs/postman/RhinoApiReferenceGuidev3.Postman.json' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
             # setup
             [regex]$pattern = '(\d+.?)+'
             $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
