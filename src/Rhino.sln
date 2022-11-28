@@ -97,7 +97,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{848E
 		..\scripts\deploy.wsl.ps1 = ..\scripts\deploy.wsl.ps1
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhino.Worker", "Rhino.Worker\Rhino.Worker.csproj", "{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Worker", "Rhino.Worker\Rhino.Worker.csproj", "{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

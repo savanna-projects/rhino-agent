@@ -398,28 +398,74 @@ namespace Rhino.Controllers.Extensions
         {
             // extract values
             var hubAddress = appSettings.Worker.HubAddress;
-            var hubVersion = appSettings.Worker.HubApiVersion;
+            var hubApiVersion = appSettings.Worker.HubApiVersion;
 
             // normalize
             hubAddress = string.IsNullOrEmpty(hubAddress) ? "http://localhost:9000" : hubAddress;
-            hubVersion = string.IsNullOrEmpty(hubVersion) ? "1" : hubVersion;
+            hubApiVersion = string.IsNullOrEmpty(hubApiVersion) ? "1" : hubApiVersion;
 
             // get from command line
             if (string.IsNullOrEmpty(cli))
             {
-                return ($"{hubAddress}/api/v{hubVersion}/rhino/orchestrator", hubAddress, hubVersion);
+                return ($"{hubAddress}/api/v{hubApiVersion}/rhino/orchestrator", hubAddress, hubApiVersion);
             }
 
             // parse
             var arguments = new CliFactory(cli).Parse();
-            _ = arguments.TryGetValue("hubVersion", out string versionOut);
+            _ = arguments.TryGetValue("hubApiVersion", out string versionOut);
             var isHubVersion = int.TryParse(versionOut, out int hubVersionOut);
 
             hubAddress = arguments.TryGetValue("hubAddress", out string addressOut) ? addressOut : hubAddress;
-            hubVersion = isHubVersion ? $"{hubVersionOut}" : hubVersion;
+            hubApiVersion = isHubVersion ? $"{hubVersionOut}" : hubApiVersion;
 
             // get
-            return ($"{hubAddress}/api/v{hubVersion}/rhino/orchestrator", hubAddress, hubVersion);
+            return ($"{hubAddress}/api/v{hubApiVersion}/rhino/orchestrator", hubAddress, hubApiVersion);
+        }
+
+        /// <summary>
+        /// Try to get the max parallel settings for Rhino worker based on configuration and/or command-line arguments.
+        /// </summary>
+        /// <param name="appSettings">The configuration implementation to use.</param>
+        /// <returns>Rhino Hub endpoint information.</returns>
+        public static int GetMaxParallel(this AppSettings appSettings)
+        {
+            return GetMaxParallel(cli: string.Empty, appSettings);
+        }
+
+        /// <summary>
+        /// Try to get the max parallel settings for Rhino worker based on configuration and/or command-line arguments.
+        /// </summary>
+        /// <param name="appSettings">The configuration implementation to use.</param>
+        /// <param name="cli">The command line arguments to use.</param>
+        /// <returns>Rhino Hub endpoint information.</returns>
+        public static int GetMaxParallel(this AppSettings appSettings, string cli)
+        {
+            return GetMaxParallel(cli, appSettings);
+        }
+
+        private static int GetMaxParallel(string cli, AppSettings appSettings)
+        {
+            // extract values
+            var maxParallel = appSettings.Worker.MaxParallel;
+            var arguments = new CliFactory(cli).Parse();
+
+            // normalize
+            maxParallel = maxParallel == default ? 1 : maxParallel;
+
+            // get from command line
+            if (!arguments.ContainsKey("maxParallel"))
+            {
+                return maxParallel;
+            }
+
+            // parse
+            _ = arguments.TryGetValue("maxParallel", out string maxParallelValue);
+            var isMaxParallel = int.TryParse(maxParallelValue, out int maxParallelout);
+
+            maxParallel = isMaxParallel ? maxParallelout : maxParallel;
+
+            // get
+            return maxParallel;
         }
         #endregion
     }

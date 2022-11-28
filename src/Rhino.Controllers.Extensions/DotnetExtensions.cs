@@ -48,7 +48,10 @@ namespace Rhino.Controllers.Extensions
                 }
                 catch (Exception e) when (e != null)
                 {
-                    Trace.TraceWarning($"Send-HttpRequest = (Error | {e.GetBaseException().Message})");
+                    var message = $"Send-HttpRequest = (Error | {e.GetBaseException().Message})";
+                    Debug.WriteLine(message);
+                    Console.WriteLine(message);
+                    Trace.TraceWarning(message);
                 }
                 await Task.Delay(3000);
             }

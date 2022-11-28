@@ -70,12 +70,15 @@ RUN dotnet publish "Rhino.Worker.csproj" -c Release -o /app/publish
 #│ 
 #│ Setup Rhino.Api entry point. 
 #└──────────────────────────────────────────
-ENV HUB_URL=http://localhost:9000
 FROM base AS final
+
+ENV HUB_ADDRESS http://localhost:9000
+ENV HUB_API_VERSION 3
+ENV MAX_PARALLEL 1
+
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Rhino.Worker.dll"]
-CMD ["--hubUrl:${HUB_URL}"]
+CMD dotnet Rhino.Worker.dll --maxParallel:$MAX_PARALLEL --hubAddress:$HUB_ADDRESS --hubApiVersion:$HUB_API_VERSION
 
 #┌─[ Setup: Arguments & Environment ]───────
 #│ 
