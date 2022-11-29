@@ -10,7 +10,6 @@
     },
     "http": {
       "commandName": "Project",
-      "commandLineArgs": "--hubAddress:http://localhost:9000 --hubApiVersion:3 --maxParallel:2",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {

@@ -28,7 +28,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
         };
 
         // members
-        private readonly AppSettings _appSettings;
+        private bool workerLock = false;
 
         /// <summary>
         /// Initialize a new instance of WorkerRepository class.
@@ -46,7 +46,6 @@ namespace Rhino.Controllers.Domain.Orchestrator
         public WorkerRepository(AppSettings settings, string cli)
         {
             // setup
-            _appSettings = settings;
             var (hubEndpoint, _, _) = settings.GetHubEndpoints(cli);
 
             // setup connection
@@ -57,12 +56,21 @@ namespace Rhino.Controllers.Domain.Orchestrator
             Connection.KeepAliveInterval = TimeSpan.FromSeconds(5);
             Connection.Reconnected += (args) => Reconnected(Connection, args);
             Connection.Reconnecting += (e) => Reconnecting(Connection, e);
-            Connection.Closed += (e) => Closed(Connection, e);
+            Connection.Closed += (e) =>
+            {
+                workerLock = false;
+                return Closed(Connection, e);
+            };
 
             Connection.On<string>("ping", OnPing);
             Connection.On<RhinoConfiguration, RhinoTestCase, IDictionary<string, object>>("get", (configuration, testCase, context) =>
             {
                 OnGet(Connection, configuration, testCase, context);
+                workerLock = false;
+            });
+            Connection.On("404", () =>
+            {
+                workerLock = false;
             });
         }
 
@@ -211,18 +219,21 @@ namespace Rhino.Controllers.Domain.Orchestrator
             // iterate
             while (!s_tokenSource.IsCancellationRequested)
             {
-
                 if (Connection.State != HubConnectionState.Connected)
                 {
                     StartConnection(Connection);
                 }
                 try
                 {
-                    Connection.InvokeAsync("get");
+                    if (!workerLock)
+                    {
+                        workerLock = true;
+                        Connection.InvokeAsync("get").GetAwaiter().GetResult();
+                    }
                 }
                 catch (Exception e) when (e != null)
                 {
-                    Trace.TraceError($"Start-Worker" +
+                    Trace.TraceError("Start-Worker" +
                         $"-Connection {Connection.ConnectionId} = (Error | {e.GetBaseException().Message})");
                 }
                 Thread.Sleep(3000);
@@ -259,7 +270,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
         private static Task Closed(HubConnection connection, Exception e) => Task.Factory.StartNew(() =>
         {
             // log
-            var message = $"Connect-Hub " +
+            var message = "Connect-Hub " +
                 $"-Id {connection?.ConnectionId} " +
                 $"-Event 'Closed' = {(e == null ? "Error" : $"(Error | {e?.GetBaseException().Message})")}";
             Trace.TraceInformation(message);
@@ -280,7 +291,10 @@ namespace Rhino.Controllers.Domain.Orchestrator
             // invoke
             try
             {
-                new InvokeTestCaseMiddleware(connection, configuration).Invoke(testCase, context, "update");
+                new InvokeTestCaseMiddleware(connection, configuration)
+                    .Invoke(testCase, context, "update")
+                    .GetAwaiter()
+                    .GetResult();
             }
             catch (Exception e) when (e != null)
             {
