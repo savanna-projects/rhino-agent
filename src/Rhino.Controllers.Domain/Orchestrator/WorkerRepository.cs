@@ -28,12 +28,13 @@ namespace Rhino.Controllers.Domain.Orchestrator
         };
 
         // members
-        private bool workerLock = false;
+        private readonly AppSettings _settings;
+        private bool workerLock;
 
         /// <summary>
         /// Initialize a new instance of WorkerRepository class.
         /// </summary>
-        /// <param name="domain">The application domain to use with the repository.</param>
+        /// <param name="settings">The application settings object.</param>
         public WorkerRepository(AppSettings settings)
             : this(settings, string.Empty)
         { }
@@ -41,43 +42,22 @@ namespace Rhino.Controllers.Domain.Orchestrator
         /// <summary>
         /// Initialize a new instance of WorkerRepository class.
         /// </summary>
-        /// <param name="domain">The application domain to use with the repository.</param>
+        /// <param name="settings">The application settings object.</param>
         /// <param name="cli">A command line integration phrase to use with the repository.</param>
         public WorkerRepository(AppSettings settings, string cli)
         {
             // setup
+            _settings = settings;
             var (hubEndpoint, _, _) = settings.GetHubEndpoints(cli);
 
             // setup connection
-            Connection = new HubConnectionBuilder()
-                .WithUrl(hubEndpoint)
-                .Build();
-
-            Connection.KeepAliveInterval = TimeSpan.FromSeconds(5);
-            Connection.Reconnected += (args) => Reconnected(Connection, args);
-            Connection.Reconnecting += (e) => Reconnecting(Connection, e);
-            Connection.Closed += (e) =>
-            {
-                workerLock = false;
-                return Closed(Connection, e);
-            };
-
-            Connection.On<string>("ping", OnPing);
-            Connection.On<RhinoConfiguration, RhinoTestCase, IDictionary<string, object>>("get", (configuration, testCase, context) =>
-            {
-                OnGet(Connection, configuration, testCase, context);
-                workerLock = false;
-            });
-            Connection.On("404", () =>
-            {
-                workerLock = false;
-            });
+            Connection = SetConnection(settings, hubEndpoint);
         }
 
         /// <summary>
         /// Gets the underline HubConnection object.
         /// </summary>
-        public HubConnection Connection { get; }
+        public HubConnection Connection { get; private set; }
 
         #region *** Worker Sync ***
         /// <summary>
@@ -221,7 +201,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
             {
                 if (Connection.State != HubConnectionState.Connected)
                 {
-                    StartConnection(Connection);
+                    StartConnection(_settings);
                 }
                 try
                 {
@@ -246,38 +226,8 @@ namespace Rhino.Controllers.Domain.Orchestrator
         /// <returns>The worker status.</returns>
         public string GetWorkerStatus()
         {
-            return s_tokenSource.IsCancellationRequested ? "Disabled" : "Enabled";
+            return workerLock ? "Running" : "Idle";
         }
-
-        // Connection Events
-        private static Task Reconnecting(HubConnection connection, Exception e) => Task.Factory.StartNew(() =>
-        {
-            var message = $"Connect-Hub " +
-                $"-Id {connection?.ConnectionId} " +
-                $"-Event 'Reconnecting' = {(e == null ? "OK" : $"(OK | {e?.GetBaseException().Message})")}";
-            Trace.TraceInformation(message);
-        });
-
-        private static Task Reconnected(HubConnection connection, string args) => Task.Factory.StartNew(() =>
-        {
-            var message = $"Connect-Hub " +
-                $"-Id {connection?.ConnectionId} " +
-                (string.IsNullOrEmpty(args) ? string.Empty : $"-Arguments {args} ") +
-                $"-Event 'Reconnected' = InProgress";
-            Trace.TraceInformation(message);
-        });
-
-        private static Task Closed(HubConnection connection, Exception e) => Task.Factory.StartNew(() =>
-        {
-            // log
-            var message = "Connect-Hub " +
-                $"-Id {connection?.ConnectionId} " +
-                $"-Event 'Closed' = {(e == null ? "Error" : $"(Error | {e?.GetBaseException().Message})")}";
-            Trace.TraceInformation(message);
-
-            // connect
-            StartConnection(connection);
-        });
 
         // Connection Methods
         private static void OnPing(string message) => Trace.TraceInformation($"Pong: {message}");
@@ -306,17 +256,90 @@ namespace Rhino.Controllers.Domain.Orchestrator
         }
 
         // Connection Life-Cycle
-        private static void StartConnection(HubConnection connection)
+        private HubConnection SetConnection(AppSettings settings, string hubEndpoint)
         {
-            try
+            // build
+            var connection = new HubConnectionBuilder()
+                .WithUrl(hubEndpoint)
+                .Build();
+
+            // setup: delegates
+            connection.KeepAliveInterval = TimeSpan.FromSeconds(5);
+            connection.Reconnected += (args) => Reconnected(connection, args);
+            connection.Reconnecting += (e) => Reconnecting(connection, e);
+            connection.Closed += (e) =>
             {
-                connection.StartAsync().Wait();
-                Trace.TraceInformation($"Connect-Hub = {connection?.State}");
-            }
-            catch (Exception e) when (e != null)
+                workerLock = false;
+                return Closed(settings, e);
+            };
+
+            // setup: api
+            connection.On<string>("ping", OnPing);
+            connection.On<RhinoConfiguration, RhinoTestCase, IDictionary<string, object>>("get", (configuration, testCase, context) =>
             {
-                Trace.TraceError($"Connect-Hub = (Error | {e.GetBaseException().Message})");
+                OnGet(connection, configuration, testCase, context);
+                workerLock = false;
+            });
+            connection.On("404", () => workerLock = false);
+
+            // get
+            return connection;
+        }
+
+        private void StartConnection(AppSettings settings)
+        {
+            // setup
+            var isConnected = false;
+            var timeout = DateTime.Now.AddSeconds(settings.Worker.ConnectionTimeout);
+
+            // attempt connection
+            while (!isConnected && DateTime.Now < timeout)
+            {
+                try
+                {
+                    Connection.StartAsync().Wait();
+                    isConnected = true;
+                    Trace.TraceInformation($"Connect-Hub = {Connection?.State}");
+                }
+                catch (Exception e) when (e != null)
+                {
+                    Connection.StopAsync().Wait();
+                    Trace.TraceError($"Connect-Hub = (Error | {e.GetBaseException().Message})");
+                    Thread.Sleep(5000);
+
+                    Connection = SetConnection(settings, hubEndpoint: settings.GetHubEndpoints().HubEndpoint);
+                }
             }
         }
+
+        // Connection Events
+        private static Task Reconnecting(HubConnection connection, Exception e) => Task.Factory.StartNew(() =>
+        {
+            var message = "Connect-Hub " +
+                $"-Id {connection?.ConnectionId} " +
+                $"-Event 'Reconnecting' = {(e == null ? "OK" : $"(OK | {e?.GetBaseException().Message})")}";
+            Trace.TraceInformation(message);
+        });
+
+        private static Task Reconnected(HubConnection connection, string args) => Task.Factory.StartNew(() =>
+        {
+            var message = "Connect-Hub " +
+                $"-Id {connection?.ConnectionId} " +
+                (string.IsNullOrEmpty(args) ? string.Empty : $"-Arguments {args} ") +
+                "-Event 'Reconnected' = InProgress";
+            Trace.TraceInformation(message);
+        });
+
+        private Task Closed(AppSettings settings, Exception e) => Task.Factory.StartNew(() =>
+        {
+            // log
+            var message = "Connect-Hub " +
+                $"-Id {Connection?.ConnectionId} " +
+                $"-Event 'Closed' = {(e == null ? "Error" : $"(Error | {e?.GetBaseException().Message})")}";
+            Trace.TraceInformation(message);
+
+            // connect
+            StartConnection(settings);
+        });
     }
 }

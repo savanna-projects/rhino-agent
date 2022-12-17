@@ -23,7 +23,7 @@ namespace Rhino.Controllers.Extensions
             var feature = context.Features.Get<IHttpConnectionFeature>();
             var remoteAddress = $"{feature?.RemoteIpAddress}";
             var ip = $"{(remoteAddress.Equals("::1") ? "localhost" : remoteAddress)}";
-            var port = feature == default ? 0 : feature.RemotePort;
+            var port = (feature?.RemotePort) ?? 0;
 
             // get
             return (ip, port);

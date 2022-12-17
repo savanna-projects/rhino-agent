@@ -145,7 +145,7 @@ namespace Rhino.Controllers.Hubs
             // setup
             var (address, port) = Context.GetAddress();
             var id = Context.ConnectionId;
-            var model = new WorkerQueueModel
+            _workers[id] = new WorkerQueueModel
             {
                 Address = address,
                 ConnectionId = id,
@@ -155,7 +155,6 @@ namespace Rhino.Controllers.Hubs
             };
 
             // invoke
-            _workers[id] = model;
             await Groups.AddToGroupAsync(id, "RhinoWorkers");
 
             // log

@@ -5,6 +5,7 @@
  */
 using Gravity.Abstraction.Logging;
 using Gravity.Extensions;
+using Gravity.Loader;
 
 using LiteDB;
 
@@ -191,6 +192,11 @@ namespace Rhino.Controllers.Domain.Automation
                 return (StatusCodes.Status500InternalServerError, e.GetBaseException().Message);
             }
         }
+
+        public (int StatusCode, string Message) SyncAssemblies() => Controllers
+            .Extensions
+            .Utilities
+            .SyncAssemblies();
         #endregion
 
         #region *** Delete ***

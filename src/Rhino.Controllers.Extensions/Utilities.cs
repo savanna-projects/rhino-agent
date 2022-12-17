@@ -3,30 +3,86 @@
  * 
  * RESSOURCES
  */
-using Rhino.Api.Contracts;
-using Rhino.Api.Contracts.AutomationProvider;
+using Gravity.Loader;
 
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
+
+using Rhino.Api.Contracts;
+
+using System.Collections.ObjectModel;
 
 namespace Rhino.Controllers.Extensions
 {
     /// <summary>
     /// Extension package for <see cref="Stream"/> object and other related object.
     /// </summary>
-    public static partial class Utilities
+    public static class Utilities
     {
-        // members: state
-        private static readonly IList<Assembly> s_assemblies = new List<Assembly>();
+        // state
+        private static IList<Type> s_typesCollection;
+        private static IList<Type> s_cachedTypes;
 
+        #region *** Types ***
         /// <summary>
         /// Gets a distinct collection of <see cref="Type"/> loaded into the AppDomain.
         /// </summary>
-        public static IList<Type> Types => Get(string.Empty)
-            .SelectMany(i => i.Types ?? Array.Empty<Type>())
-            .Distinct()
-            .ToList();
+        public static IList<Type> Types
+        {
+            get
+            {
+                // data change
+                if (s_typesCollection?.Any() == true && s_cachedTypes?.Any() == true)
+                {
+                    s_cachedTypes = s_typesCollection.Count > s_cachedTypes.Count
+                        ? new ReadOnlyCollection<Type>(s_typesCollection)
+                        : s_cachedTypes;
+                }
+
+                // no change (singleton)
+                if (s_typesCollection?.Any() == false && s_cachedTypes?.Any() == true)
+                {
+                    return s_cachedTypes;
+                }
+
+                // first time
+                var types = new AssembliesLoader().GetTypes().Distinct().ToList();
+
+                // get
+                return new ReadOnlyCollection<Type>(types);
+            }
+        }
+
+        public static (int StatusCode, string Message) SyncAssemblies()
+        {
+            try
+            {
+                if (s_typesCollection == null)
+                {
+                    s_typesCollection = new AssembliesLoader()
+                        .GetTypes()
+                        .Distinct()
+                        .ToList();
+                }
+                else
+                {
+                    lock (s_typesCollection)
+                    {
+                        s_typesCollection = new AssembliesLoader()
+                            .GetTypes()
+                            .Distinct()
+                            .ToList();
+                    }
+                }
+            }
+            catch (Exception e) when (e != null)
+            {
+                return (StatusCodes.Status500InternalServerError, e.GetBaseException().Message);
+            }
+
+            // get
+            return (StatusCodes.Status204NoContent, string.Empty);
+        }
+        #endregion
 
         /// <summary>
         /// Gets the RhinoSpecification separator including the empty lines.
@@ -39,137 +95,5 @@ namespace Rhino.Controllers.Extensions
                 return doubleLine + RhinoSpecification.Separator + doubleLine;
             }
         }
-
-        #region *** Assemblies ***
-        /// <summary>
-        /// gets a collection of all assemblies where the executing assembly is currently located
-        /// </summary>
-        /// <returns>A collection of <see cref="Assembly"/>.</returns>
-        public static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> GetTypes()
-        {
-            return Get(string.Empty);
-        }
-
-        /// <summary>
-        /// gets a collection of all assemblies where the executing assembly is currently located
-        /// </summary>
-        /// <param name="root">The root folder from which to load the assemblies.</param>
-        /// <returns>A collection of <see cref="Assembly"/>.</returns>
-        public static IEnumerable<(Assembly Assembly, IEnumerable<Type> Types)> GetTypes(string root)
-        {
-            return Get(root);
-        }
-
-        private static IList<(Assembly Assembly, IEnumerable<Type> Types)> Get(string root)
-        {
-            // reset
-            s_assemblies.Clear();
-
-            // setup
-            var mainLocation = string.IsNullOrEmpty(root)
-                ? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-                : root;
-            mainLocation ??= Environment.CurrentDirectory;
-            var rootLocations = new[]
-            {
-                mainLocation
-            };
-            var pluginsLocation = new[]
-            {
-                Path.Combine(mainLocation, RhinoPluginEntry.PluginsGravityFolder),
-                Path.Combine(mainLocation, "PluginsReporters"),
-                Path.Combine(mainLocation, RhinoPluginEntry.PluginsConnectorsFolder)
-            };
-            var locations = pluginsLocation
-                .Where(i => Directory.Exists(i))
-                .SelectMany(i => Directory.GetDirectories(i))
-                .Concat(rootLocations);
-
-            // build files
-            var files = locations
-                .Where(i => Directory.Exists(i))
-                .SelectMany(i => Directory.GetFiles(i))
-                .Where(i => GetDllFilePattern().IsMatch(i));
-
-            // build
-            foreach (var assemblyFile in files)
-            {
-                GetAssemblies(assemblyFile);
-            }
-
-            // get
-            return s_assemblies.Select(i => GetPair(i)).Where(i => i.Assembly != null).ToList();
-        }
-
-        [SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "Must be loaded from file")]
-        private static void GetAssemblies(string assemblyFile)
-        {
-            // load main assembly
-            Assembly assembly = null;
-            try
-            {
-                assembly = Assembly.Load(AssemblyName.GetAssemblyName(assemblyFile));
-                assembly.GetTypes();
-            }
-            catch (FileNotFoundException)
-            {
-                assembly = Assembly.LoadFile(assemblyFile);
-                try
-                {
-                    assembly.GetTypes();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.GetBaseException().Message);
-                    return;
-                }
-            }
-            catch (Exception e) when (e != null)
-            {
-                Console.WriteLine(e.GetBaseException().Message);
-                return;
-            }
-
-            // build
-            s_assemblies.Add(assembly);
-            foreach (var item in assembly.GetReferencedAssemblies())
-            {
-                try
-                {
-                    var names = s_assemblies.Select(i => i.FullName).Any(i => i == item.FullName);
-                    if (names)
-                    {
-                        continue;
-                    }
-                    var referenced = Assembly.Load(item);
-                    GetAssemblies(referenced.Location);
-                }
-                catch (Exception e) when (e != null)
-                {
-                    Console.WriteLine(e.GetBaseException().Message);
-                }
-            }
-        }
-
-        private static (Assembly Assembly, IEnumerable<Type> Types) GetPair(Assembly assembly)
-        {
-            try
-            {
-                // setup
-                var types = assembly.GetTypes();
-
-                // get
-                return (assembly, types);
-            }
-            catch (Exception e) when (e != null)
-            {
-                Console.WriteLine(e.GetBaseException().Message);
-            }
-            return (null, null);
-        }
-
-        [GeneratedRegex("(?i)\\.dll$", RegexOptions.None, "en-US")]
-        private static partial Regex GetDllFilePattern();
-        #endregion
     }
 }

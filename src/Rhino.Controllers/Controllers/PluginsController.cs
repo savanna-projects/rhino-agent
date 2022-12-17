@@ -228,6 +228,9 @@ namespace Rhino.Controllers.Controllers
                     .ConfigureAwait(false);
             }
 
+            // sync assemblies
+            _domain.Plugins.SyncAssemblies();
+
             // get
             var options = new JsonSerializerOptions
             {
@@ -236,6 +239,39 @@ namespace Rhino.Controllers.Controllers
             return new ContentResult
             {
                 Content = JsonSerializer.Serialize(new { response.Message }, options),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = response.StatusCode
+            };
+        }
+
+        // POST: api/v3/plugins/sync
+        [HttpPost("sync")]
+        [SwaggerOperation(
+            Summary = "Sync-Assemblies",
+            Description = "Syncs the assemblies collection under the domain.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status204NoContent, SwaggerDocument.StatusCode.Status201Created, Type = typeof(object))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> SyncAssemblies()
+        {
+            // setup
+            _domain.Plugins.SetAuthentication(Authentication);
+
+            // submit
+            var response = _domain.Plugins.SyncAssemblies();
+
+            // bad request
+            if (response.StatusCode == StatusCodes.Status500InternalServerError)
+            {
+                var serverError = $"Syncs-Assemblies = (InternalServerError | {response.Message})";
+                return await this
+                    .ErrorResultAsync<string>(serverError, StatusCodes.Status500InternalServerError)
+                    .ConfigureAwait(false);
+            }
+
+            // get
+            return new ContentResult
+            {
                 ContentType = MediaTypeNames.Application.Json,
                 StatusCode = response.StatusCode
             };

@@ -26,6 +26,9 @@ namespace Rhino.Controllers.Models
         public int Port { get; set; }
 
         [DataMember]
+        public string Status { get; set; }
+
+        [DataMember]
         public TimeSpan UpTime => DateTime.Now.Subtract(Created);
     }
 }

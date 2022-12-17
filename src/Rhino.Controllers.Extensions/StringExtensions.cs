@@ -80,7 +80,7 @@ namespace Rhino.Controllers.Extensions
                 var isNext = !isLast && char.IsUpper(str[i + 1]);
                 var isCurrent = char.IsUpper(str[i]);
 
-                if (isZero || isLast || isCurrent && isNext && isPrevious || !isCurrent)
+                if (isZero || isLast || (isCurrent && isNext && isPrevious) || !isCurrent)
                 {
                     result.Append(str[i]);
                     continue;

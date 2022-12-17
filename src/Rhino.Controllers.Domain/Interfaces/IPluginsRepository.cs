@@ -12,7 +12,8 @@ namespace Rhino.Controllers.Domain.Interfaces
     public interface IPluginsRepository : IRepository<string>
     {
         string Add(IEnumerable<string> entity, bool isPrivate);
-        Task<(int StatusCode, string Message)> SubmitAsync(PackageUploadModel uploadModel);
         (int StatusCode, Stream Stream) ExportPlugins();
+        Task<(int StatusCode, string Message)> SubmitAsync(PackageUploadModel uploadModel);
+        (int StatusCode, string Message) SyncAssemblies();
     }
 }
