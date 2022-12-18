@@ -196,7 +196,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
                     i.Value.TestCase.Scenario,
                     i.Value.TestCase.Iteration,
                     i.Value.TestCase.DataSource,
-                    i.Value.Worker
+                    Worker = _workers[i.Value.Worker.ConnectionId]
                 })
             };
 

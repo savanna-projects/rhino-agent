@@ -3,11 +3,13 @@
  * 
  * RESOURCES
  */
+using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Orchestrator;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace Rhino.Controllers.Domain.Middleware
@@ -21,6 +23,7 @@ namespace Rhino.Controllers.Domain.Middleware
         private readonly AppSettings _appSettings;
         private readonly IEnvironmentRepository _environment;
         private readonly IRepository<RhinoModelCollection> _models;
+        private readonly ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> _repairs;
 
         /// <summary>
         /// Initialize a new instance of StartWorkerMiddleware object.
@@ -31,12 +34,14 @@ namespace Rhino.Controllers.Domain.Middleware
         public StartWorkerMiddleware(
             AppSettings appSettings,
             IEnvironmentRepository environment,
-            IRepository<RhinoModelCollection> models)
+            IRepository<RhinoModelCollection> models,
+            ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> repairs)
         {
             // setup
             _appSettings = appSettings;
             _environment = environment;
             _models = models;
+            _repairs = repairs;
         }
 
         public void Start(params string[] args)
@@ -55,7 +60,7 @@ namespace Rhino.Controllers.Domain.Middleware
             // start connections
             for (int i = 0; i < maxParallel; i++)
             {
-                var repository = new WorkerRepository(_appSettings, cli);
+                var repository = new WorkerRepository(_appSettings, _repairs, cli);
                 Task.Run(repository.StartWorker);
             }
         }

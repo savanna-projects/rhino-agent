@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
+using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Converters;
 using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Formatters;
@@ -24,6 +25,8 @@ using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -138,9 +141,10 @@ using (var scope = app.Services.CreateScope())
     var models = scope.ServiceProvider.GetRequiredService<IRepository<RhinoModelCollection>>();
     var appSettings = scope.ServiceProvider.GetRequiredService<AppSettings>();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger>();
+    var repairs = scope.ServiceProvider.GetRequiredService<ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object>)>>();
 
     // invoke
-    new StartWorkerMiddleware(appSettings, environment, models).Start(args);
+    new StartWorkerMiddleware(appSettings, environment, models, repairs).Start(args);
     logger?.Info($"Sync-Worker -MaxParallel {appSettings?.Worker?.MaxParallel} = OK");
 }
 

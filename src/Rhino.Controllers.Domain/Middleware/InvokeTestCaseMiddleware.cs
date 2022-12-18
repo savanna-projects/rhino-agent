@@ -10,6 +10,7 @@ using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Engine;
 using Rhino.Connectors.Text;
 
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace Rhino.Controllers.Domain.Middleware
@@ -22,13 +23,17 @@ namespace Rhino.Controllers.Domain.Middleware
         // members
         private readonly RhinoAutomationEngine _engine;
         private readonly HubConnection _connection;
+        private readonly ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> _repairs;
 
         /// <summary>
         /// Initialize a new instance of InvokeTestCaseMiddleware object.
         /// </summary>
         /// <param name="connection">HubConnection to use with the middleware.</param>
         /// <param name="configuration">RhinoConfiguration to use with the middleware.</param>
-        public InvokeTestCaseMiddleware(HubConnection connection, RhinoConfiguration configuration)
+        public InvokeTestCaseMiddleware(
+            HubConnection connection,
+            RhinoConfiguration configuration,
+            ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> repairs)
         {
             // setup
             var provider = new TextAutomationProvider(configuration);
@@ -36,6 +41,7 @@ namespace Rhino.Controllers.Domain.Middleware
             // build
             _connection = connection;
             _engine = new RhinoAutomationEngine(provider);
+            _repairs = repairs;
         }
 
         /// <summary>
@@ -58,6 +64,11 @@ namespace Rhino.Controllers.Domain.Middleware
             catch (Exception e) when (e != null)
             {
                 Trace.TraceError($"{e}");
+                if(_connection == null || _connection.State!= HubConnectionState.Connected)
+                {
+                    _repairs.Add((testCase, testCase.Context));
+                    return Task.Delay(1);
+                }
                 return _connection.InvokeAsync("repair", testCase, testCase.Context);
             }
 

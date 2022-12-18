@@ -12,6 +12,8 @@ using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 
+using System.Collections.Concurrent;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Text.Json;
@@ -29,6 +31,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
 
         // members
         private readonly AppSettings _settings;
+        private readonly ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> _repairs;
         private bool workerLock;
 
         /// <summary>
@@ -36,7 +39,15 @@ namespace Rhino.Controllers.Domain.Orchestrator
         /// </summary>
         /// <param name="settings">The application settings object.</param>
         public WorkerRepository(AppSettings settings)
-            : this(settings, string.Empty)
+            : this(settings, new ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)>(), string.Empty)
+        { }
+
+        /// <summary>
+        /// Initialize a new instance of WorkerRepository class.
+        /// </summary>
+        /// <param name="settings">The application settings object.</param>
+        public WorkerRepository(AppSettings settings, ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> repairs)
+            : this(settings, repairs, string.Empty)
         { }
 
         /// <summary>
@@ -44,14 +55,15 @@ namespace Rhino.Controllers.Domain.Orchestrator
         /// </summary>
         /// <param name="settings">The application settings object.</param>
         /// <param name="cli">A command line integration phrase to use with the repository.</param>
-        public WorkerRepository(AppSettings settings, string cli)
+        public WorkerRepository(AppSettings settings, ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> repairs, string cli)
         {
             // setup
             _settings = settings;
+            _repairs = repairs;
             var (hubEndpoint, _, _) = settings.GetHubEndpoints(cli);
 
             // setup connection
-            Connection = SetConnection(settings, hubEndpoint);
+            Connection = SetConnection(hubEndpoint);
         }
 
         /// <summary>
@@ -236,12 +248,13 @@ namespace Rhino.Controllers.Domain.Orchestrator
             HubConnection connection,
             RhinoConfiguration configuration,
             RhinoTestCase testCase,
-            IDictionary<string, object> context)
+            IDictionary<string, object> context,
+            ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> repairs)
         {
             // invoke
             try
             {
-                new InvokeTestCaseMiddleware(connection, configuration)
+                new InvokeTestCaseMiddleware(connection, configuration, repairs)
                     .Invoke(testCase, context, "update")
                     .GetAwaiter()
                     .GetResult();
@@ -256,7 +269,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
         }
 
         // Connection Life-Cycle
-        private HubConnection SetConnection(AppSettings settings, string hubEndpoint)
+        private HubConnection SetConnection(string hubEndpoint)
         {
             // build
             var connection = new HubConnectionBuilder()
@@ -270,14 +283,14 @@ namespace Rhino.Controllers.Domain.Orchestrator
             connection.Closed += (e) =>
             {
                 workerLock = false;
-                return Closed(settings, e);
+                return Closed(e);
             };
 
             // setup: api
             connection.On<string>("ping", OnPing);
             connection.On<RhinoConfiguration, RhinoTestCase, IDictionary<string, object>>("get", (configuration, testCase, context) =>
             {
-                OnGet(connection, configuration, testCase, context);
+                OnGet(connection, configuration, testCase, context, _repairs);
                 workerLock = false;
             });
             connection.On("404", () => workerLock = false);
@@ -299,15 +312,36 @@ namespace Rhino.Controllers.Domain.Orchestrator
                 {
                     Connection.StartAsync().Wait();
                     isConnected = true;
+                    foreach (var (testCase, context) in _repairs)
+                    {
+                        Connection
+                            .InvokeAsync("repair", testCase, context)
+                            .GetAwaiter()
+                            .GetResult();
+                        Trace.TraceInformation($"Repair-TestCase -Key {testCase.Key} = OK");
+                    }
                     Trace.TraceInformation($"Connect-Hub = {Connection?.State}");
                 }
-                catch (Exception e) when (e != null)
+                catch (Exception e) when (e.GetBaseException() is not InvalidOperationException)
                 {
                     Connection.StopAsync().Wait();
                     Trace.TraceError($"Connect-Hub = (Error | {e.GetBaseException().Message})");
                     Thread.Sleep(5000);
-
-                    Connection = SetConnection(settings, hubEndpoint: settings.GetHubEndpoints().HubEndpoint);
+                }
+                catch (Exception e) when (e.GetBaseException() is InvalidOperationException)
+                {
+                    var dispose = Connection.DisposeAsync();
+                    var isDispose = dispose.IsCompleted;
+                    while (!isDispose && DateTime.Now < timeout)
+                    {
+                        Thread.Sleep(1000);
+                        isDispose = dispose.IsCompleted;
+                    }
+                    if (dispose.IsCompleted)
+                    {
+                        Connection = null;
+                        Connection = SetConnection(hubEndpoint: settings.GetHubEndpoints().HubEndpoint);
+                    }
                 }
             }
         }
@@ -330,16 +364,13 @@ namespace Rhino.Controllers.Domain.Orchestrator
             Trace.TraceInformation(message);
         });
 
-        private Task Closed(AppSettings settings, Exception e) => Task.Factory.StartNew(() =>
+        private Task Closed(Exception e) => Task.Factory.StartNew(() =>
         {
             // log
             var message = "Connect-Hub " +
                 $"-Id {Connection?.ConnectionId} " +
                 $"-Event 'Closed' = {(e == null ? "Error" : $"(Error | {e?.GetBaseException().Message})")}";
             Trace.TraceInformation(message);
-
-            // connect
-            StartConnection(settings);
         });
     }
 }
