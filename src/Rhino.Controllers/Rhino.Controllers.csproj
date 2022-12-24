@@ -6,6 +6,7 @@
 		<FileVersion>7.0.0.0</FileVersion>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<LangVersion>Latest</LangVersion>
+		<BlazorWebAssemblyOmitDebugProxyOutput>true</BlazorWebAssemblyOmitDebugProxyOutput>
 	</PropertyGroup>
 
 	<ItemGroup>

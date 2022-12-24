@@ -99,6 +99,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".scripts", ".scripts", "{84
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Worker", "Rhino.Worker\Rhino.Worker.csproj", "{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loader", "Loader\Loader.csproj", "{2FFE46B7-8C4E-4EB6-93AB-4970D8CE5B19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,10 @@ Global
 		{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FADC25BA-0194-4AD7-B5C3-08FD3E96B51F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FFE46B7-8C4E-4EB6-93AB-4970D8CE5B19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FFE46B7-8C4E-4EB6-93AB-4970D8CE5B19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FFE46B7-8C4E-4EB6-93AB-4970D8CE5B19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FFE46B7-8C4E-4EB6-93AB-4970D8CE5B19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

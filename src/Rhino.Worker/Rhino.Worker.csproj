@@ -8,6 +8,7 @@
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<LangVersion>Latest</LangVersion>
 		<DockerfileFile>../Worker.Dockerfile</DockerfileFile>
+		<BlazorWebAssemblyOmitDebugProxyOutput>true</BlazorWebAssemblyOmitDebugProxyOutput>
 	</PropertyGroup>
 
 	<ItemGroup>

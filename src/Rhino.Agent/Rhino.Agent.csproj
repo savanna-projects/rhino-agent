@@ -8,6 +8,7 @@
 		<LangVersion>Latest</LangVersion>
 		<AssemblyVersion>7.0.0.0</AssemblyVersion>
 		<FileVersion>7.0.0.0</FileVersion>
+		<BlazorWebAssemblyOmitDebugProxyOutput>true</BlazorWebAssemblyOmitDebugProxyOutput>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,7 +22,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Rhino.Controllers\Rhino.Controllers.csproj" />
 		<ProjectReference Include="..\Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj" />
-		<ProjectReference Include="..\Rhino.Plugins.Custom\Rhino.Plugins.Custom.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

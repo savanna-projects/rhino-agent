@@ -5,7 +5,6 @@
  */
 using Gravity.Abstraction.Logging;
 using Gravity.Extensions;
-using Gravity.Loader;
 
 using LiteDB;
 
@@ -41,6 +40,7 @@ namespace Rhino.Controllers.Domain.Automation
         // members: state
         private readonly ILogger _logger;
 
+        // TODO: change configuration to AppSettings
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Domain.Repository.
         /// </summary>
@@ -193,6 +193,7 @@ namespace Rhino.Controllers.Domain.Automation
             }
         }
 
+        // TODO: add folders from configuration
         public (int StatusCode, string Message) SyncAssemblies() => Controllers
             .Extensions
             .Utilities

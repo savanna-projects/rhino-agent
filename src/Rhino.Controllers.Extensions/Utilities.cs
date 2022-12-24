@@ -19,8 +19,7 @@ namespace Rhino.Controllers.Extensions
     public static class Utilities
     {
         // state
-        private static IList<Type> s_typesCollection;
-        private static IList<Type> s_cachedTypes;
+        private static IList<Type> s_types;
 
         #region *** Types ***
         /// <summary>
@@ -30,48 +29,31 @@ namespace Rhino.Controllers.Extensions
         {
             get
             {
-                // data change
-                if (s_typesCollection?.Any() == true && s_cachedTypes?.Any() == true)
+                // already exists
+                if (s_types?.Any() == true)
                 {
-                    s_cachedTypes = s_typesCollection.Count > s_cachedTypes.Count
-                        ? new ReadOnlyCollection<Type>(s_typesCollection)
-                        : s_cachedTypes;
-                }
-
-                // no change (singleton)
-                if (s_typesCollection?.Any() == false && s_cachedTypes?.Any() == true)
-                {
-                    return s_cachedTypes;
+                    return s_types;
                 }
 
                 // first time
-                var types = new AssembliesLoader().GetTypes().Distinct().ToList();
+                s_types = new AssembliesLoader().GetTypes().Distinct().ToList();
 
                 // get
-                return new ReadOnlyCollection<Type>(types);
+                return new ReadOnlyCollection<Type>(s_types);
             }
         }
 
-        public static (int StatusCode, string Message) SyncAssemblies()
+        public static (int StatusCode, string Message) SyncAssemblies(params string[] locations)
         {
             try
             {
-                if (s_typesCollection == null)
+                locations ??= Array.Empty<string>();
+                lock (s_types)
                 {
-                    s_typesCollection = new AssembliesLoader()
-                        .GetTypes()
+                    s_types = new AssembliesLoader()
+                        .GetTypes(".", locations)
                         .Distinct()
                         .ToList();
-                }
-                else
-                {
-                    lock (s_typesCollection)
-                    {
-                        s_typesCollection = new AssembliesLoader()
-                            .GetTypes()
-                            .Distinct()
-                            .ToList();
-                    }
                 }
             }
             catch (Exception e) when (e != null)

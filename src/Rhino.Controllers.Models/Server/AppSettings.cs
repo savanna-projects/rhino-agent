@@ -20,12 +20,14 @@ namespace Rhino.Controllers.Models
             Hub ??= new HubConfiguration();
             ReportsAndLogs ??= new ReportConfiguration();
             Worker ??= new WorkerConfiguration();
+            Plugins ??= new PluginsConfiguration();
             Configuration = configuration;
 
             // bind
             configuration.GetSection("Rhino:HubConfiguration").Bind(Hub);
             configuration.GetSection("Rhino:ReportConfiguration").Bind(ReportsAndLogs);
             configuration.GetSection("Rhino:WorkerConfiguration").Bind(Worker);
+            configuration.GetSection("Rhino:PluginsConfiguration").Bind(Worker);
         }
 
         public IConfiguration Configuration { get; }
@@ -36,10 +38,12 @@ namespace Rhino.Controllers.Models
 
         public WorkerConfiguration Worker { get; }
 
+        public PluginsConfiguration Plugins { get; }
+
         /// <summary>
         /// Gets the local IPv6 address.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>IPv6 Address.</returns>
         public static string GetLocalAddress()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
@@ -81,6 +85,14 @@ namespace Rhino.Controllers.Models
             public string LogsOut { get; set; }
             public IEnumerable<string> Reporters { get; set;}
             public string ReportsOut { get; set; }
+        }
+
+        /// <summary>
+        /// Child configuration
+        /// </summary>
+        public class PluginsConfiguration
+        {
+            public IEnumerable<string> Locations { get; set;}
         }
     }
 }

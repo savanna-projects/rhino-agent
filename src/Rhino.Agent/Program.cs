@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
@@ -45,6 +46,7 @@ builder.WebHost.UseUrls();
 builder.Services.AddRouting(i => i.LowercaseUrls = true);
 builder.Services.AddRazorPages();
 builder.Services.AddMvc().AddApplicationPart(typeof(RhinoController).Assembly).AddControllersAsServices();
+builder.Services.AddDirectoryBrowser();
 
 // formats & serialization
 builder.Services
@@ -115,7 +117,7 @@ else
 // setup
 var logsPath = app.Configuration.GetValue("Rhino:ReportConfiguration:LogsOut", Environment.CurrentDirectory);
 var reportsPath = ControllerUtilities.GetStaticReportsFolder(configuration: app.Configuration);
-var statusPath = Path.Combine(Environment.CurrentDirectory, "Pages", "Status");
+var staticPath = Path.Combine(Environment.CurrentDirectory, "StaticPages");
 
 // build
 app.ConfigureExceptionHandler(new TraceLogger("RhinoApi", "ExceptionHandler", logsPath));
@@ -134,7 +136,7 @@ app.UseRouting();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseStaticFiles(reportsPath, route: "/reports");
-app.UseStaticFiles(statusPath, route: "/status");
+app.UseStaticFiles(staticPath, route: "/backoffice", browseDirectory: true);
 
 app.MapDefaultControllerRoute();
 app.MapFallbackToFile("index.html");

@@ -68,15 +68,46 @@ namespace Rhino.Controllers.Extensions
         /// <returns>Self reference.</returns>
         public static IApplicationBuilder UseStaticFiles(this WebApplication app, string physicalPath, string route)
         {
+            return UseStaticFiles(app, browseDirectory: false, physicalPath, route);
+        }
+
+        /// <summary>
+        /// Enables static file serving for the given request path.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="physicalPath">The physical folder path to serve.</param>
+        /// <param name="route">The route which will point the physical path.</param>
+        /// <returns>Self reference.</returns>
+        public static IApplicationBuilder UseStaticFiles(this WebApplication app, string physicalPath, string route, bool browseDirectory)
+        {
+            return UseStaticFiles(app, browseDirectory, physicalPath, route);
+        }
+
+        private static IApplicationBuilder UseStaticFiles(WebApplication app, bool browseDirectory, string physicalPath, string route)
+        {
             // force
             Directory.CreateDirectory(physicalPath);
 
             // setup
+            var provider = new PhysicalFileProvider(physicalPath);
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(physicalPath),
+                FileProvider = provider,
                 RequestPath = route,
                 ServeUnknownFileTypes = true
+            });
+
+            // exit conditions
+            if(!browseDirectory)
+            {
+                return app;
+            }
+
+            // add browse directory
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = provider,
+                RequestPath = route
             });
 
             // get

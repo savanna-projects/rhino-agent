@@ -102,7 +102,7 @@ namespace Rhino.Controllers.Domain
             // utilities
             builder.Services.AddTransient(typeof(ILogger), (_) => ControllerUtilities.GetLogger(builder.Configuration));
             builder.Services.AddTransient(typeof(Orbit), (_) => new Orbit(Utilities.Types));
-            builder.Services.AddSingleton(typeof(IEnumerable<Type>), Utilities.Types);
+            builder.Services.AddTransient(typeof(IEnumerable<Type>), (_) => Utilities.Types);
             builder.Services.AddSingleton(typeof(ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object>)>), new ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object>)>());
 
             // data

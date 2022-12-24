@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
-  <TestRunParameters>
-    <!-- Settings: Selenium Grid -->
-    <Parameter name="Grid.Endpoint.Rhino" value="D:\AutomationEnvironment\WebDrivers" />
+	<TestRunParameters>
+		<!-- Settings: Selenium Grid -->
+		<Parameter name="Grid.Endpoint.Rhino" value="D:\AutomationEnvironment\WebDrivers" />
 
-    <!-- Settings: Project and Build -->
-    <Parameter name="Build.Number" value="Development" />
-    <Parameter name="Project.Name" value="Rhino Agent" />
+		<!-- Settings: Project and Build -->
+		<Parameter name="Build.Number" value="Development" />
+		<Parameter name="Project.Name" value="Rhino Agent" />
 
-    <!-- Settings: Data -->
-    <Parameter name="Data.ConnectionString" value="Data Source=.\\SQLEXPRESS;Initial Catalog=[catalog];Integrated Security=True" />
+		<!-- Settings: Data -->
+		<Parameter name="Data.ConnectionString" value="Data Source=.\\SQLEXPRESS;Initial Catalog=[catalog];Integrated Security=True" />
 
-    <!-- Settings: Integration Testing -->
-    <Parameter name="Integration.AttemptsDelay" value="15000" />
-    <Parameter name="Integration.NumberOfAttempts" value="1" />
-    <Parameter name="Rhino.Username" value="" />
-    <Parameter name="Rhino.Password" value="" />
-    <Parameter name="Rhino.Integration" value="BrowserStack" />
-  </TestRunParameters>
+		<!-- Settings: Integration Testing -->
+		<Parameter name="Integration.AttemptsDelay" value="15000" />
+		<Parameter name="Integration.NumberOfAttempts" value="1" />
+		<Parameter name="Rhino.Username" value="" />
+		<Parameter name="Rhino.Password" value="" />
+		<Parameter name="Rhino.Integration" value="BrowserStack" />
+	</TestRunParameters>
 
-  <MSTest>  
-    <Parallelize>
-      <Workers>1</Workers>
-      <Scope>MethodLevel</Scope>
-    </Parallelize>
-  </MSTest>
+	<MSTest>
+		<Parallelize>
+			<Workers>1</Workers>
+			<Scope>MethodLevel</Scope>
+		</Parallelize>
+	</MSTest>
 </RunSettings>
