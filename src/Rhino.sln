@@ -30,8 +30,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers", "Rhino.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Domain", "Rhino.Controllers.Domain\Rhino.Controllers.Domain.csproj", "{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Extensions", "Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj", "{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Models", "Rhino.Controllers.Models\Rhino.Controllers.Models.csproj", "{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Plugins.Custom", "Rhino.Plugins.Custom\Rhino.Plugins.Custom.csproj", "{70A8854B-BA60-420E-8CA5-126AC2A5ADA5}"
@@ -101,6 +99,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Worker", "Rhino.Worke
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loader", "Loader\Loader.csproj", "{2FFE46B7-8C4E-4EB6-93AB-4970D8CE5B19}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Extensions", "Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj", "{4B213F42-780D-44A5-866C-AAC53A4AA00D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,10 +115,6 @@ Global
 		{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{144DB381-B7BE-44CA-B1A3-8B0A58F91DA4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A4E1B90-1508-4986-AA52-A8D9E3EA8A53}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBCE4897-A2D9-463D-9EB1-FD8D204D923A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -139,6 +135,10 @@ Global
 		{2FFE46B7-8C4E-4EB6-93AB-4970D8CE5B19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FFE46B7-8C4E-4EB6-93AB-4970D8CE5B19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FFE46B7-8C4E-4EB6-93AB-4970D8CE5B19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B213F42-780D-44A5-866C-AAC53A4AA00D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B213F42-780D-44A5-866C-AAC53A4AA00D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B213F42-780D-44A5-866C-AAC53A4AA00D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B213F42-780D-44A5-866C-AAC53A4AA00D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

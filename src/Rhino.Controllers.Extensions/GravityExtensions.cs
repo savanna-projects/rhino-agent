@@ -6,6 +6,7 @@
 using Gravity.Services.Comet.Engine.Attributes;
 using Gravity.Services.Comet.Engine.Plugins;
 
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Rhino.Controllers.Extensions
@@ -52,7 +53,25 @@ namespace Rhino.Controllers.Extensions
             var resource = arguments.Count > 1 ? arguments[1].Value : arguments[0].Value;
 
             // get
-            return new ActionAttribute($"{assembly}", $"{resource}");
+            try
+            {
+                return new ActionAttribute($"{assembly}", $"{resource}");
+            }
+            catch (Exception e) when(e is FileNotFoundException)
+            {
+                try
+                {
+                    var location = type.Assembly.Location;
+                    return new ActionAttribute($"{location}", $"{resource}");
+                }
+                catch (Exception ie) when (ie != null)
+                {
+                    Trace.TraceError($"Load-Assembly -Name {assembly} = (InternalServerError | ie.Message)");
+                }
+            }
+
+            // get default
+            return default;
         }
 
         public static IEnumerable<PluginAttribute> GetMacroAttributes(this IEnumerable<Type> types)

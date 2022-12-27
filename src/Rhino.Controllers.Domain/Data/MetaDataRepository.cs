@@ -10,6 +10,7 @@ using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Services.Common;
 
 using OpenQA.Selenium;
 
@@ -38,6 +39,9 @@ namespace Rhino.Controllers.Domain.Data
     /// </summary>
     public partial class MetaDataRepository : IMetaDataRepository
     {
+        [GeneratedRegex("[^{]*")]
+        private static partial Regex GetErrorPattern();
+
         // constants
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
@@ -487,7 +491,7 @@ namespace Rhino.Controllers.Domain.Data
 
                 // build
                 var line = entityType.Equals("(E)")
-                    ? $"{actionLine} {entityType} {command + " - " + GetErrorToken().Match(testStep.Action).Value.Trim().ToLower()}"
+                    ? $"{actionLine} {entityType} {command + " - " + GetErrorPattern().Match(testStep.Action).Value.Trim().ToLower()}"
                     : $"{actionLine} {entityType} {command}";
 
                 // render entity
@@ -687,7 +691,8 @@ namespace Rhino.Controllers.Domain.Data
                 .SetAuthentication(authentication)
                 .Get()
                 .Where(i => i.Configurations?.Any() == false || $"{i.Id}".Equals(id, Compare))
-                .SelectMany(i => i.Models);
+                .SelectMany(i => i.Models)
+                .ToList();
         }
 
         private static IEnumerable<(string Source, ActionAttribute Action)> GetActions(
@@ -721,9 +726,26 @@ namespace Rhino.Controllers.Domain.Data
         private static IEnumerable<BaseModel<object>> GetLocators(IEnumerable<Type> types)
         {
             // get relevant by method
-            var methods = types
-                .SelectMany(t => t.GetMethods())
-                .Where(m => m.IsStatic && m.ReturnType == typeof(By));
+            var allMethods = types.SelectMany(t => t.GetMethods());
+            var methods = new List<MemberInfo>();
+
+            // TODO: remove this workaround when loading is complete
+            // filter
+            foreach (var method in allMethods)
+            {
+                try
+                {
+                    var isBy = method.IsStatic && method.ReturnType == typeof(By);
+                    if (isBy)
+                    {
+                        methods.Add(method);
+                    }
+                }
+                catch (Exception e) when (e != null)
+                {
+                    // ignore assembly
+                }
+            }
 
             // exit conditions
             if (!methods.Any())
@@ -760,8 +782,5 @@ namespace Rhino.Controllers.Domain.Data
                 .Where(i => i != default || !string.IsNullOrEmpty(i.Key))
                 .OrderBy(i => i.Key);
         }
-
-        [GeneratedRegex("[^{]*")]
-        private static partial Regex GetErrorToken();
     }
 }

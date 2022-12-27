@@ -24,7 +24,7 @@
 		<PackageReference Include="Rhino.Connectors.Azure" Version="2022.12.22.2" />
 		<PackageReference Include="Rhino.Connectors.Azure.Text" Version="2022.12.22.2" />
 		<PackageReference Include="Rhino.Connectors.Gurock" Version="2022.12.22.1" />
-		<PackageReference Include="Rhino.Connectors.Text" Version="2022.12.22.2" />
+		<PackageReference Include="Rhino.Connectors.Text" Version="2022.12.27.1" />
 		<PackageReference Include="Rhino.Connectors.Xray" Version="2022.12.22.1" />
 		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2022.12.22.1" />
 		<PackageReference Include="Rhino.Connectors.Xray.Cloud.Text" Version="2022.12.22.1" />
