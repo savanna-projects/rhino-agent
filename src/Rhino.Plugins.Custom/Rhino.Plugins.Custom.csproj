@@ -2,11 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>Latest</LangVersion>
 		<AssemblyVersion>7.0.0.0</AssemblyVersion>
 		<FileVersion>7.0.0.0</FileVersion>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
 	<ItemGroup>

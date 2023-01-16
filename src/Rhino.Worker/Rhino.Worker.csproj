@@ -9,6 +9,7 @@
 		<LangVersion>Latest</LangVersion>
 		<DockerfileFile>../Worker.Dockerfile</DockerfileFile>
 		<BlazorWebAssemblyOmitDebugProxyOutput>true</BlazorWebAssemblyOmitDebugProxyOutput>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
 	<ItemGroup>
