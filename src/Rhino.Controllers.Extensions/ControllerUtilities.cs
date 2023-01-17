@@ -171,7 +171,7 @@ namespace Rhino.Controllers.Extensions
         /// <summary>
         /// Renders RhinoAPI logo in the console.
         /// </summary>
-        public static void RenderLogo()
+        public static void RenderApiLogo()
         {
             try
             {
@@ -185,9 +185,40 @@ namespace Rhino.Controllers.Extensions
                 Console.WriteLine(new string(' ', 25) + "Version 0.0.0.0");
                 Console.WriteLine();
                 Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("https://github.com/savanna-projects/rhino-agent");
                 Console.WriteLine("https://github.com/gravity-api");
                 Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Gray;
+            }
+            catch (Exception e) when (e != null)
+            {
+                // ignore errors
+            }
+        }
+
+        /// <summary>
+        /// Renders RhinoWorker logo in the console.
+        /// </summary>
+        public static void RenderWorkerLogo()
+        {
+            try
+            {
+                Console.Clear();
+
+                DoRenderLogo(1, 1, Console.BackgroundColor, Console.ForegroundColor, Rhino());
+                DoRenderLogo(1, 31, Console.BackgroundColor, ConsoleColor.Red, Worker());
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine(new string(' ', 48) + "Powered by Gravity Engine");
+                Console.WriteLine(new string(' ', 48) + "Version 0.0.0.0");
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("https://github.com/savanna-projects/rhino-agent");
+                Console.WriteLine("https://github.com/gravity-api");
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
             catch (Exception e) when (e != null)
             {
@@ -232,6 +263,15 @@ namespace Rhino.Controllers.Extensions
             "▄█████▄ ██▀▀▀  ██",
             "██   ██ ██     ██",
             "▀▀   ▀▀ ▀▀     ▀▀",
+        };
+
+        private static IEnumerable<string> Worker() => new List<string>
+        {
+            "▄▄▄  ▄▄  ▄▄             ██",
+            " ██ ███ ▄█▀  ▄▄▄▄  ▄▄▄▄ ██ ▄▄   ▄▄▄▄  ▄▄▄▄",
+            " ██▄███▄██  ██ ▀██ ███▀ ████   ██▄▄██ ███▀",
+            "  ███ ███▀  ██ ▄██ ██   ██▀█▄  ███▀▀  ██  ",
+            "  ▀▀▀  ▀▀    ▀▀▀▀  ▀▀   ▀▀ ▀▀▀  ▀▀▀▀  ▀▀  ",
         };
         #endregion
 

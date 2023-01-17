@@ -33,7 +33,7 @@ using System.Text.Json.Serialization;
 using ILogger = Gravity.Abstraction.Logging.ILogger;
 
 // Setup
-ControllerUtilities.RenderLogo();
+ControllerUtilities.RenderWorkerLogo();
 var builder = WebApplication.CreateBuilder(args);
 
 #region *** Url & Kestrel ***
