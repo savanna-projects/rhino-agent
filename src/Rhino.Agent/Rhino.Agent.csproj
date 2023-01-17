@@ -11,6 +11,8 @@
 		<BlazorWebAssemblyOmitDebugProxyOutput>true</BlazorWebAssemblyOmitDebugProxyOutput>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<SelfContained>true</SelfContained>
+		<RuntimeIdentifiers>win-x86;win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+		<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Rhino.Controllers\Rhino.Controllers.csproj" />
+	  <ProjectReference Include="..\Rhino.Controllers\Rhino.Controllers.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -36,10 +38,10 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="StaticPages\status.html">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="StaticPages\upload.html">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 </Project>

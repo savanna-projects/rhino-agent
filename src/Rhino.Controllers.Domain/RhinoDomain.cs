@@ -39,6 +39,7 @@ namespace Rhino.Controllers.Domain
         /// <param name="metaData">An IHubRepository implementation to use with RhinoDomain.</param>
         /// <param name="models">An IRepository<RhinoModelCollection> implementation to use with RhinoDomain.</param>
         /// <param name="plugins">An IPluginsRepository implementation to use with RhinoDomain.</param>
+        /// <param name="resources">An IResourcesRepository implementation to use with RhinoDomain.</param>
         /// <param name="rhino">An IRhinoRepository implementation to use with RhinoDomain.</param>
         /// <param name="rhinoAsync">An IRhinoAsyncRepository implementation to use with RhinoDomain.</param>
         /// <param name="tests">An ITestsRepository implementation to use with RhinoDomain.</param>
@@ -52,6 +53,7 @@ namespace Rhino.Controllers.Domain
             IMetaDataRepository metaData,
             IRepository<RhinoModelCollection> models,
             IPluginsRepository plugins,
+            IResourcesRepository resources,
             IRhinoRepository rhino,
             IRhinoAsyncRepository rhinoAsync,
             ITestsRepository tests)
@@ -65,6 +67,7 @@ namespace Rhino.Controllers.Domain
             MetaData = metaData;
             Models = models;
             Plugins = plugins;
+            Resources = resources;
             Rhino = rhino;
             RhinoAsync = rhinoAsync;
             Tests = tests;
@@ -79,6 +82,7 @@ namespace Rhino.Controllers.Domain
         public IMetaDataRepository MetaData { get; set; }
         public IRepository<RhinoModelCollection> Models { get; set; }
         public IPluginsRepository Plugins { get; set; }
+        public IResourcesRepository Resources { get; set; }
         public IRhinoRepository Rhino { get; set; }
         public IRhinoAsyncRepository RhinoAsync { get; set; }
         public ITestsRepository Tests { get; set; }
@@ -122,6 +126,7 @@ namespace Rhino.Controllers.Domain
             builder.Services.AddTransient<IHubRepository, HubRepository>();
             builder.Services.AddTransient<IDomain, RhinoDomain>();
             builder.Services.AddTransient<IWorkerRepository, WorkerRepository>();
+            builder.Services.AddTransient<IResourcesRepository, ResourcesRepository>();
         }
     }
 }

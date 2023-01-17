@@ -139,12 +139,13 @@ using (var scope = app.Services.CreateScope())
     // services
     var environment = scope.ServiceProvider.GetRequiredService<IEnvironmentRepository>();
     var models = scope.ServiceProvider.GetRequiredService<IRepository<RhinoModelCollection>>();
+    var resources = scope.ServiceProvider.GetRequiredService<IResourcesRepository>();
     var appSettings = scope.ServiceProvider.GetRequiredService<AppSettings>();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger>();
     var repairs = scope.ServiceProvider.GetRequiredService<ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object>)>>();
 
     // invoke
-    new StartWorkerMiddleware(appSettings, environment, models, repairs).Start(args);
+    new StartWorkerMiddleware(appSettings, environment, models, resources, repairs).Start(args);
     logger?.Info($"Sync-Worker -MaxParallel {appSettings?.Worker?.MaxParallel} = OK");
 }
 

@@ -16,6 +16,7 @@ namespace Rhino.Controllers.Domain.Interfaces
         IMetaDataRepository MetaData { get; set; }
         IRepository<RhinoModelCollection> Models { get; set; }
         IPluginsRepository Plugins { get; set; }
+        IResourcesRepository Resources { get; set; }
         IRhinoRepository Rhino { get; set; }
         IRhinoAsyncRepository RhinoAsync { get; set; }
         ITestsRepository Tests { get; set; }

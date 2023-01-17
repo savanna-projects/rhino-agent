@@ -11,6 +11,7 @@ using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using System.Collections.Concurrent;
 using System.Data.Common;
@@ -77,7 +78,11 @@ namespace Rhino.Controllers.Domain.Orchestrator
         /// </summary>
         /// <remarks>Sync will first clean all existing data and will override it.</remarks>
         public static async Task SyncDataAsync(
-            string baseUrl, IRepository<RhinoModelCollection> models, IEnvironmentRepository environment, TimeSpan timeout)
+            string baseUrl,
+            IRepository<RhinoModelCollection> models,
+            IEnvironmentRepository environment,
+            IResourcesRepository resources,
+            TimeSpan timeout)
         {
             // setup
             var client = new HttpClient();
@@ -86,6 +91,7 @@ namespace Rhino.Controllers.Domain.Orchestrator
             await SyncPluginsAsync(client, baseUrl, timeout);
             await SyncModelsAsync(domain: models, client, baseUrl, timeout);
             await SyncEnvironmentAsync(domain: environment, client, baseUrl, timeout);
+            await SyncResourcesAsync(domain: resources, client, baseUrl, timeout);
         }
 
         private static async Task SyncPluginsAsync(HttpClient client, string baseUrl, TimeSpan timeout)
@@ -180,12 +186,37 @@ namespace Rhino.Controllers.Domain.Orchestrator
 
             // build
             var jsonData = await response.Content.ReadAsStringAsync();
-            var environment = JsonSerializer.Deserialize<IDictionary<string, object>>(jsonData, s_jsonOptions);
 
             // iterate
-            foreach (var item in environment)
+            foreach (var item in JsonSerializer.Deserialize<IDictionary<string, object>>(jsonData, s_jsonOptions))
             {
                 domain.Add(item);
+            }
+        }
+
+        private static async Task SyncResourcesAsync(IResourcesRepository domain, HttpClient client, string baseUrl, TimeSpan timeout)
+        {
+            // cleanup
+            domain.Delete();
+
+            // setup
+            var requestUri = $"{baseUrl}/resources";
+
+            // invoke
+            var response = await client.GetAsync(requestUri, timeout);
+            if (!response.IsSuccessStatusCode)
+            {
+                Trace.TraceWarning($"Sync-Resources -Url {baseUrl} = {response.StatusCode}");
+                return;
+            }
+
+            // build
+            var jsonData = await response.Content.ReadAsStringAsync();
+
+            // iterate
+            foreach (var item in JsonSerializer.Deserialize<IEnumerable<ResourceFileModel>>(jsonData, s_jsonOptions))
+            {
+                domain.Create(item);
             }
         }
         #endregion

@@ -187,7 +187,7 @@ namespace Rhino.Worker.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IDictionary<string, object>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
-        public IActionResult Get()
+        public IActionResult GetEnvironment()
         {
             // get response
             var parameters = _domain.Environments.SetAuthentication(Authentication).Get();
@@ -205,7 +205,7 @@ namespace Rhino.Worker.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IDictionary<string, object>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
-        public async Task<IActionResult> Get([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
+        public async Task<IActionResult> GetEnvironment([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string name)
         {
             // get response
             _domain.Environments.SetAuthentication(Authentication);
@@ -224,6 +224,52 @@ namespace Rhino.Worker.Controllers
             {
                 [entity.Key] = entity.Value
             });
+        }
+        #endregion
+
+        #region *** Resources   ***
+        // GET: api/v3/worker/resources
+        [HttpGet, Route("Resources")]
+        [SwaggerOperation(
+            Summary = "Get-Resource -All",
+            Description = "Returns a list of all available _**Resource Files**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IEnumerable<ResourceFileModel>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult GetResources()
+        {
+            // get response
+            var entities = _domain.Resources.Get();
+            Response.Headers[RhinoResponseHeader.CountTotalResources] = $"{entities.Count()}";
+
+            // return
+            return Ok(entities);
+        }
+
+        // GET: api/v3/worker/resources/:id
+        [HttpGet, Route("resources/{id}")]
+        [SwaggerOperation(
+            Summary = "Get-Resource -Id resource.txt",
+            Description = "Returns an existing _**Resource Files**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(ResourceFileModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, SwaggerDocument.StatusCode.Status404NotFound, Type = typeof(GenericErrorModel<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public async Task<IActionResult> GetResources([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
+        {
+            // get data
+            var (statusCode, entity) = _domain.Resources.Get(id);
+
+            // not found
+            if (statusCode == StatusCodes.Status404NotFound)
+            {
+                return await this
+                    .ErrorResultAsync<string>($"Get-Resource -Id {id} = NotFound", StatusCodes.Status404NotFound)
+                    .ConfigureAwait(false);
+            }
+
+            // return
+            return Ok(entity);
         }
         #endregion
 

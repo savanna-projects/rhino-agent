@@ -23,6 +23,7 @@ namespace Rhino.Controllers.Domain.Middleware
         private readonly AppSettings _appSettings;
         private readonly IEnvironmentRepository _environment;
         private readonly IRepository<RhinoModelCollection> _models;
+        private readonly IResourcesRepository _resources;
         private readonly ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> _repairs;
 
         /// <summary>
@@ -35,12 +36,14 @@ namespace Rhino.Controllers.Domain.Middleware
             AppSettings appSettings,
             IEnvironmentRepository environment,
             IRepository<RhinoModelCollection> models,
+            IResourcesRepository resources,
             ConcurrentBag<(RhinoTestCase TestCase, IDictionary<string, object> Context)> repairs)
         {
             // setup
             _appSettings = appSettings;
             _environment = environment;
             _models = models;
+            _resources = resources;
             _repairs = repairs;
         }
 
@@ -54,7 +57,7 @@ namespace Rhino.Controllers.Domain.Middleware
             var timeout = _appSettings.GetConnectionTimeout(cli);
 
             // sync
-            WorkerRepository.SyncDataAsync(baseUrl, _models, _environment, timeout).GetAwaiter().GetResult();
+            WorkerRepository.SyncDataAsync(baseUrl, _models, _environment, _resources, timeout).GetAwaiter().GetResult();
             Trace.TraceInformation("Sync-Worker = OK");
 
             // start connections
