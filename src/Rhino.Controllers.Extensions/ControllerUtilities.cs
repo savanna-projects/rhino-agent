@@ -267,7 +267,7 @@ namespace Rhino.Controllers.Extensions
 
         private static IEnumerable<string> Worker() => new List<string>
         {
-            "▄▄▄  ▄▄  ▄▄             ██",
+            "▄▄▄  ▄▄  ▄▄             ██                ",
             " ██ ███ ▄█▀  ▄▄▄▄  ▄▄▄▄ ██ ▄▄   ▄▄▄▄  ▄▄▄▄",
             " ██▄███▄██  ██ ▀██ ███▀ ████   ██▄▄██ ███▀",
             "  ███ ███▀  ██ ▄██ ██   ██▀█▄  ███▀▀  ██  ",
