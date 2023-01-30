@@ -178,12 +178,11 @@ namespace Rhino.Controllers.Extensions
                 Console.Clear();
 
                 DoRenderLogo(1, 1, Console.BackgroundColor, Console.ForegroundColor, Rhino());
-                DoRenderLogo(1, 33, Console.BackgroundColor, ConsoleColor.Red, Api());
+                DoRenderLogo(1, 32, Console.BackgroundColor, ConsoleColor.Red, Api());
 
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(new string(' ', 25) + "Powered by Gravity Engine");
-                Console.WriteLine(new string(' ', 25) + "Version 0.0.0.0");
-                Console.WriteLine();
+                Console.WriteLine(new string(' ', 24) + "Powered by Gravity Engine");
+                Console.WriteLine(new string(' ', 24) + "Version 0.0.0.0");
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("https://github.com/savanna-projects/rhino-agent");
@@ -212,7 +211,6 @@ namespace Rhino.Controllers.Extensions
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.WriteLine(new string(' ', 48) + "Powered by Gravity Engine");
                 Console.WriteLine(new string(' ', 48) + "Version 0.0.0.0");
-                Console.WriteLine();
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("https://github.com/savanna-projects/rhino-agent");
