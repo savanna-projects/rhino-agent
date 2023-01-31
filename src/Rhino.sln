@@ -101,16 +101,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loader", "Loader\Loader.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Extensions", "Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj", "{4B213F42-780D-44A5-866C-AAC53A4AA00D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finastra.Plugins.Attributes", "..\..\automation-rhino-libraries\src\Finastra.Plugins.Attributes\Finastra.Plugins.Attributes.csproj", "{B90608FE-F451-4502-9F31-D357442BE0C9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finastra.Plugins.BusinessObjects.Api", "..\..\automation-rhino-libraries\src\Finastra.Plugins.BusinessObjects.Api\Finastra.Plugins.BusinessObjects.Api.csproj", "{DDC7AC98-FB5A-40C6-821B-5FB273A0FF9D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finastra.Plugins.Extensions", "..\..\automation-rhino-libraries\src\Finastra.Plugins.Extensions\Finastra.Plugins.Extensions.csproj", "{CE5CC541-C326-46B3-BDE7-643C19845C7D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finastra.Plugins.Models", "..\..\automation-rhino-libraries\src\Finastra.Plugins.Models\Finastra.Plugins.Models.csproj", "{289FFA4B-2CAA-4F9D-A2D7-0D7EE519D4B8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finastra.Simulator", "..\..\automation-rhino-libraries\src\Finastra.Simulator\Finastra.Simulator.csproj", "{35B7AC77-F784-4413-85EA-A1D258386C68}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -149,26 +139,6 @@ Global
 		{4B213F42-780D-44A5-866C-AAC53A4AA00D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B213F42-780D-44A5-866C-AAC53A4AA00D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B213F42-780D-44A5-866C-AAC53A4AA00D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B90608FE-F451-4502-9F31-D357442BE0C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B90608FE-F451-4502-9F31-D357442BE0C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B90608FE-F451-4502-9F31-D357442BE0C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B90608FE-F451-4502-9F31-D357442BE0C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDC7AC98-FB5A-40C6-821B-5FB273A0FF9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDC7AC98-FB5A-40C6-821B-5FB273A0FF9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDC7AC98-FB5A-40C6-821B-5FB273A0FF9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDC7AC98-FB5A-40C6-821B-5FB273A0FF9D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE5CC541-C326-46B3-BDE7-643C19845C7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE5CC541-C326-46B3-BDE7-643C19845C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE5CC541-C326-46B3-BDE7-643C19845C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE5CC541-C326-46B3-BDE7-643C19845C7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{289FFA4B-2CAA-4F9D-A2D7-0D7EE519D4B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{289FFA4B-2CAA-4F9D-A2D7-0D7EE519D4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{289FFA4B-2CAA-4F9D-A2D7-0D7EE519D4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{289FFA4B-2CAA-4F9D-A2D7-0D7EE519D4B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35B7AC77-F784-4413-85EA-A1D258386C68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35B7AC77-F784-4413-85EA-A1D258386C68}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35B7AC77-F784-4413-85EA-A1D258386C68}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35B7AC77-F784-4413-85EA-A1D258386C68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

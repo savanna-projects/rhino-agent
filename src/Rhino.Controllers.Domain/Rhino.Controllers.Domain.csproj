@@ -35,11 +35,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Rhino.Controllers.Extensions\Rhino.Controllers.Extensions.csproj" />
 		<ProjectReference Include="..\Rhino.Controllers.Models\Rhino.Controllers.Models.csproj" />
-		<ProjectReference Include="..\..\..\automation-rhino-libraries\src\Finastra.Plugins.Attributes\Finastra.Plugins.Attributes.csproj" />
-		<ProjectReference Include="..\..\..\automation-rhino-libraries\src\Finastra.Plugins.BusinessObjects.Api\Finastra.Plugins.BusinessObjects.Api.csproj" />
-		<ProjectReference Include="..\..\..\automation-rhino-libraries\src\Finastra.Plugins.Extensions\Finastra.Plugins.Extensions.csproj" />
-		<ProjectReference Include="..\..\..\automation-rhino-libraries\src\Finastra.Plugins.Models\Finastra.Plugins.Models.csproj" />
-		<ProjectReference Include="..\..\..\automation-rhino-libraries\src\Finastra.Simulator\Finastra.Simulator.csproj" />
 	</ItemGroup>
 
 </Project>
