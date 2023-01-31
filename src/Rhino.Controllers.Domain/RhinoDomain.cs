@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Interfaces;
+using Rhino.Connectors.Text;
 using Rhino.Controllers.Domain.Automation;
 using Rhino.Controllers.Domain.Data;
 using Rhino.Controllers.Domain.Integration;
@@ -43,6 +45,7 @@ namespace Rhino.Controllers.Domain
         /// <param name="rhino">An IRhinoRepository implementation to use with RhinoDomain.</param>
         /// <param name="rhinoAsync">An IRhinoAsyncRepository implementation to use with RhinoDomain.</param>
         /// <param name="tests">An ITestsRepository implementation to use with RhinoDomain.</param>
+        /// <param name="textConnector">An IConnector implementation to use with RhinoDomain.</param>
         public RhinoDomain(
             IApplicationRepository application,
             AppSettings appSettings,
@@ -127,6 +130,29 @@ namespace Rhino.Controllers.Domain
             builder.Services.AddTransient<IDomain, RhinoDomain>();
             builder.Services.AddTransient<IWorkerRepository, WorkerRepository>();
             builder.Services.AddTransient<IResourcesRepository, ResourcesRepository>();
+
+            // gravity
+            builder.Services.AddTransient<IGravityRepository, GravityRepository>();
+
+            // connectors
+            builder.Services.AddTransient((_) =>
+            {
+                // setup
+                var driverParameters = new Dictionary<string, object>
+                {
+                    ["driver"] = "MockWebDriver",
+                    ["driverBinaries"] = "."
+                };
+                var configuration = new RhinoConfiguration
+                {
+                    DriverParameters = new[] { driverParameters }
+                };
+                var logger = ControllerUtilities.GetLogger(builder.Configuration);
+                var types = Utilities.Types;
+
+                // get
+                return new TextConnector(configuration, types, logger, connect: false);
+            });
         }
     }
 }

@@ -3,21 +3,19 @@
  * 
  * RESSOURCES
  */
-using Gravity.Services.Comet.Engine.Extensions;
 using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-using Rhino.Api.Contracts.Configuration;
-using Rhino.Controllers.Domain;
+using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Net.Mime;
+using System.Text.Json;
 
 namespace Rhino.Controllers.Controllers
 {
@@ -26,6 +24,20 @@ namespace Rhino.Controllers.Controllers
     [ApiController]
     public class GravityController : ControllerBase
     {
+        // members: static
+        private static readonly JsonSerializerOptions s_options = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        // members: state
+        private readonly IGravityRepository _domain;
+
+        public GravityController(IGravityRepository domain)
+        {
+            _domain = domain;
+        }
+
         // GET: api/v3/gravity/invoke
         [HttpPost, Route("invoke")]
         [SwaggerOperation(
@@ -36,11 +48,44 @@ namespace Rhino.Controllers.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<WebAutomation>))]
         public IActionResult Post([SwaggerRequestBody(SwaggerDocument.Parameter.Entity)] WebAutomation automation)
         {
-            // results
-            var orbitResponse = automation.Send();
+            // invoke
+            var (statusCode, response) = _domain.Invoke(automation);
 
-            // response
-            return Ok(orbitResponse);
+            // get
+            return new ContentResult
+            {
+                Content = JsonSerializer.Serialize(response, s_options),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = statusCode
+            };
+        }
+
+        // POST: api/v3/gravity/convert
+        [HttpPost, Route("convert")]
+        [SwaggerOperation(
+            Summary = "ConvertTo-ActionRule",
+            Description = "Converts _**Rhino Step**_ to an _**Action Rule**_ object.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(ActionRule))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult Convert([FromBody] ActionRuleConvertModel model)
+        {
+            // bad request
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // invoke
+            var (statusCode, actionRule) = _domain.Convert(model.Action);
+
+            // get
+            return new ContentResult
+            {
+                Content = JsonSerializer.Serialize(actionRule, s_options),
+                ContentType = MediaTypeNames.Application.Json,
+                StatusCode = statusCode
+            };
         }
     }
 }

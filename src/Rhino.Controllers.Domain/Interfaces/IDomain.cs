@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-using Rhino.Api.Contracts.Configuration;
+﻿using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Models;
 
 namespace Rhino.Controllers.Domain.Interfaces
