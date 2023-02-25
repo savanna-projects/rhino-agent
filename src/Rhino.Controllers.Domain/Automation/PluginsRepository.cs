@@ -123,7 +123,7 @@ namespace Rhino.Controllers.Domain.Automation
             Exception exception = default;
             try
             {
-                var id = TestIdRegex().Match(input: spec).Value;
+                var id = Regex.Match(input: spec, @"(?i)(?<=\[test-id]\\s+)\\w+", RegexOptions.None).Value;// TestIdRegex().Match(input: spec).Value;
                 var pluginPath = Path.Combine(path, id);
                 var pluginFilePath = Path.Combine(pluginPath, RhinoPluginEntry.PluginsRhinoSpecFile);
 
@@ -137,8 +137,8 @@ namespace Rhino.Controllers.Domain.Automation
             return exception;
         }
 
-        [GeneratedRegex("(?i)(?<=\\[test-id]\\s+)\\w+", RegexOptions.None, "en-US")]
-        private static partial Regex TestIdRegex();
+        //[GeneratedRegex("(?i)(?<=\\[test-id]\\s+)\\w+", RegexOptions.None, "en-US")]
+        //private static partial Regex TestIdRegex();
 
         /// <summary>
         /// Submits a code package into Rhino Domain.
@@ -305,7 +305,9 @@ namespace Rhino.Controllers.Domain.Automation
             var plugin = InvokeGet().FirstOrDefault(i => Regex.IsMatch(i, @"(?i)(?<=\[test-id]\s+)" + id));
 
             // setup: status
-            var statusCode = plugin == default ? StatusCodes.Status404NotFound : StatusCodes.Status200OK;
+            var statusCode = plugin == default
+                ? StatusCodes.Status404NotFound
+                : StatusCodes.Status200OK;
 
             // get configuration
             return (statusCode, plugin);

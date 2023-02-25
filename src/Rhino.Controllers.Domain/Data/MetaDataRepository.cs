@@ -20,6 +20,7 @@ using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Interfaces;
 using Rhino.Api.Parser;
 using Rhino.Connectors.Text;
+using Rhino.Controllers.Domain.Cache;
 using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
@@ -37,11 +38,8 @@ namespace Rhino.Controllers.Domain.Data
     /// <summary>
     /// Data Access Layer for all static data.
     /// </summary>
-    public partial class MetaDataRepository : IMetaDataRepository
+    public class MetaDataRepository : IMetaDataRepository
     {
-        [GeneratedRegex("[^{]*")]
-        private static partial Regex GetErrorPattern();
-
         // constants
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
@@ -92,22 +90,26 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>List of non conditional actions</returns>
         public IEnumerable<ActionModel> GetPlugins()
         {
-            // setup
-            var actions = new List<ActionModel>();
+            return MetaDataCache
+                .Plugins
+                .SelectMany(i => i.Value).Select(i => i.ActionModel)
+                .OrderBy(i => i.Key);
+            //// setup
+            //var actions = new List<ActionModel>();
 
-            // build
-            foreach (var (source, entity) in GetActions(_types, Authentication, _plugins, _logger))
-            {
-                var action = entity.ToModel(source);
-                if (action != default)
-                {
-                    actions.Add(action);
-                }
-            }
+            //// build
+            //foreach (var (source, entity) in GetActions(_types, Authentication, _plugins, _logger))
+            //{
+            //    var action = entity.ToModel(source);
+            //    if (action != default)
+            //    {
+            //        actions.Add(action);
+            //    }
+            //}
 
-            // get
-            _logger?.Debug($"Get-Actions = OK, {actions.Count}");
-            return actions.Where(i => !string.IsNullOrEmpty(i.Key)).OrderBy(i => i.Key);
+            //// get
+            //_logger?.Debug($"Get-Actions = OK, {actions.Count}");
+            //return actions.Where(i => !string.IsNullOrEmpty(i.Key)).OrderBy(i => i.Key);
         }
 
         /// <summary>
@@ -117,45 +119,49 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>List of non conditional actions</returns>
         public IEnumerable<ActionModel> GetPlugins(string configuration)
         {
-            // setup
-            var actions = new List<ActionModel>();
+            return MetaDataCache
+                .Plugins
+                .SelectMany(i => i.Value).Select(i => i.ActionModel)
+                .OrderBy(i => i.Key);
+            //// setup
+            //var actions = new List<ActionModel>();
 
-            // build
-            foreach (var (source, entity) in GetActions(_types, Authentication, _plugins, _logger))
-            {
-                var action = entity.ToModel(source);
-                if (action != default)
-                {
-                    actions.Add(action);
-                }
-            }
+            //// build
+            //foreach (var (source, entity) in GetActions(_types, Authentication, _plugins, _logger))
+            //{
+            //    var action = entity.ToModel(source);
+            //    if (action != default)
+            //    {
+            //        actions.Add(action);
+            //    }
+            //}
 
-            // external
-            var (statusCode, configurationEntity) = _configurations.SetAuthentication(Authentication).Get(configuration);
-            var isNullOrEmpty = string.IsNullOrEmpty(configuration);
-            var isConfiguration = !isNullOrEmpty && statusCode == StatusCodes.Status200OK;
-            var isExternal = isConfiguration && configurationEntity.ExternalRepositories?.Any() == true;
+            //// external
+            //var (statusCode, configurationEntity) = _configurations.SetAuthentication(Authentication).Get(configuration);
+            //var isNullOrEmpty = string.IsNullOrEmpty(configuration);
+            //var isConfiguration = !isNullOrEmpty && statusCode == StatusCodes.Status200OK;
+            //var isExternal = isConfiguration && configurationEntity.ExternalRepositories?.Any() == true;
 
-            if (isExternal)
-            {
-                var externalActions = configurationEntity
-                    .ExternalRepositories
-                    .Select(i => i.GetActions());
+            //if (isExternal)
+            //{
+            //    var externalActions = configurationEntity
+            //        .ExternalRepositories
+            //        .Select(i => i.GetActions());
 
-                var models = externalActions
-                    .SelectMany(i =>
-                    {
-                        var entities = i.Entities ?? Array.Empty<ActionAttribute>();
-                        var name = string.IsNullOrEmpty(i.Name) ? "external" : $"external:{i.Name}";
-                        return entities.Select(x => x.ToModel(name));
-                    });
+            //    var models = externalActions
+            //        .SelectMany(i =>
+            //        {
+            //            var entities = i.Entities ?? Array.Empty<ActionAttribute>();
+            //            var name = string.IsNullOrEmpty(i.Name) ? "external" : $"external:{i.Name}";
+            //            return entities.Select(x => x.ToModel(name));
+            //        });
 
-                actions.AddRange(models);
-            }
+            //    actions.AddRange(models);
+            //}
 
-            // get
-            _logger?.Debug($"Get-Actions -Configuration {configuration} = OK, {actions.Count}");
-            return actions.Where(i => !string.IsNullOrEmpty(i.Key)).OrderBy(i => i.Key);
+            //// get
+            //_logger?.Debug($"Get-Actions -Configuration {configuration} = OK, {actions.Count}");
+            //return actions.Where(i => !string.IsNullOrEmpty(i.Key)).OrderBy(i => i.Key);
         }
 
         /// <summary>
@@ -491,7 +497,7 @@ namespace Rhino.Controllers.Domain.Data
 
                 // build
                 var line = entityType.Equals("(E)")
-                    ? $"{actionLine} {entityType} {command + " - " + GetErrorPattern().Match(testStep.Action).Value.Trim().ToLower()}"
+                    ? $"{actionLine} {entityType} {command + " - " + Regex.Match(testStep.Action, "[^{]*").Value.Trim().ToLower()}"
                     : $"{actionLine} {entityType} {command}";
 
                 // render entity

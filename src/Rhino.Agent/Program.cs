@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
@@ -20,6 +19,7 @@ using Rhino.Agent.Cli;
 using Rhino.Api.Converters;
 using Rhino.Controllers.Controllers;
 using Rhino.Controllers.Domain;
+using Rhino.Controllers.Domain.Cache;
 using Rhino.Controllers.Domain.Formatters;
 using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
@@ -32,6 +32,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using ILogger = Gravity.Abstraction.Logging.ILogger;
+
+var a = MetaDataCache.Plugins;
 
 // Setup
 ControllerUtilities.RenderApiLogo();

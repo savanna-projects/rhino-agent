@@ -3,6 +3,7 @@
  * 
  * RESOURCES
  */
+using System;
 using System.Runtime.Serialization;
 
 namespace Rhino.Controllers.Models

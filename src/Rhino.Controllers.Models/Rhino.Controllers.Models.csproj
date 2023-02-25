@@ -3,7 +3,6 @@
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<RootNamespace>Rhino.Controllers.Models</RootNamespace>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>Latest</LangVersion>
 		<AssemblyVersion>7.0.0.0</AssemblyVersion>
 		<FileVersion>7.0.0.0</FileVersion>

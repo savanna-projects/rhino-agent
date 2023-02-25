@@ -21,6 +21,7 @@ namespace Rhino.Controllers.Models
         public static class ActionSource
         {
             public const string Code = "code";
+            public const string External = "external";
             public const string Plugin = "plugin";
         }
 
