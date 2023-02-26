@@ -8,9 +8,7 @@ using Gravity.Abstraction.WebDriver;
 using Gravity.Services.Comet.Engine.Attributes;
 using Gravity.Services.DataContracts;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Services.Common;
 
 using OpenQA.Selenium;
 
@@ -90,10 +88,7 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>List of non conditional actions</returns>
         public IEnumerable<ActionModel> GetPlugins()
         {
-            return MetaDataCache
-                .Plugins
-                .SelectMany(i => i.Value).Select(i => i.ActionModel)
-                .OrderBy(i => i.Key);
+            return MetaDataCache.Plugins.SelectMany(i => i.Value.ActionsCache);
             //// setup
             //var actions = new List<ActionModel>();
 
@@ -119,10 +114,7 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>List of non conditional actions</returns>
         public IEnumerable<ActionModel> GetPlugins(string configuration)
         {
-            return MetaDataCache
-                .Plugins
-                .SelectMany(i => i.Value).Select(i => i.ActionModel)
-                .OrderBy(i => i.Key);
+            return MetaDataCache.Plugins.SelectMany(i => i.Value.ActionsCache);
             //// setup
             //var actions = new List<ActionModel>();
 

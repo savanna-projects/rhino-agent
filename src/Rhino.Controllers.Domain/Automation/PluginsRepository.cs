@@ -137,9 +137,6 @@ namespace Rhino.Controllers.Domain.Automation
             return exception;
         }
 
-        //[GeneratedRegex("(?i)(?<=\\[test-id]\\s+)\\w+", RegexOptions.None, "en-US")]
-        //private static partial Regex TestIdRegex();
-
         /// <summary>
         /// Submits a code package into Rhino Domain.
         /// </summary>

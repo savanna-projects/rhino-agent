@@ -30,7 +30,7 @@ namespace Rhino.Controllers.Domain.Cache
         private const string DataEncryptionConfiguration = "Rhino:StateManager:DataEncryptionKey";
 
         // members: cache state
-        private static IDictionary<string, IEnumerable<PluginCacheModel>> s_plugins = GetPluginsCache(Utilities.Types);
+        private static IDictionary<string, PluginsCacheModel> s_plugins = GetPluginsCache(Utilities.Types);
 
         #region *** Singleton(s) ***
         [JsonIgnore, Newtonsoft.Json.JsonIgnore]
@@ -41,7 +41,7 @@ namespace Rhino.Controllers.Domain.Cache
             .Build();
 
         [DataMember]
-        public static IDictionary<string, IEnumerable<PluginCacheModel>> Plugins
+        public static IDictionary<string, PluginsCacheModel> Plugins
         {
             get
             {
@@ -54,10 +54,10 @@ namespace Rhino.Controllers.Domain.Cache
         #region *** Plugins: Get ***
         // TODO: add from external repository
         // TODO: load assemblies domain from folder for Gravity plugins
-        private static IDictionary<string, IEnumerable<PluginCacheModel>> GetPluginsCache(IEnumerable<Type> types)
+        private static IDictionary<string, PluginsCacheModel> GetPluginsCache(IEnumerable<Type> types)
         {
             // setup
-            var cache = new ConcurrentDictionary<string, IEnumerable<PluginCacheModel>>(StringComparer.OrdinalIgnoreCase);
+            var cache = new ConcurrentDictionary<string, PluginsCacheModel>(StringComparer.OrdinalIgnoreCase);
             var factory = new RhinoPluginFactory();
             var rootDirectory = Path.Combine(Environment.CurrentDirectory, "Plugins"/*Build dynamically from configuration*/);
             var directories = Directory
@@ -90,9 +90,26 @@ namespace Rhino.Controllers.Domain.Cache
                     var cacheModel = GetPluginCacheModel(ActionModel.ActionSource.Plugin, item.Path, item.Plugin, item.Attribute);
                     groupCollection.Add(cacheModel);
                 }
-                cache[key] = groupCollection;
+                cache[key] = new()
+                {
+                    ActionsCache = Plugins.SelectMany(i => i.Value.PluginsCache).Select(i => i.ActionModel).OrderBy(i => i.Key),
+                    ActionsCacheByConfiguration = Array.Empty<ActionModel>(),
+                    PluginsCache = groupCollection
+                };
             }
-            cache["Gravity"] = gravityPlugins.Select(i => GetPluginCacheModel((ActionAttribute)i));
+            cache["Gravity"] = new()
+            {
+                ActionsCache = gravityPlugins.Select(i => new ActionModel
+                {
+                    Entity = (ActionAttribute)i,
+                    Key = i.Name,
+                    Literal = i.Name.ToSpaceCase().ToLower(),
+                    Source = ActionModel.ActionSource.Code,
+                    Verb = "TBD"
+                }).OrderBy(i => i.Key),
+                ActionsCacheByConfiguration = Array.Empty<ActionModel>(),
+                PluginsCache = gravityPlugins.Select(i => GetPluginCacheModel((ActionAttribute)i))
+            };
 
             // get
             return cache;
