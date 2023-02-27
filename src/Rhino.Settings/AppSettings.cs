@@ -38,7 +38,7 @@ namespace Rhino.Settings
             configuration.GetSection("Rhino:HubConfiguration").Bind(Hub);
             configuration.GetSection("Rhino:ReportConfiguration").Bind(ReportsAndLogs);
             configuration.GetSection("Rhino:WorkerConfiguration").Bind(Worker);
-            configuration.GetSection("Rhino:PluginsConfiguration").Bind(Worker);
+            configuration.GetSection("Rhino:PluginsConfiguration").Bind(Plugins);
             configuration.GetSection("Rhino:StateManager").Bind(StateManager);
         }
 

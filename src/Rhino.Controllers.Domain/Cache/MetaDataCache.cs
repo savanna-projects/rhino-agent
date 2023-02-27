@@ -6,17 +6,16 @@
 using Gravity.Services.Comet.Engine.Attributes;
 
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Configuration;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Parser;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
+using Rhino.Settings;
 
 using System.Collections.Concurrent;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
 namespace Rhino.Controllers.Domain.Cache
 {
@@ -26,20 +25,11 @@ namespace Rhino.Controllers.Domain.Cache
     [DataContract]
     public static class MetaDataCache
     {
-        // constants
-        private const string DataEncryptionConfiguration = "Rhino:StateManager:DataEncryptionKey";
-
         // members: cache state
+        private static readonly AppSettings s_appSettings = new();
         private static IDictionary<string, PluginsCacheModel> s_plugins = GetPluginsCache(Utilities.Types);
 
         #region *** Singleton(s) ***
-        [JsonIgnore, Newtonsoft.Json.JsonIgnore]
-        public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
-            .AddJsonFile("appsettings.Development.json")
-            .AddEnvironmentVariables()
-            .Build();
-
         [DataMember]
         public static IDictionary<string, PluginsCacheModel> Plugins
         {
@@ -57,6 +47,7 @@ namespace Rhino.Controllers.Domain.Cache
         private static IDictionary<string, PluginsCacheModel> GetPluginsCache(IEnumerable<Type> types)
         {
             // setup
+            var a = s_appSettings?.Plugins;
             var cache = new ConcurrentDictionary<string, PluginsCacheModel>(StringComparer.OrdinalIgnoreCase);
             var factory = new RhinoPluginFactory();
             var rootDirectory = Path.Combine(Environment.CurrentDirectory, "Plugins"/*Build dynamically from configuration*/);
@@ -121,7 +112,7 @@ namespace Rhino.Controllers.Domain.Cache
         private static IEnumerable<string> GetPluginsRepository(string inDirectory)
         {
             // setup
-            var encryptionKey = Configuration?.GetValue(DataEncryptionConfiguration, string.Empty);
+            var encryptionKey = s_appSettings.StateManager?.DataEncryptionKey ?? string.Empty;
 
             // setup conditions
             var exists = Directory.Exists(inDirectory);
