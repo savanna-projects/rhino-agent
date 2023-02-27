@@ -14,6 +14,7 @@ using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 namespace Rhino.Controllers.Domain.Automation
 {
@@ -34,13 +35,13 @@ namespace Rhino.Controllers.Domain.Automation
         /// </summary>
         /// <param name="logger">An ILogger implementation to use with the Repository.</param>
         /// <param name="liteDb">An ILiteDatabase implementation to use with the Repository.</param>
-        /// <param name="configuration">An IConfiguration implementation to use with the Repository.</param>
+        /// <param name="appSettings">An IConfiguration implementation to use with the Repository.</param>
         /// <param name="configurationRepository">An IRepository<RhinoConfiguration> implementation to use with the Repository.</param>
         public TestsRepository(
             ILogger logger,
             ILiteDatabase liteDb,
-            IConfiguration configuration,
-            IRepository<RhinoConfiguration> configurationRepository) : base(logger, liteDb, configuration)
+            AppSettings appSettings,
+            IRepository<RhinoConfiguration> configurationRepository) : base(logger, liteDb, appSettings)
         {
             _logger = logger.CreateChildLogger(nameof(TestsRepository));
             _configurationRepository = configurationRepository;

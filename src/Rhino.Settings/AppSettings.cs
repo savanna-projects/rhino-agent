@@ -10,11 +10,19 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Rhino.Controllers.Models
+namespace Rhino.Settings
 {
     public class AppSettings
     {
         public const string ApiVersion = "3";
+
+        public AppSettings()
+            : this(new ConfigurationBuilder()
+                 .AddEnvironmentVariables()
+                 .AddJsonFile("appsettings.json")
+                 .AddJsonFile("appsettings.Development.json")
+                 .Build())
+        { }
 
         public AppSettings(IConfiguration configuration)
         {
@@ -23,6 +31,7 @@ namespace Rhino.Controllers.Models
             ReportsAndLogs ??= new ReportConfiguration();
             Worker ??= new WorkerConfiguration();
             Plugins ??= new PluginsConfiguration();
+            StateManager ??= new StateManagerConfiguration();
             Configuration = configuration;
 
             // bind
@@ -30,6 +39,7 @@ namespace Rhino.Controllers.Models
             configuration.GetSection("Rhino:ReportConfiguration").Bind(ReportsAndLogs);
             configuration.GetSection("Rhino:WorkerConfiguration").Bind(Worker);
             configuration.GetSection("Rhino:PluginsConfiguration").Bind(Worker);
+            configuration.GetSection("Rhino:StateManager").Bind(StateManager);
         }
 
         public IConfiguration Configuration { get; }
@@ -41,6 +51,8 @@ namespace Rhino.Controllers.Models
         public WorkerConfiguration Worker { get; }
 
         public PluginsConfiguration Plugins { get; }
+
+        public StateManagerConfiguration StateManager { get; }
 
         /// <summary>
         /// Gets the local IPv6 address.
@@ -62,8 +74,11 @@ namespace Rhino.Controllers.Models
         public class HubConfiguration
         {
             public double CreationTimeout { get; set; }
+
             public int MaxCompleted { get; set; }
+
             public int RepairAttempts { get; set; }
+
             public double RunningTimeout { get; set; }
         }
 
@@ -73,8 +88,11 @@ namespace Rhino.Controllers.Models
         public class WorkerConfiguration
         {
             public string HubAddress { get; set; }
+
             public string HubApiVersion { get; set; }
+
             public int MaxParallel { get; set; }
+
             public double ConnectionTimeout { get; set; }
         }
 
@@ -84,8 +102,11 @@ namespace Rhino.Controllers.Models
         public class ReportConfiguration
         {
             public bool Archive { get; set; }
+
             public string LogsOut { get; set; }
+
             public IEnumerable<string> Reporters { get; set;}
+
             public string ReportsOut { get; set; }
         }
 
@@ -95,6 +116,14 @@ namespace Rhino.Controllers.Models
         public class PluginsConfiguration
         {
             public IEnumerable<string> Locations { get; set;}
+        }
+
+        /// <summary>
+        /// Child configuration
+        /// </summary>
+        public class StateManagerConfiguration
+        {
+            public string DataEncryptionKey { get; set; }
         }
     }
 }

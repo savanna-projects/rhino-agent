@@ -15,6 +15,7 @@ using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Interfaces;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
+using Rhino.Settings;
 
 using System.Data;
 using System.Reflection;
@@ -450,7 +451,7 @@ namespace Rhino.Controllers.Extensions
             var arguments = new CliFactory(cli).Parse();
 
             // normalize
-            maxParallel = maxParallel == default ? 1 : maxParallel;
+            maxParallel = maxParallel == 0 ? 1 : maxParallel;
 
             // get from command line
             if (!arguments.ContainsKey("maxParallel"))

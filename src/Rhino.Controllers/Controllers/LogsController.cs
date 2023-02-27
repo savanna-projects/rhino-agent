@@ -11,6 +11,7 @@ using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 using Swashbuckle.AspNetCore.Annotations;
 

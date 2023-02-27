@@ -17,11 +17,11 @@
 		<PackageReference Include="Gravity.Services.DataContracts" Version="2023.2.16.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Rhino.Controllers.Models\Rhino.Controllers.Models.csproj" />
+		<ProjectReference Include="..\Rhino.Settings\Rhino.Settings.csproj" />
 	</ItemGroup>
 
 </Project>

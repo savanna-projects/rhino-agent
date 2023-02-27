@@ -25,6 +25,7 @@ using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Hubs;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 using System;
 using System.IO;
@@ -32,8 +33,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using ILogger = Gravity.Abstraction.Logging.ILogger;
-
-var a = MetaDataCache.Plugins;
 
 // Setup
 ControllerUtilities.RenderApiLogo();

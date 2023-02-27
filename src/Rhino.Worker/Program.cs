@@ -23,6 +23,7 @@ using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 using System;
 using System.Collections.Concurrent;

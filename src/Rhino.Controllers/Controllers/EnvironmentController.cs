@@ -12,6 +12,7 @@ using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -125,10 +126,10 @@ namespace Rhino.Controllers.Controllers
             [FromBody, SwaggerParameter(SwaggerDocument.Parameter.Entity)] IDictionary<string, object> value)
         {
             // bad request
-            if (value == null || !value.Any())
+            if (value?.Any() != true)
             {
                 return await this
-                    .ErrorResultAsync<IDictionary<string, object>>($"Add-EnvironmentParameters = (BadRequest, NoValue | NoKey)")
+                    .ErrorResultAsync<IDictionary<string, object>>("Add-EnvironmentParameters = (BadRequest, NoValue | NoKey)")
                     .ConfigureAwait(false);
             }
 
@@ -140,7 +141,7 @@ namespace Rhino.Controllers.Controllers
             var responseBody = new Dictionary<string, object>(value, StringComparer.OrdinalIgnoreCase);
 
             // get
-            return Created($"/api/v3/environment", responseBody);
+            return Created("/api/v3/environment", responseBody);
         }
         #endregion
 

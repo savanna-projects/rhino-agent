@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Controllers.Domain;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 using Swashbuckle.AspNetCore.Annotations;
 

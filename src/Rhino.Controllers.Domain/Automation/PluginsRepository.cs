@@ -9,12 +9,12 @@ using Gravity.Extensions;
 using LiteDB;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models.Server;
+using Rhino.Settings;
 
 using System.IO.Compression;
 using System.Text.RegularExpressions;
@@ -28,27 +28,30 @@ namespace Rhino.Controllers.Domain.Automation
     /// </summary>
     public partial class PluginsRepository : Repository<string>, IPluginsRepository
     {
+        // patterns
+        [GeneratedRegex("(?i)(?<=\\[test-id]\\s+)\\w+", RegexOptions.None, "en-US")]
+        private static partial Regex GetTestIdPattern();
+
         // members: static
         private static readonly string s_basePath = Path.Combine(Environment.CurrentDirectory, "Plugins");
         private static readonly IDictionary<string, string> s_folders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["Gravity"] = Path.Combine(s_basePath, "Gravity"),
             ["Reporter"] = Path.Combine(s_basePath, "Reporters"),
-            ["Connector"] = Path.Combine(s_basePath, "Connector")
+            ["Connector"] = Path.Combine(s_basePath, "Connectors")
         };
 
         // members: state
         private readonly ILogger _logger;
 
-        // TODO: change configuration to AppSettings
         /// <summary>
         /// Creates a new instance of Rhino.Agent.Domain.Repository.
         /// </summary>
         /// <param name="logger">An ILogger implementation to use with the Repository.</param>
         /// <param name="liteDb">An ILiteDatabase implementation to use with the Repository.</param>
-        /// <param name="configuration">An IConfiguration implementation to use with the Repository.</param>
-        public PluginsRepository(ILogger logger, ILiteDatabase liteDb, IConfiguration configuration)
-            : base(logger, liteDb, configuration)
+        /// <param name="appSettings">An IConfiguration implementation to use with the Repository.</param>
+        public PluginsRepository(ILogger logger, ILiteDatabase liteDb, AppSettings appSettings)
+            : base(logger, liteDb, appSettings)
         {
             _logger = logger.CreateChildLogger(nameof(EnvironmentRepository));
         }
@@ -80,7 +83,7 @@ namespace Rhino.Controllers.Domain.Automation
         {
             // setup
             var basePath = Path.Combine(Environment.CurrentDirectory, RhinoPluginEntry.PluginsRhinoFolder);
-            var encryptionKey = Configuration.GetValue(DataEncryptionConfiguration, string.Empty);
+            var encryptionKey = AppSettings.StateManager?.DataEncryptionKey ?? string.Empty;
             var path = isPrivate
                 ? basePath + "-" + JsonSerializer.Serialize(Authentication).ToBase64().Encrypt(encryptionKey).RemoveNonWord()
                 : basePath;
@@ -123,7 +126,7 @@ namespace Rhino.Controllers.Domain.Automation
             Exception exception = default;
             try
             {
-                var id = Regex.Match(input: spec, @"(?i)(?<=\[test-id]\\s+)\\w+", RegexOptions.None).Value;// TestIdRegex().Match(input: spec).Value;
+                var id = GetTestIdPattern().Match(input: spec).Value;
                 var pluginPath = Path.Combine(path, id);
                 var pluginFilePath = Path.Combine(pluginPath, RhinoPluginEntry.PluginsRhinoSpecFile);
 
@@ -211,7 +214,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // setup
             var path = Path.Combine(Environment.CurrentDirectory, RhinoPluginEntry.PluginsRhinoFolder);
-            var encryptionKey = Configuration.GetValue(DataEncryptionConfiguration, string.Empty);
+            var encryptionKey = AppSettings.StateManager?.DataEncryptionKey ?? string.Empty;
             var privateKey = "-" + JsonSerializer.Serialize(Authentication).ToBase64().Encrypt(encryptionKey).RemoveNonWord();
             var pluginsPath = !isUser && !isPassword ? path : path + privateKey;
             var userPath = string.IsNullOrEmpty(id) ? pluginsPath : Path.Combine(pluginsPath, id);
@@ -248,7 +251,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // setup
             var path = Path.Combine(Environment.CurrentDirectory, RhinoPluginEntry.PluginsRhinoFolder);
-            var encryptionKey = Configuration.GetValue(DataEncryptionConfiguration, string.Empty);
+            var encryptionKey = AppSettings.StateManager?.DataEncryptionKey ?? string.Empty;
             var privateKey = "-" + JsonSerializer.Serialize(Authentication).ToBase64().Encrypt(encryptionKey).RemoveNonWord();
             var userPath = !isUser && !isPassword ? path : path + privateKey;
 
@@ -318,7 +321,7 @@ namespace Rhino.Controllers.Domain.Automation
 
             // setup
             var path = Path.Combine(Environment.CurrentDirectory, RhinoPluginEntry.PluginsRhinoFolder);
-            var encryptionKey = Configuration.GetValue(DataEncryptionConfiguration, string.Empty);
+            var encryptionKey = AppSettings.StateManager?.DataEncryptionKey ?? string.Empty;
             var privateKey = "-" + JsonSerializer
                 .Serialize(Authentication)
                 .ToBase64()

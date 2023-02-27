@@ -22,6 +22,7 @@ using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Hubs;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 using System;
 using System.IO;

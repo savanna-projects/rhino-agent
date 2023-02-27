@@ -8,6 +8,7 @@ using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Orchestrator;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 using System.Collections.Concurrent;
 using System.Diagnostics;

@@ -1,5 +1,6 @@
 ﻿using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 namespace Rhino.Controllers.Domain.Interfaces
 {

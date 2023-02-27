@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
+using Rhino.Settings;
 
 namespace Rhino.Controllers.Domain
 {
@@ -35,12 +36,15 @@ namespace Rhino.Controllers.Domain
         /// </summary>
         /// <param name="logger">An ILogger implementation to use with the Repository.</param>
         /// <param name="liteDb">An ILiteDatabase implementation to use with the Repository.</param>
-        /// <param name="configuration">An IConfiguration implementation to use with the Repository.</param>
-        protected Repository(ILogger logger, ILiteDatabase liteDb, IConfiguration configuration)
+        /// <param name="appSettings">An IConfiguration implementation to use with the Repository.</param>
+        protected Repository(ILogger logger, ILiteDatabase liteDb, AppSettings appSettings)
         {
-            LiteDb = liteDb;
-            Configuration = configuration;
+            // fields
             _logger = logger;
+
+            // properties
+            LiteDb = liteDb;
+            AppSettings = appSettings;
         }
 
         /// <summary>
@@ -65,7 +69,7 @@ namespace Rhino.Controllers.Domain
         /// <summary>
         /// Gets the appSettings.json used by the repository.
         /// </summary>
-        public IConfiguration Configuration { get; }
+        public AppSettings AppSettings { get; }
 
         /// <summary>
         /// Sets the authentication information.
@@ -95,7 +99,9 @@ namespace Rhino.Controllers.Domain
         {
             // serialize
             var stringBody = JsonConvert.SerializeObject(Authentication).ToBase64();
-            var enStringBody = stringBody.Encrypt(Configuration.GetValue(DataEncryptionConfiguration, string.Empty)).RemoveNonWord();
+            var enStringBody = stringBody
+                .Encrypt(AppSettings.StateManager?.DataEncryptionKey ?? string.Empty)
+                .RemoveNonWord();
 
             // convert
             CollectionName = $"{name}_{enStringBody}";

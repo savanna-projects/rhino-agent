@@ -13,6 +13,7 @@ using Rhino.Api.Interfaces;
 using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 using System.Collections.Concurrent;
 

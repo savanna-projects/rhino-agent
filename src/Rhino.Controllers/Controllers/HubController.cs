@@ -11,6 +11,7 @@ using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -59,7 +60,7 @@ namespace Rhino.Controllers.Controllers
             // not found
             if (statusCode == StatusCodes.Status500InternalServerError)
             {
-                var notFound = "Create-Run -Type 'Rhino' = (InternalServerError | NotAbleToCreateRun | Timeout)";
+                const string notFound = "Create-Run -Type 'Rhino' = (InternalServerError | NotAbleToCreateRun | Timeout)";
                 return await this
                     .ErrorResultAsync<string>(notFound, StatusCodes.Status500InternalServerError)
                     .ConfigureAwait(false);
@@ -196,7 +197,7 @@ namespace Rhino.Controllers.Controllers
             // internal server error
             if (statusCode == StatusCodes.Status500InternalServerError)
             {
-                var notFound = $"Get-Completed -Type 'Rhino' -All = InternalServerError";
+                const string notFound = "Get-Completed -Type 'Rhino' -All = InternalServerError";
                 return await this
                     .ErrorResultAsync<string>(notFound, StatusCodes.Status500InternalServerError)
                     .ConfigureAwait(false);
@@ -226,7 +227,7 @@ namespace Rhino.Controllers.Controllers
             // internal server error
             if (statusCode == StatusCodes.Status500InternalServerError)
             {
-                var notFound = $"Get-Workers -Type 'Rhino' -All = InternalServerError";
+                const string notFound = "Get-Workers -Type 'Rhino' -All = InternalServerError";
                 return await this
                     .ErrorResultAsync<string>(notFound, StatusCodes.Status500InternalServerError)
                     .ConfigureAwait(false);

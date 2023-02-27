@@ -12,6 +12,7 @@ using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
+using Rhino.Settings;
 
 using System.Collections.Concurrent;
 using System.Data.Common;

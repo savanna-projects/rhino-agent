@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Models;
+using Rhino.Settings;
 
 namespace Rhino.Controllers.Domain.Automation
 {
@@ -32,9 +33,9 @@ namespace Rhino.Controllers.Domain.Automation
         /// </summary>
         /// <param name="logger">An ILogger implementation to use with the Repository.</param>
         /// <param name="liteDb">An ILiteDatabase implementation to use with the Repository.</param>
-        /// <param name="configuration">An IConfiguration implementation to use with the Repository.</param>
-        public ConfigurationsRepository(ILogger logger, ILiteDatabase liteDb, IConfiguration configuration)
-            : base(logger, liteDb, configuration)
+        /// <param name="appSettings">An IConfiguration implementation to use with the Repository.</param>
+        public ConfigurationsRepository(ILogger logger, ILiteDatabase liteDb, AppSettings appSettings)
+            : base(logger, liteDb, appSettings)
         {
             _logger = logger.CreateChildLogger(nameof(ConfigurationsRepository));
         }
