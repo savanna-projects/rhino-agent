@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            font: 16px;
+            background: #decadf;
+        }
+
+        .search-container-background {
+            display: flex;
+            justify-content: center;
+        }
+
+        .error-message {
+            width: 100%;
+            box-shadow: 0 8px 20px 0 rgb(0 0 0 / 15%);
+            background: #e4d4e5;
+            border-bottom: 2px solid #e5e5e5;
+            height: 20%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-container-down {
+            margin-top: 15%;
+        }
+
+        .search-container-up {
+            margin-top: 1%;
+            top: 2%;
+        }
+
+        .search-container {
+            box-shadow: 0 8px 20px 0 rgb(0 0 0 / 15%);
+            background: #e8d4e9;
+            /* border-bottom: 2px solid #e5e5e5; */
+            padding-top: 2%;
+            width: 30%;
+            text-align: center;
+            height: 225px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            padding-bottom: -2%;
+        }
+
+        /*the container must be positioned relative:*/
+        .search-input-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            background-color: #f1f1f1;
+            align-items: center;
+            height: 20%;
+        }
+
+        .search-input {
+            border: 1px solid #bca4bd;
+            background-color: #f1f1f1;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            flex: 1 0 auto;
+            background: #e0c5e1;
+            height: 100%;
+            padding-right: 35px;
+        }
+
+        .search-input:focus {
+            border: 1px solid #775078;
+            padding: 10px;
+            padding-right: 40px;
+            font-size: 16px;
+            width: 100%;
+            flex: 1 0 auto;
+            outline: none;
+        }
+
+        .plugins-category input[type="checkbox"] {
+            display: none;
+        }
+
+        .plugins-category input[type="checkbox"]+label {
+            display: flex;
+            padding-left: 30px;
+            margin-bottom: 5px;
+            font: 14px/20px "Open Sans", Arial, sans-serif;
+            cursor: pointer;
+            gap: 10%;
+        }
+
+        .plugins-category input[type="checkbox"]+label:before {
+            content: "";
+            display: block;
+            width: 1.7em;
+            height: 1.2em;
+            border: 1px solid #7160b1;
+            border-radius: 0.2em;
+            left: 0;
+            top: 0;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .plugins-category input[type="checkbox"]:checked+label:before {
+            background: #7160b1;
+        }
+
+        .plugins-category {
+            margin: 2%;
+        }
+
+        .plugins-category-container {
+            display: flex;
+            width: 60%;
+            gap: 2%;
+            flex-direction: row;
+            flex-wrap: nowrap;
+        }
+
+        .magnifying-glass {
+            position: absolute;
+            top: 1%;
+            right: 1%;
+            bottom: 8%;
+            background-color: transparent;
+            border: none;
+            opacity: 0.5;
+        }
+
+        .autocomplete-items-container {
+            width: 100%;
+            left: 15%;
+            top: 51%;
+            z-index: -1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .autocomplete-items {
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            width: 30%;
+            background: #e8d4e9;
+            scroll-snap-type: y mandatory;
+        }
+
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background: #e8d4e9;
+            border: 1px solid #bca4bd;
+            border-top: 0.1px solid #bca4bd;
+            border-bottom: 0.1px solid #bca4bd;
+        }
+
+        /*when hovering an item:*/
+        .autocomplete-items div:hover {
+            background-color: #e0c5e1;
+            width: 100%;
+        }
+
+        /*when navigating through the items using the arrow keys:*/
+        .autocomplete-active {
+            background-color: #e0c5e1 !important;
+        }
+
+        .searched-plugins {
+            margin-top: 4%;
+            width: 100%;
+        }
+
+        .plugin {
+            margin: 1%;
+        }
+
+        .plugin-active {
+            background-color: #d0afd1 !important;
+        }
+
+        /*when hovering an item:*/
+        .plugin-Summary:hover {
+            background-color: #e0c5e1;
+        }
+
+        .plugin-Summary {
+            background-color: #eee;
+            left: 0%;
+            width: 100%;
+            height: max-content;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #e8d4e9;
+            border-bottom: 1px solid #d4d4d4;
+            border: 1px solid #d4d4d4;
+            border-top: none;
+            z-index: 99;
+            /*position the searched plugins to be the same width as the container:*/
+            left: 0%;
+        }
+
+        .plugin-Summary h1 {
+            display: flex;
+            align-items: left;
+            justify-content: start;
+        }
+
+        .div-documentation-success {
+            box-shadow: 0 8px 20px 0 rgb(0 0 0 / 15%);
+            height: 80%;
+            padding-left: 15px;
+            padding-right: 10px;
+            background: #e0c5e1;
+            width: 100%;
+            padding-top: 5px;
+        }
+
+        .div-documentation-success h1 {
+            display: flex;
+            align-items: left;
+            justify-content: start;
+        }
+
+        .div-documentation-error {
+            box-shadow: 0 8px 20px 0 rgb(0 0 0 / 15%);
+            height: 80%;
+            padding-left: 10px;
+            padding-right: 10px;
+            background: #e8d4e9;
+            width: 100%;
+            padding-top: 5%;
+            padding-bottom: 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .close-doc {
+            position: absolute;
+            right: 3.5%;
+            width: 30px;
+            height: 25px;
+            background-color: transparent;
+            border: none;
+        }
+
+        .arguments-table {
+            border-collapse: unset;
+            width: 80%;
+            height: 40%;
+            background-color: #e9e9e9;
+        }
+
+        .arguments-table th {
+            background-color: #d8d6d6;
+        }
+
+        .arguments-table tr {
+            height: 30px;
+        }
+
+        .arguments-table th,
+        td {
+            text-align: left;
+            padding: 1%;
+            font-size: 90%;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .example {
+            padding-bottom: 4px;
+        }
+
+        .th-name {
+            width: max-content;
+            min-width: 70px;
+        }
+
+        .example-h5 {
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        body.loading:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #d9c1da;
+            z-index: 999999;
+        }
+
+        body.loading:after {
+            content: '';
+            width: 100px;
+            height: 100px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgb(39, 12, 43) rgb(39, 12, 43) rgb(39, 12, 43) transparent;
+            border-radius: 50%;
+            animation: rotate 1.5s infinite linear;
+            z-index: 999999;
+            position: fixed;
+            top: calc(50% - 50px);
+            left: calc(50% - 50px);
+        }
+
+        .loading-doc:before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #d9c1da;
+            z-index: 999999;
+            opacity: 0.8;
+        }
+
+        .loading-doc:after {
+            content: '';
+            width: 50px;
+            height: 50px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgb(39, 12, 43) rgb(39, 12, 43) rgb(39, 12, 43) transparent;
+            border-radius: 50%;
+            animation: rotate 1.5s infinite linear;
+            z-index: 999999;
+            position: fixed;
+            top: calc(50% - 50px);
+            left: calc(50% - 50px);
+        }
+
+        @-webkit-keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @-keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="loading" onload="onLoad()">
+    <div id="search-container-background" class="search-container-background">
+        <div id="search-container" class="search-container search-container-down">
+            <h1 class="search-title">Plugins Search</h1>
+            <br>
+            <div class="plugins-category-container">
+                <div class="plugins-category">
+                    <input type="checkbox" id="front" name="CategoryCheckbox" checked>
+                    <label for="front">Front</label>
+                </div>
+                <div class="plugins-category">
+                    <input type="checkbox" id="back" name="CategoryCheckbox" checked>
+                    <label for="back">Back</label>
+                </div>
+                <div class="plugins-category">
+                    <input type="checkbox" id="external" name="CategoryCheckbox" checked>
+                    <label for="external">External</label>
+                </div>
+            </div>
+            <div class="search-input-container">
+                <input id="search-input" class="search-input" type="text" placeholder="Plugins">
+                <button class="magnifying-glass" onClick="searchPlugins()">🔍</button>
+            </div>
+        </div>
+    </div>
+    <div id="autocomplete-items-container" class="autocomplete-items-container"></div>
+    <div id="searched-plugins" class="searched-plugins">
+    </div>
+    <div id="error-message" class="error-message">
+        <h2>Failed to get plugins</h2>
+    </div>
+    <script>
+        const baseUrl = `http://localhost:9900/api/v3/meta/plugins`; //TODO: what needs to be here?
+        // const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api/v3/meta/plugins`;
+        var plugins = [];
+        var sortedPlugins = [];
+        var pluginsDictionary = {
+            "back": {
+                "source": "code",
+                "list": []
+            },
+            "front": {
+                "source": "plugin",
+                "list": []
+            },
+            "external": {
+                "source": "external",
+                "list": []
+            },
+        };
+        var currentFocus;
+        const searchInput = document.getElementById("search-input");
+        const searchContainer = document.getElementById("search-container");
+        const errorMessage = document.getElementById("error-message");
+        const AutocompleteOptionsContainer = document.getElementById("autocomplete-items-container");
+        const searchedPluginsContainer = document.getElementById("searched-plugins");
+        var searchedPluginsKeys = [];
+
+        //#region loading page
+
+        async function onLoad() {
+            plugins = await getPlugins();
+            document.querySelector('body').classList.remove('loading');
+            console.log(plugins);
+            if (plugins && plugins.length > 0 && !plugins.includes("Error")) {
+                sortedPlugins = plugins;
+                Object.values(pluginsDictionary).forEach(pluginsObject => {
+                    pluginsObject.list = plugins.filter(p => p.source === pluginsObject.source);
+                });
+                setSearchInputEvents();
+                errorMessage.style.visibility = "hidden";
+                addCheckboxEvents();
+            }
+            else {
+                searchContainer.style.visibility = "hidden";
+                errorMessage.innerHTML += plugins.includes("Error") ? `<p>${plugins}</p>` : "<p>Not found plugins</p>";
+                errorMessage.style.visibility = "visible";
+            }
+        }
+
+        function addCheckboxEvents() {
+            const checkboxButtons = document.querySelectorAll('input[name="CategoryCheckbox"]');
+            for (const checkboxButton of checkboxButtons) {
+                checkboxButton.addEventListener('change', sortPlugins);
+            }
+        }
+
+        function setSearchInputEvents() {
+            searchInput.addEventListener("input", getAutocompleteOptions);
+            searchInput.addEventListener("keydown", onKeydown);
+        }
+
+        /*execute a function when someone clicks in the document:*/
+        document.addEventListener("click", function (e) {
+            closeAutocompleteOptions(e.target);
+        });
+
+        //#endregion loading page
+
+
+        //#region checkbox event
+
+        function sortPlugins() {
+            const ObjectModify = pluginsDictionary[this.id];
+            if (ObjectModify) {
+                pluginsDictionary[this.id].list = this.checked ? plugins.filter(p => p.source === ObjectModify.source) : [];
+            }
+            sortedPlugins = mergedPluginsLists();
+            getAutocompleteOptions();
+        }
+
+        function mergedPluginsLists() {
+            let mergedPlugins = [];
+            Object.values(pluginsDictionary).forEach(pluginsObject =>
+                mergedPlugins = mergedPlugins.concat(pluginsObject.list)
+            );
+            return mergedPlugins;
+        }
+
+        //#endregion checkbox event
+
+
+        //#region functions for autocomplete 
+
+        function getAutocompleteOptions() {
+            closeSearchedPlugins();
+            closeAutocompleteOptions();
+            closeDocumentation();
+            const searchInputValue = searchInput.value;
+            if (!searchInputValue) { return false; }
+            currentFocus = -1;
+            buildAutocompleteOptions(searchInputValue);
+        }
+
+        function buildAutocompleteOptions(inputValue) {
+            let OptionsContainer = buildAutocompleteOptionsContainer();
+            AutocompleteOptionsContainer.appendChild(OptionsContainer);
+            searchedPluginsKeys = [];
+            for (const plugin of sortedPlugins) {
+                let literal = plugin.literal;
+                if (literal.substr(0, inputValue.length).toUpperCase() == inputValue.toUpperCase()) {
+                    searchedPluginsKeys.push(plugin.key);
+                    OptionsContainer.appendChild(buildAutocompleteOptionContainer(literal, inputValue));
+                }
+            }
+        }
+
+        function buildAutocompleteOptionsContainer() {
+            let OptionsContainer = createDiv();
+            OptionsContainer.setAttribute("class", "autocomplete-items");
+            return OptionsContainer;
+        }
+
+        function buildAutocompleteOptionContainer(literal, inputValue) {
+            let OptionContainer = createDiv();
+            OptionContainer.innerHTML = "<strong>" + literal.substr(0, inputValue.length) + "</strong>";
+            OptionContainer.innerHTML += literal.substr(inputValue.length);
+            OptionContainer.innerHTML += "<input type='hidden' value='" + literal + "'>";
+            OptionContainer.addEventListener("click", selectOption);
+            return OptionContainer;
+        }
+
+        //#endregion functions for autocomplete
+
+
+        //#region pressing special keyboard keys
+
+        function onKeydown(event) {
+            const OptionsContainer = document.querySelector(".autocomplete-items");
+            if (OptionsContainer) {
+                let OptionsContainers = OptionsContainer.getElementsByTagName("div");
+                switch (event.keyCode) {
+                    case 40: {
+                        currentFocus++;
+                        addActiveClass(OptionsContainers);
+                        break;
+                    }
+                    case 38: {
+                        currentFocus--;
+                        addActiveClass(OptionsContainers);
+                        break;
+                    }
+                    case 13: {
+                        event.preventDefault();
+                        if (currentFocus > -1 && OptionsContainers) {
+                            OptionsContainers[currentFocus].click();
+                        }
+                        else {
+                            searchPlugins();
+                        }
+                    }
+                }
+            }
+        }
+
+        function addActiveClass(OptionsContainers) {
+            if (OptionsContainers) {
+                removeActiveClass(OptionsContainers);
+                if (currentFocus >= OptionsContainers.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = (OptionsContainers.length - 1);
+                let currentElement = OptionsContainers[currentFocus];
+                currentElement.classList.add("autocomplete-active");
+                currentElement.scrollIntoView({ block: "end", inline: "nearest" });
+            }
+        }
+
+        function removeActiveClass(OptionsContainers) {
+            for (let container of OptionsContainers) {
+                container.classList.remove("autocomplete-active");
+            }
+        }
+
+        //#endregion special certain keyboard keys
+
+
+        //#region search plugins
+
+        function selectOption() {
+            searchInput.value = this.getElementsByTagName("input")[0].value;
+            let key = plugins.find(p => p.literal === searchInput.value).key;
+            searchedPluginsKeys = [];
+            searchedPluginsKeys.push(key);
+            searchPlugins();
+        }
+
+        function searchPlugins() {
+            showSearchedPlugins();
+            if (searchedPluginsKeys.length === 1) {
+                let literal = '';
+                literal = plugins.find(p => p.key === searchedPluginsKeys[0]).literal;
+                searchInput.value = literal;
+                clickPlugin();
+                closeAutocompleteOptions();
+            }
+        }
+
+        function showSearchedPlugins() {
+            closeSearchedPlugins();
+            closeAutocompleteOptions();
+            closeDocumentation();
+            searchConainerUp();
+            for (let key of searchedPluginsKeys) {
+                let pluginContainer = buildSearchedPluginContainer(key);
+                searchedPluginsContainer.appendChild(pluginContainer);
+            }
+        }
+
+        function buildSearchedPluginContainer(key) {
+            let plugin = plugins.find(plugin => plugin.key === key);
+            let pluginContainer = createDiv();
+            pluginContainer.setAttribute("class", "plugin");
+            pluginContainer.appendChild(buildPluginSummaryContainer(plugin));
+            pluginContainer.appendChild(buildPluginDocContainer(plugin));
+            return pluginContainer;
+        }
+
+        function buildPluginSummaryContainer(plugin) {
+            let pluginSummaryContainer = createDiv();
+            pluginSummaryContainer.setAttribute("class", "plugin-Summary");
+            pluginSummaryContainer.setAttribute("id", `${plugin.key}`);
+            pluginSummaryContainer.innerHTML = "<h4>" + plugin.literal + "</h4>";
+            pluginSummaryContainer.innerHTML += "<p>" + plugin.description + "</p>";
+            pluginSummaryContainer.addEventListener("click", clickPlugin);
+            return pluginSummaryContainer;
+        }
+
+        function buildPluginDocContainer(plugin) {
+            let pluginDocContainer = createDiv();
+            pluginDocContainer.setAttribute("id", `${plugin.key}-Doc`);
+            return pluginDocContainer;
+        }
+
+        //#endregion search plugins
+
+
+        //#region documentation file functions
+
+        async function clickPlugin(event) {
+            closeDocumentation();
+            const loadingDocClass = "loading-doc";
+            document.querySelector('body').classList.add(loadingDocClass);
+            let key = event ? event.currentTarget.id : searchedPluginsKeys ? searchedPluginsKeys[0] : '';
+            const doc = await getPluginDocumentation(key);
+            document.querySelector('body').classList.remove(loadingDocClass);
+            console.log("doc", doc);
+            showDocumentation(doc, key);
+        }
+
+        function showDocumentation(doc, key) {
+            searchedPlugin = document.getElementById(key);
+            searchedPlugin.classList.add("plugin-active");
+            pluginContainer = document.getElementById(`${key}-Doc`);
+            pluginContainer.appendChild(buildDocumentation(doc));
+        }
+
+        function buildDocumentation(doc) {
+            if (doc) {
+                return buildValidDocumentation(doc);
+            }
+            else {
+                return buildNotFoundDocumentation();
+            }
+        }
+
+        function buildValidDocumentation(doc) {
+            const documentationContainer = createDiv();
+            documentationContainer.classList.add("div-documentation-success");
+            documentationContainer.setAttribute("id", "documentation-container");
+            const name = doc.literal ? doc.literal : '';
+            const source = doc.source ? doc.source : '';
+            const description = doc.entity.description ? doc.entity.description : '';
+            const cliArguments = doc.entity.cliArguments ? doc.entity.cliArguments : '';
+            const examples = doc.entity.examples ? doc.entity.examples : '';
+            documentationContainer.innerHTML = `
+                    <button class="close-doc" onclick="closeDocumentation()">❌</button>
+            <h3>${name}</h3>
+            <br><h4>Source</h4>
+            <p>${source}</p>
+            <br><h4>Description</h4>
+            <p>${description}</p>`;
+            documentationContainer.innerHTML += buildArgumentsTable(cliArguments);
+            documentationContainer.innerHTML += buildExamplesList(examples);
+            return documentationContainer;
+        }
+
+        function buildNotFoundDocumentation() {
+            const documentationContainer = createDiv();
+            documentationContainer.classList.add("div-documentation-error");
+            documentationContainer.setAttribute("id", "documentation-container");
+            documentationContainer.innerHTML = '<h3>Documentation file not found</h3>';
+            return documentationContainer;
+        }
+
+        function buildArgumentsTable(cliArguments) {
+            if (!cliArguments)
+                return '';
+            const argumentsName = Object.keys(cliArguments);
+            const argumentsDecription = Object.values(cliArguments);
+            if (argumentsName.length === 0)
+                return '';
+            let table = `<br><h4>Arguments:</h4>
+            <table class="arguments-table">
+                <tr>
+                    <th class="th-name">Name</th>
+                    <th>Description</th>
+                </tr>`;
+            for (let i = 0; i < argumentsName.length; i++) {
+                table += `<tr>
+                    <td>${argumentsName[i]}</td>
+                    <td>${argumentsDecription[i]}</td>
+                </tr>`;
+            }
+            table += '</table>';
+            return table;
+        }
+
+        function buildExamplesList(examples) {
+            if (examples.length === 0)
+                return '';
+            let examplesList = '<br><h4>Examples:</h4>';
+            for (let i = 0; i < examples.length; i++) {
+                examplesList += `<div class="example">
+                <h5 class="example-h5">${i + 1}. ${examples[i].literalExample}</h5>
+                    <p>${examples[i].description}</p>
+            </div>`;
+            }
+            return examplesList;
+        }
+
+        //#endregion documentation file functions
+
+
+        //#region close elements
+
+        function closeDocumentation() {
+            removeActivePluginClass();
+            const documentationContainer = document.getElementById("documentation-container");
+            if (documentationContainer)
+                documentationContainer.remove();
+        }
+
+        function removeActivePluginClass() {
+            // remove active plugin class
+            const activePluginsElements = document.querySelectorAll('.plugin-Summary');
+            if (activePluginsElements)
+                for (let element of activePluginsElements) {
+                    element.classList.remove("plugin-active");
+                }
+        }
+
+        function closeAutocompleteOptions(element) {
+            const autocompleteItems = document.getElementsByClassName("autocomplete-items");
+            for (const item of autocompleteItems) {
+                item.remove();
+            }
+        }
+
+        function closeSearchedPlugins() {
+            const searchedPlugins = document.querySelectorAll('.plugin');
+            for (const item of searchedPlugins) {
+                item.remove();
+            }
+            searchConainerDown();
+        }
+
+        //#endregion close elements
+
+
+        //#region move search container position
+
+        function searchConainerUp() {
+            searchContainer.classList.replace('search-container-down', 'search-container-up');
+        }
+
+        function searchConainerDown() {
+            searchContainer.classList.replace('search-container-up', 'search-container-down');
+        }
+
+        //#endregion move search container position
+
+
+        //#region get data from api
+
+        async function getPlugins() {
+            const url = `${baseUrl}/references`
+            try {
+                const response = await fetch(url);
+                console.log("response", response);
+                return await response.json();
+            } catch (error) {
+                console.error("error", error);
+                return "Error: " + error;
+            }
+        }
+
+        async function getPluginDocumentation(pluginKey) {
+            const url = `${baseUrl}/${pluginKey}`
+            try {
+                const response = await fetch(url);
+                console.log("response", response);
+                return await response.json();
+            } catch (error) {
+                console.error("error", error);
+            }
+        }
+
+        //#endregion data api functions
+
+
+        function createDiv() {
+            return document.createElement("div");
+        }
+
+    </script>
+
+</body>
+
+</html>
