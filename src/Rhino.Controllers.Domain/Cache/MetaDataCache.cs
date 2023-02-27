@@ -60,11 +60,13 @@ namespace Rhino.Controllers.Domain.Cache
             var cache = new ConcurrentDictionary<string, PluginsCacheModel>(StringComparer.OrdinalIgnoreCase);
             var factory = new RhinoPluginFactory();
             var rootDirectory = Path.Combine(Environment.CurrentDirectory, "Plugins"/*Build dynamically from configuration*/);
-            var directories = Directory
-                .GetDirectories(rootDirectory)
-                .Where(i => Path.GetFileName(i)
-                .StartsWith("Rhino", StringComparison.OrdinalIgnoreCase))
-                .ToArray();
+            var directories = !Directory.Exists(rootDirectory)
+                ? Array.Empty<string>()
+                : Directory
+                    .GetDirectories(rootDirectory)
+                    .Where(i => Path.GetFileName(i)
+                    .StartsWith("Rhino", StringComparison.OrdinalIgnoreCase))
+                    .ToArray();
 
             // get plugins: code
             var gravityPlugins = types.GetActionAttributes();
