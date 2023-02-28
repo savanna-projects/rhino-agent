@@ -63,7 +63,10 @@ namespace Rhino.Settings
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork))
             {
-                if (!string.IsNullOrEmpty(ip.ToString())) return ip.ToString();
+                if (!string.IsNullOrEmpty(ip.ToString()))
+                {
+                    return ip.ToString();
+                }
             }
             return string.Empty;
         }

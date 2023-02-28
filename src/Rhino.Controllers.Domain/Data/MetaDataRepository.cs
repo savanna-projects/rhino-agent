@@ -114,7 +114,10 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>List of non conditional actions</returns>
         public IEnumerable<ActionModel> GetPlugins(string configuration)
         {
-            return MetaDataCache.Plugins.SelectMany(i => i.Value.ActionsCache);
+            var a= MetaDataCache.Plugins.SelectMany(i => i.Value.ActionsCache);
+            var b = "";
+            return a;
+
             //// setup
             //var actions = new List<ActionModel>();
 

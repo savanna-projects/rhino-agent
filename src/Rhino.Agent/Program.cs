@@ -28,7 +28,9 @@ using Rhino.Controllers.Models;
 using Rhino.Settings;
 
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -50,6 +52,7 @@ builder.Services.AddMvc().AddApplicationPart(typeof(RhinoController).Assembly).A
 builder.Services.AddDirectoryBrowser();
 
 // formats & serialization
+builder.Services.AddResponseCompression(i => i.EnableForHttps = true);
 builder.Services
     .AddControllers(i => i.InputFormatters.Add(new TextPlainInputFormatter()))
     .AddJsonOptions(i =>
@@ -122,7 +125,7 @@ var staticPath = Path.Combine(Environment.CurrentDirectory, "StaticPages");
 
 // build
 app.ConfigureExceptionHandler(new TraceLogger("RhinoApi", "ExceptionHandler", logsPath));
-
+app.UseResponseCompression();
 app.UseCookiePolicy();
 app.UseCors("CorsPolicy");
 app.UseSwagger();
@@ -148,6 +151,21 @@ app.MapHub<RhinoHub>($"/api/v{AppSettings.ApiVersion}/rhino/orchestrator");
 
 #region *** Program       ***
 new CommandInvoker(Utilities.Types, args).Invoke();
+#endregion
+
+#region *** Cache         ***
+try
+{
+    Console.WriteLine("Loading Application Cache, Please Wait...");
+    var plugins = MetaDataCache.Plugins.SelectMany(i => i.Value.ActionsCache).Count();
+    Console.WriteLine($"Total of {plugins} Entities Cached");
+    Console.WriteLine();
+}
+catch (Exception e) when (e != null)
+{
+    Trace.TraceError($"{e}");
+    Console.WriteLine($"Sync-Plugins = (InternalServerError | e.Message)");
+}
 #endregion
 
 // log

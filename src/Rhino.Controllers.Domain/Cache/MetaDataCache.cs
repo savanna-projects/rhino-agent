@@ -47,7 +47,6 @@ namespace Rhino.Controllers.Domain.Cache
         private static IDictionary<string, PluginsCacheModel> GetPluginsCache(IEnumerable<Type> types)
         {
             // setup
-            var a = s_appSettings?.Plugins;
             var cache = new ConcurrentDictionary<string, PluginsCacheModel>(StringComparer.OrdinalIgnoreCase);
             var factory = new RhinoPluginFactory();
             var rootDirectory = Path.Combine(Environment.CurrentDirectory, "Plugins"/*Build dynamically from configuration*/);
@@ -85,7 +84,7 @@ namespace Rhino.Controllers.Domain.Cache
                 }
                 cache[key] = new()
                 {
-                    ActionsCache = Plugins.SelectMany(i => i.Value.PluginsCache).Select(i => i.ActionModel).OrderBy(i => i.Key),
+                    ActionsCache = groupCollection.Select(i => i.ActionModel).OrderBy(i => i.Key),
                     ActionsCacheByConfiguration = Array.Empty<ActionModel>(),
                     PluginsCache = groupCollection
                 };
