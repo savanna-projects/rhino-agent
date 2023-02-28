@@ -396,8 +396,7 @@
         <h2>Failed to get plugins</h2>
     </div>
     <script>
-        const baseUrl = `http://localhost:9900/api/v3/meta/plugins`; //TODO: what needs to be here?
-        // const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api/v3/meta/plugins`;
+        const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api/v3/meta/plugins`;
         var plugins = [];
         var sortedPlugins = [];
         var pluginsDictionary = {
