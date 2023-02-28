@@ -499,31 +499,31 @@
         }
 
         function buildAutocompleteOptions(inputValue) {
-            let OptionsContainer = buildAutocompleteOptionsContainer();
-            autocompleteOptionsContainer.appendChild(OptionsContainer);
+            let optionsContainer = buildAutocompleteOptionsContainer();
+            autocompleteOptionsContainer.appendChild(optionsContainer);
             searchedPluginsKeys = [];
             for (const plugin of sortedPlugins) {
                 let literal = plugin.literal;
                 if (literal.substr(0, inputValue.length).toUpperCase() == inputValue.toUpperCase()) {
                     searchedPluginsKeys.push(plugin.key);
-                    OptionsContainer.appendChild(buildAutocompleteOptionContainer(literal, inputValue));
+                    optionsContainer.appendChild(buildAutocompleteOptionContainer(literal, inputValue));
                 }
             }
         }
 
         function buildAutocompleteOptionsContainer() {
-            let OptionsContainer = createDiv();
-            OptionsContainer.setAttribute("class", "autocomplete-items");
-            return OptionsContainer;
+            let optionsContainer = createDiv();
+            optionsContainer.setAttribute("class", "autocomplete-items");
+            return optionsContainer;
         }
 
         function buildAutocompleteOptionContainer(literal, inputValue) {
-            let OptionContainer = createDiv();
-            OptionContainer.innerHTML = "<strong>" + literal.substr(0, inputValue.length) + "</strong>";
-            OptionContainer.innerHTML += literal.substr(inputValue.length);
-            OptionContainer.innerHTML += "<input type='hidden' value='" + literal + "'>";
-            OptionContainer.addEventListener("click", selectOption);
-            return OptionContainer;
+            let optionContainer = createDiv();
+            optionContainer.innerHTML = "<strong>" + literal.substr(0, inputValue.length) + "</strong>";
+            optionContainer.innerHTML += literal.substr(inputValue.length);
+            optionContainer.innerHTML += "<input type='hidden' value='" + literal + "'>";
+            optionContainer.addEventListener("click", selectOption);
+            return optionContainer;
         }
 
         //#endregion functions for autocomplete
@@ -532,24 +532,24 @@
         //#region pressing special keyboard keys
 
         function onKeydown(event) {
-            const OptionsContainer = document.querySelector(".autocomplete-items");
-            if (OptionsContainer) {
-                let OptionsContainers = OptionsContainer.getElementsByTagName("div");
+            const optionsContainer = document.querySelector(".autocomplete-items");
+            if (optionsContainer) {
+                let optionsContainers = optionsContainer.getElementsByTagName("div");
                 switch (event.keyCode) {
                     case 40: {
                         currentFocus++;
-                        addActiveClass(OptionsContainers);
+                        addActiveClass(optionsContainers);
                         break;
                     }
                     case 38: {
                         currentFocus--;
-                        addActiveClass(OptionsContainers);
+                        addActiveClass(optionsContainers);
                         break;
                     }
                     case 13: {
                         event.preventDefault();
-                        if (currentFocus > -1 && OptionsContainers) {
-                            OptionsContainers[currentFocus].click();
+                        if (currentFocus > -1 && optionsContainers) {
+                            optionsContainers[currentFocus].click();
                         }
                         else {
                             searchPlugins();
@@ -758,19 +758,19 @@
                 }
         }
 
-        function addActiveClass(OptionsContainers) {
-            if (OptionsContainers) {
-                removeActiveClass(OptionsContainers);
-                if (currentFocus >= OptionsContainers.length) currentFocus = 0;
-                if (currentFocus < 0) currentFocus = (OptionsContainers.length - 1);
-                let currentElement = OptionsContainers[currentFocus];
+        function addActiveClass(optionsContainers) {
+            if (optionsContainers) {
+                removeActiveClass(optionsContainers);
+                if (currentFocus >= optionsContainers.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = (optionsContainers.length - 1);
+                let currentElement = optionsContainers[currentFocus];
                 currentElement.classList.add("autocomplete-active");
                 currentElement.scrollIntoView({ block: "end", inline: "nearest" });
             }
         }
 
-        function removeActiveClass(OptionsContainers) {
-            for (let container of OptionsContainers) {
+        function removeActiveClass(optionsContainers) {
+            for (let container of optionsContainers) {
                 container.classList.remove("autocomplete-active");
             }
         }
