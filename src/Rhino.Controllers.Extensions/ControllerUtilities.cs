@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 
 using Rhino.Api.Contracts.AutomationProvider;
 
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 

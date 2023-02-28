@@ -19,7 +19,7 @@ using Rhino.Agent.Cli;
 using Rhino.Api.Converters;
 using Rhino.Controllers.Controllers;
 using Rhino.Controllers.Domain;
-using Rhino.Controllers.Domain.Cache;
+using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Domain.Formatters;
 using Rhino.Controllers.Domain.Middleware;
 using Rhino.Controllers.Extensions;
@@ -28,9 +28,7 @@ using Rhino.Controllers.Models;
 using Rhino.Settings;
 
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -154,18 +152,7 @@ new CommandInvoker(Utilities.Types, args).Invoke();
 #endregion
 
 #region *** Cache         ***
-try
-{
-    Console.WriteLine("Loading Application Cache, Please Wait...");
-    var plugins = MetaDataCache.Plugins.SelectMany(i => i.Value.ActionsCache).Count();
-    Console.WriteLine($"Total of {plugins} Entities Cached");
-    Console.WriteLine();
-}
-catch (Exception e) when (e != null)
-{
-    Trace.TraceError($"{e}");
-    Console.WriteLine($"Sync-Plugins = (InternalServerError | e.Message)");
-}
+DomainUtilities.SyncCache();
 #endregion
 
 // log

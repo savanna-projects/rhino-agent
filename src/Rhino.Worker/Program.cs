@@ -18,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Converters;
 using Rhino.Controllers.Domain;
+using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Domain.Formatters;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Domain.Middleware;
@@ -149,6 +150,10 @@ using (var scope = app.Services.CreateScope())
     new StartWorkerMiddleware(appSettings, environment, models, resources, repairs).Start(args);
     logger?.Info($"Sync-Worker -MaxParallel {appSettings?.Worker?.MaxParallel} = OK");
 }
+
+#region *** Cache         ***
+DomainUtilities.SyncCache();
+#endregion
 
 // invoke
 app.Run();
