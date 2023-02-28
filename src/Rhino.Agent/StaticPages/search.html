@@ -76,44 +76,44 @@
             padding-right: 35px;
         }
 
-        .search-input:focus {
-            border: 1px solid #775078;
-            padding: 10px;
-            padding-right: 40px;
-            font-size: 16px;
-            width: 100%;
-            flex: 1 0 auto;
-            outline: none;
-        }
+            .search-input:focus {
+                border: 1px solid #775078;
+                padding: 10px;
+                padding-right: 40px;
+                font-size: 16px;
+                width: 100%;
+                flex: 1 0 auto;
+                outline: none;
+            }
 
         .plugins-category input[type="checkbox"] {
             display: none;
         }
 
-        .plugins-category input[type="checkbox"]+label {
-            display: flex;
-            padding-left: 30px;
-            margin-bottom: 5px;
-            font: 14px/20px "Open Sans", Arial, sans-serif;
-            cursor: pointer;
-            gap: 10%;
-        }
+            .plugins-category input[type="checkbox"] + label {
+                display: flex;
+                padding-left: 30px;
+                margin-bottom: 5px;
+                font: 14px/20px "Open Sans", Arial, sans-serif;
+                cursor: pointer;
+                gap: 10%;
+            }
 
-        .plugins-category input[type="checkbox"]+label:before {
-            content: "";
-            display: block;
-            width: 1.7em;
-            height: 1.2em;
-            border: 1px solid #7160b1;
-            border-radius: 0.2em;
-            left: 0;
-            top: 0;
-            background: rgba(255, 255, 255, 0.03);
-        }
+                .plugins-category input[type="checkbox"] + label:before {
+                    content: "";
+                    display: block;
+                    width: 1.7em;
+                    height: 1.2em;
+                    border: 1px solid #7160b1;
+                    border-radius: 0.2em;
+                    left: 0;
+                    top: 0;
+                    background: rgba(255, 255, 255, 0.03);
+                }
 
-        .plugins-category input[type="checkbox"]:checked+label:before {
-            background: #7160b1;
-        }
+            .plugins-category input[type="checkbox"]:checked + label:before {
+                background: #7160b1;
+            }
 
         .plugins-category {
             margin: 2%;
@@ -158,20 +158,20 @@
             scroll-snap-type: y mandatory;
         }
 
-        .autocomplete-items div {
-            padding: 10px;
-            cursor: pointer;
-            background: #e8d4e9;
-            border: 1px solid #bca4bd;
-            border-top: 0.1px solid #bca4bd;
-            border-bottom: 0.1px solid #bca4bd;
-        }
+            .autocomplete-items div {
+                padding: 10px;
+                cursor: pointer;
+                background: #e8d4e9;
+                border: 1px solid #bca4bd;
+                border-top: 0.1px solid #bca4bd;
+                border-bottom: 0.1px solid #bca4bd;
+            }
 
-        /*when hovering an item:*/
-        .autocomplete-items div:hover {
-            background-color: #e0c5e1;
-            width: 100%;
-        }
+                /*when hovering an item:*/
+                .autocomplete-items div:hover {
+                    background-color: #e0c5e1;
+                    width: 100%;
+                }
 
         /*when navigating through the items using the arrow keys:*/
         .autocomplete-active {
@@ -212,11 +212,11 @@
             left: 0%;
         }
 
-        .plugin-Summary h1 {
-            display: flex;
-            align-items: left;
-            justify-content: start;
-        }
+            .plugin-Summary h1 {
+                display: flex;
+                align-items: left;
+                justify-content: start;
+            }
 
         .div-documentation-success {
             box-shadow: 0 8px 20px 0 rgb(0 0 0 / 15%);
@@ -228,11 +228,11 @@
             padding-top: 5px;
         }
 
-        .div-documentation-success h1 {
-            display: flex;
-            align-items: left;
-            justify-content: start;
-        }
+            .div-documentation-success h1 {
+                display: flex;
+                align-items: left;
+                justify-content: start;
+            }
 
         .div-documentation-error {
             box-shadow: 0 8px 20px 0 rgb(0 0 0 / 15%);
@@ -264,20 +264,20 @@
             background-color: #e9e9e9;
         }
 
-        .arguments-table th {
-            background-color: #d8d6d6;
-        }
+            .arguments-table th {
+                background-color: #d8d6d6;
+            }
 
-        .arguments-table tr {
-            height: 30px;
-        }
+            .arguments-table tr {
+                height: 30px;
+            }
 
-        .arguments-table th,
-        td {
-            text-align: left;
-            padding: 1%;
-            font-size: 90%;
-        }
+            .arguments-table th,
+            td {
+                text-align: left;
+                padding: 1%;
+                font-size: 90%;
+            }
 
         tr:nth-child(even) {
             background-color: #fafafa;
@@ -396,7 +396,8 @@
         <h2>Failed to get plugins</h2>
     </div>
     <script>
-        const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api/v3/meta/plugins`;
+        const baseUrl = `http://localhost:9900/api/v3/meta/plugins`; //TODO: what needs to be here?
+        // const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api/v3/meta/plugins`;
         var plugins = [];
         var sortedPlugins = [];
         var pluginsDictionary = {
@@ -417,7 +418,7 @@
         const searchInput = document.getElementById("search-input");
         const searchContainer = document.getElementById("search-container");
         const errorMessage = document.getElementById("error-message");
-        const AutocompleteOptionsContainer = document.getElementById("autocomplete-items-container");
+        const autocompleteOptionsContainer = document.getElementById("autocomplete-items-container");
         const searchedPluginsContainer = document.getElementById("searched-plugins");
         var searchedPluginsKeys = [];
 
@@ -434,7 +435,7 @@
                 });
                 setSearchInputEvents();
                 errorMessage.style.visibility = "hidden";
-                addCheckboxEvents();
+                setCheckboxEvents();
             }
             else {
                 searchContainer.style.visibility = "hidden";
@@ -443,7 +444,7 @@
             }
         }
 
-        function addCheckboxEvents() {
+        function setCheckboxEvents() {
             const checkboxButtons = document.querySelectorAll('input[name="CategoryCheckbox"]');
             for (const checkboxButton of checkboxButtons) {
                 checkboxButton.addEventListener('change', sortPlugins);
@@ -475,6 +476,7 @@
         }
 
         function mergedPluginsLists() {
+            // merged the plugins for all categories (from the checkbox types) into one list
             let mergedPlugins = [];
             Object.values(pluginsDictionary).forEach(pluginsObject =>
                 mergedPlugins = mergedPlugins.concat(pluginsObject.list)
@@ -485,7 +487,7 @@
         //#endregion checkbox event
 
 
-        //#region functions for autocomplete 
+        //#region functions for autocomplete
 
         function getAutocompleteOptions() {
             closeSearchedPlugins();
@@ -499,7 +501,7 @@
 
         function buildAutocompleteOptions(inputValue) {
             let OptionsContainer = buildAutocompleteOptionsContainer();
-            AutocompleteOptionsContainer.appendChild(OptionsContainer);
+            autocompleteOptionsContainer.appendChild(OptionsContainer);
             searchedPluginsKeys = [];
             for (const plugin of sortedPlugins) {
                 let literal = plugin.literal;
@@ -555,23 +557,6 @@
                         }
                     }
                 }
-            }
-        }
-
-        function addActiveClass(OptionsContainers) {
-            if (OptionsContainers) {
-                removeActiveClass(OptionsContainers);
-                if (currentFocus >= OptionsContainers.length) currentFocus = 0;
-                if (currentFocus < 0) currentFocus = (OptionsContainers.length - 1);
-                let currentElement = OptionsContainers[currentFocus];
-                currentElement.classList.add("autocomplete-active");
-                currentElement.scrollIntoView({ block: "end", inline: "nearest" });
-            }
-        }
-
-        function removeActiveClass(OptionsContainers) {
-            for (let container of OptionsContainers) {
-                container.classList.remove("autocomplete-active");
             }
         }
 
@@ -638,7 +623,7 @@
         //#endregion search plugins
 
 
-        //#region documentation file functions
+        //#region documentation file
 
         async function clickPlugin(event) {
             closeDocumentation();
@@ -677,12 +662,12 @@
             const cliArguments = doc.entity.cliArguments ? doc.entity.cliArguments : '';
             const examples = doc.entity.examples ? doc.entity.examples : '';
             documentationContainer.innerHTML = `
-                    <button class="close-doc" onclick="closeDocumentation()">❌</button>
-            <h3>${name}</h3>
-            <br><h4>Source</h4>
-            <p>${source}</p>
-            <br><h4>Description</h4>
-            <p>${description}</p>`;
+                        <button class="close-doc" onclick="closeDocumentation()">❌</button>
+                <h3>${name}</h3>
+                <br><h4>Source</h4>
+                <p>${source}</p>
+                <br><h4>Description</h4>
+                <p>${description}</p>`;
             documentationContainer.innerHTML += buildArgumentsTable(cliArguments);
             documentationContainer.innerHTML += buildExamplesList(examples);
             return documentationContainer;
@@ -704,16 +689,16 @@
             if (argumentsName.length === 0)
                 return '';
             let table = `<br><h4>Arguments:</h4>
-            <table class="arguments-table">
-                <tr>
-                    <th class="th-name">Name</th>
-                    <th>Description</th>
-                </tr>`;
+                <table class="arguments-table">
+                    <tr>
+                        <th class="th-name">Name</th>
+                        <th>Description</th>
+                    </tr>`;
             for (let i = 0; i < argumentsName.length; i++) {
                 table += `<tr>
-                    <td>${argumentsName[i]}</td>
-                    <td>${argumentsDecription[i]}</td>
-                </tr>`;
+                        <td>${argumentsName[i]}</td>
+                        <td>${argumentsDecription[i]}</td>
+                    </tr>`;
             }
             table += '</table>';
             return table;
@@ -725,32 +710,23 @@
             let examplesList = '<br><h4>Examples:</h4>';
             for (let i = 0; i < examples.length; i++) {
                 examplesList += `<div class="example">
-                <h5 class="example-h5">${i + 1}. ${examples[i].literalExample}</h5>
-                    <p>${examples[i].description}</p>
-            </div>`;
+                    <h5 class="example-h5">${i + 1}. ${examples[i].literalExample}</h5>
+                        <p>${examples[i].description}</p>
+                </div>`;
             }
             return examplesList;
         }
 
-        //#endregion documentation file functions
+        //#endregion documentation file
 
 
-        //#region close elements
+        //#region close functions
 
         function closeDocumentation() {
             removeActivePluginClass();
             const documentationContainer = document.getElementById("documentation-container");
             if (documentationContainer)
                 documentationContainer.remove();
-        }
-
-        function removeActivePluginClass() {
-            // remove active plugin class
-            const activePluginsElements = document.querySelectorAll('.plugin-Summary');
-            if (activePluginsElements)
-                for (let element of activePluginsElements) {
-                    element.classList.remove("plugin-active");
-                }
         }
 
         function closeAutocompleteOptions(element) {
@@ -768,7 +744,38 @@
             searchConainerDown();
         }
 
-        //#endregion close elements
+        //#endregion close functions
+
+
+        //#region elements marking handler
+
+        function removeActivePluginClass() {
+            // remove mark from the search plugin element after closing documentation
+            const activePluginsElements = document.querySelectorAll('.plugin-Summary');
+            if (activePluginsElements)
+                for (let element of activePluginsElements) {
+                    element.classList.remove("plugin-active");
+                }
+        }
+
+        function addActiveClass(OptionsContainers) {
+            if (OptionsContainers) {
+                removeActiveClass(OptionsContainers);
+                if (currentFocus >= OptionsContainers.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = (OptionsContainers.length - 1);
+                let currentElement = OptionsContainers[currentFocus];
+                currentElement.classList.add("autocomplete-active");
+                currentElement.scrollIntoView({ block: "end", inline: "nearest" });
+            }
+        }
+
+        function removeActiveClass(OptionsContainers) {
+            for (let container of OptionsContainers) {
+                container.classList.remove("autocomplete-active");
+            }
+        }
+
+        //#endregion elements marking handler
 
 
         //#region move search container position
@@ -809,7 +816,7 @@
             }
         }
 
-        //#endregion data api functions
+        //#endregion get data from api
 
 
         function createDiv() {
