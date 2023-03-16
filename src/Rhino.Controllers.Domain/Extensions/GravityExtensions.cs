@@ -40,10 +40,10 @@ namespace Rhino.Controllers.Domain.Extensions
                     $"-Url {repository.Url} " +
                     $"-Name {repository.Name} = (InternalServerError | {e.Message})");
             }
-            
-            if (response == null || !response.IsSuccessStatusCode)
+
+            if (response?.IsSuccessStatusCode != true)
             {
-                return (null, null);
+                return (null, Array.Empty<ActionAttribute>());
             }
 
             // build

@@ -3,6 +3,8 @@
  * 
  * RESSOURCES
  */
+using Gravity.Services.DataContracts;
+
 using Rhino.Api.Contracts.AutomationProvider;
 
 using System.Runtime.Serialization;
@@ -17,6 +19,9 @@ namespace Rhino.Controllers.Models.Server
 
         [DataMember]
         public string Directory { get; set; }
+
+        [DataMember]
+        public ExternalRepository Repository { get; set; }
 
         [DataMember]
         public string Path { get; set; }

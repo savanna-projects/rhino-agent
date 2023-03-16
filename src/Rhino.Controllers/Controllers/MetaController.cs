@@ -203,6 +203,9 @@ namespace Rhino.Controllers.Controllers
                 .GetPlugins()
                 .Where(i => !s_excludeActions.Contains(i.Key));
 
+            // headers
+            Response.Headers.Add(RhinoResponseHeader.CountTotalPlugins, entities?.Count().ToString());
+
             // return
             return Ok(entities);
         }

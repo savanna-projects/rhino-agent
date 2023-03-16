@@ -5,9 +5,11 @@
  */
 using Gravity.Abstraction.Logging;
 using Gravity.Abstraction.WebDriver;
+using Gravity.Extensions;
 using Gravity.Services.Comet.Engine.Attributes;
 using Gravity.Services.DataContracts;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using OpenQA.Selenium;
@@ -24,6 +26,7 @@ using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
+using Rhino.Settings;
 
 using System.Data;
 using System.Reflection;
@@ -46,6 +49,7 @@ namespace Rhino.Controllers.Domain.Data
         private readonly IRepository<RhinoModelCollection> _models;
         private readonly IRepository<RhinoConfiguration> _configurations;
         private readonly IEnumerable<Type> _types;
+        private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
 
         /// <summary>
@@ -59,6 +63,7 @@ namespace Rhino.Controllers.Domain.Data
             IRepository<RhinoModelCollection> models,
             IRepository<RhinoConfiguration> configurations,
             IEnumerable<Type> types,
+            AppSettings appSettings,
             ILogger logger)
         {
             // setup: fields
@@ -66,6 +71,7 @@ namespace Rhino.Controllers.Domain.Data
             _models = models;
             _configurations = configurations;
             _types = types;
+            _appSettings = appSettings;
             _logger = logger?.CreateChildLogger(nameof(MetaDataRepository));
 
             // setup: properties
@@ -82,29 +88,14 @@ namespace Rhino.Controllers.Domain.Data
         /// </summary>
         public ILogger Logger { get; }
 
+        #region *** Get Plugins ***
         /// <summary>
         /// Gets a list of non conditional actions with their literals default verbs
         /// </summary>
         /// <returns>List of non conditional actions</returns>
         public IEnumerable<ActionModel> GetPlugins()
         {
-            return MetaDataCache.Plugins.SelectMany(i => i.Value.ActionsCache);
-            //// setup
-            //var actions = new List<ActionModel>();
-
-            //// build
-            //foreach (var (source, entity) in GetActions(_types, Authentication, _plugins, _logger))
-            //{
-            //    var action = entity.ToModel(source);
-            //    if (action != default)
-            //    {
-            //        actions.Add(action);
-            //    }
-            //}
-
-            //// get
-            //_logger?.Debug($"Get-Actions = OK, {actions.Count}");
-            //return actions.Where(i => !string.IsNullOrEmpty(i.Key)).OrderBy(i => i.Key);
+            return GetActionModels(_appSettings, Authentication);
         }
 
         /// <summary>
@@ -114,50 +105,45 @@ namespace Rhino.Controllers.Domain.Data
         /// <returns>List of non conditional actions</returns>
         public IEnumerable<ActionModel> GetPlugins(string configuration)
         {
-            var a= MetaDataCache.Plugins.SelectMany(i => i.Value.ActionsCache);
-            var b = "";
-            return a;
+            // setup
+            var userPlugins = GetActionModels(_appSettings, Authentication);
 
-            //// setup
-            //var actions = new List<ActionModel>();
+            // external
+            var (statusCode, configurationEntity) = _configurations.SetAuthentication(Authentication).Get(configuration);
+            var isNullOrEmpty = string.IsNullOrEmpty(configuration);
+            var isConfiguration = !isNullOrEmpty && statusCode == StatusCodes.Status200OK;
+            var isExternal = isConfiguration && configurationEntity.ExternalRepositories?.Any() == true;
 
-            //// build
-            //foreach (var (source, entity) in GetActions(_types, Authentication, _plugins, _logger))
-            //{
-            //    var action = entity.ToModel(source);
-            //    if (action != default)
-            //    {
-            //        actions.Add(action);
-            //    }
-            //}
+            // not found
+            if (!isExternal)
+            {
+                _logger?.Debug($"Get-Actions -Configuration {configuration} = OK, {userPlugins.Count()}");
+                return userPlugins;
+            }
 
-            //// external
-            //var (statusCode, configurationEntity) = _configurations.SetAuthentication(Authentication).Get(configuration);
-            //var isNullOrEmpty = string.IsNullOrEmpty(configuration);
-            //var isConfiguration = !isNullOrEmpty && statusCode == StatusCodes.Status200OK;
-            //var isExternal = isConfiguration && configurationEntity.ExternalRepositories?.Any() == true;
+            // external
+            foreach (var repository in configurationEntity.ExternalRepositories)
+            {
+                var repositoryName = string.IsNullOrEmpty(repository.Name) ? "external" : $"external:{repository.Name}";
+                var cachedPlugins = MetaDataCache
+                    .Plugins
+                    .SelectMany(i => i.Value.ActionsCache)
+                    .Where(i => i.Source.Equals(repositoryName));
 
-            //if (isExternal)
-            //{
-            //    var externalActions = configurationEntity
-            //        .ExternalRepositories
-            //        .Select(i => i.GetActions());
+                if (cachedPlugins?.Any() == false)
+                {
+                    SyncExternalRepository(repository);
+                    _logger.Debug($"Sync-ExternalRepository -Url {repository.Url} = OK");
+                }
 
-            //    var models = externalActions
-            //        .SelectMany(i =>
-            //        {
-            //            var entities = i.Entities ?? Array.Empty<ActionAttribute>();
-            //            var name = string.IsNullOrEmpty(i.Name) ? "external" : $"external:{i.Name}";
-            //            return entities.Select(x => x.ToModel(name));
-            //        });
+                userPlugins = userPlugins.Concat(cachedPlugins);
+            }
 
-            //    actions.AddRange(models);
-            //}
-
-            //// get
-            //_logger?.Debug($"Get-Actions -Configuration {configuration} = OK, {actions.Count}");
-            //return actions.Where(i => !string.IsNullOrEmpty(i.Key)).OrderBy(i => i.Key);
+            // get
+            _logger?.Debug($"Get-Actions -Configuration {configuration} = OK, {userPlugins.Count()}");
+            return userPlugins.Where(i => !string.IsNullOrEmpty(i.Key)).OrderBy(i => i.Key);
         }
+        #endregion
 
         /// <summary>
         /// Gets a collection of available assertions (based on AssertMethodAttribute).
@@ -200,15 +186,16 @@ namespace Rhino.Controllers.Domain.Data
             }
 
             // fetch attributes
-            return driverFactory
+            var attributes = driverFactory
                 .GetMethods(Binding)
                 .SelectMany(i => i.CustomAttributes)
                 .Where(i => i.AttributeType.Name.Equals("DriverMethodAttribute", Compare))
                 .SelectMany(i => i.NamedArguments.Where(i => i.MemberName.Equals("Driver", Compare)))
                 .Select(i => new DriverModel { Key = $"{i.TypedValue.Value}", Literal = $"{i.TypedValue.Value}".ToSpaceCase().ToLower() })
-                .Where(i => !string.IsNullOrEmpty(i.Key))
-                .DistinctBy(i => i.Key)
-                .OrderBy(i => i.Key);
+                .Where(i => !string.IsNullOrEmpty(i.Key));
+
+            // get
+            return Enumerable.DistinctBy(attributes, (i) => i.Key).OrderBy(i => i.Key);
         }
 
         // TODO: implement GetExamples factory for getting examples for the different locators.
@@ -514,7 +501,7 @@ namespace Rhino.Controllers.Domain.Data
                     }
                 }
 
-                if(testStep.ExpectedResults?.Any() == true)
+                if (testStep.ExpectedResults?.Any() == true)
                 {
                     var asserts = testStep.ExpectedResults.Select(i => Regex.Match(i.ExpectedResult, pattern).Value).ToArray();
 
@@ -669,12 +656,9 @@ namespace Rhino.Controllers.Domain.Data
         public IEnumerable<FindPluginsResponseModel> FindPlugins(FindPluginsModel model)
         {
             // setup
-            var actions = GetActions(_types, Authentication, _plugins, _logger).Select(i => i.Action);
+            var actions = GetActionModels(_appSettings, Authentication).Select(i => i.Entity);
             var filterExpression = string.IsNullOrEmpty(model?.Expression) ? string.Empty : model.Expression;
-            var actionsData = Gravity
-                .Extensions
-                .DataTableExtensions
-                .Filter(new DataTable().AddRows(actions), filterExpression);
+            var actionsData = new DataTable().AddRows(actions).Filter(filterExpression);
 
             // get
             return actionsData.Rows.Cast<DataRow>().Select(i => i.ToModel());
@@ -682,6 +666,27 @@ namespace Rhino.Controllers.Domain.Data
 
         // UTILITIES
         // execute GetActions routine
+        private static IEnumerable<ActionModel> GetActionModels(AppSettings settings, Authentication authentication)
+        {
+            // setup
+            var publicRepositories = new[] { "Rhino", "Gravity", "External" };
+            var token = GetUserToken(authentication, settings);
+            var publicPlugins = MetaDataCache
+                .Plugins
+                .Where(i => publicRepositories.Contains(i.Key, StringComparer.OrdinalIgnoreCase))
+                .SelectMany(i => i.Value.ActionsCache);
+
+            var userPlugins = MetaDataCache.Plugins.TryGetValue(token, out var userPluginsOut) && !token.Equals("Rhino", Compare)
+                ? userPluginsOut.ActionsCache
+                : Array.Empty<ActionModel>();
+
+            // get
+            return publicPlugins
+                .Concat(userPlugins)
+                .Where(i => !string.IsNullOrEmpty(i.Key))
+                .OrderBy(i => i.Key);
+        }
+
         private static IEnumerable<RhinoPageModel> GetModels(
             string id,
             IRepository<RhinoModelCollection> models,
@@ -694,34 +699,6 @@ namespace Rhino.Controllers.Domain.Data
                 .Where(i => i.Configurations?.Any() == false || $"{i.Id}".Equals(id, Compare))
                 .SelectMany(i => i.Models)
                 .ToList();
-        }
-
-        private static IEnumerable<(string Source, ActionAttribute Action)> GetActions(
-            IEnumerable<Type> types,
-            Authentication authentication,
-            IPluginsRepository plugins,
-            ILogger logger)
-        {
-            // setup
-            var gravityPlugins = types.GetActionAttributes();
-            var pluginSpecs = plugins.SetAuthentication(authentication).Get();
-            var pluginObjcs = new RhinoPluginFactory().GetRhinoPlugins(pluginSpecs.ToArray());
-
-            // convert
-            var attributes = pluginObjcs.Select(i => (ActionModel.ActionSource.Plugin, i.ToAttribute()));
-            logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Plugin} = OK, {attributes.Count()}");
-
-            // all actions
-            // collect all potential types
-            var actions = gravityPlugins
-                .Select(i => (ActionModel.ActionSource.Code, (ActionAttribute)gravityPlugins.FirstOrDefault(a => a.Name == i.Name)))
-                .Concat(attributes)
-                .Where(i => !string.IsNullOrEmpty(i.Item2.Name));
-            actions = actions?.Any() == false ? Array.Empty<(string, ActionAttribute)>() : actions;
-            logger?.Debug($"Get-Actions -Source {ActionModel.ActionSource.Code} = OK, {actions.Count()}");
-
-            // get
-            return actions;
         }
 
         private static IEnumerable<BaseModel<object>> GetLocators(IEnumerable<Type> types)
@@ -782,6 +759,56 @@ namespace Rhino.Controllers.Domain.Data
                 .Select(i => i.ToModel())
                 .Where(i => i != default || !string.IsNullOrEmpty(i.Key))
                 .OrderBy(i => i.Key);
+        }
+
+        private static string GetUserToken(Authentication authentication, AppSettings appSettings)
+        {
+            // setup conditions
+            var isUser = !string.IsNullOrEmpty(authentication.Username);
+            var isPassword = !string.IsNullOrEmpty(authentication.Password);
+
+            // setup
+            var path = Path.Combine(Environment.CurrentDirectory, RhinoPluginEntry.PluginsRhinoFolder);
+            var encryptionKey = appSettings.StateManager?.DataEncryptionKey ?? string.Empty;
+            var privateKey = "-" + JsonSerializer
+                .Serialize(authentication)
+                .ToBase64()
+                .Encrypt(encryptionKey)
+                .RemoveNonWord();
+            var userPath = !isUser && !isPassword ? path : path + privateKey;
+
+            // get
+            return Path.GetFileName(userPath);
+        }
+
+        private static void SyncExternalRepository(ExternalRepository repository)
+        {
+            // collect actions
+            var (name, actions) = repository.GetActions();
+            var sourceName = string.IsNullOrEmpty(name) ? "external" : $"external:{name}";
+
+            // bridge
+            var pluginsCache = new List<PluginCacheModel>();
+            foreach (var action in actions)
+            {
+                var actionModel = action.ToModel(sourceName);
+                var cacheModel = new PluginCacheModel
+                {
+                    ActionModel = actionModel,
+                    Directory = repository.Url,
+                    Path = $"/api/v{repository.Version}/gravity/actions/{actionModel.Entity.Name}",
+                    Repository = repository
+                };
+
+                pluginsCache.Add(cacheModel);
+            }
+
+            // sync cache
+            MetaDataCache.Plugins[sourceName] = new()
+            {
+                ActionsCache = pluginsCache.Select(i => i.ActionModel),
+                PluginsCache = pluginsCache
+            };
         }
     }
 }

@@ -453,7 +453,7 @@ namespace Rhino.Controllers.Domain.Automation
                 (ConcurrentDictionary<string, AsyncStatusModel<RhinoConfiguration>>)s_status;
             var statusModel = statusCollection[$"{id}"];
 
-            // ok
+            // OK
             var isPending = statusModel.Status == AsyncStatus.Pending;
             var isRuning = isPending || statusModel.Status == AsyncStatus.Running;
             if (isRuning)
