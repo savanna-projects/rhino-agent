@@ -27,7 +27,7 @@
 		<PackageReference Include="Rhino.Connectors.Xray.Cloud" Version="2022.12.22.1" />
 		<PackageReference Include="Rhino.Connectors.Xray.Cloud.Text" Version="2022.12.22.1" />
 		<PackageReference Include="Rhino.Connectors.Xray.Text" Version="2022.12.22.1" />
-		<PackageReference Include="Rhino.Reporters.Junit" Version="2023.3.16.1" />
+		<PackageReference Include="Rhino.Reporters.Junit" Version="2023.3.21.1" />
 	</ItemGroup>
 
 	<ItemGroup>
