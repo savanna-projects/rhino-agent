@@ -16,6 +16,7 @@ using Rhino.Api.Contracts.Configuration;
 using Rhino.Api.Extensions;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
 
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
@@ -83,19 +84,24 @@ namespace Rhino.Controllers.Domain.Automation
         /// </summary>
         /// <param name="configuration">The RhinoConfiguration to invoke.</param>
         /// <returns>Status code and RhinoTestRun object (if any).</returns>
-        public (int StatusCode, RhinoTestRun TestRun) InvokeConfiguration(RhinoConfiguration configuration)
+        public GenericResultModel<RhinoTestRun> InvokeConfiguration(RhinoConfiguration configuration)
         {
             // setup
-            var (statusCode, entity) = BuildConfiguration(configuration);
+            var configurationResult = SetConfiguration(configuration);
 
             // failed
-            if (statusCode != StatusCodes.Status200OK)
+            if (configurationResult.StatusCode != StatusCodes.Status200OK)
             {
-                return (statusCode, default);
+                return new GenericResultModel<RhinoTestRun>
+                {
+                    Entity = default,
+                    Message = configurationResult.Message,
+                    StatusCode = configurationResult.StatusCode,
+                };
             }
 
             // get
-            return DoInvoke(configurations: new[] { entity }).FirstOrDefault();
+            return Invoke(configurations: new[] { configurationResult.Entity }).FirstOrDefault();
         }
 
         /// <summary>
@@ -103,7 +109,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// </summary>
         /// <param name="configuration">The RhinoConfiguration.Id to invoke.</param>
         /// <returns>Status code and RhinoTestRun object (if any).</returns>
-        public (int StatusCode, RhinoTestRun TestRun) InvokeConfiguration(string configuration)
+        public GenericResultModel<RhinoTestRun> InvokeConfiguration(string configuration)
         {
             // setup
             var (statusCode, entity) = _configurationsRepository
@@ -113,21 +119,35 @@ namespace Rhino.Controllers.Domain.Automation
             // not found
             if (statusCode == StatusCodes.Status404NotFound)
             {
-                return (StatusCodes.Status404NotFound, null);
+                var notFound = $"Invoke-Configuration -Id {configuration} = (NotFound | NoConfiguration)";
+                _logger?.Fatal(notFound);
+                return new GenericResultModel<RhinoTestRun>
+                {
+                    Entity = default,
+                    Message = notFound,
+                    StatusCode = statusCode
+                };
             }
 
             // build
-            entity.Id = $"{entity.Id}".Equals(configuration, Compare) ? entity.Id : Guid.Parse(configuration);
-            (statusCode, entity) = BuildConfiguration(entity);
+            entity.Id = $"{entity.Id}".Equals(configuration, Compare)
+                ? entity.Id
+                : Guid.Parse(configuration);
+            var configurationResult = SetConfiguration(entity);
 
             // error
-            if (statusCode != StatusCodes.Status200OK)
+            if (configurationResult.StatusCode != StatusCodes.Status200OK)
             {
-                return (statusCode, default);
+                return new GenericResultModel<RhinoTestRun>
+                {
+                    Entity = default,
+                    Message = configurationResult.Message,
+                    StatusCode = configurationResult.StatusCode
+                };
             }
 
             // get
-            return DoInvoke(configurations: new[] { entity }).FirstOrDefault();
+            return Invoke(configurations: new[] { configurationResult.Entity }).FirstOrDefault();
         }
 
         /// <summary>
@@ -160,7 +180,7 @@ namespace Rhino.Controllers.Domain.Automation
         /// <param name="isParallel"><see cref="true"/> to run all configurations in parallel.</param>
         /// <param name="maxParallel">The maximum number of configurations to run in parallel, will be ignored if isParallel argument is <see cref="false"/>.</param>
         /// <returns>A collection of status code and RhinoTestRun object (if any).</returns>
-        public IEnumerable<(int StatusCode, RhinoTestRun TestRun)> InvokeCollection(string collection, bool isParallel, int maxParallel)
+        public IEnumerable<GenericResultModel<RhinoTestRun>> InvokeCollection(string collection, bool isParallel, int maxParallel)
         {
             // setup
             var (statusCode, entity) = _testsRepository.SetAuthentication(Authentication).Get(collection);
@@ -168,13 +188,31 @@ namespace Rhino.Controllers.Domain.Automation
             // not found
             if (statusCode == StatusCodes.Status404NotFound)
             {
-                _logger?.Warn($"Invoke-Collection -Id {collection} = (NotFound, Collection)");
-                return new (int StatusCode, RhinoTestRun TestRun)[] { (statusCode, default) };
+                var notFound = $"Invoke-Collection -Id {collection} = (NotFound | NoCollection)";
+                _logger?.Fatal(notFound);
+                return new[]
+                {
+                    new GenericResultModel<RhinoTestRun>
+                    {
+                        Entity = default,
+                        Message = notFound,
+                        StatusCode = statusCode
+                    }
+                };
             }
             if (entity.Configurations.Count == 0)
             {
-                _logger?.Warn($"Invoke-Collection -Id {collection} = (NotFound, Configurations)");
-                return new (int StatusCode, RhinoTestRun TestRun)[] { (statusCode, default) };
+                var notFound = $"Invoke-Collection -Id {collection} = (NotFound | NoConfigurations)";
+                _logger?.Fatal(notFound);
+                return new[]
+                {
+                    new GenericResultModel<RhinoTestRun>
+                    {
+                        Entity = default,
+                        Message = notFound,
+                        StatusCode = statusCode
+                    }
+                };
             }
 
             // build
@@ -183,43 +221,12 @@ namespace Rhino.Controllers.Domain.Automation
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => sourceConfigurations.Contains($"{i.Id}".ToUpper()))
-                .Select(BuildConfiguration)
+                .Select(SetConfiguration)
                 .Where(i => i.StatusCode == StatusCodes.Status200OK)
-                .Select(i => i.Configuration);
+                .Select(i => i.Entity);
 
             // get
-            return DoInvoke(configurations, isParallel, maxParallel);
-        }
-
-        private IEnumerable<(int StatusCode, RhinoTestRun Results)> DoInvoke(
-            IEnumerable<RhinoConfiguration> configurations,
-            bool isParallel = false,
-            int maxParallel = 0)
-        {
-            // setup
-            maxParallel = isParallel ? maxParallel : 1;
-            maxParallel = maxParallel < 1 ? Environment.ProcessorCount : maxParallel;
-            var options = new ParallelOptions { MaxDegreeOfParallelism = maxParallel };
-            var results = new ConcurrentBag<(int StatusCode, RhinoTestRun Results)>();
-
-            // invoke
-            Parallel.ForEach(configurations, options, configuration =>
-            {
-                try
-                {
-                    var responseBody = configuration.Invoke(_types);
-                    _logger?.Debug($"Invoke-Configuration = {responseBody.Key}");
-                    results.Add((StatusCodes.Status200OK, responseBody));
-                }
-                catch (Exception e) when (e != null)
-                {
-                    _logger?.Debug($"Invoke-Configuration = (InternalServerError, {e.GetBaseException().Message})");
-                    results.Add((StatusCodes.Status500InternalServerError, default));
-                }
-            });
-
-            // get
-            return results;
+            return Invoke(configurations, isParallel, maxParallel);
         }
         #endregion
 
@@ -232,16 +239,21 @@ namespace Rhino.Controllers.Domain.Automation
         public AsyncInvokeModel StartConfiguration(RhinoConfiguration configuration)
         {
             // setup
-            var (statusCode, entity) = BuildConfiguration(configuration);
+            var configurationResult = SetConfiguration(configuration);
 
             // error
-            if (statusCode != StatusCodes.Status200OK)
+            if (configurationResult.StatusCode != StatusCodes.Status200OK)
             {
-                return new AsyncInvokeModel { Id = Guid.Empty, StatusCode = statusCode, StatusEndpoint = default };
+                return new AsyncInvokeModel
+                {
+                    Id = Guid.Empty, StatusCode =
+                    configurationResult.StatusCode,
+                    StatusEndpoint = default
+                };
             }
 
             // build
-            var (action, model) = DoStart(entity);
+            var (action, model) = Start(configurationResult.Entity);
 
             // invoke
             action.Start();
@@ -268,16 +280,21 @@ namespace Rhino.Controllers.Domain.Automation
 
             // build
             entity.Id = $"{entity.Id}".Equals(configuration, Compare) ? entity.Id : Guid.Parse(configuration);
-            (statusCode, entity) = BuildConfiguration(entity);
+            var configurationResult = SetConfiguration(entity);
 
             // error
-            if (statusCode != StatusCodes.Status200OK)
+            if (configurationResult.StatusCode != StatusCodes.Status200OK)
             {
-                return new AsyncInvokeModel { Id = Guid.Empty, StatusCode = statusCode, StatusEndpoint = default };
+                return new AsyncInvokeModel
+                {
+                    Id = Guid.Empty,
+                    StatusCode = configurationResult.StatusCode,
+                    StatusEndpoint = default
+                };
             }
 
             // build
-            var (action, model) = DoStart(entity);
+            var (action, model) = Start(configurationResult.Entity);
 
             // invoke
             action.Start();
@@ -326,9 +343,9 @@ namespace Rhino.Controllers.Domain.Automation
                 .SetAuthentication(Authentication)
                 .Get()
                 .Where(i => sourceConfigurations.Contains($"{i.Id}".ToUpper()))
-                .Select(BuildConfiguration)
+                .Select(SetConfiguration)
                 .Where(i => i.StatusCode == StatusCodes.Status200OK)
-                .Select(i => DoStart(i.Configuration))
+                .Select(i => Start(i.Entity))
                 .ToArray();
 
             // invoke
@@ -338,7 +355,7 @@ namespace Rhino.Controllers.Domain.Automation
             return configurations.Select(i => i.Model);
         }
 
-        public (Task Action, AsyncInvokeModel Model) DoStart(RhinoConfiguration configuration)
+        private (Task Action, AsyncInvokeModel Model) Start(RhinoConfiguration configuration)
         {
             // setup
             var id = Guid.NewGuid();
@@ -357,14 +374,14 @@ namespace Rhino.Controllers.Domain.Automation
             var action = new Task(() =>
             {
                 s_status[$"{id}"].Status = AsyncStatus.Running;
-                var (StatusCode, TestRun) = DoInvoke(new[] { configuration }).First();
+                var runResult = Invoke(new[] { configuration }).First();
 
                 s_status[$"{id}"] = new AsyncStatusModel<RhinoConfiguration>
                 {
-                    EntityOut = TestRun,
+                    EntityOut = runResult.Entity,
                     Progress = 100,
-                    Status = StatusCode != StatusCodes.Status200OK ? AsyncStatus.Failed : AsyncStatus.Complete,
-                    StatusCode = StatusCode,
+                    Status = runResult.StatusCode != StatusCodes.Status200OK ? AsyncStatus.Failed : AsyncStatus.Complete,
+                    StatusCode = runResult.StatusCode,
                     EntityIn = configuration,
                     RuntimeId = $"{id}"
                 };
@@ -498,14 +515,63 @@ namespace Rhino.Controllers.Domain.Automation
         }
         #endregion
 
-        // Build Pipeline
-        private (int StatusCode, RhinoConfiguration Configuration) BuildConfiguration(RhinoConfiguration configuration)
+        // Invocation
+        private IEnumerable<GenericResultModel<RhinoTestRun>> Invoke(
+            IEnumerable<RhinoConfiguration> configurations,
+            bool isParallel = false,
+            int maxParallel = 0)
+        {
+            // setup
+            maxParallel = isParallel ? maxParallel : 1;
+            maxParallel = maxParallel < 1 ? Environment.ProcessorCount : maxParallel;
+            var options = new ParallelOptions { MaxDegreeOfParallelism = maxParallel };
+            var results = new ConcurrentBag<GenericResultModel<RhinoTestRun>>();
+
+            // invoke
+            Parallel.ForEach(configurations, options, configuration =>
+            {
+                try
+                {
+                    var responseBody = configuration.Invoke(_types);
+                    var ok = $"Invoke-Configuration = {responseBody.Key}";
+                    _logger?.Debug(ok);
+                    results.Add(new GenericResultModel<RhinoTestRun>
+                    {
+                        Entity = responseBody,
+                        StatusCode = StatusCodes.Status200OK,
+                        Message = ok
+                    });
+                }
+                catch (Exception e) when (e != null)
+                {
+                    var fatal = $"Invoke-Configuration = (InternalServerError | {e.GetBaseException().Message})";
+                    _logger?.Error(fatal);
+                    results.Add(new GenericResultModel<RhinoTestRun>
+                    {
+                        Entity = default,
+                        Message = fatal,
+                        StatusCode = StatusCodes.Status500InternalServerError
+                    });
+                }
+            });
+
+            // get
+            return results;
+        }
+
+        // Configuration Setup Pipeline
+        private GenericResultModel<RhinoConfiguration> SetConfiguration(RhinoConfiguration configuration)
         {
             // validation
-            var validationCode = BuidValidation(configuration);
-            if (validationCode != -1)
+            var statusCode = AssertConfiguration(configuration);
+            if (statusCode != -1)
             {
-                return (validationCode, configuration);
+                return new GenericResultModel<RhinoConfiguration>()
+                {
+                    Entity = configuration,
+                    Message = $"Assert-Configuration = (Fail | {statusCode})",
+                    StatusCode = statusCode
+                };
             }
 
             //  setup conditions
@@ -523,16 +589,27 @@ namespace Rhino.Controllers.Domain.Automation
             try
             {
                 _logger?.Debug("Create-Configuration = OK");
-                return (StatusCodes.Status200OK, configuration);
+                return new GenericResultModel<RhinoConfiguration>()
+                {
+                    Entity = configuration,
+                    Message = "Create-Configuration = OK",
+                    StatusCode = statusCode
+                };
             }
             catch (Exception e) when (e != null)
             {
-                _logger?.Debug($"Create-Configuration = (InternalServerError, ({e.GetBaseException().Message})");
-                return (StatusCodes.Status500InternalServerError, configuration);
+                var fatal = e.GetBaseException().Message;
+                _logger?.Fatal($"Create-Configuration = (InternalServerError, ({fatal})", e);
+                return new GenericResultModel<RhinoConfiguration>()
+                {
+                    Entity = configuration,
+                    Message = $"Create-Configuration = (InternalServerError, ({fatal})",
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
-        private int BuidValidation(RhinoConfiguration configuration)
+        private int AssertConfiguration(RhinoConfiguration configuration)
         {
             // bad request            
             if (!configuration.TestsRepository.Any())
@@ -547,7 +624,7 @@ namespace Rhino.Controllers.Domain.Automation
             }
 
             // get
-            return -1;
+            return StatusCodes.Status200OK;
         }
 
         private void SetModels(RhinoConfiguration configuration)
@@ -581,7 +658,10 @@ namespace Rhino.Controllers.Domain.Automation
                 .Select(i => JsonSerializer.Serialize(i, Utilities.JsonSettings));
 
             // update
-            configuration.Models = configuration.Models.Where(i => !GetIdPattern().IsMatch(i)).Concat(modelEntities);
+            configuration.Models = configuration
+                .Models
+                .Where(i => !GetIdPattern().IsMatch(i))
+                .Concat(modelEntities);
         }
 
         private void SetTestsRepository(RhinoConfiguration configuration)

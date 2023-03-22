@@ -66,7 +66,7 @@ namespace Rhino.Controllers.Controllers
                 .InvokeConfiguration(configuration);
 
             // get
-            return GetInvokeResponse(configuration, invokeResponse);
+            return GetResponse(configuration, (invokeResponse.StatusCode, invokeResponse.Entity));
         }
 
         // GET api/v3/rhino/configurations/invoke/:id
@@ -82,10 +82,13 @@ namespace Rhino.Controllers.Controllers
         public IActionResult InvokeConfiguration([FromRoute, SwaggerParameter(SwaggerDocument.Parameter.Id)] string id)
         {
             // invoke
-            var invokeResponse = _domain.Rhino.SetAuthentication(Authentication).InvokeConfiguration(id);
+            var invokeResponse = _domain
+                .Rhino
+                .SetAuthentication(Authentication)
+                .InvokeConfiguration(id);
 
             // get
-            return GetInvokeResponse(id, invokeResponse);
+            return GetResponse(id, (invokeResponse.StatusCode, invokeResponse.Entity));
         }
         #endregion
 
@@ -127,7 +130,7 @@ namespace Rhino.Controllers.Controllers
                 .InvokeConfiguration(configuration.Entity);
 
             // get
-            return GetInvokeResponse(collection, invokeResponse);
+            return GetResponse(collection, (invokeResponse.StatusCode, invokeResponse.Entity));
         }
 
         // GET /rhino/configurations/:configuration/collections/:collection/invoke
@@ -183,7 +186,7 @@ namespace Rhino.Controllers.Controllers
                 .InvokeConfiguration(configurationEntity);
 
             // get
-            return GetInvokeResponse(collection, invokeResponse);
+            return GetResponse(collection, (invokeResponse.StatusCode, invokeResponse.Entity));
         }
 
         // GET /rhino/collections/invoke/:id
@@ -230,11 +233,11 @@ namespace Rhino.Controllers.Controllers
             }
 
             // get
-            return Ok(results.Where(i => i.StatusCode == StatusCodes.Status200OK).Select(i => i.TestRun));
+            return Ok(results.Where(i => i.StatusCode == StatusCodes.Status200OK).Select(i => i.Entity));
         }
         #endregion
 
-        private IActionResult GetInvokeResponse<T>(T entity, (int StatusCode, RhinoTestRun TestRuns) invokeResponse)
+        private IActionResult GetResponse<T>(T entity, (int StatusCode, RhinoTestRun TestRuns) invokeResponse)
         {
             // setup
             var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
