@@ -51,7 +51,7 @@ namespace Rhino.Controllers.Extensions
                 lock (s_types)
                 {
                     s_types = new AssembliesLoader()
-                        .GetTypes(".", locations)
+                        .GetTypes()
                         .Distinct()
                         .ToList();
                 }
