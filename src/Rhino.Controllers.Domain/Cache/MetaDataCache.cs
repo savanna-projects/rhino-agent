@@ -3,12 +3,15 @@
  * 
  * RESSOURCES
  */
+using Gravity.Loader;
 using Gravity.Services.Comet.Engine.Attributes;
+using Gravity.Services.DataContracts;
 
 using Microsoft.CodeAnalysis;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Parser;
+using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
@@ -27,7 +30,7 @@ namespace Rhino.Controllers.Domain.Cache
     {
         // members: cache state
         private static readonly AppSettings s_appSettings = new();
-        private static IDictionary<string, PluginsCacheModel> s_plugins = GetPluginsCache(Utilities.Types);
+        private static ConcurrentDictionary<string, PluginsCacheModel> s_plugins = GetPluginsCache(Utilities.Types);
 
         #region *** Singleton(s) ***
         [DataMember]
@@ -41,10 +44,74 @@ namespace Rhino.Controllers.Domain.Cache
         }
         #endregion
 
+        // Use for hot load
+        public static void SyncCache()
+        {
+            // reload all types
+            var types = new AssembliesLoader().GetTypes();
+
+            // refresh cache
+            s_plugins = GetPluginsCache(types);
+        }
+
+        public static void SyncPlugins(IEnumerable<PluginCacheSyncModel> models)
+        {
+            foreach (var syncModel in models)
+            {
+                SyncPlugins(syncModel?.Specification, syncModel?.Authentication);
+            }
+        }
+
+        private static void SyncPlugins(string specification, Authentication authentication)
+        {
+            // setup
+            var factory = new RhinoPluginFactory();
+            var rootDirectory = Path.Combine(Environment.CurrentDirectory, "Plugins"/*Build dynamically from configuration*/);
+            var directories = !Directory.Exists(rootDirectory)
+                ? Array.Empty<string>()
+                : Directory
+                    .GetDirectories(rootDirectory)
+                    .Where(i => Path.GetFileName(i)
+                    .StartsWith("Rhino", StringComparison.OrdinalIgnoreCase))
+                    .ToArray();
+
+            // get plugins: rhino
+            var plugins = new ConcurrentBag<(string Source, RhinoPlugin Plugin)>();
+            foreach (var directory in directories)
+            {
+                foreach (var item in GetPluginsRepository(directory))
+                {
+                    var isEqual = "";
+                }
+            }
+            // TODO: read all plugin files
+            // TODO: compare with plugins input
+            // TODO: update collection when input does not match
+            //// setup
+            //var path = Path.Combine(models.First().Path, RhinoPluginEntry.PluginsRhinoSpecFile);
+
+            //// not found
+            //if (!File.Exists(path))
+            //{
+            //    return;
+            //}
+
+            //// read
+            //var pluginContent = File.ReadAllText(models.First().Path);
+            //var isEqual = pluginContent.DeepEqual(models.First().Specifications);
+            //if (isEqual)
+            //{
+            //    return;
+            //}
+
+            //// create
+            //var factory = new RhinoPluginFactory();
+            //var p = factory.GetRhinoPlugins(pluginContent);
+        }
+
         #region *** Plugins: Get ***
-        // TODO: add from external repository
         // TODO: load assemblies domain from folder for Gravity plugins
-        private static IDictionary<string, PluginsCacheModel> GetPluginsCache(IEnumerable<Type> types)
+        private static ConcurrentDictionary<string, PluginsCacheModel> GetPluginsCache(IEnumerable<Type> types)
         {
             // setup
             var cache = new ConcurrentDictionary<string, PluginsCacheModel>(StringComparer.OrdinalIgnoreCase);
@@ -63,7 +130,7 @@ namespace Rhino.Controllers.Domain.Cache
 
             // get plugins: rhino
             var plugins = new List<(string Source, RhinoPlugin Plugin)>();
-            foreach(var directory in directories)
+            foreach (var directory in directories)
             {
                 var repository = GetPluginsRepository(directory).ToArray();
                 foreach (var item in factory.GetRhinoPlugins(repository))
@@ -75,32 +142,29 @@ namespace Rhino.Controllers.Domain.Cache
             // build cache
             foreach (var group in plugins.GroupBy(i => i.Source))
             {
-                var groupCollection = new List<PluginCacheModel>();
+                var groupCollection = new ConcurrentDictionary<string, PluginCacheModel>(StringComparer.OrdinalIgnoreCase);
                 var key = Path.GetFileName(group.Key);
                 foreach (var item in group.Select(i => (Path: i.Source, i.Plugin, Attribute: i.Plugin.ToAttribute())))
                 {
-                    var cacheModel = GetPluginCacheModel(ActionModel.ActionSource.Plugin, item.Path, item.Plugin, item.Attribute);
-                    groupCollection.Add(cacheModel);
+                    var path = Path.Combine(item.Path, item.Plugin.Key);
+                    groupCollection[item.Plugin.Key] = GetPluginCacheModel(
+                        source: ActionModel.ActionSource.Plugin,
+                        path,
+                        item.Plugin,
+                        item.Attribute);
                 }
                 cache[key] = new()
                 {
-                    ActionsCache = groupCollection.Select(i => i.ActionModel).OrderBy(i => i.Key),
-                    ActionsCacheByConfiguration = Array.Empty<ActionModel>(),
+                    ActionsCache = groupCollection.GetActionsCache(),
+                    ActionsCacheByConfiguration = new ConcurrentDictionary<string, ActionModel>(StringComparer.OrdinalIgnoreCase),
                     PluginsCache = groupCollection
                 };
             }
             cache["Gravity"] = new()
             {
-                ActionsCache = gravityPlugins.Select(i => new ActionModel
-                {
-                    Entity = (ActionAttribute)i,
-                    Key = i.Name,
-                    Literal = i.Name.ToSpaceCase().ToLower(),
-                    Source = ActionModel.ActionSource.Code,
-                    Verb = "TBD"
-                }).OrderBy(i => i.Key),
-                ActionsCacheByConfiguration = Array.Empty<ActionModel>(),
-                PluginsCache = gravityPlugins.Select(i => GetPluginCacheModel((ActionAttribute)i))
+                ActionsCache = gravityPlugins.GetActionsCache(),
+                ActionsCacheByConfiguration = new ConcurrentDictionary<string, ActionModel>(StringComparer.OrdinalIgnoreCase),
+                PluginsCache = gravityPlugins.GetPluginsCache()
             };
 
             // get
@@ -129,15 +193,7 @@ namespace Rhino.Controllers.Domain.Cache
                 .Select(File.ReadAllText);
         }
 
-        private static PluginCacheModel GetPluginCacheModel(ActionAttribute attribute)
-        {
-            return GetPluginCacheModel(
-                source: ActionModel.ActionSource.Code,
-                path: default,
-                plugin: default,
-                attribute);
-        }
-
+        // TODO: this is a duplicate method with Rhino.Controllers.Domain.Extensions.GetPluginCacheModel
         private static PluginCacheModel GetPluginCacheModel(string source, string path, RhinoPlugin plugin, ActionAttribute attribute)
         {
             // setup

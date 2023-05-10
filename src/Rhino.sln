@@ -103,6 +103,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Extension
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Settings", "Rhino.Settings\Rhino.Settings.csproj", "{BCCF0ADA-9547-4F55-90E6-4174A9BEC353}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Api", "E:\development\csharp\rhino-api\src\Rhino.Api\Rhino.Api.csproj", "{EEE9C764-24B5-49CB-A383-639F91B2FA41}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Api.Parser", "E:\development\csharp\rhino-api\src\Rhino.Api.Parser\Rhino.Api.Parser.csproj", "{C389678E-9C07-41B1-B20A-51CEE49D75C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Api.Extensions", "E:\development\csharp\rhino-api\src\Rhino.Api.Exensions\Rhino.Api.Extensions.csproj", "{5841A9B0-AADB-43AF-BA1C-55867ED5E616}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +151,18 @@ Global
 		{BCCF0ADA-9547-4F55-90E6-4174A9BEC353}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCCF0ADA-9547-4F55-90E6-4174A9BEC353}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCCF0ADA-9547-4F55-90E6-4174A9BEC353}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEE9C764-24B5-49CB-A383-639F91B2FA41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEE9C764-24B5-49CB-A383-639F91B2FA41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEE9C764-24B5-49CB-A383-639F91B2FA41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEE9C764-24B5-49CB-A383-639F91B2FA41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C389678E-9C07-41B1-B20A-51CEE49D75C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C389678E-9C07-41B1-B20A-51CEE49D75C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C389678E-9C07-41B1-B20A-51CEE49D75C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C389678E-9C07-41B1-B20A-51CEE49D75C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5841A9B0-AADB-43AF-BA1C-55867ED5E616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5841A9B0-AADB-43AF-BA1C-55867ED5E616}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5841A9B0-AADB-43AF-BA1C-55867ED5E616}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5841A9B0-AADB-43AF-BA1C-55867ED5E616}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

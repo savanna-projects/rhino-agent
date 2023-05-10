@@ -130,7 +130,6 @@ app.UseSwaggerUI(i =>
     i.EnableTryItOutByDefault();
 });
 app.UseRouting();
-
 app.MapDefaultControllerRoute();
 app.MapControllers();
 #endregion

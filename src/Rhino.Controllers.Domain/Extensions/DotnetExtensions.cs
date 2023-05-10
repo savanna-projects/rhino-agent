@@ -3,8 +3,19 @@
  * 
  * RESSOURCES
  */
+using Gravity.Services.Comet.Engine.Attributes;
+
+using Rhino.Api.Contracts.AutomationProvider;
+using Rhino.Api.Converters;
+using Rhino.Api.Extensions;
+using Rhino.Controllers.Models;
+using Rhino.Controllers.Models.Server;
+using Rhino.Settings;
+
+using System.Collections.Concurrent;
 using System.Data;
 using System.Reflection;
+using System.Text.Json;
 
 namespace Rhino.Controllers.Domain.Extensions
 {
@@ -56,6 +67,43 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // get
             return table;
+        }
+
+        public static bool DeepEqual<T>(this T source, T target, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        {
+            // not equal
+            if (source.GetType() != target.GetType())
+            {
+                return false;
+            }
+
+            // setup
+            string leftHand;
+            string rightHand;
+            var options = new JsonSerializerOptions();
+
+            options.Converters.Add(new ExceptionConverter());
+            options.Converters.Add(new MethodBaseConverter());
+            options.Converters.Add(new TypeConverter());
+
+            // string
+            if ((source is string) && (target is string))
+            {
+                leftHand = source.ToString();
+                rightHand = target.ToString();
+            }
+            else
+            {
+                leftHand = JsonSerializer.Serialize(source, options);
+                rightHand = JsonSerializer.Serialize(target, options);
+            }
+
+            // sort
+            leftHand = leftHand.Sort();
+            rightHand = rightHand.Sort();
+
+            // compare
+            return leftHand.Equals(rightHand, comparison);
         }
     }
 }

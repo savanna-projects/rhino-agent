@@ -2,15 +2,19 @@
 * 
 * RESSOURCES
 */
+using Gravity.Services.Comet.Engine.Attributes;
+
 using Microsoft.CodeAnalysis;
 
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Contracts.Configuration;
+using Rhino.Api.Extensions;
 using Rhino.Api.Interfaces;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
@@ -319,6 +323,91 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // get
             return symbol;
+        }
+        #endregion
+
+        #region *** Cache         ***
+        public static ConcurrentDictionary<string, ActionModel> GetActionsCache(this IDictionary<string, PluginCacheModel> models)
+        {
+            // setup
+            var actions = new ConcurrentDictionary<string, ActionModel>();
+
+            // iterate
+            foreach (var model in models)
+            {
+                actions[model.Value.Plugin.Key] = model.Value.ActionModel;
+            }
+
+            // get
+            return actions;
+        }
+
+        public static ConcurrentDictionary<string, ActionModel> GetActionsCache(this IEnumerable<PluginAttribute> attributes)
+        {
+            // setup
+            var cache = new ConcurrentDictionary<string, ActionModel>(StringComparer.OrdinalIgnoreCase);
+
+            // iterate
+            foreach (var attribute in attributes)
+            {
+                var key = attribute.Name;
+                var value = new ActionModel
+                {
+                    Entity = (ActionAttribute)attribute,
+                    Key = attribute.Name,
+                    Literal = attribute.Name.ToSpaceCase().ToLower(),
+                    Source = ActionModel.ActionSource.Code,
+                    Verb = "TBD"
+                };
+
+                cache[key] = value;
+            }
+
+            // get
+            return cache;
+        }
+
+        public static ConcurrentDictionary<string, PluginCacheModel> GetPluginsCache(this IEnumerable<PluginAttribute> attributes)
+        {
+            // setup
+            var cache = new ConcurrentDictionary<string, PluginCacheModel>(StringComparer.OrdinalIgnoreCase);
+
+            // iterate
+            foreach (var attribute in attributes)
+            {
+                var key = attribute.Name;
+                cache[key] = GetPluginCacheModel(
+                    source: ActionModel.ActionSource.Code,
+                    path: default,
+                    plugin: default,
+                    (ActionAttribute)attribute);
+            }
+
+            // get
+            return cache;
+        }
+
+        private static PluginCacheModel GetPluginCacheModel(string source, string path, RhinoPlugin plugin, ActionAttribute attribute)
+        {
+            // setup
+            var actionModel = new ActionModel
+            {
+                Entity = attribute,
+                Key = attribute.Name,
+                Literal = attribute.Name.ToSpaceCase().ToLower(),
+                Source = source,
+                Verb = "TBD"
+            };
+
+            // get
+            return new()
+            {
+                ActionModel = actionModel,
+                Directory = Path.GetFileName(path),
+                Path = Path.Exists(path) ? path : null,
+                Plugin = plugin,
+                Specifications = plugin == default ? null : plugin?.ToString()
+            };
         }
         #endregion
     }

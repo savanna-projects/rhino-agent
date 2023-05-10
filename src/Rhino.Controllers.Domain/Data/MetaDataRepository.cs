@@ -28,6 +28,7 @@ using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 using Rhino.Settings;
 
+using System.Collections.Concurrent;
 using System.Data;
 using System.Reflection;
 using System.Text;
@@ -45,7 +46,6 @@ namespace Rhino.Controllers.Domain.Data
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
         // members: state
-        private readonly IPluginsRepository _plugins;
         private readonly IRepository<RhinoModelCollection> _models;
         private readonly IRepository<RhinoConfiguration> _configurations;
         private readonly IEnumerable<Type> _types;
@@ -67,7 +67,6 @@ namespace Rhino.Controllers.Domain.Data
             ILogger logger)
         {
             // setup: fields
-            _plugins = plugins;
             _models = models;
             _configurations = configurations;
             _types = types;
@@ -128,7 +127,8 @@ namespace Rhino.Controllers.Domain.Data
                 var cachedPlugins = MetaDataCache
                     .Plugins
                     .SelectMany(i => i.Value.ActionsCache)
-                    .Where(i => i.Source.Equals(repositoryName));
+                    .Where(i => i.Value.Source.Equals(repositoryName))
+                    .Select(i => i.Value);
 
                 if (cachedPlugins?.Any() == false)
                 {
@@ -674,10 +674,11 @@ namespace Rhino.Controllers.Domain.Data
             var publicPlugins = MetaDataCache
                 .Plugins
                 .Where(i => publicRepositories.Contains(i.Key, StringComparer.OrdinalIgnoreCase))
-                .SelectMany(i => i.Value.ActionsCache);
+                .SelectMany(i => i.Value.ActionsCache)
+                .Select(i => i.Value);
 
             var userPlugins = MetaDataCache.Plugins.TryGetValue(token, out var userPluginsOut) && !token.Equals("Rhino", Compare)
-                ? userPluginsOut.ActionsCache
+                ? userPluginsOut.ActionsCache.Select(i => i.Value)
                 : Array.Empty<ActionModel>();
 
             // get
@@ -788,7 +789,7 @@ namespace Rhino.Controllers.Domain.Data
             var sourceName = string.IsNullOrEmpty(name) ? "external" : $"external:{name}";
 
             // bridge
-            var pluginsCache = new List<PluginCacheModel>();
+            var pluginsCache = new ConcurrentDictionary<string, PluginCacheModel>(StringComparer.OrdinalIgnoreCase);
             foreach (var action in actions)
             {
                 var actionModel = action.ToModel(sourceName);
@@ -800,13 +801,13 @@ namespace Rhino.Controllers.Domain.Data
                     Repository = repository
                 };
 
-                pluginsCache.Add(cacheModel);
+                pluginsCache[actionModel.Entity.Name] = cacheModel;
             }
 
             // sync cache
             MetaDataCache.Plugins[sourceName] = new()
             {
-                ActionsCache = pluginsCache.Select(i => i.ActionModel),
+                ActionsCache = pluginsCache.GetActionsCache(),
                 PluginsCache = pluginsCache
             };
         }

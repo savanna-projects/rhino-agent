@@ -86,6 +86,7 @@ namespace Rhino.Controllers.Controllers
             return Ok(entities);
         }
 
+        // TODO: reduce complexity to O1
         // GET: api/v3/meta/plugins/references/:key
         [HttpGet, Route("plugins/references/{key}")]
         [SwaggerOperation(
@@ -122,6 +123,7 @@ namespace Rhino.Controllers.Controllers
             });
         }
 
+        // TODO: reduce complexity to O1
         // GET: api/v3/meta/plugins/references/:key/configurations/:configuration
         [HttpGet, Route("plugins/references/{key}/configurations/{configuration}")]
         [SwaggerOperation(
@@ -159,6 +161,7 @@ namespace Rhino.Controllers.Controllers
             });
         }
 
+        // TODO: reduce complexity to O1
         // GET: api/v3/meta/plugins/references/configurations/:configuration
         [HttpGet, Route("plugins/references/configurations/{configuration}")]
         [SwaggerOperation(

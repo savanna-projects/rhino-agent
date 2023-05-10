@@ -11,6 +11,7 @@ using LiteDB;
 using Microsoft.AspNetCore.Http;
 
 using Rhino.Api.Contracts.AutomationProvider;
+using Rhino.Controllers.Domain.Cache;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models.Server;
@@ -56,6 +57,7 @@ namespace Rhino.Controllers.Domain.Automation
             _logger = logger.CreateChildLogger(nameof(EnvironmentRepository));
         }
 
+        // TODO: add to cache and update delta only
         #region *** Add    ***
         /// <summary>
         /// Add a new plugin to the domain state.
@@ -107,14 +109,14 @@ namespace Rhino.Controllers.Domain.Automation
             // get
             if (exceptions.Count == 0)
             {
-                _logger?.Debug($"Create-Plugin -Private {isPrivate} = Created");
+                _logger?.Debug($"New-Plugin -Private {isPrivate} = Created");
                 return responseBody;
             }
 
             // error
             foreach (var exception in exceptions)
             {
-                _logger?.Error($"Create-Plugin -Private {isPrivate} = InternalServerError", exception);
+                _logger?.Error($"New-Plugin -Private {isPrivate} = InternalServerError", exception);
             }
 
             // get
@@ -200,6 +202,7 @@ namespace Rhino.Controllers.Domain.Automation
             .SyncAssemblies();
         #endregion
 
+        // TODO: delete from cache
         #region *** Delete ***
         /// <summary>
         /// Deletes a plugin from the domain state.
@@ -284,6 +287,7 @@ namespace Rhino.Controllers.Domain.Automation
         }
         #endregion
 
+        // TODO: get from cache
         #region *** Get    ***
         /// <summary>
         /// Gets all plugins in the domain collection.

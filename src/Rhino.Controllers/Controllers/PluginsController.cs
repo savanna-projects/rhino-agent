@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Rhino.Api.Contracts;
-using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -246,6 +245,7 @@ namespace Rhino.Controllers.Controllers
         }
 
         // POST: api/v3/plugins/sync
+        [Obsolete(message: "This endpoint is obsolete and will be removed in future versions. Please use `/api/v3/cache/sync` instead.")]
         [HttpPost("sync")]
         [SwaggerOperation(
             Summary = "Sync-Assemblies",

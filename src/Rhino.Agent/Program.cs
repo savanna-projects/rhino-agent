@@ -7,15 +7,8 @@ using Gravity.Abstraction.Logging;
 
 using LiteDB;
 
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-using Rhino.Agent.Cli;
 using Rhino.Api.Converters;
 using Rhino.Controllers.Controllers;
 using Rhino.Controllers.Domain;
@@ -27,8 +20,6 @@ using Rhino.Controllers.Hubs;
 using Rhino.Controllers.Models;
 using Rhino.Settings;
 
-using System;
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -145,10 +136,6 @@ app.MapFallbackToFile("index.html");
 app.MapRazorPages();
 app.MapControllers();
 app.MapHub<RhinoHub>($"/api/v{AppSettings.ApiVersion}/rhino/orchestrator");
-#endregion
-
-#region *** Program       ***
-new CommandInvoker(Utilities.Types, args).Invoke();
 #endregion
 
 #region *** Cache         ***

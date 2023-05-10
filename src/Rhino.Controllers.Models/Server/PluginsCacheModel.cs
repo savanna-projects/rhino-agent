@@ -3,7 +3,7 @@
  * 
  * RESSOURCES
  */
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
 namespace Rhino.Controllers.Models.Server
@@ -12,12 +12,12 @@ namespace Rhino.Controllers.Models.Server
     public class PluginsCacheModel
     {
         [DataMember]
-        public IEnumerable<ActionModel> ActionsCache { get; set; }
+        public ConcurrentDictionary<string, ActionModel> ActionsCache { get; set; }
 
         [DataMember]
-        public IEnumerable<ActionModel> ActionsCacheByConfiguration { get; set; }
+        public ConcurrentDictionary<string, ActionModel> ActionsCacheByConfiguration { get; set; }
 
         [DataMember]
-        public IEnumerable<PluginCacheModel> PluginsCache { get; set; }
+        public ConcurrentDictionary<string, PluginCacheModel> PluginsCache { get; set; }
     }
 }
