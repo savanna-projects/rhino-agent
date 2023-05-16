@@ -130,12 +130,14 @@ namespace Rhino.Controllers.Extensions
             // is current location
             if (onFolder == ".")
             {
-                onFolder = Path.Join(Environment.CurrentDirectory, "Outputs", "Reports", "rhino");
+                onFolder = Path.Join(Environment.CurrentDirectory, "Outputs", "Reports", "Rhino");
             }
             onFolder = onFolder.Replace(Path.GetFileName(onFolder), string.Empty);
 
             // setup
-            return Path.IsPathRooted(onFolder) ? onFolder : Path.Join(Environment.CurrentDirectory, onFolder);
+            return Path.IsPathRooted(onFolder)
+                ? onFolder
+                : Path.Join(Environment.CurrentDirectory, onFolder);
         }
         #endregion
 

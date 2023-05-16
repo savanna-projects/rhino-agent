@@ -17,6 +17,7 @@ using Rhino.Api.Extensions;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
+using Rhino.Settings;
 
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
@@ -34,8 +35,11 @@ namespace Rhino.Controllers.Domain.Automation
         private const StringComparison Compare = StringComparison.OrdinalIgnoreCase;
 
         #region *** Expressions ***
-        [GeneratedRegex("^\\w{8}-(\\w{4}-){3}\\w{12}$")]
+        [GeneratedRegex(@"^\w{8}-(\w{4}-){3}\w{12}$")]
         private static partial Regex GetIdPattern();
+
+        [GeneratedRegex(@"^([a-z,A-Z]:\\|\/)\\w+")]
+        private static partial Regex GetAbsolutePathPattern();
         #endregion
 
         // members: cache
@@ -48,7 +52,10 @@ namespace Rhino.Controllers.Domain.Automation
         private readonly IRepository<RhinoModelCollection> _modelsRespository;
         private readonly ITestsRepository _testsRepository;
         private readonly ILogger _logger;
-        private readonly IConfiguration _appSettings;
+
+        [Obsolete("This field is obsolete and will be removed in future versions. Please use `_appSettings` instead.")]
+        private readonly IConfiguration _configuration;
+        private readonly AppSettings _appSettings; // TODO: replace configuration
 
         /// <summary>
         /// Creates a new instance of StaticDataRepository.
@@ -70,7 +77,8 @@ namespace Rhino.Controllers.Domain.Automation
             _modelsRespository = modelsRespository;
             _testsRepository = testsRepository;
             _logger = logger.CreateChildLogger(nameof(RhinoRepository));
-            _appSettings = appSettings;
+            _configuration = appSettings;
+            _appSettings = new AppSettings(_configuration);
         }
 
         /// <summary>
@@ -532,6 +540,8 @@ namespace Rhino.Controllers.Domain.Automation
             {
                 try
                 {
+                    configuration.ReportConfiguration.ReportOut = GetReportsOutLocation(configuration);
+                    configuration.ReportConfiguration.LogsOut = GetLogsOutLocation(configuration);
                     var responseBody = configuration.Invoke(_types);
                     var ok = $"Invoke-Configuration = {responseBody.Key}";
                     _logger?.Debug(ok);
@@ -557,6 +567,40 @@ namespace Rhino.Controllers.Domain.Automation
 
             // get
             return results;
+        }
+
+        private static string GetReportsOutLocation(RhinoConfiguration configuration)
+        {
+            // setup
+            var reportsOut = configuration.ReportConfiguration.ReportOut;
+
+            // bad request
+            if (string.IsNullOrEmpty(reportsOut) || reportsOut.Equals("."))
+            {
+                return Path.Combine(Environment.CurrentDirectory, "Outputs", "Reports", "Rhino");
+            }
+
+            // get
+            return Path.IsPathRooted(reportsOut)
+                ? reportsOut
+                : Path.Combine(Environment.CurrentDirectory, reportsOut);
+        }
+
+        private static string GetLogsOutLocation(RhinoConfiguration configuration)
+        {
+            // setup
+            var logsOut = configuration.ReportConfiguration.LogsOut;
+
+            // bad request
+            if (string.IsNullOrEmpty(logsOut) || logsOut.Equals("."))
+            {
+                return Path.Combine(Environment.CurrentDirectory, "Outputs", "Logs");
+            }
+
+            // get
+            return Path.IsPathRooted(logsOut)
+                ? logsOut
+                : Path.Combine(Environment.CurrentDirectory, logsOut);
         }
 
         // Configuration Setup Pipeline
@@ -710,10 +754,10 @@ namespace Rhino.Controllers.Domain.Automation
             var reporters = configuration.ReportConfiguration.Reporters ?? Array.Empty<string>();
 
             // reporting
-            configuration.ReportConfiguration.ReportOut = _appSettings.GetValue(ReportsOut, defaultValue: ".");
-            configuration.ReportConfiguration.LogsOut = _appSettings.GetValue(LogsOut, defaultValue: ".");
-            configuration.ReportConfiguration.Archive = _appSettings.GetValue(Archive, defaultValue: false);
-            configuration.ReportConfiguration.Reporters = _appSettings
+            configuration.ReportConfiguration.ReportOut = _configuration.GetValue(ReportsOut, defaultValue: ".");
+            configuration.ReportConfiguration.LogsOut = _configuration.GetValue(LogsOut, defaultValue: ".");
+            configuration.ReportConfiguration.Archive = _configuration.GetValue(Archive, defaultValue: false);
+            configuration.ReportConfiguration.Reporters = _configuration
                 .GetSection(Reporters)
                 .GetChildren()
                 .Select(i => i.Value)
@@ -723,8 +767,8 @@ namespace Rhino.Controllers.Domain.Automation
                 .ToArray();
 
             // screen-shots
-            configuration.ScreenshotsConfiguration.ScreenshotsOut = _appSettings.GetValue(ScreenshotsOut, defaultValue: ".");
-            configuration.ScreenshotsConfiguration.KeepOriginal = _appSettings.GetValue(KeepOriginal, defaultValue: false);
+            configuration.ScreenshotsConfiguration.ScreenshotsOut = _configuration.GetValue(ScreenshotsOut, defaultValue: ".");
+            configuration.ScreenshotsConfiguration.KeepOriginal = _configuration.GetValue(KeepOriginal, defaultValue: false);
         }
     }
 }

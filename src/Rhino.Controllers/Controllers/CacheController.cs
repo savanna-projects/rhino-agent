@@ -3,12 +3,14 @@
  * 
  * RESSOURCES
  */
+using Gravity.Services.DataContracts;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Converters;
 using Rhino.Controllers.Domain.Cache;
+using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 using Rhino.Settings;
@@ -17,6 +19,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 
@@ -27,6 +30,9 @@ namespace Rhino.Controllers.Controllers
     [ApiController]
     public class CacheController : ControllerBase
     {
+        // members: private properties
+        private Authentication Authentication => Request.GetAuthentication();
+
         // POST api/v3/cache/sync
         [HttpGet, Route("sync")]
         [SwaggerOperation(
@@ -48,22 +54,12 @@ namespace Rhino.Controllers.Controllers
             catch (Exception e) when (e!=null)
             {
                 // setup
-                var errorResponse = new GenericErrorModel<string>
-                {
-                    Status = StatusCodes.Status500InternalServerError,
-                    Request = e.StackTrace,
-                    RouteData = Request.RouteValues
-                };
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                };
-                options.Converters.Add(new ExceptionConverter());
+                var content = GetStatus500Content(Request, e);
 
                 // get
                 return new ContentResult
                 {
-                    Content = JsonSerializer.Serialize(errorResponse, options),
+                    Content = content,
                     ContentType = MediaTypeNames.Application.Json,
                     StatusCode = StatusCodes.Status500InternalServerError
                 };
@@ -78,16 +74,26 @@ namespace Rhino.Controllers.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(object))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
-        public IActionResult SyncPlugins(IEnumerable<PluginCacheSyncModel> models)
+        public IActionResult SyncPlugins(IEnumerable<PluginCacheSyncRequestModel> models)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
-                var m = new PluginCacheSyncModel();
-                m.Specification = System.IO.File.ReadAllText(@"C:\Users\s_roe\Desktop\finastra\source-code\rhino-agent\src\Rhino.Agent\Plugins\Rhino\ValidatePaymentData\PluginSpec.rhino");
+                // setup
+                var syncModels = models.Select(i => new PluginCacheSyncModel
+                {
+                    Authentication = Authentication,
+                    Specification = i.Specification
+                });
 
-                var j = JsonSerializer.Serialize(m);
+                // sync
+                MetaDataCache.SyncPlugins(models: syncModels);
 
-                MetaDataCache.SyncPlugins(new[]{ m});
+                // get
                 return Ok(new
                 {
                     TotalPlugins = MetaDataCache.Plugins.Count
@@ -96,26 +102,35 @@ namespace Rhino.Controllers.Controllers
             catch (Exception e) when (e != null)
             {
                 // setup
-                var errorResponse = new GenericErrorModel<string>
-                {
-                    Status = StatusCodes.Status500InternalServerError,
-                    Request = e.StackTrace,
-                    RouteData = Request.RouteValues
-                };
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                };
-                options.Converters.Add(new ExceptionConverter());
+                var content = GetStatus500Content(Request, e);
 
                 // get
                 return new ContentResult
                 {
-                    Content = JsonSerializer.Serialize(errorResponse, options),
+                    Content = content,
                     ContentType = MediaTypeNames.Application.Json,
                     StatusCode = StatusCodes.Status500InternalServerError
                 };
             }
+        }
+
+        private static string GetStatus500Content(HttpRequest request, Exception exception)
+        {
+            // setup
+            var errorResponse = new GenericErrorModel<string>
+            {
+                Status = StatusCodes.Status500InternalServerError,
+                Request = exception.StackTrace,
+                RouteData = request.RouteValues
+            };
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            options.Converters.Add(new ExceptionConverter());
+
+            // get
+            return JsonSerializer.Serialize(errorResponse, options);
         }
     }
 }

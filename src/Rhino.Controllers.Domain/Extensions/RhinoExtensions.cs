@@ -15,8 +15,6 @@ using Rhino.Controllers.Models;
 using Rhino.Controllers.Models.Server;
 
 using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.IO.Compression;
 using System.Text.RegularExpressions;
 
 namespace Rhino.Controllers.Domain.Extensions
@@ -326,7 +324,7 @@ namespace Rhino.Controllers.Domain.Extensions
         }
         #endregion
 
-        #region *** Cache         ***
+        #region *** Cache       ***
         public static ConcurrentDictionary<string, ActionModel> GetActionsCache(this IDictionary<string, PluginCacheModel> models)
         {
             // setup
@@ -406,7 +404,7 @@ namespace Rhino.Controllers.Domain.Extensions
                 Directory = Path.GetFileName(path),
                 Path = Path.Exists(path) ? path : null,
                 Plugin = plugin,
-                Specifications = plugin == default ? null : plugin?.ToString()
+                Specifications = plugin == default ? null : plugin.TestSpecifications
             };
         }
         #endregion

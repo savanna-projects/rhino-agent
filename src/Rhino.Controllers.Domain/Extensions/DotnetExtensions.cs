@@ -5,6 +5,8 @@
  */
 using Gravity.Services.Comet.Engine.Attributes;
 
+using Microsoft.TeamFoundation;
+
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Converters;
 using Rhino.Api.Extensions;
@@ -104,6 +106,22 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // compare
             return leftHand.Equals(rightHand, comparison);
+        }
+
+        public static void TryUpdate<TValue>(this IDictionary<string, TValue> collection, string key, TValue value)
+        {
+            // bad request
+            if (collection == null)
+            {
+                return;
+            }
+            if(!collection.ContainsKey(key))
+            {
+                return;
+            }
+
+            // update
+            collection[key] = value;
         }
     }
 }

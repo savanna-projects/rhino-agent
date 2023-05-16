@@ -57,7 +57,6 @@ namespace Rhino.Controllers.Domain.Automation
             _logger = logger.CreateChildLogger(nameof(EnvironmentRepository));
         }
 
-        // TODO: add to cache and update delta only
         #region *** Add    ***
         /// <summary>
         /// Add a new plugin to the domain state.
@@ -98,6 +97,15 @@ namespace Rhino.Controllers.Domain.Automation
                 if (exception != default)
                 {
                     exceptions.Add(exception);
+                }
+                if(exception == default)
+                {
+                    var model = new PluginCacheSyncModel
+                    {
+                        Authentication = Authentication,
+                        Specification = spec
+                    };
+                    MetaDataCache.SyncPlugins(models: new[] { model });
                 }
             }
 
@@ -202,7 +210,6 @@ namespace Rhino.Controllers.Domain.Automation
             .SyncAssemblies();
         #endregion
 
-        // TODO: delete from cache
         #region *** Delete ***
         /// <summary>
         /// Deletes a plugin from the domain state.
@@ -235,9 +242,14 @@ namespace Rhino.Controllers.Domain.Automation
 
             // setup
             var pluginPath = isPublic ? publicPath : userPath;
+            var isSuccess = DeleteFolder(pluginPath) != default;
+
+            // update cache
+            var key = Path.GetFileName(pluginsPath);
+            MetaDataCache.Plugins[key].PluginsCache.TryRemove(id, out _);
 
             // get
-            return DeleteFolder(pluginPath) != default
+            return isSuccess
                 ? StatusCodes.Status500InternalServerError
                 : StatusCodes.Status204NoContent;
         }

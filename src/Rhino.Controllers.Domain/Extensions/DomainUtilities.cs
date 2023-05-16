@@ -16,7 +16,7 @@ namespace Rhino.Controllers.Domain.Extensions
                 // Loop through the loader characters and render them to the console
                 Task.Factory.StartNew(() =>
                 {
-                    while(true)
+                    while (true)
                     {
                         foreach (char c in loaderChars)
                         {
@@ -26,7 +26,14 @@ namespace Rhino.Controllers.Domain.Extensions
                             {
                                 return;
                             }
-                            Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+                            try
+                            {
+                                Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+                            }
+                            catch (Exception e) when (e != null)
+                            {
+                                // ignore
+                            }
                         }
                     }
                 }, token);
