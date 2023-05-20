@@ -67,6 +67,7 @@ namespace Rhino.Controllers.Domain.Cache
             s_plugins = GetPluginsCache(types);
         }
 
+        // TODO: allow private plugins to be synced
         public static void SyncPlugins(IEnumerable<PluginCacheSyncModel> models)
         {
             foreach (var syncModel in models)
@@ -112,6 +113,7 @@ namespace Rhino.Controllers.Domain.Cache
             }
         }
 
+        // TODO: always false
         private static void SyncPlugins(RhinoPluginFactory factory, string specification, string directory)
         {
             var id = GetIdPattern().Match(input: specification).Value.Trim();
@@ -134,7 +136,7 @@ namespace Rhino.Controllers.Domain.Cache
             var pluginCache = GetPluginsCache(pluginCollection);
 
             // first time cache
-            if (!isSource)
+            if (!isSource || !isSpecifications)
             {
                 s_plugins[pluginSource] = new PluginsCacheModel
                 {
@@ -291,7 +293,7 @@ namespace Rhino.Controllers.Domain.Cache
                 Directory = Path.GetFileName(path),
                 Path = Path.Exists(path) ? path : null,
                 Plugin = plugin,
-                Specifications = plugin == default ? null : plugin.TestSpecifications
+                Specifications = (plugin?.TestSpecifications)
             };
         }
 
