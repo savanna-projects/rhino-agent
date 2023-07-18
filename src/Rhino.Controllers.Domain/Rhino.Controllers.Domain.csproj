@@ -12,8 +12,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Gravity.Abstraction.Logging" Version="2020.10.18.1" />
-		<PackageReference Include="Gravity.Services.Comet" Version="2023.5.30.2" />
-		<PackageReference Include="Gravity.Services.DataContracts" Version="2023.5.30.2" />
+		<PackageReference Include="Gravity.Services.Comet" Version="2023.7.17.1" />
+		<PackageReference Include="Gravity.Services.DataContracts" Version="2023.7.17.1" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
 		<PackageReference Include="LiteDB" Version="5.0.16" />
 		<PackageReference Include="Rhino.Api" Version="2023.5.21.1" />
