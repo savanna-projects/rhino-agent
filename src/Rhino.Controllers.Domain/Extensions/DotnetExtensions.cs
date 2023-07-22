@@ -3,20 +3,12 @@
  * 
  * RESSOURCES
  */
-using Gravity.Services.Comet.Engine.Attributes;
-
-using Microsoft.TeamFoundation;
-
-using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Converters;
 using Rhino.Api.Extensions;
-using Rhino.Controllers.Models;
-using Rhino.Controllers.Models.Server;
-using Rhino.Settings;
 
-using System.Collections.Concurrent;
 using System.Data;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 
 namespace Rhino.Controllers.Domain.Extensions
@@ -122,6 +114,19 @@ namespace Rhino.Controllers.Domain.Extensions
 
             // update
             collection[key] = value;
+        }
+
+        public static string ConvertToBase64(this string input)
+        {
+            try
+            {
+                var bytes = Encoding.UTF8.GetBytes(input);
+                return Convert.ToBase64String(bytes);
+            }
+            catch (Exception e) when (e != null)
+            {
+                return input;
+            }
         }
     }
 }
