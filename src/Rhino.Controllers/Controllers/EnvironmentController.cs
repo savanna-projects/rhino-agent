@@ -8,7 +8,6 @@ using Gravity.Services.DataContracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -108,6 +107,24 @@ namespace Rhino.Controllers.Controllers
             // get
             return Ok(entities);
         }
+
+        // GET: api/v3/environment/sync/encoded
+        [HttpGet, Route("sync/encoded")]
+        [SwaggerOperation(
+            Summary = "Sync-EnvironmentParameter",
+            Description = "Sync environment parameters with _**Rhino State Parameters**_.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status200OK, SwaggerDocument.StatusCode.Status200OK, Type = typeof(IDictionary<string, object>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<string>))]
+        public IActionResult SyncEncoded()
+        {
+            // setup
+            _domain.Environments.SetAuthentication(Authentication);
+            var entities = _domain.Environments.Sync(true).Entities;
+
+            // get
+            return Ok(entities);
+        }
         #endregion
 
         #region *** Post   ***
@@ -140,7 +157,39 @@ namespace Rhino.Controllers.Controllers
             var responseBody = new Dictionary<string, object>(value, StringComparer.OrdinalIgnoreCase);
 
             // get
-            return Created($"/api/v3/environment", responseBody);
+            return Created("/api/v3/environment", responseBody);
+        }
+
+        // POST: api/v3/environment/encoded
+        [HttpPost, Route("encoded")]
+        [SwaggerOperation(
+            Summary = "Add-EnvironmentParameters -Name {parameterKey}",
+            Description = "Updates a set of _**Rhino Parameter**_ if the parameters exists or create a new one if not.")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [SwaggerResponse(StatusCodes.Status201Created, SwaggerDocument.StatusCode.Status201Created, Type = typeof(IDictionary<string, object>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, SwaggerDocument.StatusCode.Status400BadRequest, Type = typeof(GenericErrorModel<IDictionary<string, object>>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, SwaggerDocument.StatusCode.Status500InternalServerError, Type = typeof(GenericErrorModel<IDictionary<string, object>>))]
+        public async Task<IActionResult> AddEncoded(
+            [FromBody, SwaggerParameter(SwaggerDocument.Parameter.Entity)] IDictionary<string, object> value)
+        {
+            // bad request
+            if (value?.Any() != true)
+            {
+                return await this
+                    .ErrorResultAsync<IDictionary<string, object>>("Add-EnvironmentParameters = (BadRequest, NoValue | NoKey)")
+                    .ConfigureAwait(false);
+            }
+
+            // build
+            _domain.Environments.SetAuthentication(Authentication);
+            _domain.Environments.Add(value, true);
+
+            // build
+            var responseBody = new Dictionary<string, object>(value, StringComparer.OrdinalIgnoreCase);
+
+            // get
+            return Created("/api/v3/environment", responseBody);
         }
         #endregion
 

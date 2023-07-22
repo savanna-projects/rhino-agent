@@ -57,7 +57,24 @@ namespace Rhino.Controllers.Domain.Automation
             }
 
             // invoke
-            InvokeAdd(entity);
+            AddToCache(entity);
+
+            // get
+            return entity;
+        }
+
+        public IDictionary<string, object> Add(IDictionary<string, object> entity, bool encode)
+        {
+            // push to gravity
+            foreach (var item in entity)
+            {
+                AutomationEnvironment.SessionParams[item.Key] = encode
+                    ? $"{item.Value}".ConvertToBase64()
+                    : item.Value;
+            }
+
+            // invoke
+            AddToCache(entity);
 
             // get
             return entity;
@@ -74,13 +91,27 @@ namespace Rhino.Controllers.Domain.Automation
             AutomationEnvironment.SessionParams[entity.Key] = entity.Value;
 
             // invoke
-            InvokeAdd(new Dictionary<string, object>(new[] { entity }, StringComparer.OrdinalIgnoreCase));
+            AddToCache(new Dictionary<string, object>(new[] { entity }, StringComparer.OrdinalIgnoreCase));
 
             // get
             return $"{entity.Value}";
         }
 
-        private void InvokeAdd(IDictionary<string, object> entity)
+        public string Add(KeyValuePair<string, object> entity, bool encode)
+        {
+            // push to gravity
+            AutomationEnvironment.SessionParams[entity.Key] = encode
+                ? $"{entity.Value}".ConvertToBase64()
+                : entity.Value;
+
+            // invoke
+            AddToCache(new Dictionary<string, object>(new[] { entity }, StringComparer.OrdinalIgnoreCase));
+
+            // get
+            return $"{entity.Value}";
+        }
+
+        private void AddToCache(IDictionary<string, object> entity)
         {
             // validate
             var name = SetCollectionName(Name).CollectionName;
@@ -221,13 +252,29 @@ namespace Rhino.Controllers.Domain.Automation
         /// <returns><see cref="int"/> and all environment parameters.</returns>
         public (int StatusCode, IDictionary<string, object> Entities) Sync()
         {
+            return SyncFromCache(false);
+        }
+
+        /// <summary>
+        /// Sync RhinoEnvironment with Gravity AutomationEnvironment.
+        /// </summary>
+        /// <returns><see cref="int"/> and all environment parameters.</returns>
+        public (int StatusCode, IDictionary<string, object> Entities) Sync(bool encode)
+        {
+            return SyncFromCache(encode);
+        }
+
+        private (int StatusCode, IDictionary<string, object> Entities) SyncFromCache(bool encode)
+        {
             // build           
             var environment = DoGet().Entity;
 
             // update
             foreach (var parameter in environment)
             {
-                AutomationEnvironment.SessionParams[parameter.Key] = parameter.Value;
+                AutomationEnvironment.SessionParams[parameter.Key] = encode
+                ? $"{parameter.Value}".ConvertToBase64()
+                : parameter.Value;
             }
             _logger?.Debug($"Update-Parameter -Sync -All = (Ok, {environment.Count})");
 
