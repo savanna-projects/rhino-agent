@@ -54,6 +54,7 @@ COPY ["Rhino.Worker/Rhino.Worker.csproj", "Rhino.Worker/"]
 COPY ["Rhino.Controllers.Domain/Rhino.Controllers.Domain.csproj", "Rhino.Controllers.Domain/"]
 COPY ["Rhino.Controllers.Extensions/Rhino.Controllers.Extensions.csproj", "Rhino.Controllers.Extensions/"]
 COPY ["Rhino.Controllers.Models/Rhino.Controllers.Models.csproj", "Rhino.Controllers.Models/"]
+COPY ["Rhino.Settings/Rhino.Settings.csproj", "Rhino.Settings/"]
 RUN dotnet restore "Rhino.Worker/Rhino.Worker.csproj"
 COPY . .
 WORKDIR "/src/Rhino.Worker"
