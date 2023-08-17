@@ -103,6 +103,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Controllers.Extension
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Settings", "Rhino.Settings\Rhino.Settings.csproj", "{BCCF0ADA-9547-4F55-90E6-4174A9BEC353}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Finastra.Plugins.Attributes", "..\..\..\Mrunal\source-code\automation-rhino-libraries\src\Finastra.Plugins.Attributes\Finastra.Plugins.Attributes.csproj", "{B76AD9A1-8FE0-43D6-BB45-41E56A37198C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Finastra.Plugins.BusinessObjects.Api", "..\..\..\Mrunal\source-code\automation-rhino-libraries\src\Finastra.Plugins.BusinessObjects.Api\Finastra.Plugins.BusinessObjects.Api.csproj", "{91F9BAD1-758A-4ADA-8506-7CEEC7224C3D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Finastra.Plugins.Extensions", "..\..\..\Mrunal\source-code\automation-rhino-libraries\src\Finastra.Plugins.Extensions\Finastra.Plugins.Extensions.csproj", "{B8AF736D-9BCF-48A6-AF14-59B8B6E073D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +151,18 @@ Global
 		{BCCF0ADA-9547-4F55-90E6-4174A9BEC353}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCCF0ADA-9547-4F55-90E6-4174A9BEC353}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCCF0ADA-9547-4F55-90E6-4174A9BEC353}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B76AD9A1-8FE0-43D6-BB45-41E56A37198C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B76AD9A1-8FE0-43D6-BB45-41E56A37198C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B76AD9A1-8FE0-43D6-BB45-41E56A37198C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B76AD9A1-8FE0-43D6-BB45-41E56A37198C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91F9BAD1-758A-4ADA-8506-7CEEC7224C3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91F9BAD1-758A-4ADA-8506-7CEEC7224C3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91F9BAD1-758A-4ADA-8506-7CEEC7224C3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91F9BAD1-758A-4ADA-8506-7CEEC7224C3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8AF736D-9BCF-48A6-AF14-59B8B6E073D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8AF736D-9BCF-48A6-AF14-59B8B6E073D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8AF736D-9BCF-48A6-AF14-59B8B6E073D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8AF736D-9BCF-48A6-AF14-59B8B6E073D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
