@@ -23,6 +23,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\Mrunal\source-code\automation-rhino-libraries\src\Finastra.Plugins.Attributes\Finastra.Plugins.Attributes.csproj" />
+		<ProjectReference Include="..\..\..\..\Mrunal\source-code\automation-rhino-libraries\src\Finastra.Plugins.BusinessObjects.Api\Finastra.Plugins.BusinessObjects.Api.csproj" />
+		<ProjectReference Include="..\..\..\..\Mrunal\source-code\automation-rhino-libraries\src\Finastra.Plugins.Extensions\Finastra.Plugins.Extensions.csproj" />
 		<ProjectReference Include="..\Rhino.Controllers\Rhino.Controllers.csproj" />
 	</ItemGroup>
 
