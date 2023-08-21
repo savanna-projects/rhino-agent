@@ -676,7 +676,7 @@ namespace Rhino.Controllers.Domain.Data
                 .Where(i => Array.Exists(publicRepositories, j => i.Key.Contains(j, StringComparison.OrdinalIgnoreCase)))
                 .SelectMany(i => i.Value.ActionsCache)
                 .Select(i => i.Value).ToList();
-            
+
             var userPlugins = MetaDataCache.Plugins.TryGetValue(token, out var userPluginsOut) && !token.Equals("Rhino", Compare)
                 ? userPluginsOut.ActionsCache.Select(i => i.Value)
                 : Array.Empty<ActionModel>();

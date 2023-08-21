@@ -333,10 +333,6 @@ namespace Rhino.Controllers.Domain.Extensions
             // iterate
             foreach (var model in models)
             {
-                if(model.Value.Plugin == null)
-                {
-                    var a = 1;
-                }
                 var key = model.Value?.Plugin?.Key ?? model.Key;
                 actions[key] = model.Value.ActionModel;
             }
@@ -354,7 +350,7 @@ namespace Rhino.Controllers.Domain.Extensions
             foreach (var attribute in attributes)
             {
                 var key = attribute.Name;
-                var value = new ActionModel
+                cache[key] = new ActionModel
                 {
                     Entity = (ActionAttribute)attribute,
                     Key = attribute.Name,
@@ -362,8 +358,6 @@ namespace Rhino.Controllers.Domain.Extensions
                     Source = ActionModel.ActionSource.Code,
                     Verb = "TBD"
                 };
-
-                cache[key] = value;
             }
 
             // get
