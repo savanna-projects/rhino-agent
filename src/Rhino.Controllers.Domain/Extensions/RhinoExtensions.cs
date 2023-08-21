@@ -333,7 +333,12 @@ namespace Rhino.Controllers.Domain.Extensions
             // iterate
             foreach (var model in models)
             {
-                actions[model.Value.Plugin.Key] = model.Value.ActionModel;
+                if(model.Value.Plugin == null)
+                {
+                    var a = 1;
+                }
+                var key = model.Value?.Plugin?.Key ?? model.Key;
+                actions[key] = model.Value.ActionModel;
             }
 
             // get
