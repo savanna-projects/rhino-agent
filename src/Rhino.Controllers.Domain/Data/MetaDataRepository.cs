@@ -673,15 +673,15 @@ namespace Rhino.Controllers.Domain.Data
             var token = GetUserToken(authentication, settings);
             var publicPlugins = MetaDataCache
                 .Plugins
-                .Where(i => publicRepositories.Contains(i.Key, StringComparer.OrdinalIgnoreCase))
+                .Where(i => Array.Exists(publicRepositories, j => i.Key.Contains(j, StringComparison.OrdinalIgnoreCase)))
                 .SelectMany(i => i.Value.ActionsCache)
-                .Select(i => i.Value);
+                .Select(i => i.Value).ToList();
 
             var userPlugins = MetaDataCache.Plugins.TryGetValue(token, out var userPluginsOut) && !token.Equals("Rhino", Compare)
                 ? userPluginsOut.ActionsCache.Select(i => i.Value)
                 : Array.Empty<ActionModel>();
 
-            // get
+            // get 
             return publicPlugins
                 .Concat(userPlugins)
                 .Where(i => !string.IsNullOrEmpty(i.Key))
