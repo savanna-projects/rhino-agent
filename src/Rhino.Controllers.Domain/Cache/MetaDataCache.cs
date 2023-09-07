@@ -113,30 +113,44 @@ namespace Rhino.Controllers.Domain.Cache
             }
         }
 
-        // TODO: always false
+        // Synchronizes Rhino plugins based on a specification and a directory.
         private static void SyncPlugins(RhinoPluginFactory factory, string specification, string directory)
         {
+            // Extract the ID from the specification using a regular expression.
             var id = GetIdPattern().Match(input: specification).Value.Trim();
+
+            // Get the plugin source from the directory.
             var pluginSource = Path.GetFileName(directory);
+
+            // Check if the plugin source is already cached.
             var isSource = s_plugins.TryGetValue(pluginSource, out PluginsCacheModel sourceOut);
+
+            // Check if the specifications for the plugin are cached.
             var isSpecifications = isSource && s_plugins[pluginSource]?.PluginsCache.TryGetValue(id, out PluginCacheModel pluginOut) == true;
+
+            // Retrieve the plugin and its specifications.
+            var plugin = (Source: pluginSource, Plugin: factory.GetRhinoPlugins(specification).FirstOrDefault());
             var cachedPlugin = isSpecifications
                 ? CleanSpecifications(s_plugins[pluginSource].PluginsCache[id].Specifications)
                 : string.Empty;
-            var isMatch = specification.Equals(cachedPlugin);
 
-            if (isMatch) // do not update if there is no change
+            // Check if the plugin specifications match the cached specifications.
+            var isMatch = plugin.Plugin.TestSpecifications.Equals(cachedPlugin);
+
+            if (isMatch)
             {
+                // If the specifications match, no need to update.
                 return;
             }
 
-            // new cache model
-            var plugin = (Source: pluginSource, Plugin: factory.GetRhinoPlugins(specification).FirstOrDefault());
+            // Create a collection with the current plugin.
             var pluginCollection = new[] { plugin }.Where(i => i.Plugin != null);
+
+            // Get the updated plugin cache.
             var pluginCache = GetPluginsCache(pluginCollection);
 
-            // first time cache
-            if (!isSource || !isSpecifications)
+            // If the source is not cached, create a new cache entry.
+            if (!isSource)
             {
                 s_plugins[pluginSource] = new PluginsCacheModel
                 {
@@ -149,11 +163,11 @@ namespace Rhino.Controllers.Domain.Cache
                 return;
             }
 
-            // update
+            // If the source is cached, update the cache with the new plugin data.
             _ = s_plugins.TryGetValue(pluginSource, out PluginsCacheModel valueOut);
 
-            valueOut.ActionsCache.TryUpdate(id, pluginCache[pluginSource].ActionsCache[id]);
-            valueOut.PluginsCache.TryUpdate(id, pluginCache[pluginSource].PluginsCache[id]);
+            valueOut.ActionsCache[id] = pluginCache[pluginSource].ActionsCache[id];
+            valueOut.PluginsCache[id] = pluginCache[pluginSource].PluginsCache[id];
         }
 
         #region *** Plugins: Get ***
