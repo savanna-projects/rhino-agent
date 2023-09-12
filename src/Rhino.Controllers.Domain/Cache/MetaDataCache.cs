@@ -9,8 +9,10 @@ using Gravity.Services.DataContracts;
 
 using Microsoft.CodeAnalysis;
 
+using Rhino.Api.Contracts;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Parser;
+using Rhino.Api.Parser.Extensions;
 using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
@@ -116,32 +118,33 @@ namespace Rhino.Controllers.Domain.Cache
         // Synchronizes Rhino plugins based on a specification and a directory.
         private static void SyncPlugins(RhinoPluginFactory factory, string specification, string directory)
         {
-            // Extract the ID from the specification using a regular expression.
-            var id = GetIdPattern().Match(input: specification).Value.Trim();
-
             // Get the plugin source from the directory.
             var pluginSource = Path.GetFileName(directory);
 
             // Check if the plugin source is already cached.
             var isSource = s_plugins.TryGetValue(pluginSource, out PluginsCacheModel sourceOut);
 
+            // Extract the ID from the specification.
+            var id = specification.GetSectionValue<string>(RhinoSpecification.TestId);
+
             // Check if the specifications for the plugin are cached.
             var isSpecifications = isSource && s_plugins[pluginSource]?.PluginsCache.TryGetValue(id, out PluginCacheModel pluginOut) == true;
-
-            // Retrieve the plugin and its specifications.
-            var plugin = (Source: pluginSource, Plugin: factory.GetRhinoPlugins(specification).FirstOrDefault());
+            
+            // take original plugin text to compare
             var cachedPlugin = isSpecifications
-                ? CleanSpecifications(s_plugins[pluginSource].PluginsCache[id].Specifications)
+                ? s_plugins[pluginSource].PluginsCache[id].Plugin.Context[ContextEntry.OriginalRhinoSpec]
                 : string.Empty;
 
             // Check if the plugin specifications match the cached specifications.
-            var isMatch = plugin.Plugin.TestSpecifications.Equals(cachedPlugin);
+            var isMatch = specification.Equals(cachedPlugin);
 
             if (isMatch)
             {
                 // If the specifications match, no need to update.
                 return;
             }
+            // Retrieve the plugin and its specifications.
+            var plugin = (Source: pluginSource, Plugin: factory.GetRhinoPlugins(specification).FirstOrDefault());
 
             // Create a collection with the current plugin.
             var pluginCollection = new[] { plugin }.Where(i => i.Plugin != null);
