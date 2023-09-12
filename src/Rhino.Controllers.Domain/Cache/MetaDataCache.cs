@@ -125,7 +125,7 @@ namespace Rhino.Controllers.Domain.Cache
             var isSource = s_plugins.TryGetValue(pluginSource, out PluginsCacheModel sourceOut);
 
             // Extract the ID from the specification.
-            var id = specification.GetSectionValue<string>(RhinoSpecification.TestId);
+            var id = GetSectionValue(specification, RhinoSpecification.TestId, string.Empty);
 
             // Check if the specifications for the plugin are cached.
             var isSpecifications = isSource && s_plugins[pluginSource]?.PluginsCache.TryGetValue(id, out PluginCacheModel pluginOut) == true;
@@ -324,6 +324,44 @@ namespace Rhino.Controllers.Domain.Cache
 
             // get
             return string.Join("\n", lines);
+        }
+
+        // temp workaround
+        private static string GetSectionValue(string spec, string section, string pattern)
+        {
+            // exit conditions
+            if (string.IsNullOrEmpty(section) || string.IsNullOrEmpty(spec))
+            {
+                return string.Empty;
+            }
+
+            // setup
+            var customSections = Api
+                .Extensions
+                .RhinoTestCaseExtensions
+                .GetCustomAnnotations(spec).Select(i => i.Annotation);
+
+            var sections = RhinoSpecification
+                .AsCollection()
+                .Where(i => !i.Equals(section, StringComparison.OrdinalIgnoreCase))
+                .Concat(customSections)
+                .Where(i => !string.IsNullOrEmpty(i) && !i.Equals(section, StringComparison.OrdinalIgnoreCase))
+                .Select(i => Regex.Escape($"[{i}]"))
+                .Concat(new[] { RhinoSpecification.Separator, RhinoSpecification.EndOfText });
+
+            // compose pattern
+            var onPattern = string.Format(@"(?<=\[{0}]).+?(?={1})", section, string.Join("|", sections));
+
+            // return section value
+            var input = Regex
+                .Match(spec, pattern: onPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase)
+                .Value
+                .Trim()
+                .Replace("\\n", string.Empty)
+                .Replace("\\r", string.Empty);
+
+            // regular expression
+            return string.IsNullOrEmpty(pattern) ? input : Regex.Match(input, pattern).Value;
         }
         #endregion
     }
