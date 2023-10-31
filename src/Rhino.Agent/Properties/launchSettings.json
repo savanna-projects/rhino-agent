@@ -1,0 +1,33 @@
+{
+    "iisSettings": {
+        "anonymousAuthentication": true,
+        "iisExpress": {
+            "applicationUrl": "http://localhost:58502",
+            "sslPort": 44300
+        },
+        "windowsAuthentication": false
+    },
+    "profiles": {
+        "Docker": {
+            "commandName": "Docker",
+            "externalUrlConfiguration": true,
+            "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+            "publishAllPorts": true,
+            "useSSL": true
+        },
+        "IIS Express": {
+            "commandName": "IISExpress",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "externalUrlConfiguration": true
+        },
+        "Rhino.Agent": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "externalUrlConfiguration": true
+        }
+    }
+}

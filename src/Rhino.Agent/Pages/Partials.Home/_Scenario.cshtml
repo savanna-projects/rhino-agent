@@ -1,0 +1,24 @@
+﻿<div class="card">
+    <div class="card-header">
+        <h4 class="panel-title">
+            <a class="text-info text-decoration-none" data-toggle="collapse" href="#scenario" style="padding-bottom: 3px;">
+                @*<small><i class="fa fa-plus"></i></small>*@Test Case Scenario <small><span id="steps_count" class="badge badge-primary">0</span></small>
+            </a>
+            <input id="test_case_title" 
+                   type="text" 
+                   placeholder="verify that [expected-result] when [condition]" 
+                   class="form-control form-control-sm" 
+                   style="margin-top:10px;" />
+        </h4>
+    </div>
+    <div id="scenario" class="collapse" data-parent="#action_content">
+        <div class="card-body">
+            <div id="test_steps"></div><br />
+            <div class="card border-primary mb-3">
+                <div class="card-header">Test Case Literal</div>
+                <div class="card-body text-monospace small" style="overflow-x: auto; white-space: nowrap; overflow-y: auto; max-height: 350px;" id="test_case_literal">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

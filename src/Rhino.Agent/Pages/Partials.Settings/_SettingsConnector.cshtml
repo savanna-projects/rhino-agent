@@ -1,0 +1,45 @@
+﻿<div class="card">
+    <div class="card-header">
+        <h4 class="panel-title">
+            <a class="text-info text-decoration-none" data-toggle="collapse" href="#settings_connector">Connector</a>
+        </h4>
+    </div>
+    <div id="settings_connector" class="collapse show" data-parent="#settings_content">
+        <div class="card-body">
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Connector Type</label>
+                <select class="form-control form-control-sm" id="connectorType">
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Server Address</label>
+                <input type="text" class="form-control form-control-sm" id="serverAddress" placeholder="ALM server address (Jira, DevOps, etc.) i.e. https://myserver:8080/">
+            </div>
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Project (for Jira connector use the project key)</label>
+                <input type="text" class="form-control form-control-sm" id="project" placeholder="Enter ALM poject under which to create automation i.e. myProject">
+            </div>
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Test suite or Test set id (entity under which to place this test case)</label>
+                <input title="Test suite or Test set id. This is the entity under which this test case will be created. Leave blank for text output."
+                       type="text"
+                       class="form-control form-control-sm"
+                       id="testSuite"
+                       placeholder="Test Suite or Test Set id i.e. 55435">
+            </div>
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">User Name</label>
+                <input type="text" class="form-control form-control-sm" id="username" placeholder="ALM server user name">
+            </div>
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm">Password</label>
+                <input type="password" class="form-control form-control-sm" id="password" placeholder="ALM server user name">
+            </div>
+            <div class="form-group">
+                <label class="col-form-label col-form-label-sm"
+                       title="Allows to additional connector capabilities for creating or running the current test.">Connector Capabilities (JSON formatted)</label>
+                <textarea class="form-control rounded-0 text-monospace form-control-sm" rows="3" id="connector_capabilities">{}</textarea>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+﻿{
+    "$schema": "http://json.schemastore.org/launchsettings.json",
+    "iisSettings": {
+        "anonymousAuthentication": true,
+        "iisExpress": {
+            "applicationUrl": "http://localhost:50447",
+            "sslPort": 44365
+        },
+        "windowsAuthentication": false
+    },
+    "profiles": {
+        "IIS Express": {
+            "commandName": "IISExpress",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "externalUrlConfiguration": true,
+            "launchBrowser": true,
+            "launchUrl": "ping/rhino"
+        },
+        "Rhino.Controllers": {
+            "commandName": "Project",
+            "dotnetRunMessages": true,
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "externalUrlConfiguration": true,
+            "launchBrowser": true,
+            "launchUrl": "ping/rhino"
+        }
+    }
+}

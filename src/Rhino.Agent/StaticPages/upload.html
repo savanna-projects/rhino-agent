@@ -1,0 +1,218 @@
+<html lang="en-us">
+<head>
+    <script>
+        function setDefaultValues() {
+            // setup
+            const address = /https?:\/\/\w+:\d+/.exec(document.baseURI)[0];
+            const element = document.getElementById('ServerAddress');
+
+            // set
+            element.setAttribute('value', address);
+            document.getElementById('PublishDate').valueAsDate = new Date();
+            document.getElementById('PackageVersion').value = '1.0.0.0';
+        }
+
+        function setArtifactValues() {
+            // setup
+            const file = document.getElementById('PluginsPackage').files[0];
+            const name = /.+(?=\.\w+)/.exec(file.name)[0];
+            const id = name.replace(/\s+/, '');
+
+            // set values
+            document.getElementById('PackageId').value = id;
+            document.getElementById('PackageName').value = name;
+        }
+
+        function submitArtifact() {
+            // setup
+            const file = document.getElementById('PluginsPackage').files[0];
+            const author = document.getElementById('Author').getAttribute('value');
+            const name = document.getElementById('PackageName').value;
+            const id = document.getElementById('PackageId').value;
+            const packageType = document.getElementById('PackageType').value;
+            const publishDate = document.getElementById('PublishDate').value;
+            const apiVersion = document.getElementById('ApiVersion').value;
+            const packageVersion = document.getElementById('PackageVersion').value;
+            const projectLink = document.getElementById('ProjectLink').value;
+            const uploadStatus = document.getElementById('UploadStatus');
+
+            // build url
+            let url = document.getElementById('ServerAddress').value;
+            url = (url.endsWith('/') ? /.+(?=\/$)/.exec(url)[0] : url) + '/api/v' + apiVersion + '/plugins/submit';
+
+            // local
+            const getBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+
+            // client side validation
+            uploadStatus.innerHTML = '';
+            if (name === null || name === undefined || name === '') {
+                uploadStatus.innerHTML = '<span style="color: crimson"><b>You must provide a package name</b></span>';
+                return;
+            }
+            if (id === null || id === undefined || id === '') {
+                uploadStatus.innerHTML = '<span style="color: crimson"><b>You must provide a package id</b></span>';
+                return;
+            }
+            if (packageType === null || packageType === undefined || packageType === '-1') {
+                uploadStatus.innerHTML = '<span style="color: crimson"><b>You must select a package type</b></span>';
+                return;
+            }
+
+            // invoke
+            uploadStatus.innerHTML = '<b>Uploading...</b>'
+            getBase64(file).then(data => {
+                const base64 = data.toString().replace(/data:\w+\/.+;base64,/, '');
+                const model = {
+                    author: author,
+                    id: id,
+                    fileData: base64,
+                    name: name,
+                    packageType: packageType,
+                    projectLink: projectLink,
+                    publishDate: publishDate,
+                    verseion: packageVersion
+                };
+                invokePostRequest(url, model);
+            });
+        }
+
+        function invokePostRequest(url, requestBody) {
+            var xhr = new XMLHttpRequest();
+            var url = url;
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 201) {
+                    let html = '<span style="color: darkgreen"><b>Uploaded successfully</b></span>';
+                    document.getElementById('UploadStatus').innerHTML = html;
+                }
+            };
+            var data = JSON.stringify(requestBody);
+            xhr.send(data);
+        }
+    </script>
+    <style type="text/css">
+        input[type=text], input[type=date], input[type=number], select {
+            min-width: 300px;
+            min-height: 26px;
+        }
+    </style>
+    <title>Rhino API - Plugins Upload Page</title>
+</head>
+<body onload="setDefaultValues();">
+    <h1>Packages Upload</h1>
+    <table>
+        <tr>
+            <td><label>Server Address:</label></td>
+            <td>
+                <input type="text"
+                       id="ServerAddress"
+                       placeholder="http://localhost:9000"
+                       title="The Rhino API server address" />
+            </td>
+        </tr>
+        <tr>
+            <td><label>API Version:</label></td>
+            <td>
+                <input type="number"
+                       id="ApiVersion"
+                       value="3"
+                       placeholder="3"
+                       title="The Rhino API version" />
+            </td>
+        </tr>
+        <tr>
+            <td><label>Author:</label></td>
+            <td>
+                <input type="text"
+                       id="Author"
+                       value="anonymous"
+                       placeholder="anonymous"
+                       title="The developer name or alias" />
+            </td>
+        </tr>
+        <tr>
+            <td><label>Package Name: <span style="color: crimson">*</span></label></td>
+            <td>
+                <input type="text"
+                       id="PackageName"
+                       placeholder="Domain Package Name"
+                       title="A unique name assigned to the Package" />
+            </td>
+        </tr>
+        <tr>
+            <td><label>Package ID: <span style="color: crimson">*</span></label></td>
+            <td>
+                <input type="text"
+                       id="PackageId"
+                       placeholder="Domain.Package.Name"
+                       title="A unique identifier assigned to the Package" />
+            </td>
+        </tr>
+        <tr>
+            <td><label>Package Type: <span style="color: crimson">*</span></label></td>
+            <td>
+                <select id="PackageType" title="The Package type">
+                    <option value="-1">--- Select an Option ---</option>
+                    <option value="Connector">Connector</option>
+                    <option value="Gravity">Gravity</option>
+                    <option value="Reporter">Reporter</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><label>Project Link:</label></td>
+            <td>
+                <input type="text"
+                       id="ProjectLink"
+                       placeholder="http://io.poject.no"
+                       title="A link to the project source code (if available)" />
+            </td>
+        </tr>
+        <tr>
+            <td><label>Publish Date:</label></td>
+            <td>
+                <input type="date"
+                       id="PublishDate"
+                       placeholder="yyyy/MM/dd"
+                       title="The Package version publish date" />
+            </td>
+        </tr>
+        <tr>
+            <td><label>Package Version:</label></td>
+            <td>
+                <input type="text"
+                       id="PackageVersion"
+                       placeholder="1.0.0.0"
+                       title="The Package version (e.g., 1.0.0.0)" />
+            </td>
+        </tr>
+        <tr>
+            <td><label>Upload Plugins Package:</label></td>
+            <td>
+                <input type="file"
+                       id="PluginsPackage"
+                       placeholder="Domain.Package.Name.zip"
+                       title="The Package .zip file"
+                       onchange="setArtifactValues();" />
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 1em">
+                <input type="button"
+                       id="SubmitPlugin"
+                       value="Submit Plugins"
+                       onclick="submitArtifact();" />
+            </td>
+            <td style="padding-top: 1em">
+                <label id="UploadStatus"></label>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

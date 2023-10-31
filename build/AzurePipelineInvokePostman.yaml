@@ -1,0 +1,301 @@
+parameters:
+- name: 'RhinoAsyncPooling'
+  default: 15000
+
+- name: 'BuildConfiguration'
+  default: 'Release'
+
+- name: 'ArtifactName'
+  value: 'drop'
+
+stages:
+  - stage: Test
+    jobs:
+    - job: 'DeployAndTestOnStageEnvironment'
+      displayName: 'Deploy Stage Environment & Invoke Automation Tests'
+      steps:
+      - checkout: none
+      - task: PowerShell@2
+        displayName: 'Parse Build Version'
+        inputs:
+          targetType: 'inline'
+          pwsh: true
+          script: |
+            # setup
+            [regex]$pattern = '(\d+.?)+'
+            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
+            # set value
+            Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+      - task: NodeTool@0
+        displayName: 'Install Node.JS'
+        inputs:
+          versionSpec: '>=6.x'
+          checkLatest: true
+
+      - task: Npm@1
+        displayName: 'Install newman-cli Package'
+        inputs:
+          command: 'custom'
+          customCommand: 'install -g newman'
+
+      - task: DownloadBuildArtifacts@1
+        displayName: 'Get Postman Collections'
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: '${{ parameters.ArtifactName }}'
+          downloadPath: '$(System.ArtifactsDirectory)'
+
+      - task: ExtractFiles@1
+        displayName: 'Extract Rhino API Files into $(System.ArtifactsDirectory)/app'
+        inputs:
+          archiveFilePatterns: '$(System.ArtifactsDirectory)/**/*.zip'
+          destinationFolder: '$(System.ArtifactsDirectory)/app'
+          cleanDestinationFolder: true
+          overwriteExistingFiles: true
+
+      - task: PowerShell@2
+        displayName: 'Set Testing Environment Parameters'
+        inputs:
+          targetType: 'inline'
+          pwsh: true
+          errorActionPreference: 'silentlyContinue'
+          failOnStderr: true
+          script: |
+            $content = Get-Content '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json'
+            $content = $content -replace "pm\.collectionVariables\.set\('endpoint',.*\)","pm.collectionVariables.set('endpoint', '$(Rhino.Stage.Endpoint)')";
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_drivers',.*\)","pm.collectionVariables.set('rhino_drivers', '$(Grid.Endpoint.Rhino)')"
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_user',.*\)","pm.collectionVariables.set('rhino_user', '$(Rhino.Username)')"
+            $content = $content -replace "pm\.collectionVariables\.set\('rhino_password',.*\)","pm.collectionVariables.set('rhino_password', '$(Rhino.Password)')"
+            $content = $content -replace "pm\.collectionVariables\.set\('async_pooling',.*\)","pm.collectionVariables.set('async_pooling', '${{ parameters.RhinoAsyncPooling }}')"
+            Set-Content -Path '$(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json' -Value $content
+
+      - template: AzurePipelineResetEnvironment.yaml
+
+      - task: PowerShell@2
+        displayName: 'Invoke Automation Tests - API'
+        inputs:
+          errorActionPreference: 'silentlyContinue'
+          pwsh: true
+          failOnStderr: false
+          targetType: 'inline'
+          script: |
+            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            --folder 'One Time Setup' `
+            --folder 'Documentation: Configurations' `
+            --folder 'Tests: Configurations' `
+            --folder 'Documentation: Environment' `
+            --folder 'Tests: Environment' `
+            --folder 'Documentation: Logs & Analysis' `
+            --folder 'Tests: Logs & Analysis' `
+            --folder 'Documentation: Page Models' `
+            --folder 'Tests: Page Models' `
+            --folder 'Documentation: Test Cases' `
+            --folder 'Tests: Test Cases' `
+            --reporters 'cli,junit' `
+            --suppress-exit-code `
+            --delay-request 1000 `
+            --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.Api.$(Build.BuildNumber).xml
+      
+      - task: PublishTestResults@2
+        displayName: Publish Test Results $(Release.Prefix).$(Build.BuildNumber).Api
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '$(System.ArtifactsDirectory)/app/TestResults.Api.$(Build.BuildNumber).xml'
+          failTaskOnFailedTests: true
+          testRunTitle: '$(Release.Prefix).$(Build.BuildNumber).Api'
+
+      - template: AzurePipelineResetEnvironment.yaml
+
+      - task: PowerShell@2
+        displayName: 'Invoke Automation Tests - Gravity'
+        inputs:
+          errorActionPreference: 'silentlyContinue'
+          failOnStderr: false
+          targetType: 'inline'
+          pwsh: true
+          script: |
+            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            --folder 'One Time Setup' `
+            --folder 'Tests: Debug Automation' `
+            --reporters 'cli,junit' `
+            --suppress-exit-code `
+            --delay-request 1000 `
+            --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.Gravity.$(Build.BuildNumber).xml
+
+      - task: PublishTestResults@2
+        displayName: Publish Test Results $(Release.Prefix).$(Build.BuildNumber).Gravity
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '$(System.ArtifactsDirectory)/app/TestResults.Gravity.$(Build.BuildNumber).xml'
+          failTaskOnFailedTests: true
+          testRunTitle: '$(Release.Prefix).$(Build.BuildNumber).Gravity'
+
+      - template: AzurePipelineResetEnvironment.yaml
+
+      - task: PowerShell@2
+        displayName: 'Invoke Automation Tests - Rhino'
+        inputs:
+          errorActionPreference: 'silentlyContinue'
+          failOnStderr: false
+          targetType: 'inline'
+          pwsh: true
+          script: |
+            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            --folder 'One Time Setup' `
+            --folder 'Documentation: Rhino' `
+            --reporters 'cli,junit' `
+            --suppress-exit-code `
+            --delay-request 1000 `
+            --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.Rhino.$(Build.BuildNumber).xml
+
+      - task: PublishTestResults@2
+        displayName: Publish Test Results $(Release.Prefix).$(Build.BuildNumber).Rhino
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '$(System.ArtifactsDirectory)/app/TestResults.Rhino.$(Build.BuildNumber).xml'
+          failTaskOnFailedTests: true
+          testRunTitle: '$(Release.Prefix).$(Build.BuildNumber).Rhino'
+
+      - template: AzurePipelineResetEnvironment.yaml
+
+      - task: PowerShell@2
+        displayName: 'Invoke Automation Tests - Rhino Async'
+        inputs:
+          errorActionPreference: 'silentlyContinue'
+          failOnStderr: false
+          targetType: 'inline'
+          pwsh: true
+          script: |
+            newman run $(System.ArtifactsDirectory)/app/RhinoApiReferenceGuidev3.Postman.json `
+            --folder 'One Time Setup' `
+            --folder 'Documentation: Rhino Async' `
+            --reporters 'cli,junit' `
+            --suppress-exit-code `
+            --delay-request 1000 `
+            --reporter-junit-export $(System.ArtifactsDirectory)/app/TestResults.RhinoAsync.$(Build.BuildNumber).xml
+
+      - task: PublishTestResults@2
+        displayName: Publish Test Results $(Release.Prefix).$(Build.BuildNumber).RhinoAsync
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '$(System.ArtifactsDirectory)/app/TestResults.RhinoAsync.$(Build.BuildNumber).xml'
+          failTaskOnFailedTests: true
+          testRunTitle: '$(Release.Prefix).$(Build.BuildNumber).RhinoAsync'
+
+    - job: StopStageEnvironment
+      displayName: 'Stop Stage Environment'
+      dependsOn: 'DeployAndTestOnStageEnvironment'
+      steps:
+      - checkout: none
+      - task: AzureAppServiceManage@0
+        displayName: Stop Rhino API Stage Application
+        inputs:
+          azureSubscription: 'Pay-As-You-Go(c6d8e3a9-122a-498c-a19e-73e5a045ec2b)'
+          Action: 'Stop Azure App Service'
+          WebAppName: 'rhino'
+
+  - stage: PublishGit
+    displayName: Publish on GitHub
+    dependsOn: 'Test'
+    condition: 'succeeded()'
+    jobs:
+    - job: 'CraeteRelease'
+      displayName: 'Create a GitHub Release & Tag'
+      steps:
+      - checkout: none
+
+      - task: PowerShell@2
+        displayName: 'Parse Build Version'
+        inputs:
+          targetType: 'inline'
+          script: |
+            # setup
+            [regex]$pattern = '(\d+.?)+'
+            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
+            # set value
+            Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+      - task: DownloadBuildArtifacts@1
+        displayName: 'Get Rhino API Agent Artifact'
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'drop'
+          downloadPath: '$(System.ArtifactsDirectory)'
+
+      - task: PowerShell@2
+        displayName: 'Set Asset Name'
+        inputs:
+          targetType: 'inline'
+          errorActionPreference: 'silentlyContinue'
+          script: |
+            $artifact     = Get-ChildItem $(build.artifactstagingdirectory)/*.zip -Recurse
+            $artifactName = $item.FullName -replace '.zip', '-$(Release.Prefix).zip'
+            Rename-Item -Path $item.FullName -NewName $name
+
+      - task: GitHubRelease@1
+        displayName: 'Create GitHub Tag'
+        inputs:
+          gitHubConnection: 'github.com'
+          repositoryName: '$(Build.Repository.Name)'
+          action: 'create'
+          target: '$(Build.SourceVersion)'
+          tagSource: 'userSpecifiedTag'
+          isPreRelease: $(Release.PreRelease)
+          tag: 'v$(buildVersion)-$(Release.Prefix)'
+          title: '$(Release.Prefix) v$(buildVersion)'
+          changeLogCompareToRelease: 'lastFullRelease'
+          changeLogType: 'commitBased'
+          assets: '$(build.artifactstagingdirectory)/**/*.zip'
+
+  - stage: PublishDocker
+    displayName: Publish on DockerHub
+    dependsOn: 'Test'
+    condition: 'succeeded()'
+    jobs:
+    - job: 'CraeteRelease'
+      displayName: 'Create a Docker Release & Tag'
+      steps:
+      - task: Docker@2
+        displayName: 'Logout from Docker'
+        inputs:
+          containerRegistry: 'docker.io'
+          command: 'logout'
+
+      - task: Docker@2
+        displayName: 'Login to Docker'
+        inputs:
+          containerRegistry: 'docker.io'
+          command: 'login'
+
+      - task: PowerShell@2
+        displayName: 'Parse Build Version'
+        inputs:
+          targetType: 'inline'
+          pwsh: true
+          script: |
+            # setup
+            [regex]$pattern = '(\d+.?)+'
+            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
+            # set value
+            Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+      - task: PowerShell@2
+        displayName: 'Format Docker Tags'
+        inputs:
+          targetType: 'inline'
+          pwsh: true
+          script: |
+            $tags = '$(Docker.Tags)'.ToLower()
+            Write-Host "##vso[task.setvariable variable=dockerTags]$tags"
+
+      - task: Docker@2
+        displayName: 'Create Docker Image - Linux'
+        inputs:
+          containerRegistry: 'docker.io'
+          repository: 'rhinoapi/rhino-agent'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: $(dockerTags)

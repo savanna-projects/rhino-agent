@@ -1,0 +1,10 @@
+﻿namespace Rhino.Controllers.Models.Server
+{
+    public static class RhinoResponseHeader
+    {
+        public const string CountTotalInvokes = "Rhino-Total-Invokes";
+        public const string CountTotalResources = "Rhino-Total-Resources";
+        public const string CountTotalSpecs = "Rhino-Total-Specs";
+        public const string CountTotalPlugins = "Rhino-Total-Plugins";
+    }
+}

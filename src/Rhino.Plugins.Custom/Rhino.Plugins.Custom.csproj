@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>Latest</LangVersion>
+		<AssemblyVersion>7.0.0.0</AssemblyVersion>
+		<FileVersion>7.0.0.0</FileVersion>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Manifest\SampleAction.json" />
+		<EmbeddedResource Include="Manifest\SampleMacro.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Gravity.Services.Comet" Version="2023.10.31.1" />
+		<PackageReference Include="Gravity.Services.DataContracts" Version="2023.10.31.1" />
+	</ItemGroup>
+
+</Project>
