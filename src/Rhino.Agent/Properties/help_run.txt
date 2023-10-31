@@ -1,2 +1,0 @@
-﻿command-options:
-  --configuration   Path to a RhinoConfiguration file to execute.
