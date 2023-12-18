@@ -16,8 +16,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Gravity.Services.Comet" Version="2023.11.13.1" />
-		<PackageReference Include="Gravity.Services.DataContracts" Version="2023.11.13.1" />
+		<PackageReference Include="Gravity.Services.Comet" Version="2023.12.17.1" />
+		<PackageReference Include="Gravity.Services.DataContracts" Version="2023.12.17.1" />
 	</ItemGroup>
 
 </Project>
