@@ -16,7 +16,7 @@ namespace Rhino.Controllers.Extensions
         public static IEnumerable<PluginAttribute> GetActionAttributes(this IEnumerable<Type> types)
         {
             // setup
-            var actionTypes = types.Where(i => IsPlugin<ActionPlugin>(i) && IsAttribute<ActionAttribute>(i));
+            var actionTypes = types.Where(i => typeof(ActionPlugin).IsAssignableFrom(i) && IsAttribute<ActionAttribute>(i));
             var attributes = new List<ActionAttribute>();
 
             // build
@@ -77,7 +77,7 @@ namespace Rhino.Controllers.Extensions
         public static IEnumerable<PluginAttribute> GetMacroAttributes(this IEnumerable<Type> types)
         {
             // setup
-            var actionTypes = types.Where(i => IsPlugin<MacroPlugin>(i) && IsAttribute<MacroAttribute>(i));
+            var actionTypes = types.Where(i => typeof(MacroPlugin).IsAssignableFrom(i) && IsAttribute<MacroAttribute>(i));
             var attributes = new List<MacroAttribute>();
 
             // build

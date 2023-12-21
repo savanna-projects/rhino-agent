@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis;
 using Rhino.Api.Contracts;
 using Rhino.Api.Contracts.AutomationProvider;
 using Rhino.Api.Parser;
-using Rhino.Api.Parser.Extensions;
 using Rhino.Controllers.Domain.Extensions;
 using Rhino.Controllers.Extensions;
 using Rhino.Controllers.Models;
