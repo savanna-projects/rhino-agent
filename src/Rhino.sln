@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docker", ".docker", "{F0581530-31D7-40C5-BD78-4322BD64C4F0}"
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
+		Agent.BrowserStackLocal.Dockerfile = Agent.BrowserStackLocal.Dockerfile
 		Agent.Dockerfile = Agent.Dockerfile
 		..\docker\DockerComposeLinux.yml = ..\docker\DockerComposeLinux.yml
 		..\docker\DockerComposeWindows.yml = ..\docker\DockerComposeWindows.yml
