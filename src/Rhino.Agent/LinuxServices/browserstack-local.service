@@ -1,0 +1,13 @@
+[Unit]
+Description=Browser Stack Service
+After=network.target
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+WorkingDirectory=/app/Binaries
+ExecStart=/app/Binaries/BrowserStackLocal --force --key $BROWSERSTACK_KEY
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -33,13 +33,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Certificates\Rhino.Https.pfx">
+		<Content Include="StaticPages\**\*.*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+
+		<None Update="Certificates\**\*.*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="StaticPages\status.html">
+
+		<None Update="Binaries\**\*.*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="StaticPages\upload.html">
+
+		<None Include="LinuxServices\**\*.*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
