@@ -8,6 +8,7 @@ using Gravity.Services.DataContracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using Rhino.Api.Converters;
 using Rhino.Controllers.Domain;
 using Rhino.Controllers.Domain.Interfaces;
 using Rhino.Controllers.Models;
@@ -27,10 +28,20 @@ namespace Rhino.Controllers.Controllers
     public class GravityController : ControllerBase
     {
         // members: static
-        private static readonly JsonSerializerOptions s_options = new()
+        private static readonly JsonSerializerOptions s_options = NewOptions();
+
+        private static JsonSerializerOptions NewOptions()
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
+            var options = new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true
+            };
+            options.Converters.Add(new ExceptionConverter());
+            options.Converters.Add(new MethodBaseConverter());
+            options.Converters.Add(new TypeConverter());
+            return options;
+        }
 
         // members: state
         private readonly IGravityRepository _domain;
