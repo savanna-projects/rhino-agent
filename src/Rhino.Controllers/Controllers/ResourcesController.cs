@@ -3,10 +3,12 @@
  * 
  * RESSOURCES
  */
+using Gravity.Extensions;
 using Gravity.Services.DataContracts;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Services.Commerce;
 
 using Rhino.Api.Contracts.Configuration;
 using Rhino.Controllers.Domain;
@@ -18,9 +20,11 @@ using Rhino.Settings;
 
 using Swashbuckle.AspNetCore.Annotations;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -149,7 +153,14 @@ namespace Rhino.Controllers.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            foreach (var item in resourceModels)
+            {
+                var buffer = new Span<byte>(new byte[item.Content.Length]);
+                if (Convert.TryFromBase64String(item.Content, buffer, out var _))
+                {
+                    item.Content = Encoding.UTF8.GetString(buffer);
+                }
+            }
             // setup
             var entities = resourceModels
                 .Select(_domain.Resources.Create)
