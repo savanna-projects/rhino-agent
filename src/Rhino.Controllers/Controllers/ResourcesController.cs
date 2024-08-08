@@ -153,6 +153,8 @@ namespace Rhino.Controllers.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            //Convert resource content from base64
             foreach (var item in resourceModels)
             {
                 var buffer = new Span<byte>(new byte[item.Content.Length]);
@@ -161,6 +163,7 @@ namespace Rhino.Controllers.Controllers
                     item.Content = Encoding.UTF8.GetString(buffer);
                 }
             }
+
             // setup
             var entities = resourceModels
                 .Select(_domain.Resources.Create)
