@@ -11,8 +11,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Gravity.Services.Comet" Version="2024.8.4.2" />
-		<PackageReference Include="Gravity.Services.DataContracts" Version="2024.8.4.2" />
+		<PackageReference Include="Gravity.Services.Comet" Version="2024.9.2.2" />
+		<PackageReference Include="Gravity.Services.DataContracts" Version="2024.9.2.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
 		<PackageReference Include="Rhino.Api.Contracts" Version="2024.8.22.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
